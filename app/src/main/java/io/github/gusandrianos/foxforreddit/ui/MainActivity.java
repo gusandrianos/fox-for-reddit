@@ -1,4 +1,4 @@
-package io.github.gusandrianos.foxforreddit;
+package io.github.gusandrianos.foxforreddit.ui;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import foxApiWrapper.lib.RedditRequest;
+import io.github.gusandrianos.foxforreddit.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,6 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void me(View view) {
         RedditRequest okHttpHandler = new RedditRequest();
-        okHttpHandler.execute("https://oauth.reddit.com/api/v1/scopes");
+        okHttpHandler.execute("https://oauth.reddit.com/api/v1/me/karma");
     }
 }

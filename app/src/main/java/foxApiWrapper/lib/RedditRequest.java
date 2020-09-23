@@ -17,7 +17,7 @@ import okhttp3.Response;
 public class RedditRequest extends AsyncTask<String, Void, String> {
 
     OkHttpClient client = new OkHttpClient();
-    String BEARER = "65888787-3tBkvBr4iQ4LUl2mEo19_-WhipI";
+    String BEARER = "65888787-I43XH7Q1oiAhNbK9rERrXd1WFac";
     // TODO: This ^^^ is stupid, needs to come from sharePrefs or something
 
     @Override

@@ -5,19 +5,20 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface OAuthToken {
-    //    @FormUrlEncoded
+    @FormUrlEncoded
     @POST("/api/v1/access_token")
     Call<Token> getUserlessToken(
-            @Header("User-Agent") String userAgent,
             @Header("Authorization") String credentials,
             @Field("grant_type") String grantType,
             @Field("device_id") String deviceID
     );
 
+    @FormUrlEncoded
     @POST("/api/v1/authorize.compact")
     Call<ResponseBody> getUserApproval(
             @Field("client_id") String clientID,
@@ -28,7 +29,7 @@ public interface OAuthToken {
             @Field("scope") String scope
     );
 
-
+    @FormUrlEncoded
     @POST("/api/v1/access_token")
     Call<Token> getAuthorizedUserToken(
             @Header("User-Agent") String userAgent,

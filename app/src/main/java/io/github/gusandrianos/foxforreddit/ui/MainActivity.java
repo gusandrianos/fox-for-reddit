@@ -6,12 +6,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+
 import foxApiWrapper.lib.RedditRequest;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.Token;
+import io.github.gusandrianos.foxforreddit.data.network.OAuthToken;
+import io.github.gusandrianos.foxforreddit.data.network.RedditAPI;
+import io.github.gusandrianos.foxforreddit.data.network.RetrofitService;
+import okhttp3.Credentials;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +34,53 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final TextView result = findViewById(R.id.result);
+        OAuthToken tokenRequest = RetrofitService.getTokenRequestInstance();
+        RedditAPI redditAPI = RetrofitService.getRedditAPIInstance();
+
+        Call<Token> userlessToken = tokenRequest.getUserlessToken(Credentials.basic("n1R0bc_lPPTtVg", ""), "https://oauth.reddit.com/grants/installed_client", "DO_NOT_TRACK_THIS_DEVICE");
+        userlessToken.enqueue(new Callback<Token>() {
+            @Override
+            public void onResponse(Call<Token> call, Response<Token> response) {
+                try {
+                    Token token = response.body();
+                    Log.i("Userless_Token: ", token.getmAccessToken());
+                    Log.i("Userless_Type: ", token.getmTokenType());
+                    Log.i("Userless_Expires: ", token.getmExpiresIn());
+                    Log.i("Userless_Scope: ", token.getmScope());
+                    result.setText(token.getmAccessToken());
+
+                } catch (NullPointerException e) {
+                    Log.i("Userless_Token: ", e.getMessage());
+                }
+
+                Log.i("TOKEN", response.body().getmAccessToken());
+                String BEARER =  " "+response.body().getmTokenType() +" "+ response.body().getmAccessToken();
+                Log.i("Brearer", BEARER);
+
+                Call<JsonObject> listing = redditAPI.getPosts("r/GlobalOffensive", "best", BEARER);
+
+
+                listing.enqueue(new Callback<JsonObject>() {
+                    @Override
+                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                        Log.d("res", response.body().toString());
+                    }
+
+                    @Override
+                    public void onFailure(Call<JsonObject> call, Throwable t) {
+
+                        Log.d("error",t.getMessage());
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<Token> call, Throwable t) {
+
+            }
+        });
     }
 
     public void loadWebPage(View view) {

@@ -1,5 +1,7 @@
 package io.github.gusandrianos.foxforreddit.data.network;
 
+import com.google.gson.JsonObject;
+
 import java.util.List;
 
 import io.github.gusandrianos.foxforreddit.data.models.Post;
@@ -18,10 +20,9 @@ public interface RedditAPI {
      * List of Posts
      */
     @GET("{subreddit}/{filter}")
-    Call<List<Post>> getPosts(
+    Call<JsonObject> getPosts(
             @Path("subreddit") String subreddit,
             @Path("filter") String filter,
-            @Header("User-Agent") String userAgent,
             @Header("Authorization") String bearer
     );
 }

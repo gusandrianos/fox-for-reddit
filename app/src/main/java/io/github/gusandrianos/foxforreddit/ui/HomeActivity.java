@@ -38,6 +38,7 @@ public class HomeActivity extends AppCompatActivity {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),0);
         viewPagerAdapter.addFragment(homeFragment, "HOME");
         viewPagerAdapter.addFragment(popularFragment, "POPULAR");
+
         viewPager.setAdapter(viewPagerAdapter);
     }
 }

@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 
 import java.util.List;
 
-import io.github.gusandrianos.foxforreddit.data.models.Post;
+import io.github.gusandrianos.foxforreddit.data.models.Listing;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -20,7 +20,7 @@ public interface RedditAPI {
      * List of Posts
      */
     @GET("{subreddit}/{filter}")
-    Call<JsonObject> getPosts(
+    Call<Listing> getPosts(
             @Path("subreddit") String subreddit,
             @Path("filter") String filter,
             @Header("Authorization") String bearer

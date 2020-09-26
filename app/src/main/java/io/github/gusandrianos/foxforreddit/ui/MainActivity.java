@@ -6,15 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.JsonObject;
-
 import foxApiWrapper.lib.RedditRequest;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
+import io.github.gusandrianos.foxforreddit.data.models.Listing;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.data.network.OAuthToken;
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI;
@@ -48,29 +49,39 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("Userless_Type: ", token.getmTokenType());
                     Log.i("Userless_Expires: ", token.getmExpiresIn());
                     Log.i("Userless_Scope: ", token.getmScope());
-                    result.setText(token.getmAccessToken());
 
                 } catch (NullPointerException e) {
                     Log.i("Userless_Token: ", e.getMessage());
                 }
 
                 Log.i("TOKEN", response.body().getmAccessToken());
-                String BEARER =  " "+response.body().getmTokenType() +" "+ response.body().getmAccessToken();
+                String BEARER = " " + response.body().getmTokenType() + " " + response.body().getmAccessToken();
                 Log.i("Brearer", BEARER);
 
-                Call<JsonObject> listing = redditAPI.getPosts("r/GlobalOffensive", "best", BEARER);
+                Call<Listing> listing = redditAPI.getPosts("", "hot", BEARER);
 
 
-                listing.enqueue(new Callback<JsonObject>() {
+                listing.enqueue(new Callback<Listing>() {
                     @Override
-                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                    public void onResponse(Call<Listing> call, Response<Listing> response) {
+                        result.setMovementMethod(new ScrollingMovementMethod());
+                        result.setText("");
+
+                        for (ChildrenItem child : response.body().getTreeData().getChildren()) {
+                            result.append("r/" + child.getPost().getSubreddit() + "\n");
+                            result.append("Posted by u/" + child.getPost().getAuthor() + "\n");
+                            result.append(child.getPost().getTitle() + "\n");
+                            String date = (String) android.text.format.DateUtils.getRelativeTimeSpanString(child.getPost().getCreatedUtc()*1000);
+                            result.append(date + "\n");
+                            result.append(child.getPost().getScore() + "\n\n");
+                        }
                         Log.d("res", response.body().toString());
                     }
 
                     @Override
-                    public void onFailure(Call<JsonObject> call, Throwable t) {
+                    public void onFailure(Call<Listing> call, Throwable t) {
 
-                        Log.d("error",t.getMessage());
+                        Log.d("error", t.getMessage());
 
                     }
                 });

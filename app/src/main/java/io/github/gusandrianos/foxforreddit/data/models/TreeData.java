@@ -15,4 +15,20 @@ public class TreeData{
 
     @SerializedName("after")
     private String after;
+
+    public List<ChildrenItem> getChildren() {
+        return children;
+    }
+
+    public String getBefore() {
+        return before;
+    }
+
+    public int getDist() {
+        return dist;
+    }
+
+    public String getAfter() {
+        return after;
+    }
 }

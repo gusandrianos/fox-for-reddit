@@ -30,13 +30,13 @@ public class Post {
     private String id;
 
     @SerializedName("created_utc")
-    private int createdUtc;
+    private long createdUtc;
 
     @SerializedName("link_flair_template_id")
     private String linkFlairTemplateId;
 
     @SerializedName("edited")
-    private boolean edited;
+    private String edited;
 
     @SerializedName("author_flair_background_color")
     private Object authorFlairBackgroundColor;
@@ -129,7 +129,7 @@ public class Post {
     private String thumbnail;
 
     @SerializedName("created")
-    private int created;
+    private Long created;
 
     @SerializedName("author")
     private String author;
@@ -151,9 +151,6 @@ public class Post {
 
     @SerializedName("preview")
     private Preview preview;
-
-    @SerializedName("pinned")
-    private boolean pinned;
 
     @SerializedName("hidden")
     private boolean hidden;
@@ -190,4 +187,36 @@ public class Post {
 
     @SerializedName("is_reddit_media_domain")
     private boolean isRedditMediaDomain;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public String getSubreddit() {
+        return subreddit;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public boolean isStickied() {
+        return stickied;
+    }
+
+    public Long getCreated() {
+        return created;
+    }
+
+    public String getEdited() {
+        return edited;
+    }
+
+    public long getCreatedUtc() {
+        return createdUtc;
+    }
 }

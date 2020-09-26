@@ -10,4 +10,12 @@ public class Listing{
 
     @SerializedName("data")
     private TreeData treeData;
+
+    public TreeData getTreeData() {
+        return treeData;
+    }
+
+    public String getKind() {
+        return kind;
+    }
 }

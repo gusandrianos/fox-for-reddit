@@ -9,4 +9,12 @@ public class ChildrenItem{
 
     @SerializedName("kind")
     private String kind;
+
+    public Post getPost() {
+        return post;
+    }
+
+    public String getKind() {
+        return kind;
+    }
 }

@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import foxApiWrapper.lib.RedditRequest;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Post;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
@@ -103,10 +102,5 @@ public class MainActivity extends AppCompatActivity {
                 initializeUI();
             }
         });
-    }
-
-    public void me(View view) {
-        RedditRequest okHttpHandler = new RedditRequest();
-        okHttpHandler.execute("https://oauth.reddit.com/api/v1/me/karma");
     }
 }

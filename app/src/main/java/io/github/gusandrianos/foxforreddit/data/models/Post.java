@@ -50,6 +50,9 @@ public class Post {
     @SerializedName("ups")
     private int ups;
 
+    @SerializedName("selftext")
+    private String selftext;
+
     @SerializedName("author_flair_type")
     private String authorFlairType;
 
@@ -58,6 +61,11 @@ public class Post {
 
     @SerializedName("author_flair_css_class")
     private Object authorFlairCssClass;
+
+
+    @SerializedName("post_hint")
+    private String postHint;
+
 
     @SerializedName("mod_reports")
     private List<Object> modReports;
@@ -218,5 +226,17 @@ public class Post {
 
     public long getCreatedUtc() {
         return createdUtc;
+    }
+
+    public String getPost_hint() {
+        return postHint;
+    }
+
+    public String getSelftext() {
+        return selftext;
+    }
+
+    public String getUrlOverriddenByDest() {
+        return urlOverriddenByDest;
     }
 }

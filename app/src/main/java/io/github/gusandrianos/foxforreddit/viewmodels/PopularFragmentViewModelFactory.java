@@ -11,8 +11,8 @@ public class PopularFragmentViewModelFactory extends ViewModelProvider.NewInstan
 
     private PostRepository mPostRepository;
 
-    public PopularFragmentViewModelFactory(PostRepository mPostRepository) {
-        this.mPostRepository = mPostRepository;
+    public PopularFragmentViewModelFactory(PostRepository postRepository) {
+        mPostRepository = postRepository;
     }
 
     @SuppressWarnings("unchecked") //suppress return

@@ -10,6 +10,7 @@ import java.util.List;
 
 import io.github.gusandrianos.foxforreddit.data.models.Listing;
 import io.github.gusandrianos.foxforreddit.data.models.Post;
+import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository;
 
 public class PopularFragmentViewModel extends ViewModel {
@@ -38,7 +39,7 @@ public class PopularFragmentViewModel extends ViewModel {
         mPostRepository = postRepository;
     }
 
-    public LiveData<List<Post>> getPosts(){
-        return mPostRepository.getPosts();
+    public LiveData<List<Post>> getPosts(Token token){
+        return mPostRepository.getPosts(token);
     }
 }

@@ -39,12 +39,12 @@ public class PostRepository {
         return instance;
     }
 
-    public LiveData<List<Post>> getPosts(Token token) {
+    public LiveData<List<Post>> getPosts(Token token, String subreddit, String filter) {
 
         String BEARER = " " + token.getmTokenType() + " " + token.getmAccessToken();
         Log.i("Brearer", BEARER);
 
-        Call<Listing> listing = redditAPI.getPosts("", "hot", BEARER);
+        Call<Listing> listing = redditAPI.getPosts(subreddit, filter, BEARER);
 
 
         listing.enqueue(new Callback<Listing>() {
@@ -68,5 +68,9 @@ public class PostRepository {
         });
 
         return data;
+    }
+
+    public LiveData<List<Post>> getPosts(Token token) {
+        return getPosts(token, "", "");
     }
 }

@@ -224,6 +224,8 @@ public class Post {
         return edited;
     }
 
+    public Object getLikes() { return likes; }
+
     public long getCreatedUtc() {
         return createdUtc;
     }

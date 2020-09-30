@@ -31,7 +31,6 @@ public class PopularFragmentViewModel extends ViewModel {
 //    }
 
 
-
     private PostRepository mPostRepository;
     private MutableLiveData<List<Post>> mPosts;
 
@@ -39,7 +38,11 @@ public class PopularFragmentViewModel extends ViewModel {
         mPostRepository = postRepository;
     }
 
-    public LiveData<List<Post>> getPosts(Token token){
+    public LiveData<List<Post>> getPosts(Token token) {
         return mPostRepository.getPosts(token);
+    }
+
+    public LiveData<List<Post>> getPosts(Token token, String subreddit, String filter) {
+        return mPostRepository.getPosts(token, subreddit, filter);
     }
 }

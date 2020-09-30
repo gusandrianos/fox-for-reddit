@@ -2,13 +2,22 @@ package io.github.gusandrianos.foxforreddit.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.List;
+
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.Post;
+import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModelFactory;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -41,4 +50,6 @@ public class HomeActivity extends AppCompatActivity {
 
         viewPager.setAdapter(viewPagerAdapter);
     }
+
+
 }

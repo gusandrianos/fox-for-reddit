@@ -1,31 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <TextView
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.7"
-        android:text="This is the title" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="0dp"
+        <ImageView android:id="@+id/img_subredditImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@mipmap/ic_launcher_round"
+            android:contentDescription="Subreddit IMG" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView android:id="@+id/txt_subreddit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Subreddit Title" />
+
+            <TextView android:id="@+id/txt_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Posted by User" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.3"
-        android:text="It will display image and the link to read more" />
+        android:orientation="horizontal">
 
-    <!-- IMAGEVIEW instead of TEXTVIEW
-    <ImageView
-        android:id="@+id/image1"
-        android:layout_width="0dp"
-        android:layout_weight="0.3"
+        <TextView android:id="@+id/txt_postTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:text="This is the title" />
+
+        <TextView android:id="@+id/txt_postLink"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="It will display image and the link to read more" />
+
+        <!-- IMAGEVIEW instead of TEXTVIEW
+        <ImageView
+            android:id="@+id/image1"
+            android:layout_width="0dp"
+            android:layout_weight="0.3"
+            android:layout_height="wrap_content"
+            android:onClick="openBrowser"
+            android:src=""
+            android:tag="http://site_1.com" />
+
+        -->
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="openBrowser"
-        android:src=""
-        android:tag="http://site_1.com" />
+        android:orientation="horizontal">
 
-    -->
+        <ImageButton android:id="@+id/imgbtn_voteUp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            />
+
+        <TextView android:id="@+id/txt_score"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            android:text="#1090"
+            android:gravity="center"/>
+
+
+        <ImageButton android:id="@+id/imgbtn_voteDown"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.33"
+            />
+
+
+        <Button android:id="@+id/btn_comment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Comment" />
+
+
+        <ImageButton android:id="@+id/imgbtn_share"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+
+    </LinearLayout>
+
 </LinearLayout>
 

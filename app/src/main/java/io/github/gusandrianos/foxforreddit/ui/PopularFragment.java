@@ -3,64 +3,81 @@ package io.github.gusandrianos.foxforreddit.ui;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.Post;
+import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModelFactory;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PopularFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class PopularFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public PopularFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PopularFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PopularFragment newInstance(String param1, String param2) {
-        PopularFragment fragment = new PopularFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    // Add RecyclerView member
+    private View mView;
+    private RecyclerView mRecyclerView;
+    private List<Post> mPosts;
+    RecyclerViewAdapter recyclerViewAdapter;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState
+    ) {
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_popular, container, false);
+        mView = inflater.inflate(R.layout.fragment_popular, container, false);
+        initializeUI(mView);
+        return mView;
+
+    }
+
+    private void initRecycleView(@NotNull View view, List<Post> posts) {
+
+        mRecyclerView = view.findViewById(R.id.recyclerview);
+        recyclerViewAdapter = new RecyclerViewAdapter(getContext(), posts);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(recyclerViewAdapter);
+    }
+
+    private void initializeUI(View view) {
+        PopularFragmentViewModelFactory factory = InjectorUtils.getInstance().providePopularFragmentViewModelFactory();
+        PopularFragmentViewModel viewModel = new ViewModelProvider(this, factory).get(PopularFragmentViewModel.class);
+        viewModel.getPosts().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+            @Override
+            public void onChanged(List<Post> posts) {
+                Log.d("POSTS", String.valueOf(posts.size()));
+                initRecycleView(view, posts);
+            }
+
+//                result.setMovementMethod(new ScrollingMovementMethod());
+//                result.setText("");
+//
+//                for (Post post : posts) {
+//                    result.append("r/" + post.getSubreddit() + "\n");
+//                    result.append("Posted by u/" + post.getAuthor() + "\n");
+//                    result.append(post.getTitle() + "\n");
+//                    String date = (String) android.text.format.DateUtils.getRelativeTimeSpanString(post.getCreatedUtc()*1000);
+//                    result.append(date + "\n");
+//                    result.append(post.getScore() + "\n\n");
+//                }
+//        }
+        });
     }
 }

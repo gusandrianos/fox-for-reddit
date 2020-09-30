@@ -239,4 +239,6 @@ public class Post {
     public String getUrlOverriddenByDest() {
         return urlOverriddenByDest;
     }
+
+    public boolean isSelf() { return isSelf; }
 }

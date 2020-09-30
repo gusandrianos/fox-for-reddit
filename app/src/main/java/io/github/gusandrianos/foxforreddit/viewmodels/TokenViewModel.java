@@ -18,4 +18,8 @@ public class TokenViewModel extends ViewModel {
     public LiveData<Token> getToken() {
         return mTokenRepository.getToken();
     }
+
+    public LiveData<Token> getToken(String code, String redirectURI) {
+        return mTokenRepository.getToken(code, redirectURI);
+    }
 }

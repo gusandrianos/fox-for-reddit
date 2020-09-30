@@ -18,111 +18,63 @@ import java.util.List;
 import foxApiWrapper.lib.RedditRequest;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Post;
+import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModelFactory;
+import io.github.gusandrianos.foxforreddit.viewmodels.TokenViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.TokenViewModelFactory;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView result;
+    Token mToken;
     int LAUNCH_SECOND_ACTIVITY = 1;
-    String authString = "n1R0bc_lPPTtVg" + ":";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        initializeUI();
-
-            result = findViewById(R.id.result);
-//        OAuthToken tokenRequest = RetrofitService.getTokenRequestInstance();
-//        RedditAPI redditAPI = RetrofitService.getRedditAPIInstance();
-//
-//        Call<Token> userlessToken = tokenRequest.getUserlessToken(Credentials.basic("n1R0bc_lPPTtVg", ""), "https://oauth.reddit.com/grants/installed_client", "DO_NOT_TRACK_THIS_DEVICE");
-//        userlessToken.enqueue(new Callback<Token>() {
+//        TokenViewModelFactory factory = InjectorUtils.getInstance().provideTokenViewModelFactory();
+//        TokenViewModel viewModel = new ViewModelProvider(this, factory).get(TokenViewModel.class);
+//        viewModel.getToken().observe(this, new Observer<Token>() {
 //            @Override
-//            public void onResponse(Call<Token> call, Response<Token> response) {
-//                try {
-//                    Token token = response.body();
-//                    Log.i("Userless_Token: ", token.getmAccessToken());
-//                    Log.i("Userless_Type: ", token.getmTokenType());
-//                    Log.i("Userless_Expires: ", token.getmExpiresIn());
-//                    Log.i("Userless_Scope: ", token.getmScope());
-//
-//                } catch (NullPointerException e) {
-//                    Log.i("Userless_Token: ", e.getMessage());
-//                }
-//
-//                Log.i("TOKEN", response.body().getmAccessToken());
-//                String BEARER = " " + response.body().getmTokenType() + " " + response.body().getmAccessToken();
-//                Log.i("Brearer", BEARER);
-//
-//                Call<Listing> listing = redditAPI.getPosts("", "hot", BEARER);
-//
-//
-//                listing.enqueue(new Callback<Listing>() {
-//                    @Override
-//                    public void onResponse(Call<Listing> call, Response<Listing> response) {
-//                        result.setMovementMethod(new ScrollingMovementMethod());
-//                        result.setText("");
-//
-//                        for (ChildrenItem child : response.body().getTreeData().getChildren()) {
-//                            result.append("r/" + child.getPost().getSubreddit() + "\n");
-//                            result.append("Posted by u/" + child.getPost().getAuthor() + "\n");
-//                            result.append(child.getPost().getTitle() + "\n");
-//                            String date = (String) android.text.format.DateUtils.getRelativeTimeSpanString(child.getPost().getCreatedUtc()*1000);
-//                            result.append(date + "\n");
-//                            result.append(child.getPost().getScore() + "\n\n");
-//                        }
-//                        Log.d("res", response.body().toString());
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<Listing> call, Throwable t) {
-//
-//                        Log.d("error", t.getMessage());
-//
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Token> call, Throwable t) {
-//
+//            public void onChanged(Token token) {
+//                mToken = token;
+//                initializeUI();
 //            }
 //        });
 
-
+        MainActivity.super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        result = findViewById(R.id.result);
     }
 
     private void initializeUI() {
         PopularFragmentViewModelFactory factory = InjectorUtils.getInstance().providePopularFragmentViewModelFactory();
         PopularFragmentViewModel viewModel = new ViewModelProvider(this, factory).get(PopularFragmentViewModel.class);
-        viewModel.getPosts().observe(this, new Observer<List<Post>>() {
+        viewModel.getPosts(mToken).observe(this, new Observer<List<Post>>() {
             @Override
             public void onChanged(List<Post> posts) {
 
                 result.setMovementMethod(new ScrollingMovementMethod());
-                        result.setText("");
+                result.setText("");
 
-                        for (Post post : posts) {
-                            result.append("r/" + post.getSubreddit() + "\n");
-                            result.append("Posted by u/" + post.getAuthor() + "\n");
-                            result.append(post.getTitle() + "\n");
-                            String date = (String) android.text.format.DateUtils.getRelativeTimeSpanString(post.getCreatedUtc()*1000);
-                            result.append(date + "\n");
-                            result.append(post.getScore() + "\n\n");
-                        }
+                for (Post post : posts) {
+                    result.append("r/" + post.getSubreddit() + "\n");
+                    result.append("Posted by u/" + post.getAuthor() + "\n");
+                    result.append(post.getTitle() + "\n");
+                    result.append(post.isSelf() + "\n");
+                    String date = (String) android.text.format.DateUtils.getRelativeTimeSpanString(post.getCreatedUtc() * 1000);
+                    result.append(date + "\n");
+                    result.append(post.getScore() + "\n\n");
+                }
             }
         });
     }
 
     public void loadWebPage(View view) {
         Intent load = new Intent(this, Main2Activity.class);
-        load.putExtra("URL", "https://www.reddit.com/api/v1/authorize.compact?client_id=n1R0bc_lPPTtVg&response_type=code&state=ggfgfgfgga&redirect_uri=https://gusandrianos.github.io/login&duration=temporary&scope=identity,mysubreddits");
+        load.putExtra("URL", "https://www.reddit.com/api/v1/authorize.compact?client_id=n1R0bc_lPPTtVg&response_type=code&state=ggfgfgfgga&redirect_uri=https://gusandrianos.github.io/login&duration=permanent&scope=identity,edit,flair,history,mysubreddits,privatemessages,read,report,save,submit,subscribe,vote,wikiread");
         startActivityForResult(load, LAUNCH_SECOND_ACTIVITY);
-
-
     }
 
     @Override
@@ -136,14 +88,21 @@ public class MainActivity extends AppCompatActivity {
                 String state = inputs[0].split("=")[1];
                 Toast.makeText(this, state + " " + code, Toast.LENGTH_LONG).show();
 
-                loadWebPage(code);
+                getAuthorizedUserToken(code);
             }
         }
     }
 
-    void loadWebPage(String c) {
-        RedditRequest okHttpHandler = new RedditRequest();
-        okHttpHandler.execute("https://www.reddit.com/api/v1/access_token", authString, c);
+    void getAuthorizedUserToken(String c) {
+        TokenViewModelFactory factory = InjectorUtils.getInstance().provideTokenViewModelFactory();
+        TokenViewModel viewModel = new ViewModelProvider(this, factory).get(TokenViewModel.class);
+        viewModel.getToken(c, "https://gusandrianos.github.io/login").observe(this, new Observer<Token>() {
+            @Override
+            public void onChanged(Token token) {
+                mToken = token;
+                initializeUI();
+            }
+        });
     }
 
     public void me(View view) {

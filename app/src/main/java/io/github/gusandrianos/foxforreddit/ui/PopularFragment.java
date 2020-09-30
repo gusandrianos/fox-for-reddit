@@ -23,9 +23,12 @@ import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Post;
+import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModelFactory;
+import io.github.gusandrianos.foxforreddit.viewmodels.TokenViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.TokenViewModelFactory;
 
 
 public class PopularFragment extends Fragment {
@@ -33,6 +36,7 @@ public class PopularFragment extends Fragment {
     private View mView;
     private RecyclerView mRecyclerView;
     private List<Post> mPosts;
+    private Token mToken;
     RecyclerViewAdapter recyclerViewAdapter;
 
     @Override
@@ -40,10 +44,17 @@ public class PopularFragment extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-
-        // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_popular, container, false);
-        initializeUI(mView);
+        TokenViewModelFactory factory = InjectorUtils.getInstance().provideTokenViewModelFactory();
+        TokenViewModel viewModel = new ViewModelProvider(this, factory).get(TokenViewModel.class);
+        viewModel.getToken().observe(getViewLifecycleOwner(), new Observer<Token>() {
+            @Override
+            public void onChanged(Token token) {
+                mToken = token;
+                initializeUI(mView);
+            }
+        });
+        // Inflate the layout for this fragment
         return mView;
 
     }
@@ -59,7 +70,7 @@ public class PopularFragment extends Fragment {
     private void initializeUI(View view) {
         PopularFragmentViewModelFactory factory = InjectorUtils.getInstance().providePopularFragmentViewModelFactory();
         PopularFragmentViewModel viewModel = new ViewModelProvider(this, factory).get(PopularFragmentViewModel.class);
-        viewModel.getPosts().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+        viewModel.getPosts(mToken).observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
             @Override
             public void onChanged(List<Post> posts) {
                 Log.d("POSTS", String.valueOf(posts.size()));

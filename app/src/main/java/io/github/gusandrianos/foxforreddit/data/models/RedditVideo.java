@@ -2,7 +2,7 @@ package io.github.gusandrianos.foxforreddit.data.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class RedditVideoPreview{
+public class RedditVideo{
 
     @SerializedName("duration")
     private int duration;
@@ -31,39 +31,39 @@ public class RedditVideoPreview{
     @SerializedName("height")
     private int height;
 
-    public int getDuration() {
+    public int getDuration(){
         return duration;
     }
 
-    public boolean isGif() {
+    public boolean isIsGif(){
         return isGif;
     }
 
-    public String getDashUrl() {
+    public String getDashUrl(){
         return dashUrl;
     }
 
-    public String getFallbackUrl() {
+    public String getFallbackUrl(){
         return fallbackUrl;
     }
 
-    public int getWidth() {
+    public int getWidth(){
         return width;
     }
 
-    public String getScrubberMediaUrl() {
+    public String getScrubberMediaUrl(){
         return scrubberMediaUrl;
     }
 
-    public String getHlsUrl() {
+    public String getHlsUrl(){
         return hlsUrl;
     }
 
-    public String getTranscodingStatus() {
+    public String getTranscodingStatus(){
         return transcodingStatus;
     }
 
-    public int getHeight() {
+    public int getHeight(){
         return height;
     }
 }

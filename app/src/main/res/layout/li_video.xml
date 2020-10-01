@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <LinearLayout
@@ -50,9 +51,43 @@
             android:text="This is the title" />
 
         <VideoView
-            android:id="@+id/vv_postVideo"
+            android:id="@+id/ep_postVideo"
             android:layout_width="match_parent"
-            android:layout_height="500dp" />
+            android:layout_height="match_parent"
+            app:resize_mode="fill"
+            app:video_url="@{url}"
+            app:on_state_change="@{callback}"/>
+
+<!--        <FrameLayout-->
+<!--            android:id="@+id/media_container"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content">-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/img_postThumbnail"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content" />-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/img_volumeControl"-->
+<!--                android:layout_width="25dp"-->
+<!--                android:layout_height="25dp"-->
+<!--                android:layout_gravity="end|bottom"-->
+<!--                android:layout_marginEnd="15dp"-->
+<!--                android:layout_marginBottom="15dp"-->
+<!--                android:alpha="0"-->
+<!--                android:animateLayoutChanges="true"-->
+<!--                android:scaleType="centerCrop"-->
+<!--                android:src="@drawable/ic_volume_up_grey_24dp" />-->
+
+<!--            <ProgressBar-->
+<!--                android:id="@+id/pb_videoLoading"-->
+<!--                style="?android:attr/progressBarStyle"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:visibility="gone" />-->
+<!--        </FrameLayout>-->
     </LinearLayout>
 
 

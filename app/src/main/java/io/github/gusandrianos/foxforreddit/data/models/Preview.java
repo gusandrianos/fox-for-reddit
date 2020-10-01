@@ -10,4 +10,8 @@ public class Preview{
 
     @SerializedName("reddit_video_preview")
     private RedditVideoPreview redditVideoPreview;
+
+    public RedditVideoPreview getRedditVideoPreview() {
+        return redditVideoPreview;
+    }
 }

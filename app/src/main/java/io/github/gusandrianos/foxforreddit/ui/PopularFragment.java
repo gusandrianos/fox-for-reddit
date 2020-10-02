@@ -32,10 +32,10 @@ import io.github.gusandrianos.foxforreddit.viewmodels.TokenViewModelFactory;
 public class PopularFragment extends Fragment {
     // Add RecyclerView member
     private View mView;
-    private RecyclerView mRecyclerView;
+    private RecyclerView mPostRecyclerView;
     private List<Post> mPosts;
     private Token mToken;
-    RecyclerViewAdapter recyclerViewAdapter;
+    PostRecyclerViewAdapter mPostRecyclerViewAdapter;
 
     @Override
     public View onCreateView(
@@ -52,10 +52,10 @@ public class PopularFragment extends Fragment {
 
     private void initRecycleView(@NotNull View view, List<Post> posts) {
 
-        mRecyclerView = view.findViewById(R.id.recyclerview);
-        recyclerViewAdapter = new RecyclerViewAdapter(getContext(), posts);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(recyclerViewAdapter);
+        mPostRecyclerView = view.findViewById(R.id.recyclerview);
+        mPostRecyclerViewAdapter = new PostRecyclerViewAdapter(getContext(), posts);
+        mPostRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mPostRecyclerView.setAdapter(mPostRecyclerViewAdapter);
     }
 
     private void initializeUI(View view) {

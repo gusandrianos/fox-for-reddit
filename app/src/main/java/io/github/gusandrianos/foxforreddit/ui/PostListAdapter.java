@@ -1,27 +1,18 @@
 package io.github.gusandrianos.foxforreddit.ui;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Post;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
-import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModelFactory;
 
 public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHolder> {
 

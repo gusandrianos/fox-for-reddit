@@ -4,18 +4,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Post;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
-import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModelFactory;
 
 public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 

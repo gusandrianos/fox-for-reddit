@@ -9,9 +9,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.facebook.stetho.Stetho;
 
 import java.util.List;
 
@@ -19,8 +22,8 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Post;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
-import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModelFactory;
+import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.TokenViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.TokenViewModelFactory;
 
@@ -32,25 +35,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        TokenViewModelFactory factory = InjectorUtils.getInstance().provideTokenViewModelFactory();
-//        TokenViewModel viewModel = new ViewModelProvider(this, factory).get(TokenViewModel.class);
-//        viewModel.getToken().observe(this, new Observer<Token>() {
-//            @Override
-//            public void onChanged(Token token) {
-//                mToken = token;
-//                initializeUI();
-//            }
-//        });
-
+        getCachedToken();
         MainActivity.super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Stetho.initializeWithDefaults(this);
         result = findViewById(R.id.result);
     }
 
     private void initializeUI() {
-        PopularFragmentViewModelFactory factory = InjectorUtils.getInstance().providePopularFragmentViewModelFactory();
-        PopularFragmentViewModel viewModel = new ViewModelProvider(this, factory).get(PopularFragmentViewModel.class);
-        viewModel.getPosts(mToken).observe(this, new Observer<List<Post>>() {
+        PostViewModelFactory factory = InjectorUtils.getInstance().providePopularFragmentViewModelFactory();
+        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        viewModel.getPosts(mToken, "r/GramersOfficial", "new").observe(this, new Observer<List<Post>>() {
             @Override
             public void onChanged(List<Post> posts) {
 
@@ -61,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
                     result.append("r/" + post.getSubreddit() + "\n");
                     result.append("Posted by u/" + post.getAuthor() + "\n");
                     result.append(post.getTitle() + "\n");
-                    result.append(post.isSelf() + "\n");
+                    if (post.getLikes() != null) {
+                        result.append(post.getLikes().toString() + "\n");
+                    }
                     String date = (String) android.text.format.DateUtils.getRelativeTimeSpanString(post.getCreatedUtc() * 1000);
                     result.append(date + "\n");
                     result.append(post.getScore() + "\n\n");
@@ -93,13 +90,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void getAuthorizedUserToken(String c) {
-        TokenViewModelFactory factory = InjectorUtils.getInstance().provideTokenViewModelFactory();
+        TokenViewModelFactory factory = InjectorUtils.getInstance().provideTokenViewModelFactory(getApplication());
         TokenViewModel viewModel = new ViewModelProvider(this, factory).get(TokenViewModel.class);
         viewModel.getToken(c, "https://gusandrianos.github.io/login").observe(this, new Observer<Token>() {
             @Override
             public void onChanged(Token token) {
                 mToken = token;
+                Log.i("getAuthorizedUserToken", "Successfully got a new AuthorizedUser token");
                 initializeUI();
+            }
+        });
+    }
+
+    void getUserlessToken() {
+        TokenViewModelFactory factory = InjectorUtils.getInstance().provideTokenViewModelFactory(getApplication());
+        TokenViewModel viewModel = new ViewModelProvider(this, factory).get(TokenViewModel.class);
+        viewModel.getToken().observe(this, new Observer<Token>() {
+            @Override
+            public void onChanged(Token token) {
+                mToken = token;
+                Log.i("getUserlessToken", "Successfully got a new Userless token");
+                initializeUI();
+            }
+        });
+    }
+
+    void getCachedToken() {
+        TokenViewModelFactory factory = InjectorUtils.getInstance().provideTokenViewModelFactory(getApplication());
+        TokenViewModel viewModel = new ViewModelProvider(this, factory).get(TokenViewModel.class);
+        viewModel.getCachedToken().observe(this, new Observer<List<Token>>() {
+            @Override
+            public void onChanged(List<Token> tokens) {
+                if (tokens.size() > 0) {
+                    mToken = tokens.get(0);
+                    Log.i("getCachedToken", "Passed Cached Token");
+                    initializeUI();
+                } else {
+                    Log.i("getCachedToken", "Trying to get a Userless token");
+                    getUserlessToken();
+                }
             }
         });
     }

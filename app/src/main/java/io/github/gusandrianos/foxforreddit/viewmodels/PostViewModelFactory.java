@@ -5,13 +5,12 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository;
-import io.github.gusandrianos.foxforreddit.viewmodels.PopularFragmentViewModel;
 
-public class PopularFragmentViewModelFactory extends ViewModelProvider.NewInstanceFactory {
+public class PostViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 
     private PostRepository mPostRepository;
 
-    public PopularFragmentViewModelFactory(PostRepository postRepository) {
+    public PostViewModelFactory(PostRepository postRepository) {
         mPostRepository = postRepository;
     }
 
@@ -19,6 +18,6 @@ public class PopularFragmentViewModelFactory extends ViewModelProvider.NewInstan
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return ((T) new PopularFragmentViewModel(mPostRepository));
+        return ((T) new PostViewModel(mPostRepository));
     }
 }

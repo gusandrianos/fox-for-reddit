@@ -13,7 +13,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Post;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository;
 
-public class PopularFragmentViewModel extends ViewModel {
+public class PostViewModel extends ViewModel {
 
 //    private MutableLiveData<List<Post>> mPosts;
 //    private PostRepository mPostRepository;
@@ -34,7 +34,7 @@ public class PopularFragmentViewModel extends ViewModel {
     private PostRepository mPostRepository;
     private MutableLiveData<List<Post>> mPosts;
 
-    public PopularFragmentViewModel(PostRepository postRepository) {
+    public PostViewModel(PostRepository postRepository) {
         mPostRepository = postRepository;
     }
 

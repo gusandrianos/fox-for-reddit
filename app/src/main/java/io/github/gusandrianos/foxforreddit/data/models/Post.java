@@ -8,6 +8,9 @@ public class Post {
     @SerializedName("secure_media")
     private Object secureMedia;
 
+    @SerializedName("poll_data")
+    private PollData pollData;
+
     @SerializedName("saved")
     private boolean saved;
 
@@ -266,5 +269,9 @@ public class Post {
 
     public boolean isVideo() {
         return isVideo;
+    }
+
+    public PollData getPollData() {
+        return pollData;
     }
 }

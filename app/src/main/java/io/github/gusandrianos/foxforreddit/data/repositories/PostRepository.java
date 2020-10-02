@@ -64,6 +64,6 @@ public class PostRepository {
     }
 
     public LiveData<List<Post>> getPosts(Token token) {
-        return getPosts(token, "", "");
+        return getPosts(token, "r/Poll", "");
     }
 }

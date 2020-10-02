@@ -1,5 +1,6 @@
 package io.github.gusandrianos.foxforreddit.utilities;
 
+import android.app.Application;
 import android.util.Log;
 
 import io.github.gusandrianos.foxforreddit.data.models.Token;
@@ -32,9 +33,9 @@ public class InjectorUtils {
         return new PopularFragmentViewModelFactory(postRepository);
     }
 
-    public TokenViewModelFactory provideTokenViewModelFactory() {
+    public TokenViewModelFactory provideTokenViewModelFactory(Application application) {
         TokenRepository tokenRepository = TokenRepository.getInstance();
-        return new TokenViewModelFactory(tokenRepository);
+        return new TokenViewModelFactory(application, tokenRepository);
     }
 }
 

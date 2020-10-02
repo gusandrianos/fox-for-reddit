@@ -23,7 +23,6 @@ import retrofit2.Response;
  * Singleton pattern
  */
 public class PostRepository {
-
     private static PostRepository instance;
     private ArrayList<Post> dataSet;
     private MutableLiveData<List<Post>> data = new MutableLiveData<>();
@@ -40,12 +39,10 @@ public class PostRepository {
     }
 
     public LiveData<List<Post>> getPosts(Token token, String subreddit, String filter) {
-
-        String BEARER = " " + token.getmTokenType() + " " + token.getmAccessToken();
+        String BEARER = " " + token.getTokenType() + " " + token.getAccessToken();
         Log.i("Brearer", BEARER);
 
         Call<Listing> listing = redditAPI.getPosts(subreddit, filter, BEARER);
-
 
         listing.enqueue(new Callback<Listing>() {
             @Override
@@ -54,19 +51,15 @@ public class PostRepository {
                 for (ChildrenItem child : response.body().getTreeData().getChildren()) {
                     dataSet.add(child.getPost());
                 }
-
                 data.setValue(dataSet); //When we get a response the mutableLiveData will add the posts
                 Log.d("res", response.body().toString());
             }
 
             @Override
             public void onFailure(Call<Listing> call, Throwable t) {
-
                 Log.d("error", t.getMessage());
-
             }
         });
-
         return data;
     }
 

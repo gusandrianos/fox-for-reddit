@@ -1,37 +1,53 @@
 package io.github.gusandrianos.foxforreddit.data.models;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
+@Entity(tableName = "token_table")
 public class Token {
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "access_token")
     @SerializedName("access_token")
-    private String mAccessToken;
+    private String accessToken;
+
+    @ColumnInfo(name = "token_type")
     @SerializedName("token_type")
-    private String mTokenType;
+    private String tokenType;
+
+    @ColumnInfo(name = "expires_in")
     @SerializedName("expires_in")
-    private String mExpiresIn;
+    private String expiresIn;
+
+    @ColumnInfo(name = "scope")
     @SerializedName("scope")
-    private String mScope;
-
-    public Token(String AccessToken, String TokenType, String ExpiresIn, String Scope) {
-        mAccessToken = AccessToken;
-        mTokenType = TokenType;
-        mExpiresIn = ExpiresIn;
-        mScope = Scope;
+    private String scope;
+    
+    public Token(String accessToken, String tokenType, String expiresIn, String scope) {
+        this.accessToken = accessToken;
+        this.tokenType = tokenType;
+        this.expiresIn = expiresIn;
+        this.scope = scope;
     }
 
-    public String getmAccessToken() {
-        return mAccessToken;
+    @NonNull
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public String getmTokenType() {
-        return mTokenType;
+    public String getTokenType() {
+        return tokenType;
     }
 
-    public String getmExpiresIn() {
-        return mExpiresIn;
+    public String getExpiresIn() {
+        return expiresIn;
     }
 
-    public String getmScope() {
-        return mScope;
+    public String getScope() {
+        return scope;
     }
 }

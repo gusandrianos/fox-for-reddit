@@ -2,6 +2,7 @@ package io.github.gusandrianos.foxforreddit.ui;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -54,6 +55,7 @@ public class PopularFragment extends Fragment {
 
         mPostRecyclerView = view.findViewById(R.id.recyclerview);
         mPostRecyclerViewAdapter = new PostRecyclerViewAdapter(getContext(), posts);
+        mPostRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY ); //keep recyclerview on position
         mPostRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mPostRecyclerView.setAdapter(mPostRecyclerViewAdapter);
     }
@@ -113,4 +115,5 @@ public class PopularFragment extends Fragment {
             }
         });
     }
+
 }

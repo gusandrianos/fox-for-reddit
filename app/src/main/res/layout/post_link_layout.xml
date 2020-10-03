@@ -54,16 +54,15 @@
             android:textColor="#000000"
             android:textSize="16sp" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.3"
-            android:orientation="vertical">
+            android:layout_weight="0.3">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_post_thumbnail"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="80dp"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_launcher_background"/>
@@ -72,11 +71,12 @@
                 android:id="@+id/txt_post_domain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
+                android:layout_gravity="bottom"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textAlignment="textStart" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                android:textColor="#FFFFFF"
+                android:background="#80121212"/>
+        </FrameLayout>
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>

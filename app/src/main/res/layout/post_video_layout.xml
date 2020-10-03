@@ -53,14 +53,30 @@
             android:textColor="#000000"
             android:text="asdasdasd"/>
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/txt_post_thumbnail"
+        <FrameLayout
             android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:layout_weight="0.3"
-            android:background="@drawable/ic_launcher_background"
-            android:drawableBottom="@drawable/ic_round_play_circle_outline_24"
-            android:layout_gravity="center"/>
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_post_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_launcher_background"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/txt_post_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:drawableBottom="@drawable/ic_round_play_circle_outline_24"
+                android:background="#40121212"/>
+
+
+        </FrameLayout>
+
+
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

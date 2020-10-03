@@ -48,24 +48,25 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         if (mPosts.get(position).getPost_hint() == null) {
-//            if(mPosts.get(position).getPollData()!=null){   //IF it is poll THEN must have poll data
-//                return 4;
-//            }
+            if (mPosts.get(position).getPollData() != null) {   //IF it is poll THEN must have poll data
+                return 4;
+            }
+
+            if (mPosts.get(position).getMedia() != null) {      //IF it's not the above THEN: IF it is rich/hosted:video THEN must have Media
+                return 3;
+            }
 //
-//            if(mPosts.get(position).getMedia()!=null){      //IF it's not the above THEN: IF it is rich/hosted:video THEN must have Media
-//                return 3;
-//            }
+            if (mPosts.get(position).getUrl().contains("https://i.")) { //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
+                return 1;
+            }
+
+            if (mPosts.get(position).getDomain().contains("self.")) { //IF it's nothing from the above THEN: IF it is self THEN contains domain with self. (not sure)
+                return 0;
+            }
 //
-//            if(mPosts.get(position).getUrl().contains("https://i.")){ //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
-//                return 1;
-//            }
-//
-//            if(mPosts.get(position).getDomain().contains("self.")){ //IF it's nothing from the above THEN: IF it is self THEN contains domain with self. (not sure)
-//                return 0;
-//            }
-//
-//            return 2; //IF it's nothing from the above THEN choose link
-            return 4;
+//            return 0;
+            return 2; //IF it's nothing from the above THEN choose link
+//            return 4;
         }
 
         if (mPosts.get(position).getPost_hint().contains("self")) {
@@ -102,7 +103,6 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter {
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
         View view;
 
-        Log.d("VIEWTIPE", String.valueOf(viewType));
         if (viewType == 0) {
             view = layoutInflater.inflate(R.layout.post_self_layout, parent, false);
             return new PostSelfViewHolder(view);
@@ -139,26 +139,19 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter {
             if (mPosts.get(position).getPollData() != null) {   //IF it is poll THEN must have poll data
                 PostPollViewHolder postPollViewHolder = (PostPollViewHolder) holder;
                 postPollViewHolder.onBind(mPosts.get(position));
+            } else if (mPosts.get(position).getMedia() != null) {      //IF it's not the above THEN: IF it is rich/hosted:video THEN must have Media
+                PostVideoViewHolder postVideoViewHolder = (PostVideoViewHolder) holder;
+                postVideoViewHolder.onBind(mPosts.get(position));
+            } else if (mPosts.get(position).getUrl().contains("https://i.")) { //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
+                PostImageViewHolder postImageViewHolder = (PostImageViewHolder) holder;
+                postImageViewHolder.onBind(mPosts.get(position));
+            } else if (mPosts.get(position).getDomain().contains("self.")) { //IF it's nothing from the above THEN: IF it is self THEN contains domain with self. (not sure)
+                PostSelfViewHolder postSelfViewHolder = (PostSelfViewHolder) holder;
+                postSelfViewHolder.onBind(mPosts.get(position));
+            } else {
+                PostLinkViewHolder postLinkViewHolder = (PostLinkViewHolder) holder;
+                postLinkViewHolder.onBind(mPosts.get(position));        //IF it's nothing from the above THEN choose link
             }
-
-//            if(mPosts.get(position).getMedia()!=null){      //IF it's not the above THEN: IF it is rich/hosted:video THEN must have Media
-//                PostVideoViewHolder postVideoViewHolder = (PostVideoViewHolder) holder;
-//                postVideoViewHolder.onBind(mPosts.get(position));
-//            }
-//
-//            if(mPosts.get(position).getUrl().contains("https://i.")){ //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
-//                PostImageViewHolder postImageViewHolder = (PostImageViewHolder) holder;
-//                postImageViewHolder.onBind(mPosts.get(position));
-//            }
-//
-//            if(mPosts.get(position).getDomain().contains("self.")){ //IF it's nothing from the above THEN: IF it is self THEN contains domain with self. (not sure)
-//                PostSelfViewHolder postSelfViewHolder = (PostSelfViewHolder) holder;
-//                postSelfViewHolder.onBind(mPosts.get(position));
-//            }
-//
-//            PostLinkViewHolder postLinkViewHolder = (PostLinkViewHolder) holder;
-//            postLinkViewHolder.onBind(mPosts.get(position));        //IF it's nothing from the above THEN choose link
-
         } else if (mPosts.get(position).getPost_hint().contains("self")) {
             PostSelfViewHolder postSelfViewHolder = (PostSelfViewHolder) holder;
             postSelfViewHolder.onBind(mPosts.get(position));
@@ -183,6 +176,7 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         return mPosts.size();
     }
+
 
     public abstract static class AbstractPostViewHolder extends RecyclerView.ViewHolder {
         View parent;
@@ -272,29 +266,17 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter {
     }
 
     public static class PostVideoViewHolder extends AbstractPostViewHolder {
-        TextView mTxt_post_thumbnail;
+        ImageView mImg_post_thumbnail;
 
         public PostVideoViewHolder(@NonNull View itemView) {
             super(itemView);
-            mTxt_post_thumbnail = itemView.findViewById(R.id.txt_post_thumbnail);
+            mImg_post_thumbnail = itemView.findViewById(R.id.img_post_thumbnail);
         }
 
         @Override
         public void onBind(Post post) {
             super.onBind(post);
-
-            Glide.with(parent.getContext())
-                    .load(post.getThumbnail())
-                    .apply(RequestOptions.placeholderOf(R.drawable.ic_launcher_background))
-                    .into(new SimpleTarget<Drawable>() {
-                        @Override
-                        public void onResourceReady(@NonNull Drawable resource,
-                                                    @Nullable Transition<? super Drawable> transition) {
-
-                            mTxt_post_thumbnail.setBackground(resource);
-
-                        }
-                    });
+            Glide.with(parent).load(post.getThumbnail()).placeholder(R.drawable.ic_launcher_background).into(mImg_post_thumbnail);
 
         }
     }
@@ -303,14 +285,12 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter {
 
     public static class PostPollViewHolder extends AbstractPostViewHolder {
 
-        RadioGroup mRg_post_votes;
-        Button mBtn_post_vote;
+        Button mBtn_post_vote_now;
         TextView mTxt_post_vote_num, mTxt_post_vote_time_left;
 
         public PostPollViewHolder(@NonNull View itemView) {
             super(itemView);
-            mRg_post_votes = itemView.findViewById(R.id.rg_post_votes);
-            mBtn_post_vote = itemView.findViewById(R.id.btn_post_vote);
+            mBtn_post_vote_now = itemView.findViewById(R.id.btn_post_vote_now);
             mTxt_post_vote_num = itemView.findViewById(R.id.txt_post_vote_num);
             mTxt_post_vote_time_left = itemView.findViewById(R.id.txt_post_vote_time_left);
         }
@@ -319,15 +299,8 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter {
         public void onBind(Post post) {
             super.onBind(post);
 
-            for (OptionsItem optionsItem : post.getPollData().getOptions()) {
-                RadioButton rdbtn = new RadioButton(itemView.getContext());
-                rdbtn.setId(View.generateViewId());
-                rdbtn.setText(optionsItem.getText());
-                rdbtn.setTag(optionsItem.getId());
-                mRg_post_votes.addView(rdbtn);
-            }
 
-            String votes = String.valueOf(post.getPollData().getTotalVoteCount()) + " Votes";
+            String votes = post.getPollData().getTotalVoteCount() + " Votes";
             mTxt_post_vote_num.setText(votes);
 
             String ends_at = "Ends at " + getDate(post.getPollData().getVotingEndTimestamp());

@@ -26,4 +26,12 @@ public interface OAuthToken {
             @Field("code") String code,
             @Field("redirect_uri") String redirectURI
     );
+
+    @FormUrlEncoded
+    @POST("/api/v1/access_token")
+    Call<Token> refreshAuthorizedUserToken(
+            @Header("Authorization") String credentials,
+            @Field("grant_type") String grantType,
+            @Field("refresh_token") String refreshToken
+    );
 }

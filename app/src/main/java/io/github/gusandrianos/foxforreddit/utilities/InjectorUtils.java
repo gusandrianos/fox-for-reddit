@@ -6,7 +6,6 @@ import android.util.Log;
 import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository;
 import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
-import io.github.gusandrianos.foxforreddit.viewmodels.TokenViewModelFactory;
 
 public class InjectorUtils {
 
@@ -31,9 +30,10 @@ public class InjectorUtils {
         return new PostViewModelFactory(postRepository);
     }
 
-    public TokenViewModelFactory provideTokenViewModelFactory(Application application) {
+    public TokenRepository provideTokenRepository(Application application) {
         TokenRepository tokenRepository = TokenRepository.getInstance();
-        return new TokenViewModelFactory(application, tokenRepository);
+        tokenRepository.setApplication(application);
+        return tokenRepository;
     }
 }
 

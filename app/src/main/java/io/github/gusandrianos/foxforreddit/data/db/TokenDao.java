@@ -1,6 +1,5 @@
 package io.github.gusandrianos.foxforreddit.data.db;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -18,5 +17,5 @@ public interface TokenDao {
     void delete();
 
     @Query("SELECT * FROM token_table")
-    LiveData<List<Token>> getToken();
+    List<Token> getToken();
 }

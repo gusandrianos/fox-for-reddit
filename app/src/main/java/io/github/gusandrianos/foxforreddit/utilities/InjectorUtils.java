@@ -25,7 +25,7 @@ public class InjectorUtils {
 
     }
 
-    public PostViewModelFactory providePopularFragmentViewModelFactory() {
+    public PostViewModelFactory providePostViewModelFactory() {
         PostRepository postRepository = PostRepository.getInstance();
         return new PostViewModelFactory(postRepository);
     }

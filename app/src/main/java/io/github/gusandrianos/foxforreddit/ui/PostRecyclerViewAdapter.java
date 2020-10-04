@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -40,62 +42,75 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.OptionsItem;
 import io.github.gusandrianos.foxforreddit.data.models.Post;
 
-public class PostRecyclerViewAdapter extends RecyclerView.Adapter {
+public class PostRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     Context mContext;
-    List<Post> mPosts;
+    private List<Post> mPosts;
+    private boolean isLoadingAdded = false;
+
+    private static final int LOADING = 0;
+    private static final int SELF = 1;
+    private static final int LINK = 2;
+    private static final int IMAGE = 3;
+    private static final int VIDEO = 4;
+    private static final int POLL = 5;
+
+    public PostRecyclerViewAdapter(Context context) {
+        mContext = context;
+        mPosts = new LinkedList<>();
+    }
+
+    public void setPosts(List<Post> posts) {
+        mPosts = posts;
+    }
 
     @Override
     public int getItemViewType(int position) {
         if (mPosts.get(position).getPost_hint() == null) {
             if (mPosts.get(position).getPollData() != null) {   //IF it is poll THEN must have poll data
-                return 4;
+                return POLL;
             }
 
             if (mPosts.get(position).getMedia() != null) {      //IF it's not the above THEN: IF it is rich/hosted:video THEN must have Media
-                return 3;
+                return VIDEO;
             }
 //
             if (mPosts.get(position).getUrl().contains("https://i.")) { //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
-                return 1;
+                return IMAGE;
             }
 
             if (mPosts.get(position).getDomain().contains("self.")) { //IF it's nothing from the above THEN: IF it is self THEN contains domain with self. (not sure)
-                return 0;
+                return SELF;
             }
 //
 //            return 0;
-            return 2; //IF it's nothing from the above THEN choose link
+            return LINK; //IF it's nothing from the above THEN choose link
 //            return 4;
         }
 
         if (mPosts.get(position).getPost_hint().contains("self")) {
-            return 0;
+            return SELF;
         }
 
         if (mPosts.get(position).getPost_hint().contains("image")) {
-            return 1;
+            return IMAGE;
         }
 
         if (mPosts.get(position).getPost_hint().contains("link")) {
-            return 2;
+            return LINK;
         }
 
         if (mPosts.get(position).getPost_hint().contains("video")) {
-            return 3;
+            return VIDEO;
         }
 
         if (mPosts.get(position).getPost_hint().contains("poll")) {
-            return 4;
+            return POLL;
         }
 
         return 9;  //Not created yet ViewHolder (aViewHolder) returns if not null, otherwise will be returned first If statement
     }
 
-    public PostRecyclerViewAdapter(Context context, List<Post> posts) {
-        mContext = context;
-        mPosts = posts;
-    }
 
     @NonNull
     @Override
@@ -103,80 +118,157 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter {
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
         View view;
 
-        if (viewType == 0) {
-            view = layoutInflater.inflate(R.layout.post_self_layout, parent, false);
-            return new PostSelfViewHolder(view);
+        switch (viewType) {
+            case SELF:
+                view = layoutInflater.inflate(R.layout.post_self_layout, parent, false);
+                return new PostSelfViewHolder(view);
+            case IMAGE:
+                view = layoutInflater.inflate(R.layout.post_image_layout, parent, false);
+                return new PostImageViewHolder(view);
+            case LINK:
+                view = layoutInflater.inflate(R.layout.post_link_layout, parent, false);
+                return new PostLinkViewHolder(view);
+            case VIDEO:
+                view = layoutInflater.inflate(R.layout.post_video_layout, parent, false);
+                return new PostVideoViewHolder(view);
+            case POLL:
+                view = layoutInflater.inflate(R.layout.post_poll_layout, parent, false);
+                return new PostPollViewHolder(view);
+            case LOADING:
+                View viewLoading = layoutInflater.inflate(R.layout.post_progress_layout, parent, false);
+                return new PostLoadingViewHolder(viewLoading);
         }
 
-        if (viewType == 1) {
-            view = layoutInflater.inflate(R.layout.post_image_layout, parent, false);
-            return new PostImageViewHolder(view);
-        }
+//        if (viewType == SELF) {
+//            view = layoutInflater.inflate(R.layout.post_self_layout, parent, false);
+//            return new PostSelfViewHolder(view);
+//        }
+//
+//        if (viewType == IMAGE) {
+//            view = layoutInflater.inflate(R.layout.post_image_layout, parent, false);
+//            return new PostImageViewHolder(view);
+//        }
+//
+//        if (viewType == LINK) {
+//            view = layoutInflater.inflate(R.layout.post_link_layout, parent, false);
+//            return new PostLinkViewHolder(view);
+//        }
+//
+//        if (viewType == VIDEO) {
+//            view = layoutInflater.inflate(R.layout.post_video_layout, parent, false);
+//            return new PostVideoViewHolder(view);
+//        }
+//
+//        if (viewType == POLL) {
+//            view = layoutInflater.inflate(R.layout.post_poll_layout, parent, false);
+//            return new PostPollViewHolder(view);
+//        }
 
-        if (viewType == 2) {
-            view = layoutInflater.inflate(R.layout.post_link_layout, parent, false);
-            return new PostLinkViewHolder(view);
-        }
-
-        if (viewType == 3) {
-            view = layoutInflater.inflate(R.layout.post_video_layout, parent, false);
-            return new PostVideoViewHolder(view);
-        }
-
-        if (viewType == 4) {
-            view = layoutInflater.inflate(R.layout.post_poll_layout, parent, false);
-            return new PostPollViewHolder(view);
-        }
-
-        view = layoutInflater.inflate(R.layout.post_self_layout, parent, false);
+        view = layoutInflater.inflate(R.layout.post_self_layout, parent, false); //Just in case...
         return new PostSelfViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        if (mPosts.get(position).getPost_hint() == null) {
-            if (mPosts.get(position).getPollData() != null) {   //IF it is poll THEN must have poll data
-                PostPollViewHolder postPollViewHolder = (PostPollViewHolder) holder;
-                postPollViewHolder.onBind(mPosts.get(position));
-            } else if (mPosts.get(position).getMedia() != null) {      //IF it's not the above THEN: IF it is rich/hosted:video THEN must have Media
-                PostVideoViewHolder postVideoViewHolder = (PostVideoViewHolder) holder;
-                postVideoViewHolder.onBind(mPosts.get(position));
-            } else if (mPosts.get(position).getUrl().contains("https://i.")) { //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
-                PostImageViewHolder postImageViewHolder = (PostImageViewHolder) holder;
-                postImageViewHolder.onBind(mPosts.get(position));
-            } else if (mPosts.get(position).getDomain().contains("self.")) { //IF it's nothing from the above THEN: IF it is self THEN contains domain with self. (not sure)
+
+        switch (getItemViewType(position)) {
+            case SELF:
                 PostSelfViewHolder postSelfViewHolder = (PostSelfViewHolder) holder;
                 postSelfViewHolder.onBind(mPosts.get(position));
-            } else {
+                break;
+            case IMAGE:
+                PostImageViewHolder postImageViewHolder = (PostImageViewHolder) holder;
+                postImageViewHolder.onBind(mPosts.get(position));
+                break;
+            case LINK:
                 PostLinkViewHolder postLinkViewHolder = (PostLinkViewHolder) holder;
-                postLinkViewHolder.onBind(mPosts.get(position));        //IF it's nothing from the above THEN choose link
-            }
-        } else if (mPosts.get(position).getPost_hint().contains("self")) {
-            PostSelfViewHolder postSelfViewHolder = (PostSelfViewHolder) holder;
-            postSelfViewHolder.onBind(mPosts.get(position));
-        } else if (mPosts.get(position).getPost_hint().contains("image")) {
-            PostImageViewHolder postImageViewHolder = (PostImageViewHolder) holder;
-            postImageViewHolder.onBind(mPosts.get(position));
-        } else if (mPosts.get(position).getPost_hint().contains("link")) {
-            PostLinkViewHolder postLinkViewHolder = (PostLinkViewHolder) holder;
-            postLinkViewHolder.onBind(mPosts.get(position));
-        } else if (mPosts.get(position).getPost_hint().contains("video")) {
-            PostVideoViewHolder postVideoViewHolder = (PostVideoViewHolder) holder;
-            postVideoViewHolder.onBind(mPosts.get(position));
-        } else {
-            PostPollViewHolder postPollViewHolder = (PostPollViewHolder) holder;
-            postPollViewHolder.onBind(mPosts.get(position));
+                postLinkViewHolder.onBind(mPosts.get(position));
+                break;
+            case VIDEO:
+                PostVideoViewHolder postVideoViewHolder = (PostVideoViewHolder) holder;
+                postVideoViewHolder.onBind(mPosts.get(position));
+                break;
+            case POLL:
+                PostPollViewHolder postPollViewHolder = (PostPollViewHolder) holder;
+                postPollViewHolder.onBind(mPosts.get(position));
+                break;
+            case LOADING:
+                PostLoadingViewHolder postLoadingViewHolder = (PostLoadingViewHolder) holder;
+                postLoadingViewHolder.mProgressBar.setVisibility(View.VISIBLE);
+                break;
         }
+
+//        if (getItemViewType(position) == SELF) {
+//            PostSelfViewHolder postSelfViewHolder = (PostSelfViewHolder) holder;
+//            postSelfViewHolder.onBind(mPosts.get(position));
+//        } else if (getItemViewType(position) == IMAGE) {
+//            PostImageViewHolder postImageViewHolder = (PostImageViewHolder) holder;
+//            postImageViewHolder.onBind(mPosts.get(position));
+//        } else if (getItemViewType(position) == LINK) {
+//            PostLinkViewHolder postLinkViewHolder = (PostLinkViewHolder) holder;
+//            postLinkViewHolder.onBind(mPosts.get(position));
+//        } else if (getItemViewType(position) == VIDEO) {
+//            PostVideoViewHolder postVideoViewHolder = (PostVideoViewHolder) holder;
+//            postVideoViewHolder.onBind(mPosts.get(position));
+//        } else {
+//            PostPollViewHolder postPollViewHolder = (PostPollViewHolder) holder;
+//            postPollViewHolder.onBind(mPosts.get(position));
+//        }
 
 
     }
 
     @Override
     public int getItemCount() {
-        return mPosts.size();
+        return mPosts == null ? 0 : mPosts.size();
     }
 
+
+
+    public void addLoadingFooter() {
+        isLoadingAdded = true;
+        add(new Post());
+    }
+
+    public void removeLoadingFooter() {
+        isLoadingAdded = false;
+
+        int position = mPosts.size() - 1;
+        Post result = getItem(position);
+
+        if (result != null) {
+            mPosts.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void add(Post post) {
+        mPosts.add(post);
+        notifyItemInserted(mPosts.size() - 1);
+    }
+
+    public void addAll(List<Post> postResults) {
+        for (Post result : postResults) {
+            add(result);
+        }
+    }
+
+    public Post getItem(int position) {
+        return mPosts.get(position);
+    }
+
+
+
+    public static class PostLoadingViewHolder extends RecyclerView.ViewHolder{
+
+        ProgressBar mProgressBar;
+
+        public PostLoadingViewHolder(@NonNull View itemView) {
+            super(itemView);
+            mProgressBar = (ProgressBar) itemView.findViewById(R.id.loadmore_progress);
+        }
+    }
 
     public abstract static class AbstractPostViewHolder extends RecyclerView.ViewHolder {
         View parent;

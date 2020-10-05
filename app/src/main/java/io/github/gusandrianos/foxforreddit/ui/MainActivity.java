@@ -19,13 +19,13 @@ import com.facebook.stetho.Stetho;
 import java.util.List;
 
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
+import io.github.gusandrianos.foxforreddit.data.models.Listing;
 import io.github.gusandrianos.foxforreddit.data.models.Post;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
-import io.github.gusandrianos.foxforreddit.viewmodels.TokenViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.TokenViewModelFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,9 +35,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getCachedToken();
+        mToken = InjectorUtils.getInstance().provideTokenRepository(getApplication()).getToken();
         MainActivity.super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initializeUI();
         Stetho.initializeWithDefaults(this);
         result = findViewById(R.id.result);
     }
@@ -45,14 +46,14 @@ public class MainActivity extends AppCompatActivity {
     private void initializeUI() {
         PostViewModelFactory factory = InjectorUtils.getInstance().providePopularFragmentViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        viewModel.getPosts(mToken, "r/GramersOfficial", "new").observe(this, new Observer<List<Post>>() {
+        viewModel.getPosts(mToken, "r/GramersOfficial", "new").observe(this, new Observer<Listing>() {
             @Override
-            public void onChanged(List<Post> posts) {
-
+            public void onChanged(Listing listing) {
                 result.setMovementMethod(new ScrollingMovementMethod());
                 result.setText("");
 
-                for (Post post : posts) {
+                for (ChildrenItem child : listing.getTreeData().getChildren()) {
+                    Post post = child.getPost();
                     result.append("r/" + post.getSubreddit() + "\n");
                     result.append("Posted by u/" + post.getAuthor() + "\n");
                     result.append(post.getTitle() + "\n");
@@ -90,46 +91,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void getAuthorizedUserToken(String c) {
-        TokenViewModelFactory factory = InjectorUtils.getInstance().provideTokenViewModelFactory(getApplication());
-        TokenViewModel viewModel = new ViewModelProvider(this, factory).get(TokenViewModel.class);
-        viewModel.getToken(c, "https://gusandrianos.github.io/login").observe(this, new Observer<Token>() {
-            @Override
-            public void onChanged(Token token) {
-                mToken = token;
-                Log.i("getAuthorizedUserToken", "Successfully got a new AuthorizedUser token");
-                initializeUI();
-            }
-        });
-    }
 
-    void getUserlessToken() {
-        TokenViewModelFactory factory = InjectorUtils.getInstance().provideTokenViewModelFactory(getApplication());
-        TokenViewModel viewModel = new ViewModelProvider(this, factory).get(TokenViewModel.class);
-        viewModel.getToken().observe(this, new Observer<Token>() {
-            @Override
-            public void onChanged(Token token) {
-                mToken = token;
-                Log.i("getUserlessToken", "Successfully got a new Userless token");
-                initializeUI();
-            }
-        });
-    }
-
-    void getCachedToken() {
-        TokenViewModelFactory factory = InjectorUtils.getInstance().provideTokenViewModelFactory(getApplication());
-        TokenViewModel viewModel = new ViewModelProvider(this, factory).get(TokenViewModel.class);
-        viewModel.getCachedToken().observe(this, new Observer<List<Token>>() {
-            @Override
-            public void onChanged(List<Token> tokens) {
-                if (tokens.size() > 0) {
-                    mToken = tokens.get(0);
-                    Log.i("getCachedToken", "Passed Cached Token");
-                    initializeUI();
-                } else {
-                    Log.i("getCachedToken", "Trying to get a Userless token");
-                    getUserlessToken();
-                }
-            }
-        });
     }
 }

@@ -50,7 +50,6 @@ public class PopularFragment extends Fragment {
         Stetho.initializeWithDefaults(getActivity());
         // Inflate the layout for this fragment
         return mView;
-
     }
 
     private void initRecycleView(@NotNull View view, List<Post> posts) {
@@ -62,7 +61,7 @@ public class PopularFragment extends Fragment {
         mPostRecyclerView.setAdapter(mPostRecyclerViewAdapter);
     }
 
-    private void initializeUI(View view) {
+    public void initializeUI(View view) {
         PostViewModelFactory factory = InjectorUtils.getInstance().providePopularFragmentViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         viewModel.getPosts(mToken).observe(getViewLifecycleOwner(), new Observer<Listing>() {
@@ -76,5 +75,15 @@ public class PopularFragment extends Fragment {
                 initRecycleView(view, posts);
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Token token = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
+        if (!mToken.getAccessToken().equals(token.getAccessToken())) {
+            mToken = token;
+            initializeUI(mView);
+        }
     }
 }

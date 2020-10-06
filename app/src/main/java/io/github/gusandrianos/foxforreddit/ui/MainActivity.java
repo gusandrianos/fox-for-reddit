@@ -9,14 +9,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 
-import java.util.List;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
@@ -91,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void getAuthorizedUserToken(String c) {
-
+        mToken = InjectorUtils.getInstance().provideTokenRepository(getApplication()).getNewToken(c, "https://gusandrianos.github.io/login");
+        initializeUI();
     }
 }

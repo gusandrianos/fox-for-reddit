@@ -41,17 +41,6 @@ public class TokenRepository {
         return instance;
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
-    }
-
-    public void initDB() {
-        if (application != null) {
-            FoxDatabase foxDatabase = FoxDatabase.getInstance(application);
-            tokenDao = foxDatabase.tokenDao();
-        }
-    }
-
     public Token getNewToken(String code, String redirectURI) {
         if (mToken != null && (code.isEmpty() || redirectURI.isEmpty()))
             return mToken;
@@ -183,7 +172,17 @@ public class TokenRepository {
             long expiration = mToken.getExpirationTimestamp();
             if (expiration - now > 0)
                 return mToken;
+            else {
+                if (refreshToken() != null)
+                    return mToken;
+                else if (getNewToken() != null) {
+                    return mToken;
+                }
+            }
         }
+
+        //TODO: Clean this
+
         if (getCachedToken() != null) {
             long now = Instant.now().getEpochSecond();
             long expiration = mToken.getExpirationTimestamp();
@@ -203,13 +202,21 @@ public class TokenRepository {
     }
 
     public void setCachedToken(Token token) {
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                tokenDao.delete();
-                tokenDao.insert(token);
-            }
+        Executors.newSingleThreadExecutor().execute(() -> {
+            tokenDao.delete();
+            tokenDao.insert(token);
         });
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
+    }
+
+    public void initDB() {
+        if (application != null) {
+            FoxDatabase foxDatabase = FoxDatabase.getInstance(application);
+            tokenDao = foxDatabase.tokenDao();
+        }
     }
 
     public void logToken(Token token) {

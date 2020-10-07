@@ -22,10 +22,13 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
 
-public class PopularFragment extends Fragment {
+public class PostFragment extends Fragment {
     // Add RecyclerView member
     private View mView;
     private Token mToken;
+    String subreddit;
+    String filter;
+    int page;
     PostAdapter mPostRecyclerViewAdapter;
 
     @Nullable
@@ -39,6 +42,9 @@ public class PopularFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mView = getView();
         mToken = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
+        page = getArguments().getInt("page", 0);
+        subreddit = getArguments().getString("subreddit", "");
+        filter = getArguments().getString("filter", "");
         initRecycleView();
         initializeUI();
         Stetho.initializeWithDefaults(getActivity());
@@ -56,7 +62,7 @@ public class PopularFragment extends Fragment {
     public void initializeUI() {
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        viewModel.getPosts("", "", mToken).observe(getViewLifecycleOwner(), postPagingData -> {
+        viewModel.getPosts(subreddit, filter, mToken).observe(getViewLifecycleOwner(), postPagingData -> {
             mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), postPagingData);
         });
     }

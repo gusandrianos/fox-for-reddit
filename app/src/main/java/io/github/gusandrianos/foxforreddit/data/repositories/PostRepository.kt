@@ -6,7 +6,7 @@ import androidx.paging.liveData
 import io.github.gusandrianos.foxforreddit.data.models.Token
 
 object PostRepository {
-    fun getSearchPosts(subreddit: String, filter: String, token: Token) =
+    fun getPosts(subreddit: String, filter: String, token: Token) =
             Pager(
                     config = PagingConfig(pageSize = 25, enablePlaceholders = false),
                     pagingSourceFactory = { PostPagingSource(subreddit, filter, token) }

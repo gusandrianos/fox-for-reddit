@@ -9,6 +9,6 @@ import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository
 
 class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
     fun getPosts(subreddit: String, filter: String, token: Token): LiveData<PagingData<Post>> {
-        return mPostRepository.getSearchPosts(subreddit, filter, token)
+        return mPostRepository.getPosts(subreddit, filter, token)
     }
 }

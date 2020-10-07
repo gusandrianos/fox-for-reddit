@@ -34,7 +34,7 @@ public class HomeActivity extends AppCompatActivity {
     private DrawerLayout drawer;
 
     private HomeFragment homeFragment;
-    private PopularFragment popularFragment;
+    private PopularFragment postsFragment;
 
     int LAUNCH_SECOND_ACTIVITY = 1;
     Token mToken;
@@ -64,12 +64,12 @@ public class HomeActivity extends AppCompatActivity {
         tabLayout = findViewById(R.id.tab_layout);
 
         homeFragment = new HomeFragment();
-        popularFragment = new PopularFragment();
+        postsFragment = new PopularFragment();
 
         tabLayout.setupWithViewPager(viewPager);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
-        viewPagerAdapter.addFragment(popularFragment, "POPULAR");
+        viewPagerAdapter.addFragment(postsFragment, "POPULAR");
         viewPagerAdapter.addFragment(homeFragment, "HOME");
 
         viewPager.setAdapter(viewPagerAdapter);

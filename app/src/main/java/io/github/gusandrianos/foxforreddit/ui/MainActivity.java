@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 
-
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.Listing;
@@ -42,28 +41,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
-        PostViewModelFactory factory = InjectorUtils.getInstance().providePopularFragmentViewModelFactory();
+        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        viewModel.getPosts(mToken, "r/GramersOfficial", "new").observe(this, new Observer<Listing>() {
-            @Override
-            public void onChanged(Listing listing) {
-                result.setMovementMethod(new ScrollingMovementMethod());
-                result.setText("");
-
-                for (ChildrenItem child : listing.getTreeData().getChildren()) {
-                    Post post = child.getPost();
-                    result.append("r/" + post.getSubreddit() + "\n");
-                    result.append("Posted by u/" + post.getAuthor() + "\n");
-                    result.append(post.getTitle() + "\n");
-                    if (post.getLikes() != null) {
-                        result.append(post.getLikes().toString() + "\n");
-                    }
-                    String date = (String) android.text.format.DateUtils.getRelativeTimeSpanString(post.getCreatedUtc() * 1000);
-                    result.append(date + "\n");
-                    result.append(post.getScore() + "\n\n");
-                }
-            }
-        });
+//        viewModel.getPosts(mToken, "r/GramersOfficial", "new").observe(this, new Observer<Listing>() {
+//            @Override
+//            public void onChanged(Listing listing) {
+//                result.setMovementMethod(new ScrollingMovementMethod());
+//                result.setText("");
+//
+//                for (ChildrenItem child : listing.getTreeData().getChildren()) {
+//                    Post post = child.getPost();
+//                    result.append("r/" + post.getSubreddit() + "\n");
+//                    result.append("Posted by u/" + post.getAuthor() + "\n");
+//                    result.append(post.getTitle() + "\n");
+//                    if (post.getLikes() != null) {
+//                        result.append(post.getLikes().toString() + "\n");
+//                    }
+//                    String date = (String) android.text.format.DateUtils.getRelativeTimeSpanString(post.getCreatedUtc() * 1000);
+//                    result.append(date + "\n");
+//                    result.append(post.getScore() + "\n\n");
+//                }
+//            }
+//        });
     }
 
     public void loadWebPage(View view) {

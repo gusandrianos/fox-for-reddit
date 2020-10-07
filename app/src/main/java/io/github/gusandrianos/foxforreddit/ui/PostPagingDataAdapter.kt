@@ -1,9 +1,6 @@
 package io.github.gusandrianos.foxforreddit.ui
 
-import android.content.Context
-import android.text.format.DateFormat
 import android.text.format.DateUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +18,6 @@ import io.github.gusandrianos.foxforreddit.data.models.Post
 
 import java.text.DecimalFormat
 import java.text.NumberFormat
-import java.util.*
 
 private var LOADING = 0
 private var SELF = 1
@@ -30,16 +26,11 @@ private var IMAGE = 3
 private var VIDEO = 4
 private var POLL = 5
 
-class PostPagingDataAdapter:
-        PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPARATOR) {
-
-
+class PostPagingDataAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPARATOR) {
     companion object {
         private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
-
                 return oldItem.id == newItem.id
-
             }
 
             override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
@@ -50,53 +41,37 @@ class PostPagingDataAdapter:
 
     override fun getItemViewType(position: Int): Int {
         val currentItem = getItem(position)
-        Log.d("ASD", "HERE")
         if (currentItem?.post_hint == null) {
-            if (currentItem?.pollData != null) {   //IF it is poll THEN must have poll data
+            if (currentItem?.pollData != null)    //IF it is poll THEN must have poll data
                 return POLL
-            }
-            if (currentItem?.media != null) {      //IF it's not the above THEN: IF it is rich/hosted:video THEN must have Media
+            if (currentItem?.media != null)       //IF it's not the above THEN: IF it is rich/hosted:video THEN must have Media
                 return VIDEO
-            }
-            //
-            if (currentItem?.url!!.contains("https://i.")) { //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
+            if (currentItem?.url!!.contains("https://i."))  //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
                 return IMAGE
-            }
-            return if (currentItem.domain.contains("self.")) { //IF it's nothing from the above THEN: IF it is self THEN contains domain with self. (not sure)
+            return if (currentItem.domain.contains("self."))  //IF it's nothing from the above THEN: IF it is self THEN contains domain with self. (not sure)
                 SELF
-            } else LINK
-            //
+            else LINK
+
 //            return 0;
-            //IF it's nothing from the above THEN choose link
-            //            return 4;
+//            IF it's nothing from the above THEN choose link
+//            return 4;
         }
 
-        if (currentItem.post_hint.contains("self")) {
+        if (currentItem.post_hint.contains("self"))
             return SELF
-        }
-
-        if (currentItem.post_hint.contains("image")) {
+        if (currentItem.post_hint.contains("image"))
             return IMAGE
-        }
-
-        if (currentItem.post_hint.contains("link")) {
+        if (currentItem.post_hint.contains("link"))
             return LINK
-        }
-
-        if (currentItem.post_hint.contains("video")) {
+        if (currentItem.post_hint.contains("video"))
             return VIDEO
-        }
-
-        return if (currentItem.post_hint.contains("poll")) {
+        return if (currentItem.post_hint.contains("poll"))
             POLL
-        } else 9
-
+        else 9
         //Not created yet ViewHolder (aViewHolder) returns if not null, otherwise will be returned first If statement
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        Log.d("ASD", "HERE")
         val layoutInflater = LayoutInflater.from(parent.context)
         val view: View
 
@@ -129,14 +104,10 @@ class PostPagingDataAdapter:
 
         view = layoutInflater.inflate(R.layout.post_self_layout, parent, false) //Just in case...
         return PostSelfViewHolder(view)
-
     }
 
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Log.d("ASD", "HERE")
         val currentItem = getItem(position)
-
 
         when (getItemViewType(position)) {
             SELF -> {
@@ -166,17 +137,16 @@ class PostPagingDataAdapter:
         }
     }
 
-
     abstract class AbstractPostViewHolder(var parent: View) : RecyclerView.ViewHolder(parent) {
-        var mImg_post_subreddit: ImageView
-        var mTxt_post_subreddit: TextView
-        var mTxt_post_user: TextView
-        var mTxt_post_title: TextView
-        var mTxt_post_score: TextView
-        var mImgbtn_post_vote_up: ImageButton
-        var mImgbtn_post_vote_down: ImageButton
-        var Btn_post_num_comments: Button
-        var mbtn_post_share: Button
+        var mImg_post_subreddit: ImageView = itemView.findViewById(R.id.img_post_subreddit)
+        var mTxt_post_subreddit: TextView = itemView.findViewById(R.id.txt_post_subreddit)
+        var mTxt_post_user: TextView = itemView.findViewById(R.id.txt_post_user)
+        var mTxt_post_title: TextView = itemView.findViewById(R.id.txt_post_title)
+        var mTxt_post_score: TextView = itemView.findViewById(R.id.txt_post_score)
+        var mImgbtn_post_vote_up: ImageButton = itemView.findViewById(R.id.imgbtn_post_vote_up)
+        var mImgbtn_post_vote_down: ImageButton = itemView.findViewById(R.id.imgbtn_post_vote_down)
+        var Btn_post_num_comments: Button = itemView.findViewById(R.id.btn_post_num_comments)
+        var mbtn_post_share: Button = itemView.findViewById(R.id.btn_post_share)
         open fun onBind(post: Post) {
             val user = ("Posted by u/" + post.author
                     + " - "
@@ -191,17 +161,6 @@ class PostPagingDataAdapter:
             Btn_post_num_comments.text = formatValue(post.numComments.toDouble())
         }
 
-        init {
-            mImg_post_subreddit = itemView.findViewById(R.id.img_post_subreddit)
-            mTxt_post_subreddit = itemView.findViewById(R.id.txt_post_subreddit)
-            mTxt_post_user = itemView.findViewById(R.id.txt_post_user)
-            mTxt_post_title = itemView.findViewById(R.id.txt_post_title)
-            mTxt_post_score = itemView.findViewById(R.id.txt_post_score)
-            mImgbtn_post_vote_up = itemView.findViewById(R.id.imgbtn_post_vote_up)
-            mImgbtn_post_vote_down = itemView.findViewById(R.id.imgbtn_post_vote_down)
-            Btn_post_num_comments = itemView.findViewById(R.id.btn_post_num_comments)
-            mbtn_post_share = itemView.findViewById(R.id.btn_post_share)
-        }
     }
 
     class PostSelfViewHolder(itemView: View) : AbstractPostViewHolder(itemView) {
@@ -252,12 +211,10 @@ class PostPagingDataAdapter:
     }
 
     //ToDo poll
-
-    //ToDo poll
     class PostPollViewHolder(itemView: View) : AbstractPostViewHolder(itemView) {
-        var mBtn_post_vote_now: Button
-        var mTxt_post_vote_num: TextView
-        var mTxt_post_vote_time_left: TextView
+        var mBtn_post_vote_now: Button = itemView.findViewById(R.id.btn_post_vote_now)
+        var mTxt_post_vote_num: TextView = itemView.findViewById(R.id.txt_post_vote_num)
+        var mTxt_post_vote_time_left: TextView = itemView.findViewById(R.id.txt_post_vote_time_left)
         override fun onBind(post: Post) {
             super.onBind(post)
             val votes = post.pollData.totalVoteCount.toString() + " Votes"
@@ -265,22 +222,12 @@ class PostPagingDataAdapter:
             val ends_at = "Ends at " + getDate(post.pollData.votingEndTimestamp)
             mTxt_post_vote_time_left.text = ends_at
         }
-
-        init {
-            mBtn_post_vote_now = itemView.findViewById(R.id.btn_post_vote_now)
-            mTxt_post_vote_num = itemView.findViewById(R.id.txt_post_vote_num)
-            mTxt_post_vote_time_left = itemView.findViewById(R.id.txt_post_vote_time_left)
-        }
     }
-
-
 }
 
 //ToDo fix hours
 fun getDate(timestamp: Long): String {
-    val cal = Calendar.getInstance(Locale.getDefault())
-    cal.timeInMillis = timestamp
-    return DateFormat.format("hh:mm dd-MM", cal).toString()
+    return DateUtils.getRelativeTimeSpanString(timestamp * 1000).toString();
 }
 
 fun formatValue(value: Double): String {

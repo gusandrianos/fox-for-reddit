@@ -274,4 +274,78 @@ public class Post {
     public PollData getPollData() {
         return pollData;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "secureMedia=" + secureMedia +
+                ", pollData=" + pollData +
+                ", saved=" + saved +
+                ", hideScore=" + hideScore +
+                ", subredditId='" + subredditId + '\'' +
+                ", score=" + score +
+                ", numComments=" + numComments +
+                ", spoiler=" + spoiler +
+                ", id='" + id + '\'' +
+                ", createdUtc=" + createdUtc +
+                ", linkFlairTemplateId='" + linkFlairTemplateId + '\'' +
+                ", edited='" + edited + '\'' +
+                ", authorFlairBackgroundColor=" + authorFlairBackgroundColor +
+                ", domain='" + domain + '\'' +
+                ", noFollow=" + noFollow +
+                ", ups=" + ups +
+                ", selftext='" + selftext + '\'' +
+                ", authorFlairType='" + authorFlairType + '\'' +
+                ", permalink='" + permalink + '\'' +
+                ", authorFlairCssClass=" + authorFlairCssClass +
+                ", postHint='" + postHint + '\'' +
+                ", modReports=" + modReports +
+                ", sendReplies=" + sendReplies +
+                ", archived=" + archived +
+                ", authorFlairTextColor=" + authorFlairTextColor +
+                ", isSelf=" + isSelf +
+                ", authorFullname='" + authorFullname + '\'' +
+                ", linkFlairCssClass=" + linkFlairCssClass +
+                ", upvoteRatio=" + upvoteRatio +
+                ", clicked=" + clicked +
+                ", authorFlairTemplateId=" + authorFlairTemplateId +
+                ", url='" + url + '\'' +
+                ", urlOverriddenByDest='" + urlOverriddenByDest + '\'' +
+                ", stickied=" + stickied +
+                ", viewCount=" + viewCount +
+                ", linkFlairRichtext=" + linkFlairRichtext +
+                ", linkFlairBackgroundColor='" + linkFlairBackgroundColor + '\'' +
+                ", authorFlairRichtext=" + authorFlairRichtext +
+                ", over18=" + over18 +
+                ", subreddit='" + subreddit + '\'' +
+                ", suggestedSort=" + suggestedSort +
+                ", locked=" + locked +
+                ", likes=" + likes +
+                ", thumbnail='" + thumbnail + '\'' +
+                ", created=" + created +
+                ", author='" + author + '\'' +
+                ", linkFlairTextColor='" + linkFlairTextColor + '\'' +
+                ", isVideo=" + isVideo +
+                ", subredditNamePrefixed='" + subredditNamePrefixed + '\'' +
+                ", name='" + name + '\'' +
+                ", mediaOnly=" + mediaOnly +
+                ", preview=" + preview +
+                ", hidden=" + hidden +
+                ", authorPatreonFlair=" + authorPatreonFlair +
+                ", media=" + media +
+                ", title='" + title + '\'' +
+                ", authorFlairText=" + authorFlairText +
+                ", thumbnailWidth=" + thumbnailWidth +
+                ", linkFlairText=" + linkFlairText +
+                ", subredditSubscribers=" + subredditSubscribers +
+                ", thumbnailHeight=" + thumbnailHeight +
+                ", linkFlairType='" + linkFlairType + '\'' +
+                ", visited=" + visited +
+                ", isRedditMediaDomain=" + isRedditMediaDomain +
+                '}';
+    }
 }

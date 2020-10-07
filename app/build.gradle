@@ -1,13 +1,15 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "io.github.gusandrianos.foxforreddit"
         minSdkVersion 26
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
@@ -24,6 +26,10 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 }
 
@@ -57,4 +63,6 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
     //Facebook Stetho for DB Debugging
     implementation 'com.facebook.stetho:stetho:1.5.1'
+    //Paging
+    implementation 'androidx.paging:paging-runtime-ktx:3.0.0-alpha07'
 }

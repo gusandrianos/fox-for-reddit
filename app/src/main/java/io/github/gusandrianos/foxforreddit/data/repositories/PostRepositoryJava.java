@@ -20,15 +20,15 @@ import retrofit2.Response;
 /**
  * Singleton pattern
  */
-public class PostRepository {
-    private static PostRepository instance;
+public class PostRepositoryJava {
+    private static PostRepositoryJava instance;
     private ArrayList<Post> dataSet;
     private MutableLiveData<Listing> data = new MutableLiveData<>();
     RedditAPI redditAPI = RetrofitService.getRedditAPIInstance();
 
-    public static PostRepository getInstance() {
+    public static PostRepositoryJava getInstance() {
         if (instance == null) {
-            instance = new PostRepository();
+            instance = new PostRepositoryJava();
             Log.i("INSTANCE", "created new instance");
         } else {
             Log.i("INSTANCE", "passed same instance");
@@ -36,11 +36,11 @@ public class PostRepository {
         return instance;
     }
 
-    public LiveData<Listing> getPosts(Token token, String subreddit, String filter) {
+    public LiveData<Listing> getPosts(String subreddit, String filter, String after, Token token) {
         String BEARER = " " + token.getTokenType() + " " + token.getAccessToken();
         Log.i("Brearer", BEARER);
 
-        Call<Listing> listing = redditAPI.getPosts(subreddit, filter, BEARER);
+        Call<Listing> listing = redditAPI.getPosts(subreddit, filter, after, BEARER);
 
         listing.enqueue(new Callback<Listing>() {
             @Override
@@ -59,7 +59,7 @@ public class PostRepository {
         return data;
     }
 
-    public LiveData<Listing> getPosts(Token token) {
-        return getPosts(token, "", "");
+    public LiveData<Listing> getPosts(String after, Token token) {
+        return getPosts("", "", after, token);
     }
 }

@@ -17,7 +17,7 @@ public class HomeActivity extends AppCompatActivity {
     private TabLayout tabLayout;
 
     private HomeFragment homeFragment;
-    private PopularFragment popularFragment;
+    private PostsFragment postsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +31,13 @@ public class HomeActivity extends AppCompatActivity {
         tabLayout = findViewById(R.id.tab_layout);
 
         homeFragment = new HomeFragment();
-        popularFragment = new PopularFragment();
+        postsFragment = new PostsFragment();
 
         tabLayout.setupWithViewPager(viewPager);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),0);
         viewPagerAdapter.addFragment(homeFragment, "HOME");
-        viewPagerAdapter.addFragment(popularFragment, "POPULAR");
+        viewPagerAdapter.addFragment(postsFragment, "POPULAR");
 
         viewPager.setAdapter(viewPagerAdapter);
     }

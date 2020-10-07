@@ -24,28 +24,21 @@ class PostPagingSource(
     override suspend fun load(params: LoadParams<String>): LoadResult<String, Post> {
         val position = params.key ?: STARTER_PAGE
 
-        return try{
+        return try {
 
             val response = redditAPI.getPostList(mSubreddit, mFilter, position, params.loadSize, mBearer)
-            val items = response.treeData.children?.map { it.post }?: emptyList();
-
-            PostRepositoryKotlin.pageArray.add(position)
-            var currentPosition = if(position== STARTER_PAGE) 0 else PostRepositoryKotlin.pageArray.indexOf(position)
-
-            var prevValue = if(currentPosition==0) null else PostRepositoryKotlin.pageArray.get(currentPosition-1)
-
+            val items = response.treeData.children?.map { it.post } ?: emptyList();
 
             LoadResult.Page(
                     data = items,
-                    prevKey = prevValue,
+                    prevKey = null,
                     nextKey = if (items.isEmpty()) null else response.treeData?.after
             )
-        }catch (exception: IOException){  //Maybe there is no Internet Connection when try to make request
+        } catch (exception: IOException) {  //Maybe there is no Internet Connection when try to make request
             LoadResult.Error(exception)
-        }catch (exception: HttpException){ //Maybe something went wrong on the server (ex. no data, or not authorized)
+        } catch (exception: HttpException) { //Maybe something went wrong on the server (ex. no data, or not authorized)
             LoadResult.Error(exception)
         }
-
 
 
     }

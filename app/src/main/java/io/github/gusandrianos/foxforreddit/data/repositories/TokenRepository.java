@@ -99,9 +99,14 @@ public class TokenRepository {
     }
 
     public Token refreshToken() {
+        if (mToken.getRefreshToken() == null) {
+            mToken = null;
+            return mToken;
+        }
         if (tokenDao == null) {
             initDB();
         }
+        Log.i("Token Refresh", "Token Dao created");
 
         Call<Token> token;
         String clientID = "n1R0bc_lPPTtVg";
@@ -174,7 +179,10 @@ public class TokenRepository {
 
     public Token getToken() {
         if (mToken != null) {
-            return mToken;
+            long now = Instant.now().getEpochSecond();
+            long expiration = mToken.getExpirationTimestamp();
+            if (expiration - now > 0)
+                return mToken;
         }
         if (getCachedToken() != null) {
             long now = Instant.now().getEpochSecond();

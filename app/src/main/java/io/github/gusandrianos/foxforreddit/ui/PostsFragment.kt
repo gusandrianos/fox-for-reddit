@@ -1,17 +1,10 @@
 package io.github.gusandrianos.foxforreddit.ui
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import io.github.gusandrianos.foxforreddit.R
-import io.github.gusandrianos.foxforreddit.data.models.Token
 import io.github.gusandrianos.foxforreddit.databinding.FragmentPostsBinding
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel

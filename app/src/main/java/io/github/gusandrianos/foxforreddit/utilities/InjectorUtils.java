@@ -3,8 +3,7 @@ package io.github.gusandrianos.foxforreddit.utilities;
 import android.app.Application;
 import android.util.Log;
 
-import io.github.gusandrianos.foxforreddit.data.repositories.PostRepositoryJava;
-import io.github.gusandrianos.foxforreddit.data.repositories.PostRepositoryKotlin;
+import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository;
 import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
@@ -27,7 +26,7 @@ public class InjectorUtils {
     }
 
     public PostViewModelFactory providePostViewModelFactory() {
-        PostRepositoryKotlin postRepository = PostRepositoryKotlin.INSTANCE;
+        PostRepository postRepository = PostRepository.INSTANCE;
         return new PostViewModelFactory(postRepository);
     }
 

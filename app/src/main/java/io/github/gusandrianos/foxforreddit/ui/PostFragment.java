@@ -20,6 +20,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
+import kotlin.Unit;
 
 
 public class PostFragment extends Fragment {
@@ -56,7 +57,11 @@ public class PostFragment extends Fragment {
         mPostRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY); //keep recyclerview on position
         mPostRecyclerView.setHasFixedSize(true);
         mPostRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mPostRecyclerView.setAdapter(mPostRecyclerViewAdapter);
+        PostLoadStateAdapter postLoadStateAdapter = new PostLoadStateAdapter(() -> {
+            mPostRecyclerViewAdapter.retry();
+            return Unit.INSTANCE;
+        });
+        mPostRecyclerView.setAdapter(mPostRecyclerViewAdapter.withLoadStateFooter(postLoadStateAdapter));
     }
 
     public void initializeUI() {

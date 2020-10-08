@@ -18,6 +18,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Post
 
 import java.text.DecimalFormat
 import java.text.NumberFormat
+import java.time.Instant
 import kotlin.math.pow
 
 class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPARATOR) {
@@ -202,16 +203,17 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
             super.onBind(post)
             val votes = post.pollData.totalVoteCount.toString() + " Votes"
             mTxtPostVoteNum.text = votes
-            val endsAt = "Ends at " + getDate(post.pollData.votingEndTimestamp)
-            mTxtPostVoteTimeLeft.text = endsAt
+            mTxtPostVoteTimeLeft.text = getPollEndingDate(post.pollData.votingEndTimestamp)
         }
 
     }
 }
 
-//ToDo fix hours
-fun getDate(timestamp: Long): String {
-    return DateUtils.getRelativeTimeSpanString(timestamp * 1000).toString();
+fun getPollEndingDate(timestamp: Long): String {
+    val now = Instant.now().toEpochMilli()
+    if (now > timestamp)
+        return "Poll has ended"
+    return "Ends " + DateUtils.getRelativeTimeSpanString(timestamp, now, 0L, DateUtils.FORMAT_ABBREV_RELATIVE).toString()
 }
 
 fun formatValue(number: Double): String {

@@ -77,10 +77,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 item -> {
-                    Log.i("I work", "onNavigationItemSelected: ");
                     switch (item.getItemId()) {
                         case R.id.nav_login:
-                            Log.i("I work", "onNavigationItemSelected: ");
                             loadLogInWebpage();
                             break;
                     }

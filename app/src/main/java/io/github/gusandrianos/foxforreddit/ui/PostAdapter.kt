@@ -1,6 +1,7 @@
 package io.github.gusandrianos.foxforreddit.ui
 
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
     private val IMAGE = 3
     private val VIDEO = 4
     private val POLL = 5
+    private val COMMENT = 6
 
     companion object {
         private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Post>() {
@@ -45,6 +47,10 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
 
     override fun getItemViewType(position: Int): Int {
         val currentItem = getItem(position)
+        if (currentItem?.name!!.startsWith("t1_")) {
+            Log.i("", "getItemViewType: I work")
+            return COMMENT
+        }
         if (currentItem?.post_hint == null) {
             if (currentItem?.pollData != null)    //IF it is poll THEN must have poll data
                 return POLL
@@ -94,6 +100,10 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
                 view = layoutInflater.inflate(R.layout.post_poll_layout, parent, false)
                 return PostPollViewHolder(view)
             }
+            COMMENT -> {
+                view = layoutInflater.inflate(R.layout.post_comment_layout, parent, false)
+                return PostCommentViewHolder(view)
+            }
         }
         view = layoutInflater.inflate(R.layout.post_self_layout, parent, false) //Just in case...
         return PostSelfViewHolder(view)
@@ -121,6 +131,10 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
             POLL -> {
                 val postPollViewHolder = holder as PostAdapter.PostPollViewHolder
                 postPollViewHolder.onBind(currentItem!!)
+            }
+            COMMENT -> {
+                val postCommentViewHolder = holder as PostAdapter.PostCommentViewHolder
+                postCommentViewHolder.onBind(currentItem!!)
             }
         }
     }
@@ -165,7 +179,7 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
 
         override fun onBind(post: Post) {
             super.onBind(post)
-            //Todo if it is nfsw
+            //Todo if it is nsfw
             Glide.with(parent).load(post.thumbnail).placeholder(R.drawable.ic_launcher_background).into(mImgPostThumbnail)
         }
 
@@ -204,6 +218,28 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
             val votes = post.pollData.totalVoteCount.toString() + " Votes"
             mTxtPostVoteNum.text = votes
             mTxtPostVoteTimeLeft.text = getPollEndingDate(post.pollData.votingEndTimestamp)
+        }
+
+    }
+
+    // We know naming it PostComment instead of Comment is stupid, don't judge hey :p
+    class PostCommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private val mTxtPostUser: TextView = itemView.findViewById(R.id.txt_post_user)
+        private val mTxtTimePosted: TextView = itemView.findViewById(R.id.txt_time_posted)
+        private val mTxtPostScore: TextView = itemView.findViewById(R.id.txt_post_score)
+        private val mTxtPostTitle: TextView = itemView.findViewById(R.id.txt_post_title)
+        private val mTxtPostSubreddit: TextView = itemView.findViewById(R.id.txt_post_subreddit)
+        private val mTxtComment: TextView = itemView.findViewById(R.id.txt_comment)
+
+        fun onBind(comment: Post) {
+            val subreddit = "In r/" + comment.subreddit
+            mTxtPostUser.text = comment.author
+            mTxtTimePosted.text = DateUtils.getRelativeTimeSpanString(comment.createdUtc * 1000).toString()
+            mTxtPostScore.text = comment.score.toString().trim()
+            mTxtPostTitle.text = comment.linkTitle
+            mTxtPostSubreddit.text = subreddit
+            mTxtComment.text = comment.body
         }
 
     }

@@ -29,11 +29,24 @@
                 android:layout_height="wrap_content"
                 android:text="Subreddit Title" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txt_post_user"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Posted by User" />
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_post_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:text="Posted by User" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_time_posted"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="time ago" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -65,17 +78,17 @@
                 android:layout_height="80dp"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_launcher_background"/>
+                android:src="@drawable/ic_launcher_background" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txt_post_domain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
+                android:background="#80121212"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="#FFFFFF"
-                android:background="#80121212"/>
+                android:textColor="#FFFFFF" />
         </FrameLayout>
 
 
@@ -99,7 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:textColor="#FF5A5A5A"/>
+            android:textColor="#FF5A5A5A" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/imgbtn_post_vote_down"
@@ -118,8 +131,8 @@
             android:drawableStart="@drawable/ic_round_mode_comment_24"
             android:paddingStart="24sp"
             android:textAlignment="textStart"
-            android:textSize="12sp"
-            android:textColor="#FF5A5A5A"/>
+            android:textColor="#FF5A5A5A"
+            android:textSize="12sp" />
 
 
         <androidx.appcompat.widget.AppCompatButton
@@ -128,7 +141,7 @@
             android:layout_height="match_parent"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:drawableStart="@drawable/ic_round_share_24"
-            android:paddingStart="32sp"/>
+            android:paddingStart="32sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.appcompat.widget.LinearLayoutCompat>

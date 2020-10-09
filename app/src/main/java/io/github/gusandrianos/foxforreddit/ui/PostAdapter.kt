@@ -143,6 +143,7 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
         private val mImgPostSubreddit: ImageView = itemView.findViewById(R.id.img_post_subreddit)
         private val mTxtPostSubreddit: TextView = itemView.findViewById(R.id.txt_post_subreddit)
         private val mTxtPostUser: TextView = itemView.findViewById(R.id.txt_post_user)
+        private val mTxtTimePosted: TextView = itemView.findViewById(R.id.txt_time_posted)
         private val mTxtPostTitle: TextView = itemView.findViewById(R.id.txt_post_title)
         private val mTxtPostScore: TextView = itemView.findViewById(R.id.txt_post_score)
         private val mImgBtnPostVoteUp: ImageButton = itemView.findViewById(R.id.imgbtn_post_vote_up)
@@ -151,14 +152,13 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
         private val mBtnPostShare: Button = itemView.findViewById(R.id.btn_post_share)
 
         open fun onBind(post: Post) {
-            val user = ("Posted by u/" + post.author
-                    + " - "
-                    + DateUtils.getRelativeTimeSpanString(post.createdUtc * 1000) as String)
+            val user = "Posted by u/" + post.author
             val subreddit = "r/" + post.subreddit
 
             //Glide.with(parent.getContext()).load().placeholder(R.drawable.ic_launcher_background).into(mImgPostSubreddit);  //MUST GET SUBREDDIT ICON
             mTxtPostSubreddit.text = subreddit
             mTxtPostUser.text = user
+            mTxtTimePosted.text = DateUtils.getRelativeTimeSpanString(post.createdUtc * 1000).toString()
             mTxtPostTitle.text = post.title
             mTxtPostScore.text = formatValue(post.score.toDouble())
             mBtnPostNumComments.text = formatValue(post.numComments.toDouble())

@@ -25,7 +25,8 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@android:color/white" />
+                android:background="@android:color/white"
+                app:layout_scrollFlags="scroll|enterAlways|snap" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"

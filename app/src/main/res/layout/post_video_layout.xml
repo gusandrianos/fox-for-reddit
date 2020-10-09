@@ -79,12 +79,13 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_launcher_background" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatImageView
+                android:src="@drawable/ic_round_play_circle_outline_24"
+                android:padding="24dp"
                 android:id="@+id/txt_post_thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#40121212"
-                android:drawableBottom="@drawable/ic_round_play_circle_outline_24" />
+                android:background="#40121212" />
 
 
         </FrameLayout>

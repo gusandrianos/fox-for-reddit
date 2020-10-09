@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/img_post_subreddit"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:contentDescription="Subreddit IMG"
+        android:src="@mipmap/ic_launcher_round" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_post_subreddit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Subreddit Title" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/txt_post_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:text="Posted by User" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/txt_time_posted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="time ago" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

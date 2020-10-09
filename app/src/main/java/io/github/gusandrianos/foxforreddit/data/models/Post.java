@@ -5,6 +5,12 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class Post {
+    @SerializedName("body")
+    private String body;
+
+    @SerializedName("link_title")
+    private String linkTitle;
+
     @SerializedName("secure_media")
     private Object secureMedia;
 
@@ -241,9 +247,7 @@ public class Post {
         return postHint;
     }
 
-    public String getSelftext() {
-        return selftext;
-    }
+    public String getSelftext() { return selftext; }
 
     public String getUrlOverriddenByDest() {
         return urlOverriddenByDest;
@@ -278,6 +282,12 @@ public class Post {
     public String getId() {
         return id;
     }
+
+    public String getName() { return name; }
+
+    public String getBody() { return body; }
+
+    public String getLinkTitle() { return linkTitle; }
 
     @Override
     public String toString() {

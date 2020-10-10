@@ -136,7 +136,16 @@ class PostAdapter(private val listener: onItemClickListener) : PagingDataAdapter
         }
     }
 
-    inner abstract class AbstractPostViewHolder(var parent: View) : RecyclerView.ViewHolder(parent) {
+    fun onClick(position: Int, clicked: String){
+        if (position != RecyclerView.NO_POSITION) {    //For index -1. (Ex. animation and item deleted and its position is -1)
+            val item = getItem(position)
+            if (item != null) {                          //Maybe getItem return null
+                listener.onItemClick(item, clicked)
+            }
+        }
+    }
+
+    abstract inner class AbstractPostViewHolder(var parent: View) : RecyclerView.ViewHolder(parent) {
         private val mImgPostSubreddit: ImageView = itemView.findViewById(R.id.img_post_subreddit)
         private val mTxtPostSubreddit: TextView = itemView.findViewById(R.id.txt_post_subreddit)
         private val mTxtPostUser: TextView = itemView.findViewById(R.id.txt_post_user)
@@ -149,77 +158,30 @@ class PostAdapter(private val listener: onItemClickListener) : PagingDataAdapter
         private val mBtnPostShare: Button = itemView.findViewById(R.id.btn_post_share)
 
         init {
+
             parent.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {    //For index -1. (Ex. animation and item deleted and its position is -1)
-                    val item = getItem(position)
-                    if (item != null) {                          //Maybe getItem return null
-                        listener.onItemClick(item, "Item")
-                    }
-                }
+                onClick(bindingAdapterPosition, "Item")
             }
             mImgPostSubreddit.setOnClickListener{
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item != null) {
-                        listener.onItemClick(item, "Subreddit")
-                    }
-                }
+                onClick(bindingAdapterPosition, "subreddit")
             }
             mTxtPostSubreddit.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item != null) {
-                        listener.onItemClick(item, "subreddit")
-                    }
-                }
+                onClick(bindingAdapterPosition, "subreddit")
             }
             mTxtPostUser.setOnClickListener{
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item != null) {
-                        listener.onItemClick(item, "user")
-                    }
-                }
+                onClick(bindingAdapterPosition, "user")
             }
             mImgBtnPostVoteUp.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item != null) {
-                        listener.onItemClick(item, "VoteUp")
-                    }
-                }
+                onClick(bindingAdapterPosition, "VoteUp")
             }
             mImgBtnPostVoteDown.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item != null) {
-                        listener.onItemClick(item, "VoteDown")
-                    }
-                }
+                onClick(bindingAdapterPosition, "VoteDown")
             }
             mBtnPostNumComments.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item != null) {
-                        listener.onItemClick(item, "CommentsNum")
-                    }
-                }
+                onClick(bindingAdapterPosition, "CommentsNum")
             }
             mBtnPostShare.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item != null) {
-                        listener.onItemClick(item, "Share")
-                    }
-                }
+                onClick(bindingAdapterPosition, "Share")
             }
         }
 
@@ -262,13 +224,7 @@ class PostAdapter(private val listener: onItemClickListener) : PagingDataAdapter
 
         init {
             mImgPostThumbnail.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item != null) {
-                        listener.onItemClick(item, "Thumbnail")
-                    }
-                }
+                onClick(bindingAdapterPosition, "Thumbnail")
             }
         }
 
@@ -288,13 +244,7 @@ class PostAdapter(private val listener: onItemClickListener) : PagingDataAdapter
 
         init {
             mFlThumbnail.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item != null) {
-                        listener.onItemClick(item, "Thumbnail")
-                    }
-                }
+                onClick(bindingAdapterPosition, "Thumbnail")
             }
         }
 
@@ -311,13 +261,7 @@ class PostAdapter(private val listener: onItemClickListener) : PagingDataAdapter
 
         init {
             mFlThumbnail.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item != null) {
-                        listener.onItemClick(item, "Thumbnail")
-                    }
-                }
+                onClick(bindingAdapterPosition, "Thumbnail")
             }
         }
 
@@ -337,13 +281,7 @@ class PostAdapter(private val listener: onItemClickListener) : PagingDataAdapter
 
         init {
             mBtnPostVoteNow.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item != null) {
-                        listener.onItemClick(item, "VoteNow")
-                    }
-                }
+                onClick(bindingAdapterPosition, "VoteNow")
             }
         }
 

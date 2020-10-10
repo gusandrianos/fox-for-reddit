@@ -13,13 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 
 import org.jetbrains.annotations.NotNull;
 
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Post;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
@@ -29,7 +29,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import kotlin.Unit;
 
 
-public class PostFragment extends Fragment implements PostAdapter.onItemClickListener{
+public class PostFragment extends Fragment implements PostAdapter.OnItemClickListener{
     // Add RecyclerView member
     private View mView;
     private Token mToken;
@@ -92,35 +92,36 @@ public class PostFragment extends Fragment implements PostAdapter.onItemClickLis
     }
 
     @Override
-    public void onItemClick(@NotNull Post post, @NotNull String pressed) {
+    public void onItemClick(@NotNull Post post, @NotNull String clicked) {
         Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
-        switch (pressed){
-            case "subreddit":
+
+        switch (clicked){
+            case Constants.POST_SUBREDDIT:
                 Toast.makeText(getActivity(), "Subreddit", Toast.LENGTH_SHORT).show();
                 break;
-            case "user":
+            case Constants.POST_USER:
                 Toast.makeText(getActivity(), "user", Toast.LENGTH_SHORT).show();
                 break;
-            case "Thumbnail":
+            case Constants.POST_THUMBNAIL:
                 Toast.makeText(getActivity(), "Thumbnail", Toast.LENGTH_SHORT).show();
                 break;
-            case "VoteUp":
+            case Constants.POST_VOTE_UP:
                 Toast.makeText(getActivity(), "VoteUp", Toast.LENGTH_SHORT).show();
                 break;
-            case "VoteDown":
+            case Constants.POST_VOTE_DOWN:
                 Toast.makeText(getActivity(), "VoteDown", Toast.LENGTH_SHORT).show();
                 break;
-            case "CommentsNum":
+            case Constants.POST_COMMENTS_NUM:
                 Toast.makeText(getActivity(), "CommentsNum", Toast.LENGTH_SHORT).show();
                 break;
-            case "Share":
+            case Constants.POST_SHARE:
                 Toast.makeText(getActivity(), "Share", Toast.LENGTH_SHORT).show();
                 break;
-            case "VoteNow":
+            case Constants.POST_VOTE_NOW:
                 Toast.makeText(getActivity(), "Vote Now", Toast.LENGTH_SHORT).show();
                 break;
             default:
-                Toast.makeText(getActivity(), "Item", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), post.getAuthor(), Toast.LENGTH_SHORT).show();
         }
     }
 

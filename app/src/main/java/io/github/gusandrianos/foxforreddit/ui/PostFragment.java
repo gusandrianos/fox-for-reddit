@@ -13,10 +13,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
+import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.Post;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
@@ -24,7 +29,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import kotlin.Unit;
 
 
-public class PostFragment extends Fragment {
+public class PostFragment extends Fragment implements PostAdapter.onItemClickListener{
     // Add RecyclerView member
     private View mView;
     private Token mToken;
@@ -54,7 +59,7 @@ public class PostFragment extends Fragment {
 
     private void initRecycleView() {
         RecyclerView mPostRecyclerView = mView.findViewById(R.id.recyclerview);
-        mPostRecyclerViewAdapter = new PostAdapter();
+        mPostRecyclerViewAdapter = new PostAdapter(this);
         mPostRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY); //keep recyclerview on position
         mPostRecyclerView.setHasFixedSize(true);
         mPostRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -85,4 +90,38 @@ public class PostFragment extends Fragment {
             Stetho.initializeWithDefaults(getActivity());
         }
     }
+
+    @Override
+    public void onItemClick(@NotNull Post post, @NotNull String pressed) {
+        Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
+        switch (pressed){
+            case "subreddit":
+                Toast.makeText(getActivity(), "Subreddit", Toast.LENGTH_SHORT).show();
+                break;
+            case "user":
+                Toast.makeText(getActivity(), "user", Toast.LENGTH_SHORT).show();
+                break;
+            case "Thumbnail":
+                Toast.makeText(getActivity(), "Thumbnail", Toast.LENGTH_SHORT).show();
+                break;
+            case "VoteUp":
+                Toast.makeText(getActivity(), "VoteUp", Toast.LENGTH_SHORT).show();
+                break;
+            case "VoteDown":
+                Toast.makeText(getActivity(), "VoteDown", Toast.LENGTH_SHORT).show();
+                break;
+            case "CommentsNum":
+                Toast.makeText(getActivity(), "CommentsNum", Toast.LENGTH_SHORT).show();
+                break;
+            case "Share":
+                Toast.makeText(getActivity(), "Share", Toast.LENGTH_SHORT).show();
+                break;
+            case "VoteNow":
+                Toast.makeText(getActivity(), "Vote Now", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                Toast.makeText(getActivity(), "Item", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

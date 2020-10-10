@@ -9,6 +9,7 @@
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:contentDescription="Subreddit IMG"
+        android:clickable="true"
         android:src="@mipmap/ic_launcher_round" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -20,6 +21,7 @@
             android:id="@+id/txt_post_subreddit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="true"
             android:text="Subreddit Title" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -31,6 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
+                android:clickable="true"
                 android:text="Posted by User" />
 
             <androidx.appcompat.widget.AppCompatTextView

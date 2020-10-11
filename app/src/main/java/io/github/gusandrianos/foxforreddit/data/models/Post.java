@@ -289,6 +289,10 @@ public class Post {
 
     public String getLinkTitle() { return linkTitle; }
 
+    public String getAuthorFullname() {
+        return authorFullname;
+    }
+
     @Override
     public String toString() {
         return "Post{" +

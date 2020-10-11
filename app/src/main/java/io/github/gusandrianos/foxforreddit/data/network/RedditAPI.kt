@@ -1,11 +1,9 @@
 package io.github.gusandrianos.foxforreddit.data.network
 
 import io.github.gusandrianos.foxforreddit.data.models.Listing
+import org.json.JSONObject
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface RedditAPI {
     /**
@@ -32,4 +30,13 @@ interface RedditAPI {
             @Query("after") after: String?,
             @Header("Authorization") bearer: String?
     ): Call<Listing>
+
+    @FormUrlEncoded
+    @POST("/api/vote")
+    fun votePost(
+            @Header("Authorization") bearer: String?,
+            @Field("dir") dir: String?,
+            @Field("id") id: String?,
+            @Field("rank") rank: Int?
+    ): Call<Void>
 }

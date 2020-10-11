@@ -1,6 +1,7 @@
 package io.github.gusandrianos.foxforreddit.ui
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater

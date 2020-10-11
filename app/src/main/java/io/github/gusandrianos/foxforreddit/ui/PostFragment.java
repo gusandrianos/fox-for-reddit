@@ -94,7 +94,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     @Override
     public void onItemClick(@NotNull Post post, @NotNull String clicked) {
         Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
-
+        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         switch (clicked){
             case Constants.POST_SUBREDDIT:
                 Toast.makeText(getActivity(), "Subreddit", Toast.LENGTH_SHORT).show();
@@ -107,9 +108,20 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 break;
             case Constants.POST_VOTE_UP:
                 Toast.makeText(getActivity(), "VoteUp", Toast.LENGTH_SHORT).show();
+                if(post.getLikes()==null || !((Boolean) post.getLikes()))   //If down or no voted
+                    viewModel.votePost("1",post.getName(),mToken);      //then send up vote
+                else{                                                       //else (up voted)
+                    viewModel.votePost("0",post.getName(),mToken);      //send no vote
+                }
                 break;
             case Constants.POST_VOTE_DOWN:
                 Toast.makeText(getActivity(), "VoteDown", Toast.LENGTH_SHORT).show();
+                if(post.getLikes()==null || ((Boolean) post.getLikes()))   //If up or no voted
+                    viewModel.votePost("-1",post.getName(),mToken);    //then send down vote
+                else{                                                      //else (down voted)
+                    viewModel.votePost("0",post.getName(),mToken);     //send no vote
+                }
+
                 break;
             case Constants.POST_COMMENTS_NUM:
                 Toast.makeText(getActivity(), "CommentsNum", Toast.LENGTH_SHORT).show();

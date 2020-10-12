@@ -92,49 +92,56 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     }
 
     @Override
-    public void onItemClick(@NotNull Post post, @NotNull String clicked) {
+    public void onItemClick(@NotNull Post post, @NotNull String clicked) {      //ToDo improve voting system (Binding Adapter and viewModel)
         Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         switch (clicked){
             case Constants.POST_SUBREDDIT:
                 Toast.makeText(getActivity(), "Subreddit", Toast.LENGTH_SHORT).show();
+                //Todo open post
                 break;
             case Constants.POST_USER:
                 Toast.makeText(getActivity(), "user", Toast.LENGTH_SHORT).show();
+                //Todo open user
                 break;
             case Constants.POST_THUMBNAIL:
                 Toast.makeText(getActivity(), "Thumbnail", Toast.LENGTH_SHORT).show();
+                //Todo open thumbnail
                 break;
             case Constants.POST_VOTE_UP:
-                Toast.makeText(getActivity(), "VoteUp", Toast.LENGTH_SHORT).show();
-                if(post.getLikes()==null || !((Boolean) post.getLikes()))   //If down or no voted
+                if(post.getLikes()==null || !((Boolean) post.getLikes())) {  //If down or no voted
                     viewModel.votePost("1",post.getName(),mToken);      //then send up vote
-                else{                                                       //else (up voted)
+                    post.setLikes(true);
+                }else{                                                       //else (up voted)
                     viewModel.votePost("0",post.getName(),mToken);      //send no vote
+                    post.setLikes(null);
                 }
                 break;
             case Constants.POST_VOTE_DOWN:
-                Toast.makeText(getActivity(), "VoteDown", Toast.LENGTH_SHORT).show();
-                if(post.getLikes()==null || ((Boolean) post.getLikes()))   //If up or no voted
+                if(post.getLikes()==null || ((Boolean) post.getLikes())) {  //If up or no voted
                     viewModel.votePost("-1",post.getName(),mToken);    //then send down vote
-                else{                                                      //else (down voted)
+                    post.setLikes(false);
+                }else{                                                      //else (down voted)
                     viewModel.votePost("0",post.getName(),mToken);     //send no vote
+                    post.setLikes(null);
                 }
-
                 break;
             case Constants.POST_COMMENTS_NUM:
                 Toast.makeText(getActivity(), "CommentsNum", Toast.LENGTH_SHORT).show();
+                //Todo open post
                 break;
             case Constants.POST_SHARE:
                 Toast.makeText(getActivity(), "Share", Toast.LENGTH_SHORT).show();
+                //Todo share
                 break;
             case Constants.POST_VOTE_NOW:
                 Toast.makeText(getActivity(), "Vote Now", Toast.LENGTH_SHORT).show();
+                //Todo open vote post
                 break;
             default:
                 Toast.makeText(getActivity(), post.getAuthor(), Toast.LENGTH_SHORT).show();
+                //Todo open post
         }
     }
-
 }

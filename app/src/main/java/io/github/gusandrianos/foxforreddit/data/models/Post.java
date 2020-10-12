@@ -293,6 +293,10 @@ public class Post {
         return authorFullname;
     }
 
+    public void setLikes(Object likes) {
+        this.likes = likes;
+    }
+
     @Override
     public String toString() {
         return "Post{" +

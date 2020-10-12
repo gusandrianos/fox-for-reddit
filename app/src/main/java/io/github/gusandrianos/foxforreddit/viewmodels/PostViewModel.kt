@@ -1,9 +1,6 @@
 package io.github.gusandrianos.foxforreddit.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import io.github.gusandrianos.foxforreddit.data.models.Post
@@ -12,7 +9,6 @@ import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository
 
 class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
     var posts: LiveData<PagingData<Post>>? = null
-    var vote: LiveData<Void>? = null
 
     fun getPosts(subreddit: String, filter: String, token: Token): LiveData<PagingData<Post>> {
         if (posts != null) {

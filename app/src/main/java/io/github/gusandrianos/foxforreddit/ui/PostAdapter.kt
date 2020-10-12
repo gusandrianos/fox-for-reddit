@@ -1,7 +1,6 @@
 package io.github.gusandrianos.foxforreddit.ui
 
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -165,9 +164,25 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
                 onClick(bindingAdapterPosition, Constants.POST_USER)
             }
             mImgBtnPostVoteUp.setOnClickListener {
+                if (getItem((bindingAdapterPosition))?.likes == null || getItem((bindingAdapterPosition))?.likes == false) {
+                    mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
+                    mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24)
+                    mTxtPostScore.setTextColor(Color.parseColor("#FFE07812"))
+                } else {
+                    mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24)
+                    mTxtPostScore.setTextColor(Color.parseColor("#AAAAAA"))
+                }
                 onClick(bindingAdapterPosition, Constants.POST_VOTE_UP)
             }
             mImgBtnPostVoteDown.setOnClickListener {
+                if (getItem((bindingAdapterPosition))?.likes == null || getItem((bindingAdapterPosition))?.likes == true) {
+                    mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
+                    mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24)
+                    mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"))
+                } else {
+                    mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24)
+                    mTxtPostScore.setTextColor(Color.parseColor("#AAAAAA"))
+                }
                 onClick(bindingAdapterPosition, Constants.POST_VOTE_DOWN)
             }
             mBtnPostNumComments.setOnClickListener {
@@ -188,13 +203,13 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
             mTxtPostTitle.text = post.title
             mTxtPostScore.text = formatValue(post.score.toDouble())
             mBtnPostNumComments.text = formatValue(post.numComments.toDouble())
-            if (post.likes!=null){
-                if(post.likes==true){
+            if (post.likes != null) {
+                if (post.likes == true) {
                     mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
-                    mTxtPostScore.setTextColor(Color.parseColor(("#FFE07812")))
-                }else{
+                    mTxtPostScore.setTextColor(Color.parseColor("#FFE07812"))
+                } else {
                     mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
-                    mTxtPostScore.setTextColor(Color.parseColor(("#FF5AA4FF")))
+                    mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"))
                 }
             }
         }
@@ -322,8 +337,6 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
         fun onItemClick(post: Post, pressed: String)
     }
 }
-
-
 
 fun getPollEndingDate(timestamp: Long): String {
     val now = Instant.now().toEpochMilli()

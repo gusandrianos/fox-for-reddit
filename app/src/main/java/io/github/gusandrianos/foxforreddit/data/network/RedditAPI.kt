@@ -1,7 +1,6 @@
 package io.github.gusandrianos.foxforreddit.data.network
 
 import io.github.gusandrianos.foxforreddit.data.models.Listing
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.*
 

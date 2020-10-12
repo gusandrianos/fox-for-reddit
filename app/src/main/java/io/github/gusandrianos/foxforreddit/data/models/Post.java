@@ -289,6 +289,14 @@ public class Post {
 
     public String getLinkTitle() { return linkTitle; }
 
+    public String getAuthorFullname() {
+        return authorFullname;
+    }
+
+    public void setLikes(Object likes) {
+        this.likes = likes;
+    }
+
     @Override
     public String toString() {
         return "Post{" +

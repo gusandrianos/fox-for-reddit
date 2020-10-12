@@ -1,8 +1,6 @@
 package io.github.gusandrianos.foxforreddit.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import io.github.gusandrianos.foxforreddit.data.models.Post
@@ -18,5 +16,9 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
         }
         posts = mPostRepository.getPosts(subreddit, filter, token).cachedIn(viewModelScope)
         return posts!!
+    }
+
+    fun votePost(dir: String, id: String, token: Token){
+        mPostRepository.votePost(dir, id, token)
     }
 }

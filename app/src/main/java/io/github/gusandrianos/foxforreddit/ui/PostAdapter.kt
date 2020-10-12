@@ -1,18 +1,17 @@
 package io.github.gusandrianos.foxforreddit.ui
 
+import android.graphics.Color
 import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Post
 
@@ -22,7 +21,7 @@ import java.text.NumberFormat
 import java.time.Instant
 import kotlin.math.pow
 
-class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPARATOR) {
+class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPARATOR) {
 
     private val SELF = 1
     private val LINK = 2
@@ -139,7 +138,7 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
         }
     }
 
-    abstract class AbstractPostViewHolder(var parent: View) : RecyclerView.ViewHolder(parent) {
+    abstract inner class AbstractPostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val mImgPostSubreddit: ImageView = itemView.findViewById(R.id.img_post_subreddit)
         private val mTxtPostSubreddit: TextView = itemView.findViewById(R.id.txt_post_subreddit)
         private val mTxtPostUser: TextView = itemView.findViewById(R.id.txt_post_user)
@@ -151,10 +150,52 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
         private val mBtnPostNumComments: Button = itemView.findViewById(R.id.btn_post_num_comments)
         private val mBtnPostShare: Button = itemView.findViewById(R.id.btn_post_share)
 
+        init {
+            itemView.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_ITEM)
+            }
+            mImgPostSubreddit.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT)
+            }
+            mTxtPostSubreddit.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT)
+            }
+            mTxtPostUser.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_USER)
+            }
+            mImgBtnPostVoteUp.setOnClickListener {
+                if (getItem((bindingAdapterPosition))?.likes == null || getItem((bindingAdapterPosition))?.likes == false) {
+                    mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
+                    mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24)
+                    mTxtPostScore.setTextColor(Color.parseColor("#FFE07812"))
+                } else {
+                    mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24)
+                    mTxtPostScore.setTextColor(Color.parseColor("#AAAAAA"))
+                }
+                onClick(bindingAdapterPosition, Constants.POST_VOTE_UP)
+            }
+            mImgBtnPostVoteDown.setOnClickListener {
+                if (getItem((bindingAdapterPosition))?.likes == null || getItem((bindingAdapterPosition))?.likes == true) {
+                    mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
+                    mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24)
+                    mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"))
+                } else {
+                    mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24)
+                    mTxtPostScore.setTextColor(Color.parseColor("#AAAAAA"))
+                }
+                onClick(bindingAdapterPosition, Constants.POST_VOTE_DOWN)
+            }
+            mBtnPostNumComments.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_COMMENTS_NUM)
+            }
+            mBtnPostShare.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_SHARE)
+            }
+        }
+
         open fun onBind(post: Post) {
             val user = "Posted by u/" + post.author
             val subreddit = "r/" + post.subreddit
-
             //Glide.with(parent.getContext()).load().placeholder(R.drawable.ic_launcher_background).into(mImgPostSubreddit);  //MUST GET SUBREDDIT ICON
             mTxtPostSubreddit.text = subreddit
             mTxtPostUser.text = user
@@ -162,56 +203,86 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
             mTxtPostTitle.text = post.title
             mTxtPostScore.text = formatValue(post.score.toDouble())
             mBtnPostNumComments.text = formatValue(post.numComments.toDouble())
+            if (post.likes != null) {
+                if (post.likes == true) {
+                    mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
+                    mTxtPostScore.setTextColor(Color.parseColor("#FFE07812"))
+                } else {
+                    mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
+                    mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"))
+                }
+            }
         }
-
     }
 
-    class PostSelfViewHolder(itemView: View) : AbstractPostViewHolder(itemView) {
+    inner class PostSelfViewHolder(itemView: View) : AbstractPostViewHolder(itemView) {
 
         override fun onBind(post: Post) {
             super.onBind(post)
         }
-
     }
 
-    class PostImageViewHolder(itemView: View) : AbstractPostViewHolder(itemView) {
+    inner class PostImageViewHolder(itemView: View) : AbstractPostViewHolder(itemView) {
         private val mImgPostThumbnail: ImageView = itemView.findViewById(R.id.img_post_thumbnail)
+
+        init {
+            mImgPostThumbnail.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL)
+            }
+        }
 
         override fun onBind(post: Post) {
             super.onBind(post)
             //Todo if it is nsfw
-            Glide.with(parent).load(post.thumbnail).placeholder(R.drawable.ic_launcher_background).into(mImgPostThumbnail)
+            Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.ic_launcher_background).into(mImgPostThumbnail)
         }
-
     }
 
-    class PostLinkViewHolder(itemView: View) : AbstractPostViewHolder(itemView) {
+    inner class PostLinkViewHolder(itemView: View) : AbstractPostViewHolder(itemView) {
+        private val mFlThumbnail: FrameLayout = itemView.findViewById(R.id.fl_thumbnail)
         private val mImgPostThumbnail: ImageView = itemView.findViewById(R.id.img_post_thumbnail)
         private val mTxtPostDomain: TextView = itemView.findViewById(R.id.txt_post_domain)
 
+        init {
+            mFlThumbnail.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL)
+            }
+        }
+
         override fun onBind(post: Post) {
             super.onBind(post)
-            Glide.with(parent).load(post.thumbnail).placeholder(R.drawable.ic_launcher_background).into(mImgPostThumbnail)
+            Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.ic_launcher_background).into(mImgPostThumbnail)
             mTxtPostDomain.text = post.domain
             mTxtPostDomain.tag = post.urlOverriddenByDest
         }
-
     }
 
-    class PostVideoViewHolder(itemView: View) : AbstractPostViewHolder(itemView) {
+    inner class PostVideoViewHolder(itemView: View) : AbstractPostViewHolder(itemView) {
+        private val mFlThumbnail: FrameLayout = itemView.findViewById(R.id.fl_thumbnail)
         private val mImgPostThumbnail: ImageView = itemView.findViewById(R.id.img_post_thumbnail)
+
+        init {
+            mFlThumbnail.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL)
+            }
+        }
 
         override fun onBind(post: Post) {
             super.onBind(post)
-            Glide.with(parent).load(post.thumbnail).placeholder(R.drawable.ic_launcher_background).into(mImgPostThumbnail)
+            Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.ic_launcher_background).into(mImgPostThumbnail)
         }
-
     }
 
-    class PostPollViewHolder(itemView: View) : AbstractPostViewHolder(itemView) {
+    inner class PostPollViewHolder(itemView: View) : AbstractPostViewHolder(itemView) {
         private val mBtnPostVoteNow: Button = itemView.findViewById(R.id.btn_post_vote_now)
         private val mTxtPostVoteNum: TextView = itemView.findViewById(R.id.txt_post_vote_num)
         private val mTxtPostVoteTimeLeft: TextView = itemView.findViewById(R.id.txt_post_vote_time_left)
+
+        init {
+            mBtnPostVoteNow.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_VOTE_NOW)
+            }
+        }
 
         override fun onBind(post: Post) {
             super.onBind(post)
@@ -219,18 +290,28 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
             mTxtPostVoteNum.text = votes
             mTxtPostVoteTimeLeft.text = getPollEndingDate(post.pollData.votingEndTimestamp)
         }
-
     }
 
     // We know naming it PostComment instead of Comment is stupid, don't judge hey :p
-    class PostCommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
+    inner class PostCommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val mTxtPostUser: TextView = itemView.findViewById(R.id.txt_post_user)
         private val mTxtTimePosted: TextView = itemView.findViewById(R.id.txt_time_posted)
         private val mTxtPostScore: TextView = itemView.findViewById(R.id.txt_post_score)
         private val mTxtPostTitle: TextView = itemView.findViewById(R.id.txt_post_title)
         private val mTxtPostSubreddit: TextView = itemView.findViewById(R.id.txt_post_subreddit)
         private val mTxtComment: TextView = itemView.findViewById(R.id.txt_comment)
+
+        init {
+            itemView.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_ITEM)
+            }
+            mTxtPostUser.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_USER)
+            }
+            mTxtPostSubreddit.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT)
+            }
+        }
 
         fun onBind(comment: Post) {
             val subreddit = "In r/" + comment.subreddit
@@ -241,7 +322,19 @@ class PostAdapter : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPAR
             mTxtPostSubreddit.text = subreddit
             mTxtComment.text = comment.body
         }
+    }
 
+    fun onClick(position: Int, clicked: String) {
+        if (position != RecyclerView.NO_POSITION) {    //For index -1. (Ex. animation and item deleted and its position is -1)
+            val item = getItem(position)
+            if (item != null) {                          //Maybe getItem return null
+                listener.onItemClick(item, clicked)
+            }
+        }
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(post: Post, pressed: String)
     }
 }
 

@@ -13,10 +13,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 
+import org.jetbrains.annotations.NotNull;
+
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.Post;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
@@ -24,7 +29,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import kotlin.Unit;
 
 
-public class PostFragment extends Fragment {
+public class PostFragment extends Fragment implements PostAdapter.OnItemClickListener{
     // Add RecyclerView member
     private View mView;
     private Token mToken;
@@ -54,7 +59,7 @@ public class PostFragment extends Fragment {
 
     private void initRecycleView() {
         RecyclerView mPostRecyclerView = mView.findViewById(R.id.recyclerview);
-        mPostRecyclerViewAdapter = new PostAdapter();
+        mPostRecyclerViewAdapter = new PostAdapter(this);
         mPostRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY); //keep recyclerview on position
         mPostRecyclerView.setHasFixedSize(true);
         mPostRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -83,6 +88,60 @@ public class PostFragment extends Fragment {
             initRecycleView();
             initializeUI();
             Stetho.initializeWithDefaults(getActivity());
+        }
+    }
+
+    @Override
+    public void onItemClick(@NotNull Post post, @NotNull String clicked) {      //ToDo improve voting system (Binding Adapter and viewModel)
+        Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
+        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        switch (clicked){
+            case Constants.POST_SUBREDDIT:
+                Toast.makeText(getActivity(), "Subreddit", Toast.LENGTH_SHORT).show();
+                //Todo open post
+                break;
+            case Constants.POST_USER:
+                Toast.makeText(getActivity(), "user", Toast.LENGTH_SHORT).show();
+                //Todo open user
+                break;
+            case Constants.POST_THUMBNAIL:
+                Toast.makeText(getActivity(), "Thumbnail", Toast.LENGTH_SHORT).show();
+                //Todo open thumbnail
+                break;
+            case Constants.POST_VOTE_UP:
+                if(post.getLikes()==null || !((Boolean) post.getLikes())) {  //If down or no voted
+                    viewModel.votePost("1",post.getName(),mToken);      //then send up vote
+                    post.setLikes(true);
+                }else{                                                       //else (up voted)
+                    viewModel.votePost("0",post.getName(),mToken);      //send no vote
+                    post.setLikes(null);
+                }
+                break;
+            case Constants.POST_VOTE_DOWN:
+                if(post.getLikes()==null || ((Boolean) post.getLikes())) {  //If up or no voted
+                    viewModel.votePost("-1",post.getName(),mToken);    //then send down vote
+                    post.setLikes(false);
+                }else{                                                      //else (down voted)
+                    viewModel.votePost("0",post.getName(),mToken);     //send no vote
+                    post.setLikes(null);
+                }
+                break;
+            case Constants.POST_COMMENTS_NUM:
+                Toast.makeText(getActivity(), "CommentsNum", Toast.LENGTH_SHORT).show();
+                //Todo open post
+                break;
+            case Constants.POST_SHARE:
+                Toast.makeText(getActivity(), "Share", Toast.LENGTH_SHORT).show();
+                //Todo share
+                break;
+            case Constants.POST_VOTE_NOW:
+                Toast.makeText(getActivity(), "Vote Now", Toast.LENGTH_SHORT).show();
+                //Todo open vote post
+                break;
+            default:
+                Toast.makeText(getActivity(), post.getAuthor(), Toast.LENGTH_SHORT).show();
+                //Todo open post
         }
     }
 }

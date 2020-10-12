@@ -27,6 +27,7 @@
             android:layout_weight="0.3"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
+            android:clickable="true"
             android:src="@drawable/ic_launcher_background" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 

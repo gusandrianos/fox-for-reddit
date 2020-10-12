@@ -22,9 +22,11 @@
             android:textSize="16sp" />
 
         <FrameLayout
+            android:id="@+id/fl_thumbnail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.3">
+            android:layout_weight="0.3"
+            android:clickable="true">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_post_thumbnail"

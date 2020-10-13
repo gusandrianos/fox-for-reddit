@@ -1,6 +1,7 @@
 package io.github.gusandrianos.foxforreddit.data.network
 
 import io.github.gusandrianos.foxforreddit.data.models.Listing
+import io.github.gusandrianos.foxforreddit.data.models.UserResponse
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -22,14 +23,6 @@ interface RedditAPI {
             @Header("Authorization") bearer: String
     ): Listing
 
-    @GET("{subreddit}/{filter}")
-    fun getPosts(
-            @Path("subreddit") subreddit: String?,
-            @Path("filter") filter: String?,
-            @Query("after") after: String?,
-            @Header("Authorization") bearer: String?
-    ): Call<Listing>
-
     @FormUrlEncoded
     @POST("/api/vote")
     fun votePost(
@@ -38,4 +31,11 @@ interface RedditAPI {
             @Field("id") id: String?,
             @Field("rank") rank: Int?
     ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("user/{username}/about")
+    fun getUser(
+            @Path("username") username: String,
+            @Header("Authorization") bearer: String?,
+    ): Call<UserResponse>
 }

@@ -15,8 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.facebook.stetho.Stetho;
-
 import org.jetbrains.annotations.NotNull;
 
 import io.github.gusandrianos.foxforreddit.Constants;
@@ -54,7 +52,6 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         filter = getArguments().getString("filter", "");
         initRecycleView();
         initializeUI();
-        Stetho.initializeWithDefaults(getActivity());
     }
 
     private void initRecycleView() {
@@ -87,7 +84,6 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             mToken = token;
             initRecycleView();
             initializeUI();
-            Stetho.initializeWithDefaults(getActivity());
         }
     }
 

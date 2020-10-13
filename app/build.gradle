@@ -33,7 +33,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
@@ -58,8 +58,6 @@ dependencies {
     //Room
     implementation 'androidx.room:room-runtime:2.2.5'
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
-    //Facebook Stetho for DB Debugging
-    implementation 'com.facebook.stetho:stetho:1.5.1'
     //Paging
     implementation 'androidx.paging:paging-runtime-ktx:3.0.0-alpha07'
     // Navigation Component

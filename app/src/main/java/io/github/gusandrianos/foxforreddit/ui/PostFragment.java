@@ -28,7 +28,6 @@ import kotlin.Unit;
 
 
 public class PostFragment extends Fragment implements PostAdapter.OnItemClickListener{
-    // Add RecyclerView member
     private View mView;
     private Token mToken;
     String subreddit;
@@ -139,5 +138,16 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 Toast.makeText(getActivity(), post.getAuthor(), Toast.LENGTH_SHORT).show();
                 //Todo open post
         }
+    }
+
+    public static PostFragment newInstance(String subreddit, String filter) {
+        PostFragment fragment = new PostFragment();
+
+        Bundle args = new Bundle();
+        args.putString("subreddit", subreddit);
+        args.putString("filter", filter);
+        fragment.setArguments(args);
+
+        return fragment;
     }
 }

@@ -1,7 +1,9 @@
 package io.github.gusandrianos.foxforreddit.data.network
 
 import io.github.gusandrianos.foxforreddit.data.models.Listing
+import io.github.gusandrianos.foxforreddit.data.models.User
 import io.github.gusandrianos.foxforreddit.data.models.UserResponse
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -32,10 +34,14 @@ interface RedditAPI {
             @Field("rank") rank: Int?
     ): Call<Void>
 
-    @FormUrlEncoded
-    @POST("user/{username}/about")
+    @GET("user/{username}/about")
     fun getUser(
             @Path("username") username: String,
             @Header("Authorization") bearer: String?,
     ): Call<UserResponse>
+
+    @GET("api/v1/me")
+    fun getMe(
+            @Header("Authorization") bearer: String,
+    ): Call<User>
 }

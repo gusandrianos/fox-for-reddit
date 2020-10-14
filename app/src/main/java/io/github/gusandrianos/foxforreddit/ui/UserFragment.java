@@ -4,28 +4,33 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
-import java.util.ArrayList;
-
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.User;
+import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 public class UserFragment extends Fragment {
+
+    private User mUser;
 
     @Nullable
     @Override
@@ -36,40 +41,62 @@ public class UserFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mUser = MainActivity.mUser;
+        String username;
+
+        if (getArguments() != null)
+            username = getArguments().getString("username", "");
+        else
+            username = mUser.getName();
 
         setUpToolbar();
 
-        ViewPager viewPager = view.findViewById(R.id.profile_view_pager);
-        TabLayout tabLayout = view.findViewById(R.id.profile_tab_layout);
+        CollapsingToolbarLayout collapsingToolbar = getActivity().findViewById(R.id.profile_collapsing_toolbar);
 
-        ArrayList<PostFragment> homeFragments = new ArrayList<>();
-        homeFragments.add(newPostFragment("u/Dinos_12345", ""));
-
-        tabLayout.setupWithViewPager(viewPager);
-
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
-        viewPagerAdapter.addFragment(homeFragments.get(0), "HOME");
-
-        viewPager.setAdapter(viewPagerAdapter);
+        if (username.equals(mUser.getName())) {
+            collapsingToolbar.setTitle(mUser.getName());
+            buildUserProfile(mUser, view, true);
+        } else {
+            UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory(getActivity().getApplication());
+            UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+            collapsingToolbar.setTitle(username);
+            viewModel.getUser(username).observe(getViewLifecycleOwner(), user -> {
+                buildUserProfile(user, view, user.getName().equals(mUser.getName()));
+            });
+        }
     }
 
-    public PostFragment newPostFragment(String subreddit, String filter) {
-        PostFragment fragment = new PostFragment();
+    private void buildUserProfile(User user, View view, boolean isSelf) {
+        ViewPager viewPager = view.findViewById(R.id.profile_view_pager);
+        TabLayout tabLayout = view.findViewById(R.id.profile_tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
+        if(isSelf)
+            tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
-        Bundle args = new Bundle();
-        args.putString("subreddit", subreddit);
-        args.putString("filter", filter);
-        fragment.setArguments(args);
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
 
-        return fragment;
+        viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/submitted", ""), "Posts");
+        viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/comments", ""), "Comments");
+        viewPager.setAdapter(viewPagerAdapter);
+        if (isSelf) {
+            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/upvoted", ""), "Upvoted");
+            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/downvoted", ""), "Downvoted");
+            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/hidden", ""), "Hidden");
+            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/saved", ""), "Saved");
+            viewPagerAdapter.notifyDataSetChanged();
+        }
+        ImageView profilePic = getActivity().findViewById(R.id.profile_picture);
+        ImageView coverPic = getActivity().findViewById(R.id.profile_cover);
+        Glide.with(view).load(user.getIconImg().split("\\?")[0]).into(profilePic);
+        Glide.with(view).load(user.getSubreddit().getBannerImg().split("\\?")[0]).into(coverPic);
     }
 
     private void setUpToolbar() {
         MainActivity mainActivity = (MainActivity) getActivity();
-        NavigationView navigationView = ((AppCompatActivity) getActivity()).findViewById(R.id.nav_view);
+        NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
         NavController navController = NavHostFragment.findNavController(this);
         AppBarConfiguration appBarConfiguration = mainActivity.appBarConfiguration;
-        Toolbar toolbar = ((AppCompatActivity) getActivity()).findViewById(R.id.profile_toolbar);
+        Toolbar toolbar = getActivity().findViewById(R.id.profile_toolbar);
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }

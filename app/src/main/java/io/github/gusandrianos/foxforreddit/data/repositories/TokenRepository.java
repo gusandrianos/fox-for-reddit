@@ -168,9 +168,8 @@ public class TokenRepository {
 
     public Token getToken() {
         if (mToken != null) {
-            long now = Instant.now().getEpochSecond();
-            long expiration = mToken.getExpirationTimestamp();
-            if (expiration - now > 0)
+
+            if (!mToken.hasExpired())
                 return mToken;
             else {
                 if (refreshToken() != null)
@@ -181,12 +180,8 @@ public class TokenRepository {
             }
         }
 
-        //TODO: Clean this
-
         if (getCachedToken() != null) {
-            long now = Instant.now().getEpochSecond();
-            long expiration = mToken.getExpirationTimestamp();
-            if (expiration - now > 0) {
+            if (!mToken.hasExpired()) {
                 return mToken;
             } else {
                 if (refreshToken() != null) {
@@ -194,6 +189,7 @@ public class TokenRepository {
                 }
             }
         }
+
         if (getNewToken() != null) {
             return mToken;
         }

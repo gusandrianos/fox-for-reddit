@@ -8,6 +8,8 @@ import androidx.room.PrimaryKey;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.time.Instant;
+
 @Entity(tableName = "token_table")
 public class Token {
     @PrimaryKey
@@ -46,6 +48,12 @@ public class Token {
         this.expiresIn = expiresIn;
         this.scope = scope;
         this.refreshToken = refreshToken;
+    }
+
+    public boolean hasExpired() {
+        long now = Instant.now().getEpochSecond();
+        long expiration = expirationTimestamp;
+        return now > expiration;
     }
 
     @NonNull

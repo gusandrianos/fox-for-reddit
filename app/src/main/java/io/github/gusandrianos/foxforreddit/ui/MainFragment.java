@@ -48,8 +48,8 @@ public class MainFragment extends Fragment {
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
 
         homeFragments = new ArrayList<>();
-        homeFragments.add(newPostFragment("", ""));
-        homeFragments.add(newPostFragment("r/all", "hot"));
+        homeFragments.add(PostFragment.newInstance("", ""));
+        homeFragments.add(PostFragment.newInstance("r/all", "hot"));
 
         tabLayout.setupWithViewPager(viewPager);
 
@@ -58,17 +58,6 @@ public class MainFragment extends Fragment {
         viewPagerAdapter.addFragment(homeFragments.get(1), "POPULAR");
 
         viewPager.setAdapter(viewPagerAdapter);
-    }
-
-    private PostFragment newPostFragment(String subreddit, String filter) {
-        PostFragment fragment = new PostFragment();
-
-        Bundle args = new Bundle();
-        args.putString("subreddit", subreddit);
-        args.putString("filter", filter);
-        fragment.setArguments(args);
-
-        return fragment;
     }
 
     private void setUpToolbar() {

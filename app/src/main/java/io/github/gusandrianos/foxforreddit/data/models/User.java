@@ -1,8 +1,9 @@
 package io.github.gusandrianos.foxforreddit.data.models;
 
+import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
-public class User {
+public class User{
 
 	@SerializedName("has_stripe_subscription")
 	private boolean hasStripeSubscription;
@@ -20,7 +21,7 @@ public class User {
 	private int commentKarma;
 
 	@SerializedName("subreddit")
-	private UserSubreddit userSubreddit;
+	private Subreddit subreddit;
 
 	@SerializedName("pref_show_trending")
 	private boolean prefShowTrending;
@@ -64,8 +65,8 @@ public class User {
 	@SerializedName("has_android_subscription")
 	private boolean hasAndroidSubscription;
 
-	@SerializedName("modhash")
-	private String modhash;
+	@SerializedName("seen_premium_adblock_modal")
+	private boolean seenPremiumAdblockModal;
 
 	@SerializedName("pref_show_snoovatar")
 	private boolean prefShowSnoovatar;
@@ -79,8 +80,14 @@ public class User {
 	@SerializedName("name")
 	private String name;
 
+	@SerializedName("seen_give_award_tooltip")
+	private boolean seenGiveAwardTooltip;
+
 	@SerializedName("in_chat")
 	private boolean inChat;
+
+	@SerializedName("linked_identities")
+	private List<Object> linkedIdentities;
 
 	@SerializedName("is_gold")
 	private boolean isGold;
@@ -109,6 +116,9 @@ public class User {
 	@SerializedName("is_sponsor")
 	private boolean isSponsor;
 
+	@SerializedName("seen_redesign_modal")
+	private boolean seenRedesignModal;
+
 	@SerializedName("has_external_account")
 	private boolean hasExternalAccount;
 
@@ -117,6 +127,9 @@ public class User {
 
 	@SerializedName("has_gold_subscription")
 	private boolean hasGoldSubscription;
+
+	@SerializedName("seen_layout_switch")
+	private boolean seenLayoutSwitch;
 
 	@SerializedName("pref_nightmode")
 	private boolean prefNightmode;
@@ -129,6 +142,9 @@ public class User {
 
 	@SerializedName("has_mail")
 	private boolean hasMail;
+
+	@SerializedName("oauth_client_id")
+	private String oauthClientId;
 
 	@SerializedName("pref_autoplay")
 	private boolean prefAutoplay;
@@ -175,11 +191,11 @@ public class User {
 	@SerializedName("has_ios_subscription")
 	private boolean hasIosSubscription;
 
-	@SerializedName("is_friend")
-	private boolean isFriend;
-
 	@SerializedName("gold_expiration")
 	private Object goldExpiration;
+
+	@SerializedName("seen_subreddit_chat_ftux")
+	private boolean seenSubredditChatFtux;
 
 	public boolean isHasStripeSubscription(){
 		return hasStripeSubscription;
@@ -201,8 +217,8 @@ public class User {
 		return commentKarma;
 	}
 
-	public UserSubreddit getUserSubreddit(){
-		return userSubreddit;
+	public Subreddit getSubreddit(){
+		return subreddit;
 	}
 
 	public boolean isPrefShowTrending(){
@@ -261,8 +277,8 @@ public class User {
 		return hasAndroidSubscription;
 	}
 
-	public String getModhash(){
-		return modhash;
+	public boolean isSeenPremiumAdblockModal(){
+		return seenPremiumAdblockModal;
 	}
 
 	public boolean isPrefShowSnoovatar(){
@@ -281,8 +297,16 @@ public class User {
 		return name;
 	}
 
+	public boolean isSeenGiveAwardTooltip(){
+		return seenGiveAwardTooltip;
+	}
+
 	public boolean isInChat(){
 		return inChat;
+	}
+
+	public List<Object> getLinkedIdentities(){
+		return linkedIdentities;
 	}
 
 	public boolean isIsGold(){
@@ -321,6 +345,10 @@ public class User {
 		return isSponsor;
 	}
 
+	public boolean isSeenRedesignModal(){
+		return seenRedesignModal;
+	}
+
 	public boolean isHasExternalAccount(){
 		return hasExternalAccount;
 	}
@@ -331,6 +359,10 @@ public class User {
 
 	public boolean isHasGoldSubscription(){
 		return hasGoldSubscription;
+	}
+
+	public boolean isSeenLayoutSwitch(){
+		return seenLayoutSwitch;
 	}
 
 	public boolean isPrefNightmode(){
@@ -347,6 +379,10 @@ public class User {
 
 	public boolean isHasMail(){
 		return hasMail;
+	}
+
+	public String getOauthClientId(){
+		return oauthClientId;
 	}
 
 	public boolean isPrefAutoplay(){
@@ -409,11 +445,11 @@ public class User {
 		return hasIosSubscription;
 	}
 
-	public boolean isIsFriend(){
-		return isFriend;
-	}
-
 	public Object getGoldExpiration(){
 		return goldExpiration;
+	}
+
+	public boolean isSeenSubredditChatFtux(){
+		return seenSubredditChatFtux;
 	}
 }

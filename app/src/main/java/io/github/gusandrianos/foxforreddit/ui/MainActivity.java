@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -22,11 +23,15 @@ import com.google.android.material.navigation.NavigationView;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
+import io.github.gusandrianos.foxforreddit.data.models.User;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 
 public class MainActivity extends AppCompatActivity {
 
+    public static User mUser;
     int LAUNCH_SECOND_ACTIVITY = 1;
     Token mToken;
     private NavController navController;
@@ -48,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         appBarConfiguration = new AppBarConfiguration.Builder(R.id.mainFragment, R.id.userFragment).setOpenableLayout(drawer).build();
-        
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.nav_login) {
@@ -57,6 +62,19 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
+
+        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory(getApplication());
+        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        viewModel.getMe().observe(this, user -> {
+            if (user != null) {
+                String username = user.getName();
+                if (username != null)
+                    mUser = user;
+            } else {
+                //TODO: Handle this by showing appropriate error
+            }
+        });
+
     }
 
     @Override

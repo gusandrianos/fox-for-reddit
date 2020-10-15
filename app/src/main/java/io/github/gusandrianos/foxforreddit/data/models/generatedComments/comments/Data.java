@@ -11,7 +11,7 @@ public class Data{
     private String modhash;
 
 //    @SerializedName("children")
-    @JsonAdapter(ChildrenItemAdapterFactory.class)
+    @JsonAdapter(ChildrenTypeAdapter.class)
     private List<ChildrenItem> children;
 
     @SerializedName("before")
@@ -96,7 +96,7 @@ public class Data{
     private int downs;
 
     @SerializedName("edited")
-    private boolean edited;
+    private Object edited;
 
     @SerializedName("author")
     private String author;
@@ -123,8 +123,8 @@ public class Data{
     private boolean scoreHidden;
 
 //    @SerializedName("replies")
-    @JsonAdapter(RepliesAdapterFactory.class)
-    private Replies replies;
+//    @JsonAdapter(RepliesAdapterFactory.class)
+//    private Replies replies;
 
     @SerializedName("subreddit_name_prefixed")
     private String subredditNamePrefixed;
@@ -344,7 +344,7 @@ public class Data{
         return downs;
     }
 
-    public boolean isEdited(){
+    public Object isEdited(){
         return edited;
     }
 
@@ -380,9 +380,9 @@ public class Data{
         return scoreHidden;
     }
 
-    public Replies getReplies(){
-        return replies;
-    }
+//    public Replies getReplies(){
+//        return replies;
+//    }
 
     public String getSubredditNamePrefixed(){
         return subredditNamePrefixed;

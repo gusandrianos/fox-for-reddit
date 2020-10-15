@@ -1,9 +1,10 @@
 package io.github.gusandrianos.foxforreddit.data.models.generatedComments.comments;
 
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
-
+//@JsonAdapter(ChildrenItemAdapterFactory.class)
 public class ChildrenItem{
 
     @SerializedName("data")
@@ -16,6 +17,8 @@ public class ChildrenItem{
 
     public ChildrenItem(String loadMoreChild) {
         this.loadMoreChild = loadMoreChild;
+        data = null;
+        kind = null;
     }
 
     public Data getData(){

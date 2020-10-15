@@ -10,6 +10,12 @@ public class Replies{
     @SerializedName("kind")
     private String kind;
 
+    private String name;
+
+    public Replies(String name) {
+        this.name = name;
+    }
+
     public Data getData(){
         return data;
     }

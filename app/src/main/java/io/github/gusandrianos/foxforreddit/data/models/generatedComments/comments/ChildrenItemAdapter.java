@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
@@ -24,13 +25,15 @@ public class ChildrenItemAdapter extends TypeAdapter<ChildrenItem> {
 
     @Override
     public ChildrenItem read(JsonReader in) throws IOException {
-        switch (in.peek()){
-            case STRING:
-                return new ChildrenItem(in.toString());
+
+        switch (in.peek()) {
             case BEGIN_OBJECT:
+                Log.i("RunTime", "read: "+ in.toString());
                 return gson.fromJson(in, ChildrenItem.class);
+            case STRING:
+                return new ChildrenItem(in.nextString());
             default:
-                throw new RuntimeException("Expected object or string not, " + in.peek());
+                throw new RuntimeException("Expected object or string, not " + in.peek());
         }
     }
 }

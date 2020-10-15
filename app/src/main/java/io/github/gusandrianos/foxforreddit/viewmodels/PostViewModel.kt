@@ -1,5 +1,6 @@
 package io.github.gusandrianos.foxforreddit.viewmodels
 
+import android.app.Application
 import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -20,5 +21,9 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
 
     fun votePost(dir: String, id: String, token: Token){
         mPostRepository.votePost(dir, id, token)
+    }
+
+    fun getSinglePost(subreddit: String, commentID: String, article: String, token: Token){
+        mPostRepository.getSinglePost(subreddit, commentID, article, token)
     }
 }

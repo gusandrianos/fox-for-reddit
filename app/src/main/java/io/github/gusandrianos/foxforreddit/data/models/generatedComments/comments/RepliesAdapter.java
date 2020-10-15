@@ -24,10 +24,10 @@ public class RepliesAdapter extends TypeAdapter<Replies> {
     @Override
     public Replies read(JsonReader in) throws IOException {
         switch (in.peek()){
-            case STRING:
-                return null;
             case BEGIN_OBJECT:
-                return gson.fromJson(in, ChildrenItem.class);
+                return gson.fromJson(in, Replies.class);
+            case STRING:
+                return new Replies(in.toString());
             default:
                 throw new RuntimeException("Expected object or string not, " + in.peek());
         }

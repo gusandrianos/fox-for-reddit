@@ -27,7 +27,7 @@ public class RepliesAdapter extends TypeAdapter<Replies> {
             case BEGIN_OBJECT:
                 return gson.fromJson(in, Replies.class);
             case STRING:
-                return new Replies(in.toString());
+                return null;
             default:
                 throw new RuntimeException("Expected object or string not, " + in.peek());
         }

@@ -123,8 +123,8 @@ public class Data{
     private boolean scoreHidden;
 
 //    @SerializedName("replies")
-//    @JsonAdapter(RepliesAdapterFactory.class)
-//    private Replies replies;
+    @JsonAdapter(RepliesTypeAdapter.class)
+    private Replies replies;
 
     @SerializedName("subreddit_name_prefixed")
     private String subredditNamePrefixed;

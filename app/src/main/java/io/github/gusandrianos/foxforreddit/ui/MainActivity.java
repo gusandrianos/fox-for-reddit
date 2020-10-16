@@ -1,11 +1,14 @@
 package io.github.gusandrianos.foxforreddit.ui;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -13,12 +16,17 @@ import androidx.navigation.ui.NavigationUI;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
@@ -28,40 +36,65 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static User mUser;
     int LAUNCH_SECOND_ACTIVITY = 1;
     Token mToken;
     private NavController navController;
     AppBarConfiguration appBarConfiguration;
+    NavigationView navigationView;
+    NavOptions options;
+    List<Integer> topLevelDestinationIds;
+    int itemSelectedID = 0;
+    DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
-        }
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(Color.TRANSPARENT);
+
+        topLevelDestinationIds = Arrays.asList(R.id.mainFragment, R.id.userFragment);
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        navController = navHostFragment.getNavController();
+        navController = Objects.requireNonNull(navHostFragment).getNavController();
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         appBarConfiguration = new AppBarConfiguration.Builder(R.id.mainFragment, R.id.userFragment).setOpenableLayout(drawer).build();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_login) {
-                loadLogInWebpage();
-                return true;
+        navigationView = findViewById(R.id.nav_view);
+
+        if (savedInstanceState == null) {
+            navigationView.setCheckedItem(R.id.mainFragment);
+        }
+
+        navigationView.setNavigationItemSelectedListener(this);
+        drawer.addDrawerListener(new DrawerListener());
+
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (topLevelDestinationIds.contains(destination.getId())) {
+                navigationView.setCheckedItem(destination.getId());
             }
-            return false;
         });
 
+        setAuthorizedUI();
+    }
+
+    private void setAuthorizedUI() {
+        if (mToken == null) {
+            mToken = InjectorUtils.getInstance().provideTokenRepository(getApplication()).getToken();
+        }
+        if (mToken.getRefreshToken() != null) {
+            getCurrentUser();
+            navigationView.getMenu().getItem(1).setVisible(true);
+            navigationView.getMenu().getItem(2).getSubMenu().getItem(0).setVisible(false);
+        }
+    }
+
+    private void getCurrentUser() {
         UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory(getApplication());
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
         viewModel.getMe().observe(this, user -> {
@@ -69,11 +102,13 @@ public class MainActivity extends AppCompatActivity {
                 String username = user.getName();
                 if (username != null)
                     mUser = user;
-            } else {
-                //TODO: Handle this by showing appropriate error
             }
+            //TODO: Handle this by showing appropriate error
         });
+    }
 
+    boolean isValidDestination(int dest_id) {
+        return dest_id != Objects.requireNonNull(Navigation.findNavController(this, R.id.nav_host_fragment).getCurrentDestination()).getId();
     }
 
     @Override
@@ -93,10 +128,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == LAUNCH_SECOND_ACTIVITY) {
             if (resultCode == Activity.RESULT_OK) {
-                String result = data.getStringExtra("result");
+                String result = Objects.requireNonNull(data).getStringExtra("result");
                 String[] inputs = result.split("\\?")[1].split("&");
                 String code = inputs[1].split("=")[1];
                 mToken = InjectorUtils.getInstance().provideTokenRepository(getApplication()).getNewToken(code, "https://gusandrianos.github.io/login");
+                setAuthorizedUI();
             }
         }
     }
@@ -108,5 +144,59 @@ public class MainActivity extends AppCompatActivity {
             drawer.closeDrawer(GravityCompat.START);
         else
             super.onBackPressed();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.mainFragment) {
+            itemSelectedID = id;
+            drawer.close();
+            return true;
+        } else if (id == R.id.userFragment) {
+            itemSelectedID = id;
+            drawer.close();
+            return true;
+        } else if (id == R.id.nav_login) {
+            itemSelectedID = id;
+            drawer.close();
+            return true;
+        }
+        itemSelectedID = -1;
+        return false;
+    }
+
+    private class DrawerListener implements DrawerLayout.DrawerListener {
+        @Override
+        public void onDrawerClosed(@NonNull View drawerView) {
+            if (itemSelectedID != -1) {
+                if (itemSelectedID == R.id.mainFragment) {
+                    if (isValidDestination(R.id.mainFragment)) {
+                        options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
+                        navController.navigate(R.id.mainFragment, null, options);
+                    }
+                    itemSelectedID = -1;
+                } else if (itemSelectedID == R.id.userFragment) {
+                    if (isValidDestination(R.id.userFragment))
+                        navController.navigate(R.id.userFragment);
+                    itemSelectedID = -1;
+                } else if (itemSelectedID == R.id.nav_login) {
+                    loadLogInWebpage();
+                    itemSelectedID = -1;
+                }
+            }
+        }
+
+        @Override
+        public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+        }
+
+        @Override
+        public void onDrawerOpened(@NonNull View drawerView) {
+        }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
+        }
     }
 }

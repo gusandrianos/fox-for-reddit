@@ -1,78 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.AboutUserFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/txt_post_karma"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="1337"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@id/txt_post_karma_text"
+        app:layout_constraintEnd_toStartOf="@id/txt_comment_karma_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/txt_post_karma"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="1337"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@id/txt_post_karma_text"
-            app:layout_constraintEnd_toStartOf="@id/txt_comment_karma_text"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/txt_post_karma_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Post Karma"
+        app:layout_constraintBottom_toTopOf="@id/txt_trophies"
+        app:layout_constraintEnd_toStartOf="@id/txt_comment_karma_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txt_post_karma" />
 
-        <TextView
-            android:id="@+id/txt_post_karma_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Post Karma"
-            app:layout_constraintBottom_toTopOf="@id/txt_trophies"
-            app:layout_constraintEnd_toStartOf="@id/txt_comment_karma_text"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txt_post_karma" />
+    <TextView
+        android:id="@+id/txt_comment_karma"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="1337"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@id/txt_comment_karma_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/txt_post_karma"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/txt_comment_karma"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="1337"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@id/txt_comment_karma_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/txt_post_karma"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/txt_comment_karma_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Comment Karma"
+        app:layout_constraintBottom_toTopOf="@id/txt_trophies"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/txt_post_karma"
+        app:layout_constraintTop_toBottomOf="@id/txt_comment_karma" />
 
-        <TextView
-            android:id="@+id/txt_comment_karma_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Comment Karma"
-            app:layout_constraintBottom_toTopOf="@id/txt_trophies"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/txt_post_karma"
-            app:layout_constraintTop_toBottomOf="@id/txt_comment_karma" />
+    <TextView
+        android:id="@+id/txt_trophies"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Trophies"
+        app:layout_constraintBottom_toTopOf="@id/recycler_trophies"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.00"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txt_comment_karma_text" />
 
-        <TextView
-            android:id="@+id/txt_trophies"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Trophies"
-            app:layout_constraintBottom_toTopOf="@id/recycler_trophies"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.00"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txt_comment_karma_text" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_trophies"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txt_trophies" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_trophies"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txt_trophies"
-            tools:layout_editor_absoluteX="107dp" />
-        
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

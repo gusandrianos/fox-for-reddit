@@ -15,7 +15,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: Update navigation to make this work again
     public void loadLogInWebpage() {
-        Intent load = new Intent(this, Main2Activity.class);
+        Intent load = new Intent(this, LoginActivity.class);
         load.putExtra("URL", "https://www.reddit.com/api/v1/authorize.compact?client_id=n1R0bc_lPPTtVg&response_type=code&state=ggfgfgfgga&redirect_uri=https://gusandrianos.github.io/login&duration=permanent&scope=*");
         startActivityForResult(load, LAUNCH_SECOND_ACTIVITY);
     }

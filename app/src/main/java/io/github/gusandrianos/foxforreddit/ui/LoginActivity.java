@@ -11,12 +11,12 @@ import android.webkit.WebViewClient;
 
 import io.github.gusandrianos.foxforreddit.R;
 
-public class Main2Activity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_login);
         Intent load = getIntent();
         String url = load.getStringExtra("URL");
 
@@ -35,7 +35,7 @@ public class Main2Activity extends AppCompatActivity {
             }
         }
 
-        WebView mywev = findViewById(R.id.webview1);
+        WebView mywev = findViewById(R.id.webview);
         MyWebViewClient mywebc = new MyWebViewClient();
         mywev.setWebViewClient(mywebc);
         mywev.loadUrl(url);

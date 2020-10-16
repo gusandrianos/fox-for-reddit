@@ -3,7 +3,7 @@ package io.github.gusandrianos.foxforreddit.data.network
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.models.User
 import io.github.gusandrianos.foxforreddit.data.models.UserResponse
-import org.json.JSONObject
+import io.github.gusandrianos.foxforreddit.data.models.trophies.TrophiesResponse
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -44,4 +44,10 @@ interface RedditAPI {
     fun getMe(
             @Header("Authorization") bearer: String,
     ): Call<User>
+
+    @GET("api/v1/user/{username}/trophies")
+    fun getTrophies(
+            @Header("Authorization") bearer: String,
+            @Path("username") username: String
+    ): Call<TrophiesResponse>
 }

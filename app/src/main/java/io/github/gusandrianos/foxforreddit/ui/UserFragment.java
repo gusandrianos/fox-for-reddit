@@ -70,13 +70,15 @@ public class UserFragment extends Fragment {
         ViewPager viewPager = view.findViewById(R.id.profile_view_pager);
         TabLayout tabLayout = view.findViewById(R.id.profile_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-        if(isSelf)
+        if (isSelf)
             tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
 
         viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/submitted", ""), "Posts");
         viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/comments", ""), "Comments");
+        viewPagerAdapter.addFragment(AboutUserFragment.newInstance(user.getName(), user.getLinkKarma(), user.getCommentKarma()), "About");
+
         viewPager.setAdapter(viewPagerAdapter);
         if (isSelf) {
             viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/upvoted", ""), "Upvoted");

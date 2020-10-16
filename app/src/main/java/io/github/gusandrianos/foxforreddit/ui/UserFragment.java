@@ -19,7 +19,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import io.github.gusandrianos.foxforreddit.R;
@@ -51,18 +50,16 @@ public class UserFragment extends Fragment {
 
         setUpToolbar();
 
-        CollapsingToolbarLayout collapsingToolbar = getActivity().findViewById(R.id.profile_collapsing_toolbar);
+        CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.profile_collapsing_toolbar);
 
         if (username.equals(mUser.getName())) {
             collapsingToolbar.setTitle(mUser.getName());
             buildUserProfile(mUser, view, true);
         } else {
-            UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory(getActivity().getApplication());
+            UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory(requireActivity().getApplication());
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
             collapsingToolbar.setTitle(username);
-            viewModel.getUser(username).observe(getViewLifecycleOwner(), user -> {
-                buildUserProfile(user, view, user.getName().equals(mUser.getName()));
-            });
+            viewModel.getUser(username).observe(getViewLifecycleOwner(), user -> buildUserProfile(user, view, user.getName().equals(mUser.getName())));
         }
     }
 
@@ -87,19 +84,18 @@ public class UserFragment extends Fragment {
             viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/saved", ""), "Saved");
             viewPagerAdapter.notifyDataSetChanged();
         }
-        ImageView profilePic = getActivity().findViewById(R.id.profile_picture);
-        ImageView coverPic = getActivity().findViewById(R.id.profile_cover);
+        ImageView profilePic = requireActivity().findViewById(R.id.profile_picture);
+        ImageView coverPic = requireActivity().findViewById(R.id.profile_cover);
         Glide.with(view).load(user.getIconImg().split("\\?")[0]).into(profilePic);
         Glide.with(view).load(user.getSubreddit().getBannerImg().split("\\?")[0]).into(coverPic);
     }
 
     private void setUpToolbar() {
-        MainActivity mainActivity = (MainActivity) getActivity();
-        NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+        MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         AppBarConfiguration appBarConfiguration = mainActivity.appBarConfiguration;
-        Toolbar toolbar = getActivity().findViewById(R.id.profile_toolbar);
-        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
+        Toolbar toolbar = requireActivity().findViewById(R.id.profile_toolbar);
+        CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.profile_collapsing_toolbar);
+        NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController, appBarConfiguration);
     }
 }

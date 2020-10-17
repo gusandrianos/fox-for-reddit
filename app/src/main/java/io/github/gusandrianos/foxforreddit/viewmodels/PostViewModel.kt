@@ -6,10 +6,12 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import io.github.gusandrianos.foxforreddit.data.models.Post
 import io.github.gusandrianos.foxforreddit.data.models.Token
+import io.github.gusandrianos.foxforreddit.data.models.generatedComments.comments.Comments
 import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository
 
 class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
     var posts: LiveData<PagingData<Post>>? = null
+    var mComments: LiveData<Comments>? = null
 
     fun getPosts(subreddit: String, filter: String, token: Token): LiveData<PagingData<Post>> {
         if (posts != null) {
@@ -23,7 +25,7 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
         mPostRepository.votePost(dir, id, token)
     }
 
-    fun getSinglePost(subreddit: String, commentID: String, article: String, token: Token){
-        mPostRepository.getSinglePost(subreddit, commentID, article, token)
+    fun getSinglePost(subreddit: String, commentID: String, article: String, token: Token): LiveData<Comments>{
+        return mPostRepository.getSinglePost(subreddit, commentID, article, token)
     }
 }

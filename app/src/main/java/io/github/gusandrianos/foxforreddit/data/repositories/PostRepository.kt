@@ -1,6 +1,8 @@
 package io.github.gusandrianos.foxforreddit.data.repositories
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.liveData
@@ -17,6 +19,7 @@ import retrofit2.Response
 
 object PostRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
+    private val dataComments = MutableLiveData<Comments>()
 
     fun getPosts(subreddit: String, filter: String, token: Token) =
             Pager(
@@ -38,7 +41,7 @@ object PostRepository {
         })
     }
 
-    fun getSinglePost(subreddit: String, commentID: String, article: String, token: Token){
+    fun getSinglePost(subreddit: String, commentID: String, article: String, token: Token): LiveData<Comments> {
         val bearer = " " + token.tokenType + " " + token.accessToken
         val singlePost = redditAPI.getSinglePost(subreddit, commentID, article, bearer)
         singlePost.enqueue(object : Callback<JsonArray> {
@@ -46,7 +49,7 @@ object PostRepository {
                 if (response.isSuccessful) {
                     val jsonArray = JSONArray(response.body().toString())
                     val comment: Comments = Gson().fromJson(jsonArray.getJSONObject(1).toString(), Comments::class.java)
-                    Log.i("Comment", "onResponse: " +comment.toString())
+                    dataComments.value = comment
                 }
             }
 
@@ -55,5 +58,6 @@ object PostRepository {
             }
 
         })
+        return dataComments
     }
 }

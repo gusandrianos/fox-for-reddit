@@ -59,12 +59,10 @@ public class MainFragment extends Fragment {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
         viewPagerAdapter.addFragment(homeFragments.get(0), "HOME");
         viewPagerAdapter.addFragment(homeFragments.get(1), "POPULAR");
+        viewPagerAdapter.addFragment(new SinglePostFragment(), "Comments");
 
         viewPager.setAdapter(viewPagerAdapter);
 
-        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
-        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        viewModel.getSinglePost("r/AskReddit","jbfcf8","a_gun_is_being_pointed_at_you_tell_the_funniest",mToken);
     }
 
     private void setUpToolbar() {

@@ -1,42 +1,9 @@
-package io.github.gusandrianos.foxforreddit.data.models.generatedComments.comments;
+package io.github.gusandrianos.foxforreddit.data.models.generatedComments.morechildren;
 
 import java.util.List;
-
-import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
-public class Data{
-
-    @SerializedName("modhash")
-    private String modhash;
-
-//    @SerializedName("children")
-    @JsonAdapter(ChildrenTypeAdapter.class)
-    private List<ChildrenItem> children;
-
-    @SerializedName("before")
-    private Object before;
-
-    @SerializedName("dist")
-    private Object dist;
-
-    @SerializedName("after")
-    private Object after;
-
-    @SerializedName("depth")
-    private int depth;
-
-    @SerializedName("parent_id")
-    private String parentId;
-
-    @SerializedName("count")
-    private int count;
-
-    @SerializedName("name")
-    private String name;
-
-    @SerializedName("id")
-    private String id;
+public class DataMoreChildren {
 
     @SerializedName("body_html")
     private String bodyHtml;
@@ -77,6 +44,9 @@ public class Data{
     @SerializedName("can_gild")
     private boolean canGild;
 
+    @SerializedName("id")
+    private String id;
+
     @SerializedName("author_premium")
     private boolean authorPremium;
 
@@ -96,7 +66,7 @@ public class Data{
     private int downs;
 
     @SerializedName("edited")
-    private Object edited;
+    private boolean edited;
 
     @SerializedName("author")
     private String author;
@@ -110,11 +80,11 @@ public class Data{
     @SerializedName("author_flair_background_color")
     private Object authorFlairBackgroundColor;
 
-    @SerializedName("report_reasons")
-    private Object reportReasons;
-
     @SerializedName("gildings")
     private Gildings gildings;
+
+    @SerializedName("report_reasons")
+    private Object reportReasons;
 
     @SerializedName("approved_by")
     private Object approvedBy;
@@ -122,15 +92,17 @@ public class Data{
     @SerializedName("score_hidden")
     private boolean scoreHidden;
 
-//    @SerializedName("replies")
-    @JsonAdapter(RepliesTypeAdapter.class)
-    private Replies replies;
+    @SerializedName("replies")
+    private String replies;
 
     @SerializedName("subreddit_name_prefixed")
     private String subredditNamePrefixed;
 
     @SerializedName("mod_reason_by")
     private Object modReasonBy;
+
+    @SerializedName("parent_id")
+    private String parentId;
 
     @SerializedName("top_awarded_type")
     private Object topAwardedType;
@@ -141,14 +113,17 @@ public class Data{
     @SerializedName("no_follow")
     private boolean noFollow;
 
+    @SerializedName("name")
+    private String name;
+
     @SerializedName("ups")
     private int ups;
 
-    @SerializedName("awarders")
-    private List<Object> awarders;
-
     @SerializedName("author_flair_type")
     private String authorFlairType;
+
+    @SerializedName("awarders")
+    private List<Object> awarders;
 
     @SerializedName("permalink")
     private String permalink;
@@ -213,6 +188,9 @@ public class Data{
     @SerializedName("author_flair_template_id")
     private Object authorFlairTemplateId;
 
+    @SerializedName("depth")
+    private int depth;
+
     @SerializedName("stickied")
     private boolean stickied;
 
@@ -228,45 +206,7 @@ public class Data{
     @SerializedName("banned_by")
     private Object bannedBy;
 
-    public String getModhash(){
-        return modhash;
-    }
 
-    public List<ChildrenItem> getChildren(){
-        return children;
-    }
-
-    public Object getBefore(){
-        return before;
-    }
-
-    public Object getDist(){
-        return dist;
-    }
-
-    public Object getAfter(){
-        return after;
-    }
-
-    public int getDepth(){
-        return depth;
-    }
-
-    public String getParentId(){
-        return parentId;
-    }
-
-    public int getCount(){
-        return count;
-    }
-
-    public String getName(){
-        return name;
-    }
-
-    public String getId(){
-        return id;
-    }
 
     public String getBodyHtml(){
         return bodyHtml;
@@ -320,6 +260,10 @@ public class Data{
         return canGild;
     }
 
+    public String getId(){
+        return id;
+    }
+
     public boolean isAuthorPremium(){
         return authorPremium;
     }
@@ -344,7 +288,7 @@ public class Data{
         return downs;
     }
 
-    public Object isEdited(){
+    public boolean isEdited(){
         return edited;
     }
 
@@ -364,12 +308,12 @@ public class Data{
         return authorFlairBackgroundColor;
     }
 
-    public Object getReportReasons(){
-        return reportReasons;
-    }
-
     public Gildings getGildings(){
         return gildings;
+    }
+
+    public Object getReportReasons(){
+        return reportReasons;
     }
 
     public Object getApprovedBy(){
@@ -380,7 +324,7 @@ public class Data{
         return scoreHidden;
     }
 
-    public Replies getReplies(){
+    public String getReplies(){
         return replies;
     }
 
@@ -390,6 +334,10 @@ public class Data{
 
     public Object getModReasonBy(){
         return modReasonBy;
+    }
+
+    public String getParentId(){
+        return parentId;
     }
 
     public Object getTopAwardedType(){
@@ -404,16 +352,20 @@ public class Data{
         return noFollow;
     }
 
+    public String getName(){
+        return name;
+    }
+
     public int getUps(){
         return ups;
     }
 
-    public List<Object> getAwarders(){
-        return awarders;
-    }
-
     public String getAuthorFlairType(){
         return authorFlairType;
+    }
+
+    public List<Object> getAwarders(){
+        return awarders;
     }
 
     public String getPermalink(){
@@ -498,6 +450,10 @@ public class Data{
 
     public Object getAuthorFlairTemplateId(){
         return authorFlairTemplateId;
+    }
+
+    public int getDepth(){
+        return depth;
     }
 
     public boolean isStickied(){

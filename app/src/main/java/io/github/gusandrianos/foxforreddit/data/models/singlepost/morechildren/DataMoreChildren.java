@@ -3,6 +3,8 @@ package io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren;
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.Gildings;
+
 public class DataMoreChildren {
 
     @SerializedName("body_html")

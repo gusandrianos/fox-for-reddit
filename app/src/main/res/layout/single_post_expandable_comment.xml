@@ -144,10 +144,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            android:textColor="@color/colorPrimary"
+
             android:text="Load More"
             android:layout_margin="@dimen/activity_horizontal_margin"
-            android:background="@android:color/transparent"
+
             app:layout_constraintLeft_toRightOf="@id/separatorContainer2"/>
 
 

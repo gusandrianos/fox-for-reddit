@@ -10,7 +10,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import io.github.gusandrianos.foxforreddit.data.models.Token
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.Comments
-import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.DataThings
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
@@ -66,16 +65,18 @@ object PostRepository {
 
     fun getMoreChildren(linkId: String, children: String, token: Token): LiveData<MoreChildren>{
         val bearer = " " + token.tokenType + " " + token.accessToken
-        val moreChildren = redditAPI.getMoreChildren(bearer,linkId, children)
-        moreChildren.enqueue(object : Callback<MoreChildren>{
+        val moreChildren = redditAPI.getMoreChildren(bearer,linkId, children,"json")
+        Log.i("GOT", "onResponse: " +children + "   "+linkId )
+        moreChildren.enqueue(object : Callback<MoreChildren> {
             override fun onResponse(call: Call<MoreChildren>, response: Response<MoreChildren>) {
-                if(response.isSuccessful){
+                if (response.isSuccessful) {
                     dataMoreChildren.value = response.body()
                 }
+                Log.i("GOT", "onResponse: " + response.body() )
             }
 
             override fun onFailure(call: Call<MoreChildren>, t: Throwable) {
-                TODO("Not yet implemented")
+                Log.i("GOT", "onFailure: " +t.message)
             }
         })
         return dataMoreChildren

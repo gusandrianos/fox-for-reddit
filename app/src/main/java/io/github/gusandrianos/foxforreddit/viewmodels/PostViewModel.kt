@@ -1,5 +1,6 @@
 package io.github.gusandrianos.foxforreddit.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -30,6 +31,7 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
     }
 
     fun getMoreChildren(linkId: String, children: String, token:Token): LiveData<MoreChildren>{
+        Log.i("VIEWMODEL", "getMoreChildren: "+mPostRepository.getMoreChildren(linkId, children, token).toString())
         return mPostRepository.getMoreChildren(linkId, children, token)
     }
 }

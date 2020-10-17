@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -70,23 +69,31 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         groupLayoutManager.setSpanSizeLookup(groupAdapter.getSpanSizeLookup());
         mCommentsRecyclerView.setLayoutManager(groupLayoutManager);
         mCommentsRecyclerView.setAdapter(groupAdapter);
+
+//        Token mToken = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
+//        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+//        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+//        Log.i("LISTENER", "Before observe ");
+//        viewModel.getMoreChildren("jbmf8f","g936mtd",mToken)
+//                .observe(getViewLifecycleOwner(), new Observer<MoreChildren>() {
+//                    @Override
+//                    public void onChanged(MoreChildren moreChildren) {
+//                        for (ChildrenItem more: moreChildren.getJson().getData().getChildren()) {
+//                            Log.i("LISTENER", "DuringObserve");
+//                            groupAdapter.add(new ExpandableCommentGroup(more, more.getData().getDepth(),"t3_jbmf8f",SinglePostFragment.this::onLoadMoreClicked));
+//
+//                        }
+//                    }
+//                });
     }
 
     @Override
     public void onLoadMoreClicked(@NotNull String linkId, @NotNull String moreChildren, int position) {
-        Log.i("LISTENER", "onLoadMoreClicked: clicked" + position);
+
         Token mToken = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        viewModel.getMoreChildren(linkId,moreChildren,mToken)
-                .observe(getViewLifecycleOwner(), new Observer<MoreChildren>() {
-                    @Override
-                    public void onChanged(MoreChildren moreChildren) {
-                        for (ThingsItem more : moreChildren.getJson().getData().getThings()) {
-
-//                            groupAdapter.add(new ExpandableCommentGroup(more, more.getData().getDepth(),"t3_jbmf8f",SinglePostFragment.this::onLoadMoreClicked));
-                        }
-                    }
-                });
+        Log.i("LISTENER", "Before observe " + position);
+        viewModel.getMoreChildren(linkId,moreChildren,mToken);
     }
 }

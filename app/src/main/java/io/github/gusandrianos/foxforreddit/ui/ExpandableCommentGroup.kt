@@ -1,5 +1,6 @@
 package io.github.gusandrianos.foxforreddit.ui
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import com.xwray.groupie.ExpandableGroup
@@ -15,12 +16,12 @@ class ExpandableCommentGroup constructor(private val mComment: ChildrenItem, pri
     init {
         if (mComment.data.replies != null)
             for (comment in mComment.data.replies.data.children) {
-                add(ExpandableCommentGroup(comment, comment.data.depth, linkId,listener)).apply {isExpanded=true}
+                add(ExpandableCommentGroup(comment, comment.data.depth, linkId, listener)).apply {isExpanded=true}
             }
     }
 }
 
-open class ExpandableCommentItem constructor(private val mComment: ChildrenItem, private val depth: Int, private val linkId: String,private val listener:OnItemClickListener ) : Item<GroupieViewHolder>(), ExpandableItem {
+open class ExpandableCommentItem constructor(private val mComment: ChildrenItem, private val depth: Int, private val linkId: String, private val listener: OnItemClickListener) : Item<GroupieViewHolder>(), ExpandableItem {
     private lateinit var expandableGroup: ExpandableGroup
 
     override fun setExpandableGroup(onToggleListener: ExpandableGroup) {
@@ -46,7 +47,7 @@ open class ExpandableCommentItem constructor(private val mComment: ChildrenItem,
             }
             viewHolder.itemView.btn_more_childs.apply {
                 setOnClickListener {
-                    listener.onLoadMoreClicked(linkId,moreChildren, position)
+                    listener.onLoadMoreClicked(linkId, moreChildren.removePrefix(","), position)
                 }
             }
             viewHolder.itemView.btn_more_childs.text= "$i More Replies"

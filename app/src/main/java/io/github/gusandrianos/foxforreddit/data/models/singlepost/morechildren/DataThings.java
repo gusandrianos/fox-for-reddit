@@ -4,11 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.ChildrenItem;
+
 public class DataThings {
     @SerializedName("things")
-    private List<ThingsItem> things;
+    private List<ChildrenItem> children;
 
-    public List<ThingsItem> getThings(){
-        return things;
+    public List<ChildrenItem> getChildren(){
+        return children;
     }
 }

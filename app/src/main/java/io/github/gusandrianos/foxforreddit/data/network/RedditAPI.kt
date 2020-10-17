@@ -61,8 +61,7 @@ interface RedditAPI {
             @Header("Authorization") bearer: String,
             @Query("link_id") linkId: String,
             @Query("children") children: String,
-            @Query("api_type") apiType: String = "json"
-
+            @Query("api_type") apiType: String
     ): Call<MoreChildren>
 
     @GET("api/v1/user/{username}/trophies")

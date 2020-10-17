@@ -9,7 +9,9 @@ import androidx.paging.liveData
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import io.github.gusandrianos.foxforreddit.data.models.Token
-import io.github.gusandrianos.foxforreddit.data.models.generatedComments.comments.Comments
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.Comments
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.DataThings
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import org.json.JSONArray
@@ -20,6 +22,7 @@ import retrofit2.Response
 object PostRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     private val dataComments = MutableLiveData<Comments>()
+    private val dataMoreChildren = MutableLiveData<MoreChildren>()
 
     fun getPosts(subreddit: String, filter: String, token: Token) =
             Pager(
@@ -59,5 +62,22 @@ object PostRepository {
 
         })
         return dataComments
+    }
+
+    fun getMoreChildren(linkId: String, children: String, token: Token): LiveData<MoreChildren>{
+        val bearer = " " + token.tokenType + " " + token.accessToken
+        val moreChildren = redditAPI.getMoreChildren(bearer,linkId, children)
+        moreChildren.enqueue(object : Callback<MoreChildren>{
+            override fun onResponse(call: Call<MoreChildren>, response: Response<MoreChildren>) {
+                if(response.isSuccessful){
+                    dataMoreChildren.value = response.body()
+                }
+            }
+
+            override fun onFailure(call: Call<MoreChildren>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
+        return dataMoreChildren
     }
 }

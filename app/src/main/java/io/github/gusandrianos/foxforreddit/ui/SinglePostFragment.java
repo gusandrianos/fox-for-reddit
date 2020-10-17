@@ -1,7 +1,6 @@
 package io.github.gusandrianos.foxforreddit.ui;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,36 +8,27 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
-import com.google.gson.internal.LinkedTreeMap;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
 
 
-import java.util.Objects;
-
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 
-import io.github.gusandrianos.foxforreddit.data.models.generatedComments.comments.ChildrenItem;
-import io.github.gusandrianos.foxforreddit.data.models.generatedComments.comments.Comments;
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.ChildrenItem;
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.Comments;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
-import kotlin.Unit;
 
 public class SinglePostFragment extends Fragment {
     private RecyclerView mCommentsRecyclerView;
     private View mView;
-
     private GroupAdapter<GroupieViewHolder> groupAdapter = new GroupAdapter<>();
     private GridLayoutManager groupLayoutManager;
 
@@ -73,11 +63,7 @@ public class SinglePostFragment extends Fragment {
         mCommentsRecyclerView = mView.findViewById(R.id.recyclerview);
         groupLayoutManager = new GridLayoutManager(getActivity(), groupAdapter.getSpanCount());
         groupLayoutManager.setSpanSizeLookup(groupAdapter.getSpanSizeLookup());
-
-
         mCommentsRecyclerView.setLayoutManager(groupLayoutManager);
         mCommentsRecyclerView.setAdapter(groupAdapter);
-
-
     }
 }

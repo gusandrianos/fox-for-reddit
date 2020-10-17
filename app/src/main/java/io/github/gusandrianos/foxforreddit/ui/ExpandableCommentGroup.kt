@@ -1,16 +1,13 @@
 package io.github.gusandrianos.foxforreddit.ui
 
-import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
 import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.ExpandableItem
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
 import io.github.gusandrianos.foxforreddit.R
-import io.github.gusandrianos.foxforreddit.data.models.generatedComments.comments.ChildrenItem
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.ChildrenItem
 
 import kotlinx.android.synthetic.main.single_post_expandable_comment.view.*
 
@@ -22,7 +19,6 @@ class ExpandableCommentGroup constructor(private val mComment: ChildrenItem, pri
                 add(ExpandableCommentGroup(comment, comment.data.depth))
             }
     }
-
 }
 
 open class ExpandableCommentItem constructor(private val mComment: ChildrenItem, private val depth: Int) : Item<GroupieViewHolder>(), ExpandableItem {

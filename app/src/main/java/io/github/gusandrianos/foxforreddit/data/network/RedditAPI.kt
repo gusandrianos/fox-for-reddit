@@ -4,6 +4,7 @@ import com.google.gson.JsonArray
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.models.User
 import io.github.gusandrianos.foxforreddit.data.models.UserResponse
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
@@ -54,4 +55,13 @@ interface RedditAPI {
             @Path("article") article: String,
             @Header("Authorization") bearer: String
     ): Call<JsonArray>
+
+    @GET("api/morechildren")
+    fun getMoreChildren(
+            @Header("Authorization") bearer: String,
+            @Query("link_id") linkId: String,
+            @Query("children") children: String,
+            @Query("api_type") apiType: String = "json"
+
+    ): Call<MoreChildren>
 }

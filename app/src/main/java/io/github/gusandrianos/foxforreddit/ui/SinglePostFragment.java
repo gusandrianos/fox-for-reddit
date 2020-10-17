@@ -1,9 +1,11 @@
 package io.github.gusandrianos.foxforreddit.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,22 +15,24 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.xwray.groupie.ExpandableGroup;
-import com.xwray.groupie.ExpandableItem;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
 
+
+import org.jetbrains.annotations.NotNull;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.Comments;
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren;
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.ThingsItem;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
-public class SinglePostFragment extends Fragment {
+public class SinglePostFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
     private RecyclerView mCommentsRecyclerView;
     private View mView;
     private GroupAdapter<GroupieViewHolder> groupAdapter = new GroupAdapter<>();
@@ -53,8 +57,7 @@ public class SinglePostFragment extends Fragment {
                     @Override
                     public void onChanged(Comments comments) {
                         for (ChildrenItem child : comments.getData().getChildren()) {
-                            
-                            groupAdapter.add(new ExpandableCommentGroup(child, child.getData().getDepth(),"t3_jbmf8f"));
+                            groupAdapter.add(new ExpandableCommentGroup(child, child.getData().getDepth(),"t3_jbmf8f",SinglePostFragment.this::onLoadMoreClicked));
                         }
                     }
                 });
@@ -67,5 +70,23 @@ public class SinglePostFragment extends Fragment {
         groupLayoutManager.setSpanSizeLookup(groupAdapter.getSpanSizeLookup());
         mCommentsRecyclerView.setLayoutManager(groupLayoutManager);
         mCommentsRecyclerView.setAdapter(groupAdapter);
+    }
+
+    @Override
+    public void onLoadMoreClicked(@NotNull String linkId, @NotNull String moreChildren, int position) {
+        Log.i("LISTENER", "onLoadMoreClicked: clicked" + position);
+        Token mToken = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
+        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        viewModel.getMoreChildren(linkId,moreChildren,mToken)
+                .observe(getViewLifecycleOwner(), new Observer<MoreChildren>() {
+                    @Override
+                    public void onChanged(MoreChildren moreChildren) {
+                        for (ThingsItem more : moreChildren.getJson().getData().getThings()) {
+
+//                            groupAdapter.add(new ExpandableCommentGroup(more, more.getData().getDepth(),"t3_jbmf8f",SinglePostFragment.this::onLoadMoreClicked));
+                        }
+                    }
+                });
     }
 }

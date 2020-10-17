@@ -2,28 +2,25 @@ package io.github.gusandrianos.foxforreddit.ui
 
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
 import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.ExpandableItem
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
-import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.ChildrenItem
-
 import kotlinx.android.synthetic.main.single_post_expandable_comment.view.*
 
-class ExpandableCommentGroup constructor(private val mComment: ChildrenItem, private val depth: Int = 0, private val linkId: String) : ExpandableGroup(ExpandableCommentItem(mComment, depth, linkId)) {
+class ExpandableCommentGroup constructor(private val mComment: ChildrenItem, private val depth: Int = 0, private val linkId: String, private val listener: ExpandableCommentItem.OnItemClickListener) : ExpandableGroup(ExpandableCommentItem(mComment, depth, linkId, listener)) {
 
     init {
         if (mComment.data.replies != null)
             for (comment in mComment.data.replies.data.children) {
-                add(ExpandableCommentGroup(comment, comment.data.depth, linkId)).apply {isExpanded=true}
+                add(ExpandableCommentGroup(comment, comment.data.depth, linkId,listener)).apply {isExpanded=true}
             }
     }
 }
 
-open class ExpandableCommentItem constructor(private val mComment: ChildrenItem, private val depth: Int, private val linkId: String) : Item<GroupieViewHolder>(), ExpandableItem {
+open class ExpandableCommentItem constructor(private val mComment: ChildrenItem, private val depth: Int, private val linkId: String,private val listener:OnItemClickListener ) : Item<GroupieViewHolder>(), ExpandableItem {
     private lateinit var expandableGroup: ExpandableGroup
 
     override fun setExpandableGroup(onToggleListener: ExpandableGroup) {
@@ -40,14 +37,19 @@ open class ExpandableCommentItem constructor(private val mComment: ChildrenItem,
             viewHolder.itemView.cl_comment.visibility= View.GONE
             viewHolder.itemView.cl_loadmore.visibility= View.VISIBLE
             viewHolder.itemView.cl_loadmore.tag = mComment.data.parentId
-            var more = ""
+            var moreChildren = ""
             var i = 0
             for(child in mComment.data.children) {
                 if(i<100)
-                    more += child.loadMoreChild + ","
+                    moreChildren += "," + child.loadMoreChild
                 i++
             }
-            viewHolder.itemView.btn_more_childs.text= "$linkId $i Replies"
+            viewHolder.itemView.btn_more_childs.apply {
+                setOnClickListener {
+                    listener.onLoadMoreClicked(linkId,moreChildren, position)
+                }
+            }
+            viewHolder.itemView.btn_more_childs.text= "$i More Replies"
         } else {
             addDepthViews(viewHolder)
             viewHolder.itemView.cl_comment.visibility= View.VISIBLE
@@ -92,5 +94,9 @@ open class ExpandableCommentItem constructor(private val mComment: ChildrenItem,
                     .inflate(R.layout.separator_view, viewHolder.itemView.separatorContainer2, false)
             viewHolder.itemView.separatorContainer2.addView((v))
         }
+    }
+
+    interface OnItemClickListener {
+        fun onLoadMoreClicked(linkId: String, moreChildren: String, position: Int)
     }
 }

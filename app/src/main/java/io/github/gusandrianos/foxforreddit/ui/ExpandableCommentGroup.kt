@@ -2,26 +2,28 @@ package io.github.gusandrianos.foxforreddit.ui
 
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.ExpandableItem
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
+import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.ChildrenItem
 
 import kotlinx.android.synthetic.main.single_post_expandable_comment.view.*
 
-class ExpandableCommentGroup constructor(private val mComment: ChildrenItem, private val depth: Int = 0) : ExpandableGroup(ExpandableCommentItem(mComment, depth)) {
+class ExpandableCommentGroup constructor(private val mComment: ChildrenItem, private val depth: Int = 0, private val linkId: String) : ExpandableGroup(ExpandableCommentItem(mComment, depth, linkId)) {
 
     init {
         if (mComment.data.replies != null)
             for (comment in mComment.data.replies.data.children) {
-                add(ExpandableCommentGroup(comment, comment.data.depth))
+                add(ExpandableCommentGroup(comment, comment.data.depth, linkId)).apply {isExpanded=true}
             }
     }
 }
 
-open class ExpandableCommentItem constructor(private val mComment: ChildrenItem, private val depth: Int) : Item<GroupieViewHolder>(), ExpandableItem {
+open class ExpandableCommentItem constructor(private val mComment: ChildrenItem, private val depth: Int, private val linkId: String) : Item<GroupieViewHolder>(), ExpandableItem {
     private lateinit var expandableGroup: ExpandableGroup
 
     override fun setExpandableGroup(onToggleListener: ExpandableGroup) {
@@ -45,7 +47,7 @@ open class ExpandableCommentItem constructor(private val mComment: ChildrenItem,
                     more += child.loadMoreChild + ","
                 i++
             }
-            viewHolder.itemView.txt_more_childs.text= mComment.data.parentId+"$i Replies"
+            viewHolder.itemView.btn_more_childs.text= "$linkId $i Replies"
         } else {
             addDepthViews(viewHolder)
             viewHolder.itemView.cl_comment.visibility= View.VISIBLE

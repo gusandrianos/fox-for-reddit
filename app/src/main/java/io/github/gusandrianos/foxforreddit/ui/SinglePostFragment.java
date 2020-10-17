@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.xwray.groupie.ExpandableGroup;
+import com.xwray.groupie.ExpandableItem;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
 
@@ -51,8 +53,8 @@ public class SinglePostFragment extends Fragment {
                     @Override
                     public void onChanged(Comments comments) {
                         for (ChildrenItem child : comments.getData().getChildren()) {
-                            if(!child.getData().equals("more"))
-                            groupAdapter.add(new ExpandableCommentGroup(child, child.getData().getDepth()));
+                            
+                            groupAdapter.add(new ExpandableCommentGroup(child, child.getData().getDepth(),"t3_jbmf8f"));
                         }
                     }
                 });

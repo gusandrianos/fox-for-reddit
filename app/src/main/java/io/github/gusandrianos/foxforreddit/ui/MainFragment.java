@@ -31,7 +31,6 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 public class MainFragment extends Fragment {
 
     Token mToken;
-    private ArrayList<PostFragment> homeFragments;
 
     @Nullable
     @Override
@@ -45,12 +44,12 @@ public class MainFragment extends Fragment {
 
         setUpToolbar();
 
-        mToken = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
+        mToken = InjectorUtils.getInstance().provideTokenRepository(requireActivity().getApplication()).getToken();
 
         ViewPager viewPager = view.findViewById(R.id.view_pager);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
 
-        homeFragments = new ArrayList<>();
+        ArrayList<PostFragment> homeFragments = new ArrayList<>();
         homeFragments.add(PostFragment.newInstance("", ""));
         homeFragments.add(PostFragment.newInstance("r/all", "hot"));
 
@@ -66,13 +65,10 @@ public class MainFragment extends Fragment {
     }
 
     private void setUpToolbar() {
-        MainActivity mainActivity = (MainActivity) getActivity();
-        NavigationView navigationView = ((AppCompatActivity) getActivity()).findViewById(R.id.nav_view);
+        MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         AppBarConfiguration appBarConfiguration = mainActivity.appBarConfiguration;
-        Toolbar toolbar = ((AppCompatActivity) getActivity()).findViewById(R.id.toolbar_main);
-
+        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_main);
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
     }
 }

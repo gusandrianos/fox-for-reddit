@@ -4,9 +4,9 @@ import com.google.gson.JsonArray
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.models.User
 import io.github.gusandrianos.foxforreddit.data.models.UserResponse
+
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
-import org.json.JSONArray
-import org.json.JSONObject
+import io.github.gusandrianos.foxforreddit.data.models.trophies.TrophiesResponse
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -64,4 +64,10 @@ interface RedditAPI {
             @Query("api_type") apiType: String = "json"
 
     ): Call<MoreChildren>
+
+    @GET("api/v1/user/{username}/trophies")
+    fun getTrophies(
+            @Header("Authorization") bearer: String,
+            @Path("username") username: String
+    ): Call<TrophiesResponse>
 }

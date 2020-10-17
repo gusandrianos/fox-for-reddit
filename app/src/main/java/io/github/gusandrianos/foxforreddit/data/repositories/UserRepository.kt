@@ -1,11 +1,14 @@
-package io.github.gusandrianos.foxforreddit.data.repositories;
+package io.github.gusandrianos.foxforreddit.data.repositories
 
 import android.app.Application
+import android.content.ContentValues
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.github.gusandrianos.foxforreddit.data.models.User
 import io.github.gusandrianos.foxforreddit.data.models.UserResponse
+import io.github.gusandrianos.foxforreddit.data.models.trophies.TrophiesItem
+import io.github.gusandrianos.foxforreddit.data.models.trophies.TrophiesResponse
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils
@@ -18,6 +21,7 @@ object UserRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     private var user: MutableLiveData<User> = MutableLiveData()
     private var me: MutableLiveData<User> = MutableLiveData()
+    private var trophies: MutableLiveData<List<TrophiesItem>> = MutableLiveData()
 
     fun getUser(username: String, application: Application): LiveData<User> {
         val token = InjectorUtils.getInstance().provideTokenRepository(application).token
@@ -53,5 +57,25 @@ object UserRepository {
             }
         })
         return me
+    }
+
+    fun getTrophies(application: Application, username: String): LiveData<List<TrophiesItem>> {
+        val token = InjectorUtils.getInstance().provideTokenRepository(application).token
+        val bearer = " " + token.tokenType + " " + token.accessToken
+        val trophiesRequest = redditAPI.getTrophies(bearer, username)
+        trophiesRequest.enqueue(object : Callback<TrophiesResponse> {
+            override fun onResponse(call: Call<TrophiesResponse>, response: Response<TrophiesResponse>) {
+                Log.i(ContentValues.TAG, "onResponse: I am here" + response.raw())
+                if (response.isSuccessful) {
+                    Log.i(ContentValues.TAG, "isSuccessful: I am here")
+                    trophies.value = response.body()?.data?.trophies
+                }
+            }
+
+            override fun onFailure(call: Call<TrophiesResponse>, t: Throwable) {
+                Log.i("USER REPOSITORY", "getTrophies() onFailure: ${t.message}")
+            }
+        })
+        return trophies
     }
 }

@@ -69,7 +69,7 @@ public class Data{
     private Object discussionType;
 
     @SerializedName("edited")
-    private boolean edited;
+    private String edited;
 
     @SerializedName("allow_live_comments")
     private boolean allowLiveComments;
@@ -431,7 +431,7 @@ public class Data{
         return discussionType;
     }
 
-    public boolean isEdited(){
+    public String isEdited(){
         return edited;
     }
 

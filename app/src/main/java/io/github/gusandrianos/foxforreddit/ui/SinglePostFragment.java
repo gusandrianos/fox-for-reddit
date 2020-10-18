@@ -76,13 +76,15 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         Token mToken = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        viewModel.getSinglePost("r/japanpics", "jdaw3f", "japan_nara_kofukiji_temple_the_nanendō_an", mToken)
+        viewModel.getSinglePost("r/AskReddit", "j9hojh", "if_you_had_30_minutes_to_hide_from_a_nuclear", mToken)
                 .observe(getViewLifecycleOwner(), new Observer<SinglePostResponse>() {
                     @Override
                     public void onChanged(SinglePostResponse singlePostResponse) {
                         Data singlePostData = singlePostResponse.getSinglepost().getData().getChildren().get(0).getData();
                         mTxtPostSubreddit.setText(singlePostData.getSubredditNamePrefixed());
-                        mTxtTimePosted.setText(DateUtils.getRelativeTimeSpanString(singlePostData.getCreatedUtc()*1000).toString());//ToDo does not work
+                        String user = "Posted by User "+singlePostData.getAuthor();
+                        mTxtPostUser.setText(user);
+                        mTxtTimePosted.setText(DateUtils.getRelativeTimeSpanString((long)singlePostData.getCreatedUtc()*1000).toString());
                         mTxtPostTitle.setText(singlePostData.getTitle());
                         mTxtPostScore.setText(formatValue(singlePostData.getScore()));
                         if (singlePostData.getLikes() != null)

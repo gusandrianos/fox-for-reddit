@@ -219,7 +219,7 @@ public class Data{
     private boolean locked;
 
     @SerializedName("likes")
-    private Object likes;
+    private Boolean likes;
 
     @SerializedName("thumbnail")
     private String thumbnail;
@@ -631,7 +631,7 @@ public class Data{
         return locked;
     }
 
-    public Object getLikes(){
+    public Boolean getLikes(){
         return likes;
     }
 

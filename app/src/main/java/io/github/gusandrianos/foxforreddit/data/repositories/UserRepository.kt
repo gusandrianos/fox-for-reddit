@@ -1,10 +1,12 @@
 package io.github.gusandrianos.foxforreddit.data.repositories
 
 import android.app.Application
-import android.content.ContentValues
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.liveData
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
@@ -22,8 +24,7 @@ object UserRepository {
     private var trophies: MutableLiveData<List<Thing>> = MutableLiveData()
 
     fun getUser(username: String, application: Application): LiveData<Data> {
-        val token = InjectorUtils.getInstance().provideTokenRepository(application).token
-        val bearer = " " + token.tokenType + " " + token.accessToken
+        val bearer = getBearer(application)
         val about = redditAPI.getUser(username, bearer)
         about.enqueue(object : Callback<Thing> {
             override fun onResponse(call: Call<Thing>, response: Response<Thing>) {
@@ -39,9 +40,9 @@ object UserRepository {
         return user
     }
 
+
     fun getMe(application: Application): LiveData<Data> {
-        val token = InjectorUtils.getInstance().provideTokenRepository(application).token
-        val bearer = " " + token.tokenType + " " + token.accessToken
+        val bearer = getBearer(application)
         val about = redditAPI.getMe(bearer)
         about.enqueue(object : Callback<Data> {
             override fun onResponse(call: Call<Data>, response: Response<Data>) {
@@ -58,14 +59,11 @@ object UserRepository {
     }
 
     fun getTrophies(application: Application, username: String): LiveData<List<Thing>> {
-        val token = InjectorUtils.getInstance().provideTokenRepository(application).token
-        val bearer = " " + token.tokenType + " " + token.accessToken
+        val bearer = getBearer(application)
         val trophiesRequest = redditAPI.getTrophies(bearer, username)
         trophiesRequest.enqueue(object : Callback<Thing> {
             override fun onResponse(call: Call<Thing>, response: Response<Thing>) {
-                Log.i(ContentValues.TAG, "onResponse: I am here" + response.raw())
                 if (response.isSuccessful) {
-                    Log.i(ContentValues.TAG, "isSuccessful: I am here")
                     trophies.value = response.body()?.data?.trophies
                 }
             }
@@ -75,5 +73,16 @@ object UserRepository {
             }
         })
         return trophies
+    }
+
+    fun getSubreddits(application: Application, where: String) =
+            Pager(
+                    config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+                    pagingSourceFactory = { SubredditListPagingSource(where, getBearer(application)) }
+            ).liveData
+
+    private fun getBearer(application: Application): String {
+        val token = InjectorUtils.getInstance().provideTokenRepository(application).token
+        return " " + token.tokenType + " " + token.accessToken
     }
 }

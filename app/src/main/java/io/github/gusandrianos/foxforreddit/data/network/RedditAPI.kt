@@ -68,4 +68,12 @@ interface RedditAPI {
             @Header("Authorization") bearer: String,
             @Path("username") username: String
     ): Call<Thing>
+
+    @GET("subreddits/mine/{where}")
+    suspend fun getSubreddits(
+            @Header("Authorization") bearer: String,
+            @Path("where") where: String,
+            @Query("after") after: String,
+            @Query("count") count: Int
+    ): Listing
 }

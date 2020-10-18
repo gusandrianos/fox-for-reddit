@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (mToken.getRefreshToken() != null) {
             getCurrentUser();
             navigationView.getMenu().getItem(1).setVisible(true);
-            navigationView.getMenu().getItem(2).getSubMenu().getItem(0).setVisible(false);
+            navigationView.getMenu().getItem(3).getSubMenu().getItem(0).setVisible(false);
         }
     }
 
@@ -157,6 +157,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             itemSelectedID = id;
             drawer.close();
             return true;
+        } else if (id == R.id.subredditListFragment) {
+            itemSelectedID = id;
+            drawer.close();
+            return true;
         } else if (id == R.id.nav_login) {
             itemSelectedID = id;
             drawer.close();
@@ -171,14 +175,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public void onDrawerClosed(@NonNull View drawerView) {
             if (itemSelectedID != -1) {
                 if (itemSelectedID == R.id.mainFragment) {
-                    if (isValidDestination(R.id.mainFragment)) {
+                    if (isValidDestination(itemSelectedID)) {
                         options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
                         navController.navigate(R.id.mainFragment, null, options);
                     }
                     itemSelectedID = -1;
                 } else if (itemSelectedID == R.id.userFragment) {
-                    if (isValidDestination(R.id.userFragment))
+                    if (isValidDestination(itemSelectedID))
                         navController.navigate(R.id.userFragment);
+                    itemSelectedID = -1;
+                } else if (itemSelectedID == R.id.subredditListFragment) {
+                    if (isValidDestination(itemSelectedID))
+                        navController.navigate(R.id.subredditListFragment);
                     itemSelectedID = -1;
                 } else if (itemSelectedID == R.id.nav_login) {
                     loadLogInWebpage();

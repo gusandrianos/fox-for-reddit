@@ -395,6 +395,276 @@ public class Data {
     @SerializedName("icon_70")
     private String icon70;
 
+    @SerializedName("modhash")
+    private String modhash;
+
+    @SerializedName("user_flair_position")
+    private String userFlairPosition;
+
+    @SerializedName("public_description")
+    private String publicDescription;
+
+    @SerializedName("key_color")
+    private String keyColor;
+
+    @SerializedName("active_user_count")
+    private Object activeUserCount;
+
+    @SerializedName("accounts_active")
+    private Object accountsActive;
+
+    @SerializedName("user_is_banned")
+    private boolean userIsBanned;
+
+    @SerializedName("submit_text_label")
+    private String submitTextLabel;
+
+    @SerializedName("user_flair_text_color")
+    private Object userFlairTextColor;
+
+    @SerializedName("emojis_enabled")
+    private boolean emojisEnabled;
+
+    @SerializedName("user_is_muted")
+    private boolean userIsMuted;
+
+    @SerializedName("disable_contributor_requests")
+    private boolean disableContributorRequests;
+
+    @SerializedName("public_description_html")
+    private String publicDescriptionHtml;
+
+    @SerializedName("is_crosspostable_subreddit")
+    private boolean isCrosspostableSubreddit;
+
+    @SerializedName("user_is_subscriber")
+    private boolean userIsSubscriber;
+
+    @SerializedName("whitelist_status")
+    private Object whitelistStatus;
+
+    @SerializedName("icon_size")
+    private List<Integer> iconSize;
+
+    @SerializedName("user_flair_enabled_in_sr")
+    private boolean userFlairEnabledInSr;
+
+    @SerializedName("show_media")
+    private boolean showMedia;
+
+    @SerializedName("comment_score_hide_mins")
+    private int commentScoreHideMins;
+
+    @SerializedName("is_enrolled_in_new_modmail")
+    private Object isEnrolledInNewModmail;
+
+    @SerializedName("header_title")
+    private String headerTitle;
+
+    @SerializedName("restrict_commenting")
+    private boolean restrictCommenting;
+
+    @SerializedName("subscribers")
+    private int subscribers;
+
+    @SerializedName("restrict_posting")
+    private boolean restrictPosting;
+
+    @SerializedName("community_icon")
+    private String communityIcon;
+
+    @SerializedName("display_name")
+    private String displayName;
+
+    @SerializedName("primary_color")
+    private String primaryColor;
+
+    @SerializedName("link_flair_position")
+    private String linkFlairPosition;
+
+    @SerializedName("link_flair_enabled")
+    private boolean linkFlairEnabled;
+
+    @SerializedName("user_is_contributor")
+    private boolean userIsContributor;
+
+    @SerializedName("can_assign_user_flair")
+    private boolean canAssignUserFlair;
+
+    @SerializedName("submit_link_label")
+    private String submitLinkLabel;
+
+    @SerializedName("banner_img")
+    private String bannerImg;
+
+    @SerializedName("user_flair_css_class")
+    private Object userFlairCssClass;
+
+    @SerializedName("allow_videogifs")
+    private boolean allowVideogifs;
+
+    @SerializedName("user_flair_type")
+    private String userFlairType;
+
+    @SerializedName("notification_level")
+    private Object notificationLevel;
+
+    @SerializedName("description_html")
+    private Object descriptionHtml;
+
+    @SerializedName("allow_polls")
+    private boolean allowPolls;
+
+    @SerializedName("user_sr_flair_enabled")
+    private Object userSrFlairEnabled;
+
+    @SerializedName("wls")
+    private Object wls;
+
+    @SerializedName("suggested_comment_sort")
+    private String suggestedCommentSort;
+
+    @SerializedName("videostream_links_count")
+    private int videostreamLinksCount;
+
+    @SerializedName("submit_text")
+    private String submitText;
+
+    @SerializedName("user_has_favorited")
+    private boolean userHasFavorited;
+
+    @SerializedName("accounts_active_is_fuzzed")
+    private boolean accountsActiveIsFuzzed;
+
+    @SerializedName("allow_images")
+    private boolean allowImages;
+
+    @SerializedName("public_traffic")
+    private boolean publicTraffic;
+
+    @SerializedName("description")
+    private String description;
+
+    @SerializedName("user_flair_text")
+    private Object userFlairText;
+
+    @SerializedName("banner_background_color")
+    private String bannerBackgroundColor;
+
+    @SerializedName("user_flair_template_id")
+    private Object userFlairTemplateId;
+
+    @SerializedName("display_name_prefixed")
+    private String displayNamePrefixed;
+
+    @SerializedName("submission_type")
+    private String submissionType;
+
+    @SerializedName("spoilers_enabled")
+    private boolean spoilersEnabled;
+
+    @SerializedName("show_media_preview")
+    private boolean showMediaPreview;
+
+    @SerializedName("user_sr_theme_enabled")
+    private boolean userSrThemeEnabled;
+
+    @SerializedName("free_form_reports")
+    private boolean freeFormReports;
+
+    @SerializedName("lang")
+    private String lang;
+
+    @SerializedName("user_is_moderator")
+    private boolean userIsModerator;
+
+    @SerializedName("user_flair_background_color")
+    private Object userFlairBackgroundColor;
+
+    @SerializedName("allow_discovery")
+    private boolean allowDiscovery;
+
+    @SerializedName("banner_background_image")
+    private String bannerBackgroundImage;
+
+    @SerializedName("subreddit_type")
+    private String subredditType;
+
+    @SerializedName("banner_size")
+    private Object bannerSize;
+
+    @SerializedName("allow_galleries")
+    private boolean allowGalleries;
+
+    @SerializedName("header_size")
+    private Object headerSize;
+
+    @SerializedName("collapse_deleted_comments")
+    private boolean collapseDeletedComments;
+
+    @SerializedName("advertiser_category")
+    private String advertiserCategory;
+
+    @SerializedName("has_menu_widget")
+    private boolean hasMenuWidget;
+
+    @SerializedName("collections_enabled")
+    private boolean collectionsEnabled;
+
+    @SerializedName("original_content_tag_enabled")
+    private boolean originalContentTagEnabled;
+
+    @SerializedName("event_posts_enabled")
+    private boolean eventPostsEnabled;
+
+    @SerializedName("allow_predictions")
+    private boolean allowPredictions;
+
+    @SerializedName("all_original_content")
+    private boolean allOriginalContent;
+
+    @SerializedName("mobile_banner_image")
+    private String mobileBannerImage;
+
+    @SerializedName("user_can_flair_in_sr")
+    private Object userCanFlairInSr;
+
+    @SerializedName("allow_videos")
+    private boolean allowVideos;
+
+    @SerializedName("header_img")
+    private Object headerImg;
+
+    @SerializedName("submit_text_html")
+    private Object submitTextHtml;
+
+    @SerializedName("wiki_enabled")
+    private Object wikiEnabled;
+
+    @SerializedName("quarantine")
+    private boolean quarantine;
+
+    @SerializedName("hide_ads")
+    private boolean hideAds;
+
+    @SerializedName("emojis_custom_size")
+    private Object emojisCustomSize;
+
+    @SerializedName("can_assign_link_flair")
+    private boolean canAssignLinkFlair;
+
+    @SerializedName("is_default_banner")
+    private boolean isDefaultBanner;
+
+    @SerializedName("is_default_icon")
+    private boolean isDefaultIcon;
+
+    @SerializedName("allow_chat_post_creation")
+    private boolean allowChatPostCreation;
+
+    @SerializedName("is_chat_post_feature_enabled")
+    private boolean isChatPostFeatureEnabled;
+
     public List<Thing> getChildren() {
         return children;
     }
@@ -433,10 +703,6 @@ public class Data {
 
     public String getUrl() {
         return url;
-    }
-
-    public String getCreated() {
-        return created;
     }
 
     public String getEdited() {
@@ -750,4 +1016,364 @@ public class Data {
     public List<Thing> getTrophies() { return trophies; }
 
     public String getIcon70() { return icon70; }
+
+    public String getModhash(){
+        return modhash;
+    }
+
+    public String getUserFlairPosition(){
+        return userFlairPosition;
+    }
+
+    public String getPublicDescription(){
+        return publicDescription;
+    }
+
+    public String getKeyColor(){
+        return keyColor;
+    }
+
+    public Object getActiveUserCount(){
+        return activeUserCount;
+    }
+
+    public Object getAccountsActive(){
+        return accountsActive;
+    }
+
+    public boolean isUserIsBanned(){
+        return userIsBanned;
+    }
+
+    public String getSubmitTextLabel(){
+        return submitTextLabel;
+    }
+
+    public Object getUserFlairTextColor(){
+        return userFlairTextColor;
+    }
+
+    public boolean isEmojisEnabled(){
+        return emojisEnabled;
+    }
+
+    public boolean isUserIsMuted(){
+        return userIsMuted;
+    }
+
+    public boolean isDisableContributorRequests(){
+        return disableContributorRequests;
+    }
+
+    public String getPublicDescriptionHtml(){
+        return publicDescriptionHtml;
+    }
+
+    public boolean isIsCrosspostableSubreddit(){
+        return isCrosspostableSubreddit;
+    }
+
+    public boolean isUserIsSubscriber(){
+        return userIsSubscriber;
+    }
+
+    public Object getWhitelistStatus(){
+        return whitelistStatus;
+    }
+
+    public List<Integer> getIconSize(){
+        return iconSize;
+    }
+
+    public boolean isUserFlairEnabledInSr(){
+        return userFlairEnabledInSr;
+    }
+
+    public boolean isShowMedia(){
+        return showMedia;
+    }
+
+    public int getCommentScoreHideMins(){
+        return commentScoreHideMins;
+    }
+
+    public Object getIsEnrolledInNewModmail(){
+        return isEnrolledInNewModmail;
+    }
+
+    public String getHeaderTitle(){
+        return headerTitle;
+    }
+
+    public boolean isRestrictCommenting(){
+        return restrictCommenting;
+    }
+
+    public int getSubscribers(){
+        return subscribers;
+    }
+
+    public boolean isRestrictPosting(){
+        return restrictPosting;
+    }
+
+    public String getCommunityIcon(){
+        return communityIcon;
+    }
+
+    public String getDisplayName(){
+        return displayName;
+    }
+
+    public String getPrimaryColor(){
+        return primaryColor;
+    }
+
+    public String getLinkFlairPosition(){
+        return linkFlairPosition;
+    }
+
+    public boolean isLinkFlairEnabled(){
+        return linkFlairEnabled;
+    }
+
+    public boolean isUserIsContributor(){
+        return userIsContributor;
+    }
+
+    public boolean isCanAssignUserFlair(){
+        return canAssignUserFlair;
+    }
+
+    public String getSubmitLinkLabel(){
+        return submitLinkLabel;
+    }
+
+    public String getBannerImg(){
+        return bannerImg;
+    }
+
+    public Object getUserFlairCssClass(){
+        return userFlairCssClass;
+    }
+
+    public boolean isAllowVideogifs(){
+        return allowVideogifs;
+    }
+
+    public String getUserFlairType(){
+        return userFlairType;
+    }
+
+    public Object getNotificationLevel(){
+        return notificationLevel;
+    }
+
+    public Object getDescriptionHtml(){
+        return descriptionHtml;
+    }
+
+    public boolean isAllowPolls(){
+        return allowPolls;
+    }
+
+    public Object getUserSrFlairEnabled(){
+        return userSrFlairEnabled;
+    }
+
+    public Object getWls(){
+        return wls;
+    }
+
+    public String getSuggestedCommentSort(){
+        return suggestedCommentSort;
+    }
+
+    public int getVideostreamLinksCount(){
+        return videostreamLinksCount;
+    }
+
+    public String getSubmitText(){
+        return submitText;
+    }
+
+    public boolean isUserHasFavorited(){
+        return userHasFavorited;
+    }
+
+    public boolean isAccountsActiveIsFuzzed(){
+        return accountsActiveIsFuzzed;
+    }
+
+    public boolean isAllowImages(){
+        return allowImages;
+    }
+
+    public boolean isPublicTraffic(){
+        return publicTraffic;
+    }
+
+    public String getDescription(){
+        return description;
+    }
+
+    public Object getUserFlairText(){
+        return userFlairText;
+    }
+
+    public String getBannerBackgroundColor(){
+        return bannerBackgroundColor;
+    }
+
+    public Object getUserFlairTemplateId(){
+        return userFlairTemplateId;
+    }
+
+    public String getDisplayNamePrefixed(){
+        return displayNamePrefixed;
+    }
+
+    public String getSubmissionType(){
+        return submissionType;
+    }
+
+    public boolean isSpoilersEnabled(){
+        return spoilersEnabled;
+    }
+
+    public boolean isShowMediaPreview(){
+        return showMediaPreview;
+    }
+
+    public boolean isUserSrThemeEnabled(){
+        return userSrThemeEnabled;
+    }
+
+    public boolean isFreeFormReports(){
+        return freeFormReports;
+    }
+
+    public String getLang(){
+        return lang;
+    }
+
+    public boolean isUserIsModerator(){
+        return userIsModerator;
+    }
+
+    public Object getUserFlairBackgroundColor(){
+        return userFlairBackgroundColor;
+    }
+
+    public boolean isAllowDiscovery(){
+        return allowDiscovery;
+    }
+
+    public String getBannerBackgroundImage(){
+        return bannerBackgroundImage;
+    }
+
+    public String getSubredditType(){
+        return subredditType;
+    }
+
+    public Object getBannerSize(){
+        return bannerSize;
+    }
+
+    public boolean isAllowGalleries(){
+        return allowGalleries;
+    }
+
+    public Object getHeaderSize(){
+        return headerSize;
+    }
+
+    public boolean isCollapseDeletedComments(){
+        return collapseDeletedComments;
+    }
+
+    public String getAdvertiserCategory(){
+        return advertiserCategory;
+    }
+
+    public boolean isHasMenuWidget(){
+        return hasMenuWidget;
+    }
+
+    public boolean isCollectionsEnabled(){
+        return collectionsEnabled;
+    }
+
+    public boolean isOriginalContentTagEnabled(){
+        return originalContentTagEnabled;
+    }
+
+    public boolean isEventPostsEnabled(){
+        return eventPostsEnabled;
+    }
+
+    public boolean isAllowPredictions(){
+        return allowPredictions;
+    }
+
+    public boolean isAllOriginalContent(){
+        return allOriginalContent;
+    }
+
+    public String getMobileBannerImage(){
+        return mobileBannerImage;
+    }
+
+    public Object getUserCanFlairInSr(){
+        return userCanFlairInSr;
+    }
+
+    public boolean isAllowVideos(){
+        return allowVideos;
+    }
+
+    public Object getHeaderImg(){
+        return headerImg;
+    }
+
+    public Object getSubmitTextHtml(){
+        return submitTextHtml;
+    }
+
+    public Object getWikiEnabled(){
+        return wikiEnabled;
+    }
+
+    public boolean isQuarantine(){
+        return quarantine;
+    }
+
+    public boolean isHideAds(){
+        return hideAds;
+    }
+
+    public Object getEmojisCustomSize(){
+        return emojisCustomSize;
+    }
+
+    public boolean isCanAssignLinkFlair(){
+        return canAssignLinkFlair;
+    }
+
+    public boolean isIsDefaultBanner(){
+        return isDefaultBanner;
+    }
+
+    public boolean isIsDefaultIcon(){
+        return isDefaultIcon;
+    }
+
+    public boolean isAllowChatPostCreation(){
+        return allowChatPostCreation;
+    }
+
+    public boolean isIsChatPostFeatureEnabled(){
+        return isChatPostFeatureEnabled;
+    }
 }

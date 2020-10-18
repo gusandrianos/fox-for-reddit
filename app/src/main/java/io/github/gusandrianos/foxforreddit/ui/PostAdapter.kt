@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
-import io.github.gusandrianos.foxforreddit.data.models.Post
+import io.github.gusandrianos.foxforreddit.data.models.Data
 
 
 import java.text.DecimalFormat
@@ -21,7 +21,7 @@ import java.text.NumberFormat
 import java.time.Instant
 import kotlin.math.pow
 
-class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter<Post, RecyclerView.ViewHolder>(POST_COMPARATOR) {
+class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter<Data, RecyclerView.ViewHolder>(POST_COMPARATOR) {
 
     private val SELF = 1
     private val LINK = 2
@@ -31,13 +31,13 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
     private val COMMENT = 6
 
     companion object {
-        private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Post>() {
+        private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Data>() {
 
-            override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
+            override fun areItemsTheSame(oldItem: Data, newItem: Data): Boolean {
                 return oldItem.id == newItem.id
             }
 
-            override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
+            override fun areContentsTheSame(oldItem: Data, newItem: Data): Boolean {
                 return oldItem.toString() == newItem.toString()
             }
 
@@ -193,7 +193,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
             }
         }
 
-        open fun onBind(post: Post) {
+        open fun onBind(post: Data) {
             val user = "Posted by u/" + post.author
             val subreddit = "r/" + post.subreddit
             //Glide.with(parent.getContext()).load().placeholder(R.drawable.ic_launcher_background).into(mImgPostSubreddit);  //MUST GET SUBREDDIT ICON
@@ -217,7 +217,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
 
     inner class PostSelfViewHolder(itemView: View) : AbstractPostViewHolder(itemView) {
 
-        override fun onBind(post: Post) {
+        override fun onBind(post: Data) {
             super.onBind(post)
         }
     }
@@ -231,7 +231,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
             }
         }
 
-        override fun onBind(post: Post) {
+        override fun onBind(post: Data) {
             super.onBind(post)
             //Todo if it is nsfw
             Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.ic_launcher_background).into(mImgPostThumbnail)
@@ -249,7 +249,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
             }
         }
 
-        override fun onBind(post: Post) {
+        override fun onBind(post: Data) {
             super.onBind(post)
             Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.ic_launcher_background).into(mImgPostThumbnail)
             mTxtPostDomain.text = post.domain
@@ -267,7 +267,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
             }
         }
 
-        override fun onBind(post: Post) {
+        override fun onBind(post: Data) {
             super.onBind(post)
             Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.ic_launcher_background).into(mImgPostThumbnail)
         }
@@ -284,7 +284,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
             }
         }
 
-        override fun onBind(post: Post) {
+        override fun onBind(post: Data) {
             super.onBind(post)
             val votes = post.pollData.totalVoteCount.toString() + " Votes"
             mTxtPostVoteNum.text = votes
@@ -313,7 +313,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
             }
         }
 
-        fun onBind(comment: Post) {
+        fun onBind(comment: Data) {
             val subreddit = "In r/" + comment.subreddit
             mTxtPostUser.text = comment.author
             mTxtTimePosted.text = DateUtils.getRelativeTimeSpanString(comment.createdUtc * 1000).toString()
@@ -334,7 +334,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
     }
 
     interface OnItemClickListener {
-        fun onItemClick(post: Post, pressed: String)
+        fun onItemClick(post: Data, pressed: String)
     }
 }
 

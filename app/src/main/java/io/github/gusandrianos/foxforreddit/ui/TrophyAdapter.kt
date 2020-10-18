@@ -8,10 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.github.gusandrianos.foxforreddit.R
-import io.github.gusandrianos.foxforreddit.data.models.trophies.TrophiesItem
+import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.ui.TrophyAdapter.ViewHolder
 
-class TrophyAdapter(private val trophies: List<TrophiesItem>) : RecyclerView.Adapter<ViewHolder>() {
+class TrophyAdapter(private val trophies: List<Thing>) : RecyclerView.Adapter<ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var trophyImg = view.findViewById(R.id.img_trophy_thumbnail) as ImageView
         var trophyTitle = view.findViewById(R.id.txt_trophy_title) as TextView

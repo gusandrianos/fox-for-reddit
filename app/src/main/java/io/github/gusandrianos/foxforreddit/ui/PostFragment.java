@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.models.Post;
+import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
@@ -87,7 +87,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     }
 
     @Override
-    public void onItemClick(@NotNull Post post, @NotNull String clicked) {      //ToDo improve voting system (Binding Adapter and viewModel)
+    public void onItemClick(@NotNull Data post, @NotNull String clicked) {      //ToDo improve voting system (Binding Adapter and viewModel)
         Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);

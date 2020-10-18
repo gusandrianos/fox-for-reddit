@@ -20,16 +20,21 @@ import androidx.viewpager.widget.ViewPager;
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.models.User;
+import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.data.models.Subreddit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 public class UserFragment extends Fragment {
 
-    private User mUser;
+    private Data mUser;
 
     @Nullable
     @Override
@@ -63,7 +68,7 @@ public class UserFragment extends Fragment {
         }
     }
 
-    private void buildUserProfile(User user, View view, boolean isSelf) {
+    private void buildUserProfile(Data user, View view, boolean isSelf) {
         ViewPager viewPager = view.findViewById(R.id.profile_view_pager);
         TabLayout tabLayout = view.findViewById(R.id.profile_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
@@ -87,7 +92,12 @@ public class UserFragment extends Fragment {
         ImageView profilePic = requireActivity().findViewById(R.id.profile_picture);
         ImageView coverPic = requireActivity().findViewById(R.id.profile_cover);
         Glide.with(view).load(user.getIconImg().split("\\?")[0]).into(profilePic);
-        Glide.with(view).load(user.getSubreddit().getBannerImg().split("\\?")[0]).into(coverPic);
+
+        Type subredditType = new TypeToken<Subreddit>() {}.getType();
+        Gson gson = new Gson();
+        Subreddit subreddit = gson.fromJson(gson.toJsonTree(user.getSubreddit()).getAsJsonObject(), subredditType);
+
+        Glide.with(view).load(subreddit.getBannerImg().split("\\?")[0]).into(coverPic);
     }
 
     private void setUpToolbar() {

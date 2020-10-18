@@ -2,16 +2,16 @@ package io.github.gusandrianos.foxforreddit.data.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ChildrenItem{
+public class Thing {
 
     @SerializedName("data")
-    private Post post;
+    private Data data;
 
     @SerializedName("kind")
     private String kind;
 
-    public Post getPost() {
-        return post;
+    public Data getData() {
+        return data;
     }
 
     public String getKind() {

@@ -2,11 +2,10 @@ package io.github.gusandrianos.foxforreddit.data.network
 
 import com.google.gson.JsonArray
 import io.github.gusandrianos.foxforreddit.data.models.Listing
-import io.github.gusandrianos.foxforreddit.data.models.User
-import io.github.gusandrianos.foxforreddit.data.models.UserResponse
+import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.data.models.Thing
 
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
-import io.github.gusandrianos.foxforreddit.data.models.trophies.TrophiesResponse
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -41,12 +40,12 @@ interface RedditAPI {
     fun getUser(
             @Path("username") username: String,
             @Header("Authorization") bearer: String?,
-    ): Call<UserResponse>
+    ): Call<Thing>
 
     @GET("api/v1/me")
     fun getMe(
             @Header("Authorization") bearer: String,
-    ): Call<User>
+    ): Call<Data>
 
     @GET("{subreddit}/comments/{commentID}/{article}")
     fun getSinglePost(
@@ -68,5 +67,5 @@ interface RedditAPI {
     fun getTrophies(
             @Header("Authorization") bearer: String,
             @Path("username") username: String
-    ): Call<TrophiesResponse>
+    ): Call<Thing>
 }

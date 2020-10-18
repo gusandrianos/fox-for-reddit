@@ -4,17 +4,16 @@ import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import io.github.gusandrianos.foxforreddit.data.models.Post
+import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Token
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.SinglePostResponse
-import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.Comments
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository
 
 class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
-    var posts: LiveData<PagingData<Post>>? = null
+    var posts: LiveData<PagingData<Data>>? = null
 
-    fun getPosts(subreddit: String, filter: String, token: Token): LiveData<PagingData<Post>> {
+    fun getPosts(subreddit: String, filter: String, token: Token): LiveData<PagingData<Data>> {
         if (posts != null) {
             return posts!!;
         }

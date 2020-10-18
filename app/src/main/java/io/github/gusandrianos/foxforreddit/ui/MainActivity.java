@@ -30,14 +30,14 @@ import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
-import io.github.gusandrianos.foxforreddit.data.models.User;
+import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    public static User mUser;
+    public static Data mUser;
     int LAUNCH_SECOND_ACTIVITY = 1;
     Token mToken;
     private NavController navController;

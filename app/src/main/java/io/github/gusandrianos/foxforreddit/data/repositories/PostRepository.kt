@@ -9,8 +9,10 @@ import androidx.paging.liveData
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import io.github.gusandrianos.foxforreddit.data.models.Token
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.SinglePostResponse
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.Comments
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.post.SinglePost
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import org.json.JSONArray
@@ -20,7 +22,7 @@ import retrofit2.Response
 
 object PostRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
-    private val dataComments = MutableLiveData<Comments>()
+    private val dataSinglePost = MutableLiveData<SinglePostResponse>()
     private val dataMoreChildren = MutableLiveData<MoreChildren>()
 
     fun getPosts(subreddit: String, filter: String, token: Token) =
@@ -43,15 +45,17 @@ object PostRepository {
         })
     }
 
-    fun getSinglePost(subreddit: String, commentID: String, article: String, token: Token): LiveData<Comments> {
+    fun getSinglePost(subreddit: String, commentID: String, article: String, token: Token): LiveData<SinglePostResponse> {
         val bearer = " " + token.tokenType + " " + token.accessToken
         val singlePost = redditAPI.getSinglePost(subreddit, commentID, article, bearer)
         singlePost.enqueue(object : Callback<JsonArray> {
             override fun onResponse(call: Call<JsonArray>, response: Response<JsonArray>) {
                 if (response.isSuccessful) {
                     val jsonArray = JSONArray(response.body().toString())
+                    val singlePost: SinglePost = Gson().fromJson(jsonArray.getJSONObject(0).toString(), SinglePost::class.java)
                     val comment: Comments = Gson().fromJson(jsonArray.getJSONObject(1).toString(), Comments::class.java)
-                    dataComments.value = comment
+
+                    dataSinglePost.value = SinglePostResponse(singlePost,comment)
                 }
             }
 
@@ -60,7 +64,7 @@ object PostRepository {
             }
 
         })
-        return dataComments
+        return dataSinglePost
     }
 
     fun getMoreChildren(linkId: String, children: String, token: Token): LiveData<MoreChildren>{

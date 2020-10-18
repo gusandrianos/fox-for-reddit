@@ -21,7 +21,7 @@ public class Data{
     private Object after;
 
     @SerializedName("secure_media")
-    private Object secureMedia;
+    private SecureMedia secureMedia;
 
     @SerializedName("saved")
     private boolean saved;
@@ -59,6 +59,9 @@ public class Data{
     @SerializedName("created_utc")
     private int createdUtc;
 
+    @SerializedName("link_flair_template_id")
+    private String linkFlairTemplateId;
+
     @SerializedName("banned_at_utc")
     private Object bannedAtUtc;
 
@@ -72,7 +75,7 @@ public class Data{
     private boolean allowLiveComments;
 
     @SerializedName("author_flair_background_color")
-    private Object authorFlairBackgroundColor;
+    private String authorFlairBackgroundColor;
 
     @SerializedName("approved_by")
     private Object approvedBy;
@@ -105,13 +108,13 @@ public class Data{
     private String permalink;
 
     @SerializedName("content_categories")
-    private Object contentCategories;
+    private List<String> contentCategories;
 
     @SerializedName("wls")
     private int wls;
 
     @SerializedName("author_flair_css_class")
-    private Object authorFlairCssClass;
+    private String authorFlairCssClass;
 
     @SerializedName("mod_reports")
     private List<Object> modReports;
@@ -129,7 +132,7 @@ public class Data{
     private boolean archived;
 
     @SerializedName("author_flair_text_color")
-    private Object authorFlairTextColor;
+    private String authorFlairTextColor;
 
     @SerializedName("can_mod_post")
     private boolean canModPost;
@@ -138,7 +141,7 @@ public class Data{
     private boolean isSelf;
 
     @SerializedName("link_flair_css_class")
-    private Object linkFlairCssClass;
+    private String linkFlairCssClass;
 
     @SerializedName("author_fullname")
     private String authorFullname;
@@ -162,10 +165,13 @@ public class Data{
     private boolean clicked;
 
     @SerializedName("author_flair_template_id")
-    private Object authorFlairTemplateId;
+    private String authorFlairTemplateId;
 
     @SerializedName("url")
     private String url;
+
+    @SerializedName("url_overridden_by_dest")
+    private String urlOverriddenByDest;
 
     @SerializedName("parent_whitelist_status")
     private String parentWhitelistStatus;
@@ -205,6 +211,9 @@ public class Data{
 
     @SerializedName("author_premium")
     private boolean authorPremium;
+
+    @SerializedName("post_hint")
+    private String postHint;
 
     @SerializedName("locked")
     private boolean locked;
@@ -257,6 +266,9 @@ public class Data{
     @SerializedName("media_only")
     private boolean mediaOnly;
 
+    @SerializedName("preview")
+    private Preview preview;
+
     @SerializedName("num_reports")
     private Object numReports;
 
@@ -273,22 +285,25 @@ public class Data{
     private Object modNote;
 
     @SerializedName("media")
-    private Object media;
+    private Media media;
 
     @SerializedName("title")
     private String title;
 
     @SerializedName("author_flair_text")
-    private Object authorFlairText;
+    private String authorFlairText;
 
     @SerializedName("num_crossposts")
     private int numCrossposts;
+
+    @SerializedName("thumbnail_width")
+    private int thumbnailWidth;
 
     @SerializedName("secure_media_embed")
     private SecureMediaEmbed secureMediaEmbed;
 
     @SerializedName("link_flair_text")
-    private Object linkFlairText;
+    private String linkFlairText;
 
     @SerializedName("subreddit_type")
     private String subredditType;
@@ -304,6 +319,9 @@ public class Data{
 
     @SerializedName("removed_by_category")
     private Object removedByCategory;
+
+    @SerializedName("thumbnail_height")
+    private int thumbnailHeight;
 
     @SerializedName("link_flair_type")
     private String linkFlairType;
@@ -349,7 +367,7 @@ public class Data{
         return after;
     }
 
-    public Object getSecureMedia(){
+    public SecureMedia getSecureMedia(){
         return secureMedia;
     }
 
@@ -401,6 +419,10 @@ public class Data{
         return createdUtc;
     }
 
+    public String getLinkFlairTemplateId(){
+        return linkFlairTemplateId;
+    }
+
     public Object getBannedAtUtc(){
         return bannedAtUtc;
     }
@@ -417,7 +439,7 @@ public class Data{
         return allowLiveComments;
     }
 
-    public Object getAuthorFlairBackgroundColor(){
+    public String getAuthorFlairBackgroundColor(){
         return authorFlairBackgroundColor;
     }
 
@@ -461,7 +483,7 @@ public class Data{
         return permalink;
     }
 
-    public Object getContentCategories(){
+    public List<String> getContentCategories(){
         return contentCategories;
     }
 
@@ -469,7 +491,7 @@ public class Data{
         return wls;
     }
 
-    public Object getAuthorFlairCssClass(){
+    public String getAuthorFlairCssClass(){
         return authorFlairCssClass;
     }
 
@@ -493,7 +515,7 @@ public class Data{
         return archived;
     }
 
-    public Object getAuthorFlairTextColor(){
+    public String getAuthorFlairTextColor(){
         return authorFlairTextColor;
     }
 
@@ -505,7 +527,7 @@ public class Data{
         return isSelf;
     }
 
-    public Object getLinkFlairCssClass(){
+    public String getLinkFlairCssClass(){
         return linkFlairCssClass;
     }
 
@@ -537,12 +559,16 @@ public class Data{
         return clicked;
     }
 
-    public Object getAuthorFlairTemplateId(){
+    public String getAuthorFlairTemplateId(){
         return authorFlairTemplateId;
     }
 
     public String getUrl(){
         return url;
+    }
+
+    public String getUrlOverriddenByDest(){
+        return urlOverriddenByDest;
     }
 
     public String getParentWhitelistStatus(){
@@ -595,6 +621,10 @@ public class Data{
 
     public boolean isAuthorPremium(){
         return authorPremium;
+    }
+
+    public String getPostHint(){
+        return postHint;
     }
 
     public boolean isLocked(){
@@ -665,6 +695,10 @@ public class Data{
         return mediaOnly;
     }
 
+    public Preview getPreview(){
+        return preview;
+    }
+
     public Object getNumReports(){
         return numReports;
     }
@@ -685,7 +719,7 @@ public class Data{
         return modNote;
     }
 
-    public Object getMedia(){
+    public Media getMedia(){
         return media;
     }
 
@@ -693,7 +727,7 @@ public class Data{
         return title;
     }
 
-    public Object getAuthorFlairText(){
+    public String getAuthorFlairText(){
         return authorFlairText;
     }
 
@@ -701,11 +735,15 @@ public class Data{
         return numCrossposts;
     }
 
+    public int getThumbnailWidth(){
+        return thumbnailWidth;
+    }
+
     public SecureMediaEmbed getSecureMediaEmbed(){
         return secureMediaEmbed;
     }
 
-    public Object getLinkFlairText(){
+    public String getLinkFlairText(){
         return linkFlairText;
     }
 
@@ -727,6 +765,10 @@ public class Data{
 
     public Object getRemovedByCategory(){
         return removedByCategory;
+    }
+
+    public int getThumbnailHeight(){
+        return thumbnailHeight;
     }
 
     public String getLinkFlairType(){

@@ -39,7 +39,7 @@ public class AllAwardingsItem{
     private int subredditCoinReward;
 
     @SerializedName("icon_format")
-    private Object iconFormat;
+    private String iconFormat;
 
     @SerializedName("award_type")
     private String awardType;
@@ -54,10 +54,10 @@ public class AllAwardingsItem{
     private boolean isEnabled;
 
     @SerializedName("penny_price")
-    private Object pennyPrice;
+    private int pennyPrice;
 
     @SerializedName("penny_donate")
-    private Object pennyDonate;
+    private int pennyDonate;
 
     @SerializedName("static_icon_height")
     private int staticIconHeight;
@@ -90,7 +90,7 @@ public class AllAwardingsItem{
     private List<ResizedStaticIconsItem> resizedStaticIcons;
 
     @SerializedName("giver_coin_reward")
-    private Object giverCoinReward;
+    private int giverCoinReward;
 
     @SerializedName("name")
     private String name;
@@ -139,7 +139,7 @@ public class AllAwardingsItem{
         return subredditCoinReward;
     }
 
-    public Object getIconFormat(){
+    public String getIconFormat(){
         return iconFormat;
     }
 
@@ -159,11 +159,11 @@ public class AllAwardingsItem{
         return isEnabled;
     }
 
-    public Object getPennyPrice(){
+    public int getPennyPrice(){
         return pennyPrice;
     }
 
-    public Object getPennyDonate(){
+    public int getPennyDonate(){
         return pennyDonate;
     }
 
@@ -207,7 +207,7 @@ public class AllAwardingsItem{
         return resizedStaticIcons;
     }
 
-    public Object getGiverCoinReward(){
+    public int getGiverCoinReward(){
         return giverCoinReward;
     }
 

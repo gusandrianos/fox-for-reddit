@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 
+import io.github.gusandrianos.foxforreddit.data.models.singlepost.SinglePostResponse;
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.Comments;
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren;
@@ -52,10 +53,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         viewModel.getSinglePost("r/AskReddit", "jbmf8f", "whats_older_than_we_think", mToken)
-                .observe(getViewLifecycleOwner(), new Observer<Comments>() {
+                .observe(getViewLifecycleOwner(), new Observer<SinglePostResponse>() {
                     @Override
-                    public void onChanged(Comments comments) {
-                        for (ChildrenItem child : comments.getData().getChildren()) {
+                    public void onChanged(SinglePostResponse singlePostResponse) {
+                        for (ChildrenItem child : singlePostResponse.getComments().getData().getChildren()) {
                             groupAdapter.add(new ExpandableCommentGroup(child, child.getData().getDepth(),"t3_jbmf8f",SinglePostFragment.this::onLoadMoreClicked));
                         }
                     }

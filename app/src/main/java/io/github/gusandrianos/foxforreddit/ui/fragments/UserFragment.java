@@ -1,4 +1,4 @@
-package io.github.gusandrianos.foxforreddit.ui;
+package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,6 +28,8 @@ import java.lang.reflect.Type;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Subreddit;
+import io.github.gusandrianos.foxforreddit.ui.MainActivity;
+import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;

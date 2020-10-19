@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     int LAUNCH_SECOND_ACTIVITY = 1;
     Token mToken;
     private NavController navController;
-    AppBarConfiguration appBarConfiguration;
+    public AppBarConfiguration appBarConfiguration;
     NavigationView navigationView;
     NavOptions options;
     List<Integer> topLevelDestinationIds;

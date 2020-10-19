@@ -1,4 +1,4 @@
-package io.github.gusandrianos.foxforreddit.ui;
+package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
 
@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.utilities.TrophyAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;

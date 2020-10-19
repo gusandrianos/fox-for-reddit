@@ -1,4 +1,4 @@
-package io.github.gusandrianos.foxforreddit.ui
+package io.github.gusandrianos.foxforreddit.utilities
 
 import android.graphics.Color
 import android.text.format.DateUtils
@@ -112,27 +112,27 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
         val currentItem = getItem(position)
         when (getItemViewType(position)) {
             SELF -> {
-                val postSelfViewHolder = holder as PostAdapter.PostSelfViewHolder
+                val postSelfViewHolder = holder as PostSelfViewHolder
                 postSelfViewHolder.onBind(currentItem!!)
             }
             IMAGE -> {
-                val postImageViewHolder = holder as PostAdapter.PostImageViewHolder
+                val postImageViewHolder = holder as PostImageViewHolder
                 postImageViewHolder.onBind(currentItem!!)
             }
             LINK -> {
-                val postLinkViewHolder = holder as PostAdapter.PostLinkViewHolder
+                val postLinkViewHolder = holder as PostLinkViewHolder
                 postLinkViewHolder.onBind(currentItem!!)
             }
             VIDEO -> {
-                val postVideoViewHolder = holder as PostAdapter.PostVideoViewHolder
+                val postVideoViewHolder = holder as PostVideoViewHolder
                 postVideoViewHolder.onBind(currentItem!!)
             }
             POLL -> {
-                val postPollViewHolder = holder as PostAdapter.PostPollViewHolder
+                val postPollViewHolder = holder as PostPollViewHolder
                 postPollViewHolder.onBind(currentItem!!)
             }
             COMMENT -> {
-                val postCommentViewHolder = holder as PostAdapter.PostCommentViewHolder
+                val postCommentViewHolder = holder as PostCommentViewHolder
                 postCommentViewHolder.onBind(currentItem!!)
             }
         }

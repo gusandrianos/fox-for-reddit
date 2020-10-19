@@ -3,8 +3,6 @@ package io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren;
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
-import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.Gildings;
-
 public class DataMoreChildren {
 
     @SerializedName("body_html")
@@ -81,9 +79,6 @@ public class DataMoreChildren {
 
     @SerializedName("author_flair_background_color")
     private Object authorFlairBackgroundColor;
-
-    @SerializedName("gildings")
-    private Gildings gildings;
 
     @SerializedName("report_reasons")
     private Object reportReasons;
@@ -308,10 +303,6 @@ public class DataMoreChildren {
 
     public Object getAuthorFlairBackgroundColor(){
         return authorFlairBackgroundColor;
-    }
-
-    public Gildings getGildings(){
-        return gildings;
     }
 
     public Object getReportReasons(){

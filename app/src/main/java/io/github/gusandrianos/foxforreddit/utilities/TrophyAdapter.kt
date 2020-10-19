@@ -1,4 +1,4 @@
-package io.github.gusandrianos.foxforreddit.ui
+package io.github.gusandrianos.foxforreddit.utilities
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Thing
-import io.github.gusandrianos.foxforreddit.ui.TrophyAdapter.ViewHolder
+import io.github.gusandrianos.foxforreddit.utilities.TrophyAdapter.ViewHolder
 
 class TrophyAdapter(private val trophies: List<Thing>) : RecyclerView.Adapter<ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

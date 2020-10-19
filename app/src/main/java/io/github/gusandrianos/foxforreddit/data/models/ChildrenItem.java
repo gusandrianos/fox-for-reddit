@@ -1,12 +1,11 @@
-package io.github.gusandrianos.foxforreddit.data.models.singlepost.comments;
+package io.github.gusandrianos.foxforreddit.data.models;
 
 import com.google.gson.annotations.SerializedName;
 
-//@JsonAdapter(ChildrenItemAdapterFactory.class)
-public class ChildrenItem{
+public class ChildrenItem {
 
     @SerializedName("data")
-    private Data data;
+    private CommentData data;
 
     @SerializedName("kind")
     private String kind;
@@ -19,11 +18,11 @@ public class ChildrenItem{
         kind = null;
     }
 
-    public Data getData(){
+    public CommentData getData() {
         return data;
     }
 
-    public String getKind(){
+    public String getKind() {
         return kind;
     }
 

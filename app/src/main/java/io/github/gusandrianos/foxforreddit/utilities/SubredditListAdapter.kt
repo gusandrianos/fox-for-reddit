@@ -1,4 +1,4 @@
-package io.github.gusandrianos.foxforreddit.ui
+package io.github.gusandrianos.foxforreddit.utilities
 
 import android.view.LayoutInflater
 import android.view.View

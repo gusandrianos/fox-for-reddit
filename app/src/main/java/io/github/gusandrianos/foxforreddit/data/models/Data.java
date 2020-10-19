@@ -57,7 +57,7 @@ public class Data {
     private String linkFlairTemplateId;
 
     @SerializedName("edited")
-    private String edited;
+    private Object edited;
 
     @SerializedName("author_flair_background_color")
     private Object authorFlairBackgroundColor;
@@ -150,7 +150,7 @@ public class Data {
     private boolean locked;
 
     @SerializedName("likes")
-    private Object likes;
+    private Boolean likes;
 
     @SerializedName("thumbnail")
     private String thumbnail;
@@ -665,6 +665,131 @@ public class Data {
     @SerializedName("is_chat_post_feature_enabled")
     private boolean isChatPostFeatureEnabled;
 
+//    @SerializedName("children")
+////    @JsonAdapter(ChildrenTypeAdapter.class)
+//    private List<Object> children;
+
+    @SerializedName("depth")
+    private int depth;
+
+    @SerializedName("parent_id")
+    private String parentId;
+
+    @SerializedName("count")
+    private int count;
+
+    @SerializedName("body_html")
+    private String bodyHtml;
+
+    @SerializedName("controversiality")
+    private int controversiality;
+
+    @SerializedName("total_awards_received")
+    private int totalAwardsReceived;
+
+    @SerializedName("link_id")
+    private String linkId;
+
+    @SerializedName("mod_reason_title")
+    private Object modReasonTitle;
+
+    @SerializedName("is_submitter")
+    private boolean isSubmitter;
+
+    @SerializedName("can_gild")
+    private boolean canGild;
+
+    @SerializedName("author_premium")
+    private boolean authorPremium;
+
+    @SerializedName("banned_at_utc")
+    private Object bannedAtUtc;
+
+    @SerializedName("downs")
+    private int downs;
+
+    @SerializedName("treatment_tags")
+    private List<Object> treatmentTags;
+
+    @SerializedName("report_reasons")
+    private Object reportReasons;
+
+    @SerializedName("approved_by")
+    private Object approvedBy;
+
+    @SerializedName("score_hidden")
+    private boolean scoreHidden;
+
+    @SerializedName("replies")
+//    @JsonAdapter(RepliesTypeAdapter.class)
+    private Object replies;
+
+    @SerializedName("mod_reason_by")
+    private Object modReasonBy;
+
+    @SerializedName("top_awarded_type")
+    private Object topAwardedType;
+
+    @SerializedName("approved_at_utc")
+    private Object approvedAtUtc;
+
+    @SerializedName("awarders")
+    private List<Object> awarders;
+
+    @SerializedName("num_reports")
+    private Object numReports;
+
+    @SerializedName("gilded")
+    private int gilded;
+
+    @SerializedName("collapsed")
+    private boolean collapsed;
+
+    @SerializedName("collapsed_reason")
+    private Object collapsedReason;
+
+    @SerializedName("removal_reason")
+    private Object removalReason;
+
+    @SerializedName("mod_note")
+    private Object modNote;
+
+    @SerializedName("can_mod_post")
+    private boolean canModPost;
+
+    @SerializedName("user_reports")
+    private List<Object> userReports;
+
+    @SerializedName("associated_award")
+    private Object associatedAward;
+
+    @SerializedName("distinguished")
+    private Object distinguished;
+
+    @SerializedName("all_awardings")
+    private List<Object> allAwardings;
+
+    @SerializedName("comment_type")
+    private Object commentType;
+
+    @SerializedName("collapsed_because_crowd_control")
+    private Object collapsedBecauseCrowdControl;
+
+    @SerializedName("banned_by")
+    private Object bannedBy;
+
+    @SerializedName("is_original_content")
+    private boolean isOriginalContent;
+
+    @SerializedName("pinned")
+    private boolean pinned;
+
+    @SerializedName("is_meta")
+    private boolean isMeta;
+
+    @SerializedName("category")
+    private Object category;
+
     public List<Thing> getChildren() {
         return children;
     }
@@ -705,11 +830,7 @@ public class Data {
         return url;
     }
 
-    public String getEdited() {
-        return edited;
-    }
-
-    public Object getLikes() {
+    public Boolean getLikes() {
         return likes;
     }
 
@@ -777,7 +898,7 @@ public class Data {
         return authorFullname;
     }
 
-    public void setLikes(Object likes) {
+    public void setLikes(Boolean likes) {
         this.likes = likes;
     }
 
@@ -901,7 +1022,9 @@ public class Data {
         return isSuspended;
     }
 
-    public boolean isNewModmailExists() { return newModmailExists; }
+    public boolean isNewModmailExists() {
+        return newModmailExists;
+    }
 
     public boolean isIsSponsor() {
         return isSponsor;
@@ -995,7 +1118,9 @@ public class Data {
         return prefNoProfanity;
     }
 
-    public String getIconImg() { return iconImg; }
+    public String getIconImg() {
+        return iconImg;
+    }
 
     public int getInboxCount() {
         return inboxCount;
@@ -1013,367 +1138,608 @@ public class Data {
         return seenSubredditChatFtux;
     }
 
-    public List<Thing> getTrophies() { return trophies; }
+    public List<Thing> getTrophies() {
+        return trophies;
+    }
 
-    public String getIcon70() { return icon70; }
+    public String getIcon70() {
+        return icon70;
+    }
 
-    public String getModhash(){
+    public String getModhash() {
         return modhash;
     }
 
-    public String getUserFlairPosition(){
+    public String getUserFlairPosition() {
         return userFlairPosition;
     }
 
-    public String getPublicDescription(){
+    public String getPublicDescription() {
         return publicDescription;
     }
 
-    public String getKeyColor(){
+    public String getKeyColor() {
         return keyColor;
     }
 
-    public Object getActiveUserCount(){
+    public Object getActiveUserCount() {
         return activeUserCount;
     }
 
-    public Object getAccountsActive(){
+    public Object getAccountsActive() {
         return accountsActive;
     }
 
-    public boolean isUserIsBanned(){
+    public boolean isUserIsBanned() {
         return userIsBanned;
     }
 
-    public String getSubmitTextLabel(){
+    public String getSubmitTextLabel() {
         return submitTextLabel;
     }
 
-    public Object getUserFlairTextColor(){
+    public Object getUserFlairTextColor() {
         return userFlairTextColor;
     }
 
-    public boolean isEmojisEnabled(){
+    public boolean isEmojisEnabled() {
         return emojisEnabled;
     }
 
-    public boolean isUserIsMuted(){
+    public boolean isUserIsMuted() {
         return userIsMuted;
     }
 
-    public boolean isDisableContributorRequests(){
+    public boolean isDisableContributorRequests() {
         return disableContributorRequests;
     }
 
-    public String getPublicDescriptionHtml(){
+    public String getPublicDescriptionHtml() {
         return publicDescriptionHtml;
     }
 
-    public boolean isIsCrosspostableSubreddit(){
+    public boolean isIsCrosspostableSubreddit() {
         return isCrosspostableSubreddit;
     }
 
-    public boolean isUserIsSubscriber(){
+    public boolean isUserIsSubscriber() {
         return userIsSubscriber;
     }
 
-    public Object getWhitelistStatus(){
+    public Object getWhitelistStatus() {
         return whitelistStatus;
     }
 
-    public List<Integer> getIconSize(){
+    public List<Integer> getIconSize() {
         return iconSize;
     }
 
-    public boolean isUserFlairEnabledInSr(){
+    public boolean isUserFlairEnabledInSr() {
         return userFlairEnabledInSr;
     }
 
-    public boolean isShowMedia(){
+    public boolean isShowMedia() {
         return showMedia;
     }
 
-    public int getCommentScoreHideMins(){
+    public int getCommentScoreHideMins() {
         return commentScoreHideMins;
     }
 
-    public Object getIsEnrolledInNewModmail(){
+    public Object getIsEnrolledInNewModmail() {
         return isEnrolledInNewModmail;
     }
 
-    public String getHeaderTitle(){
+    public String getHeaderTitle() {
         return headerTitle;
     }
 
-    public boolean isRestrictCommenting(){
+    public boolean isRestrictCommenting() {
         return restrictCommenting;
     }
 
-    public int getSubscribers(){
+    public int getSubscribers() {
         return subscribers;
     }
 
-    public boolean isRestrictPosting(){
+    public boolean isRestrictPosting() {
         return restrictPosting;
     }
 
-    public String getCommunityIcon(){
+    public String getCommunityIcon() {
         return communityIcon;
     }
 
-    public String getDisplayName(){
+    public String getDisplayName() {
         return displayName;
     }
 
-    public String getPrimaryColor(){
+    public String getPrimaryColor() {
         return primaryColor;
     }
 
-    public String getLinkFlairPosition(){
+    public String getLinkFlairPosition() {
         return linkFlairPosition;
     }
 
-    public boolean isLinkFlairEnabled(){
+    public boolean isLinkFlairEnabled() {
         return linkFlairEnabled;
     }
 
-    public boolean isUserIsContributor(){
+    public boolean isUserIsContributor() {
         return userIsContributor;
     }
 
-    public boolean isCanAssignUserFlair(){
+    public boolean isCanAssignUserFlair() {
         return canAssignUserFlair;
     }
 
-    public String getSubmitLinkLabel(){
+    public String getSubmitLinkLabel() {
         return submitLinkLabel;
     }
 
-    public String getBannerImg(){
+    public String getBannerImg() {
         return bannerImg;
     }
 
-    public Object getUserFlairCssClass(){
+    public Object getUserFlairCssClass() {
         return userFlairCssClass;
     }
 
-    public boolean isAllowVideogifs(){
+    public boolean isAllowVideogifs() {
         return allowVideogifs;
     }
 
-    public String getUserFlairType(){
+    public String getUserFlairType() {
         return userFlairType;
     }
 
-    public Object getNotificationLevel(){
+    public Object getNotificationLevel() {
         return notificationLevel;
     }
 
-    public Object getDescriptionHtml(){
+    public Object getDescriptionHtml() {
         return descriptionHtml;
     }
 
-    public boolean isAllowPolls(){
+    public boolean isAllowPolls() {
         return allowPolls;
     }
 
-    public Object getUserSrFlairEnabled(){
+    public Object getUserSrFlairEnabled() {
         return userSrFlairEnabled;
     }
 
-    public Object getWls(){
+    public Object getWls() {
         return wls;
     }
 
-    public String getSuggestedCommentSort(){
+    public String getSuggestedCommentSort() {
         return suggestedCommentSort;
     }
 
-    public int getVideostreamLinksCount(){
+    public int getVideostreamLinksCount() {
         return videostreamLinksCount;
     }
 
-    public String getSubmitText(){
+    public String getSubmitText() {
         return submitText;
     }
 
-    public boolean isUserHasFavorited(){
+    public boolean isUserHasFavorited() {
         return userHasFavorited;
     }
 
-    public boolean isAccountsActiveIsFuzzed(){
+    public boolean isAccountsActiveIsFuzzed() {
         return accountsActiveIsFuzzed;
     }
 
-    public boolean isAllowImages(){
+    public boolean isAllowImages() {
         return allowImages;
     }
 
-    public boolean isPublicTraffic(){
+    public boolean isPublicTraffic() {
         return publicTraffic;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return description;
     }
 
-    public Object getUserFlairText(){
+    public Object getUserFlairText() {
         return userFlairText;
     }
 
-    public String getBannerBackgroundColor(){
+    public String getBannerBackgroundColor() {
         return bannerBackgroundColor;
     }
 
-    public Object getUserFlairTemplateId(){
+    public Object getUserFlairTemplateId() {
         return userFlairTemplateId;
     }
 
-    public String getDisplayNamePrefixed(){
+    public String getDisplayNamePrefixed() {
         return displayNamePrefixed;
     }
 
-    public String getSubmissionType(){
+    public String getSubmissionType() {
         return submissionType;
     }
 
-    public boolean isSpoilersEnabled(){
+    public boolean isSpoilersEnabled() {
         return spoilersEnabled;
     }
 
-    public boolean isShowMediaPreview(){
+    public boolean isShowMediaPreview() {
         return showMediaPreview;
     }
 
-    public boolean isUserSrThemeEnabled(){
+    public boolean isUserSrThemeEnabled() {
         return userSrThemeEnabled;
     }
 
-    public boolean isFreeFormReports(){
+    public boolean isFreeFormReports() {
         return freeFormReports;
     }
 
-    public String getLang(){
+    public String getLang() {
         return lang;
     }
 
-    public boolean isUserIsModerator(){
+    public boolean isUserIsModerator() {
         return userIsModerator;
     }
 
-    public Object getUserFlairBackgroundColor(){
+    public Object getUserFlairBackgroundColor() {
         return userFlairBackgroundColor;
     }
 
-    public boolean isAllowDiscovery(){
+    public boolean isAllowDiscovery() {
         return allowDiscovery;
     }
 
-    public String getBannerBackgroundImage(){
+    public String getBannerBackgroundImage() {
         return bannerBackgroundImage;
     }
 
-    public String getSubredditType(){
+    public String getSubredditType() {
         return subredditType;
     }
 
-    public Object getBannerSize(){
+    public Object getBannerSize() {
         return bannerSize;
     }
 
-    public boolean isAllowGalleries(){
+    public boolean isAllowGalleries() {
         return allowGalleries;
     }
 
-    public Object getHeaderSize(){
+    public Object getHeaderSize() {
         return headerSize;
     }
 
-    public boolean isCollapseDeletedComments(){
+    public boolean isCollapseDeletedComments() {
         return collapseDeletedComments;
     }
 
-    public String getAdvertiserCategory(){
+    public String getAdvertiserCategory() {
         return advertiserCategory;
     }
 
-    public boolean isHasMenuWidget(){
+    public boolean isHasMenuWidget() {
         return hasMenuWidget;
     }
 
-    public boolean isCollectionsEnabled(){
+    public boolean isCollectionsEnabled() {
         return collectionsEnabled;
     }
 
-    public boolean isOriginalContentTagEnabled(){
+    public boolean isOriginalContentTagEnabled() {
         return originalContentTagEnabled;
     }
 
-    public boolean isEventPostsEnabled(){
+    public boolean isEventPostsEnabled() {
         return eventPostsEnabled;
     }
 
-    public boolean isAllowPredictions(){
+    public boolean isAllowPredictions() {
         return allowPredictions;
     }
 
-    public boolean isAllOriginalContent(){
+    public boolean isAllOriginalContent() {
         return allOriginalContent;
     }
 
-    public String getMobileBannerImage(){
+    public String getMobileBannerImage() {
         return mobileBannerImage;
     }
 
-    public Object getUserCanFlairInSr(){
+    public Object getUserCanFlairInSr() {
         return userCanFlairInSr;
     }
 
-    public boolean isAllowVideos(){
+    public boolean isAllowVideos() {
         return allowVideos;
     }
 
-    public Object getHeaderImg(){
+    public Object getHeaderImg() {
         return headerImg;
     }
 
-    public Object getSubmitTextHtml(){
+    public Object getSubmitTextHtml() {
         return submitTextHtml;
     }
 
-    public Object getWikiEnabled(){
+    public Object getWikiEnabled() {
         return wikiEnabled;
     }
 
-    public boolean isQuarantine(){
+    public boolean isQuarantine() {
         return quarantine;
     }
 
-    public boolean isHideAds(){
+    public boolean isHideAds() {
         return hideAds;
     }
 
-    public Object getEmojisCustomSize(){
+    public Object getEmojisCustomSize() {
         return emojisCustomSize;
     }
 
-    public boolean isCanAssignLinkFlair(){
+    public boolean isCanAssignLinkFlair() {
         return canAssignLinkFlair;
     }
 
-    public boolean isIsDefaultBanner(){
+    public boolean isIsDefaultBanner() {
         return isDefaultBanner;
     }
 
-    public boolean isIsDefaultIcon(){
+    public boolean isIsDefaultIcon() {
         return isDefaultIcon;
     }
 
-    public boolean isAllowChatPostCreation(){
+    public boolean isAllowChatPostCreation() {
         return allowChatPostCreation;
     }
 
-    public boolean isIsChatPostFeatureEnabled(){
+    public boolean isIsChatPostFeatureEnabled() {
         return isChatPostFeatureEnabled;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public String getBodyHtml() {
+        return bodyHtml;
+    }
+
+    public List<Object> getAuthorFlairRichtext() {
+        return authorFlairRichtext;
+    }
+
+    public boolean isSaved() {
+        return saved;
+    }
+
+    public int getControversiality() {
+        return controversiality;
+    }
+
+    public int getTotalAwardsReceived() {
+        return totalAwardsReceived;
+    }
+
+    public String getLinkId() {
+        return linkId;
+    }
+
+    public String getSubredditId() {
+        return subredditId;
+    }
+
+    public Object getModReasonTitle() {
+        return modReasonTitle;
+    }
+
+    public boolean isIsSubmitter() {
+        return isSubmitter;
+    }
+
+    public boolean isCanGild() {
+        return canGild;
+    }
+
+    public boolean isAuthorPremium() {
+        return authorPremium;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public Object getBannedAtUtc() {
+        return bannedAtUtc;
+    }
+
+    public int getDowns() {
+        return downs;
+    }
+
+    public Object getEdited() {
+        return edited;
+    }
+
+    public List<Object> getTreatmentTags() {
+        return treatmentTags;
+    }
+
+    public Object getAuthorFlairBackgroundColor() {
+        return authorFlairBackgroundColor;
+    }
+
+    public Object getReportReasons() {
+        return reportReasons;
+    }
+
+    public Object getApprovedBy() {
+        return approvedBy;
+    }
+
+    public boolean isScoreHidden() {
+        return scoreHidden;
+    }
+
+    public Object getReplies() {
+        return replies;
+    }
+
+    public String getSubredditNamePrefixed() {
+        return subredditNamePrefixed;
+    }
+
+    public Object getModReasonBy() {
+        return modReasonBy;
+    }
+
+    public Object getTopAwardedType() {
+        return topAwardedType;
+    }
+
+    public Object getApprovedAtUtc() {
+        return approvedAtUtc;
+    }
+
+    public boolean isNoFollow() {
+        return noFollow;
+    }
+
+    public int getUps() {
+        return ups;
+    }
+
+    public List<Object> getAwarders() {
+        return awarders;
+    }
+
+    public String getAuthorFlairType() {
+        return authorFlairType;
+    }
+
+    public String getPermalink() {
+        return permalink;
+    }
+
+    public Object getAuthorFlairCssClass() {
+        return authorFlairCssClass;
+    }
+
+    public Object getNumReports() {
+        return numReports;
+    }
+
+    public List<Object> getModReports() {
+        return modReports;
+    }
+
+    public int getGilded() {
+        return gilded;
+    }
+
+    public boolean isAuthorPatreonFlair() {
+        return authorPatreonFlair;
+    }
+
+    public boolean isCollapsed() {
+        return collapsed;
+    }
+
+    public Object getCollapsedReason() {
+        return collapsedReason;
+    }
+
+    public Object getRemovalReason() {
+        return removalReason;
+    }
+
+    public Object getModNote() {
+        return modNote;
+    }
+
+    public boolean isSendReplies() {
+        return sendReplies;
+    }
+
+    public Object getAuthorFlairText() {
+        return authorFlairText;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public Object getAuthorFlairTextColor() {
+        return authorFlairTextColor;
+    }
+
+    public boolean isCanModPost() {
+        return canModPost;
+    }
+
+    public List<Object> getUserReports() {
+        return userReports;
+    }
+
+    public Object getAssociatedAward() {
+        return associatedAward;
+    }
+
+    public Object getDistinguished() {
+        return distinguished;
+    }
+
+    public Object getAuthorFlairTemplateId() {
+        return authorFlairTemplateId;
+    }
+
+    public List<Object> getAllAwardings() {
+        return allAwardings;
+    }
+
+    public Object getCommentType() {
+        return commentType;
+    }
+
+    public Object getCollapsedBecauseCrowdControl() {
+        return collapsedBecauseCrowdControl;
+    }
+
+    public Object getBannedBy() {
+        return bannedBy;
+    }
+
+
+    public boolean isOriginalContent() {
+        return isOriginalContent;
+    }
+
+    public boolean isPinned() {
+        return pinned;
+    }
+
+    public boolean isMeta() {
+        return isMeta;
+    }
+
+    public Object getCategory() {
+        return category;
     }
 }

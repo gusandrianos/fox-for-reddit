@@ -1,4 +1,4 @@
-package io.github.gusandrianos.foxforreddit.ui;
+package io.github.gusandrianos.foxforreddit.utilities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

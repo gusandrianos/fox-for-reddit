@@ -1,4 +1,4 @@
-package io.github.gusandrianos.foxforreddit.ui;
+package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.utilities.SubredditListAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;

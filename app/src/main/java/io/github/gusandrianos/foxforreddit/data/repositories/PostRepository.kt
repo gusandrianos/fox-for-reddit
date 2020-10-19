@@ -1,34 +1,33 @@
 package io.github.gusandrianos.foxforreddit.data.repositories
 
-import android.util.Log
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.liveData
 import com.google.gson.Gson
-import com.google.gson.JsonArray
+import com.google.gson.reflect.TypeToken
+import io.github.gusandrianos.foxforreddit.data.models.CommentListing
+import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.models.Token
-import io.github.gusandrianos.foxforreddit.data.models.singlepost.SinglePostResponse
-import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.Comments
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
-import io.github.gusandrianos.foxforreddit.data.models.singlepost.post.SinglePost
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
-import org.json.JSONArray
+import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 object PostRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
-    private val dataSinglePost = MutableLiveData<SinglePostResponse>()
+    private val commentsData = MutableLiveData<CommentListing>()
     private val dataMoreChildren = MutableLiveData<MoreChildren>()
 
-    fun getPosts(subreddit: String, filter: String, token: Token) =
+    fun getPosts(subreddit: String, filter: String, application: Application) =
             Pager(
                     config = PagingConfig(pageSize = 25, prefetchDistance = 25, enablePlaceholders = false),
-                    pagingSourceFactory = { PostPagingSource(subreddit, filter, token) }
+                    pagingSourceFactory = { PostPagingSource(subreddit, filter, getBearer(application)) }
             ).liveData
 
     fun votePost(dir: String, id: String, token: Token) {
@@ -45,44 +44,43 @@ object PostRepository {
         })
     }
 
-    fun getSinglePost(subreddit: String, commentID: String, article: String, token: Token): LiveData<SinglePostResponse> {
+    fun getSinglePost(subreddit: String, commentID: String, article: String, token: Token): LiveData<CommentListing> {
         val bearer = " " + token.tokenType + " " + token.accessToken
         val singlePost = redditAPI.getSinglePost(subreddit, commentID, article, bearer)
-        singlePost.enqueue(object : Callback<JsonArray> {
-            override fun onResponse(call: Call<JsonArray>, response: Response<JsonArray>) {
+        singlePost.enqueue(object : Callback<List<Any>> {
+            override fun onResponse(call: Call<List<Any>>, response: Response<List<Any>>) {
                 if (response.isSuccessful) {
-                    val jsonArray = JSONArray(response.body().toString())
-                    val singlePost: SinglePost = Gson().fromJson(jsonArray.getJSONObject(0).toString(), SinglePost::class.java)
-                    val comment: Comments = Gson().fromJson(jsonArray.getJSONObject(1).toString(), Comments::class.java)
-
-                    dataSinglePost.value = SinglePostResponse(singlePost,comment)
+                    val commentsType = object : TypeToken<CommentListing?>() {}.type
+                    val gson = Gson()
+                    val comments = gson.fromJson<CommentListing>(gson.toJsonTree(response.body()!![1]).asJsonObject, commentsType)
+                    commentsData.value = comments
                 }
             }
 
-            override fun onFailure(call: Call<JsonArray>, t: Throwable) {
-                Log.i("SinglePost", "onFailure: " + t.message)
+            override fun onFailure(call: Call<List<Any>>, t: Throwable) {
             }
-
         })
-        return dataSinglePost
+        return commentsData
     }
 
-    fun getMoreChildren(linkId: String, children: String, token: Token): LiveData<MoreChildren>{
+    fun getMoreChildren(linkId: String, children: String, token: Token): LiveData<MoreChildren> {
         val bearer = " " + token.tokenType + " " + token.accessToken
-        val moreChildren = redditAPI.getMoreChildren(bearer,linkId, children,"json")
-        Log.i("GOT", "onResponse: " +children + "   "+linkId )
+        val moreChildren = redditAPI.getMoreChildren(bearer, linkId, children, "json")
         moreChildren.enqueue(object : Callback<MoreChildren> {
             override fun onResponse(call: Call<MoreChildren>, response: Response<MoreChildren>) {
                 if (response.isSuccessful) {
                     dataMoreChildren.value = response.body()
                 }
-                Log.i("GOT", "onResponse: " + response.body() )
             }
 
             override fun onFailure(call: Call<MoreChildren>, t: Throwable) {
-                Log.i("GOT", "onFailure: " +t.message)
             }
         })
         return dataMoreChildren
+    }
+
+    private fun getBearer(application: Application): String {
+        val token = InjectorUtils.getInstance().provideTokenRepository(application).token
+        return " " + token.tokenType + " " + token.accessToken
     }
 }

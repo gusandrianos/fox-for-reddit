@@ -1,23 +1,26 @@
 package io.github.gusandrianos.foxforreddit.viewmodels
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import io.github.gusandrianos.foxforreddit.data.models.CommentListing
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Token
-import io.github.gusandrianos.foxforreddit.data.models.singlepost.SinglePostResponse
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository
 
 class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
     var posts: LiveData<PagingData<Data>>? = null
 
-    fun getPosts(subreddit: String, filter: String, token: Token): LiveData<PagingData<Data>> {
+    fun getPosts(subreddit: String, filter: String, application: Application): LiveData<PagingData<Data>> {
         if (posts != null) {
             return posts!!;
         }
-        posts = mPostRepository.getPosts(subreddit, filter, token).cachedIn(viewModelScope)
+        posts = mPostRepository.getPosts(subreddit, filter, application).cachedIn(viewModelScope)
         return posts!!
     }
 
@@ -25,12 +28,12 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
         mPostRepository.votePost(dir, id, token)
     }
 
-    fun getSinglePost(subreddit: String, commentId: String, article: String, token: Token): LiveData<SinglePostResponse>{
+    fun getSinglePost(subreddit: String, commentId: String, article: String, token: Token): LiveData<CommentListing>{
         return mPostRepository.getSinglePost(subreddit, commentId, article, token)
     }
 
-    fun getMoreChildren(linkId: String, children: String, token:Token): LiveData<MoreChildren>{
-        Log.i("VIEWMODEL", "getMoreChildren: "+mPostRepository.getMoreChildren(linkId, children, token).toString())
+    fun getMoreChildren(linkId: String, children: String, token: Token): LiveData<MoreChildren>{
+        Log.i("VIEWMODEL", "getMoreChildren: " + mPostRepository.getMoreChildren(linkId, children, token).toString())
         return mPostRepository.getMoreChildren(linkId, children, token)
     }
 }

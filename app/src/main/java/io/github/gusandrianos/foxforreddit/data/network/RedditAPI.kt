@@ -53,7 +53,7 @@ interface RedditAPI {
             @Path("commentID") commentID: String,
             @Path("article") article: String,
             @Header("Authorization") bearer: String
-    ): Call<JsonArray>
+    ): Call<List<Any>>
 
     @GET("api/morechildren")
     fun getMoreChildren(

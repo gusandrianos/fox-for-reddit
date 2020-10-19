@@ -1,20 +1,19 @@
-package io.github.gusandrianos.foxforreddit.data.models.singlepost.post;
+package io.github.gusandrianos.foxforreddit.data.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class SinglePost{
-
+public class CommentListing {
     @SerializedName("data")
-    private Data data;
+    private CommentData data;
 
     @SerializedName("kind")
     private String kind;
 
-    public Data getData(){
+    public CommentData getData() {
         return data;
     }
 
-    public String getKind(){
+    public String getKind() {
         return kind;
     }
 }

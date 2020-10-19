@@ -1,4 +1,4 @@
-package io.github.gusandrianos.foxforreddit.ui;
+package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
 
@@ -21,13 +21,15 @@ import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
+import io.github.gusandrianos.foxforreddit.utilities.PostAdapter;
+import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import kotlin.Unit;
 
 
-public class PostFragment extends Fragment implements PostAdapter.OnItemClickListener{
+public class PostFragment extends Fragment implements PostAdapter.OnItemClickListener {
     private View mView;
     private Token mToken;
     String subreddit;
@@ -70,7 +72,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     public void initializeUI() {
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        viewModel.getPosts(subreddit, filter, mToken).observe(getViewLifecycleOwner(), postPagingData -> {
+        viewModel.getPosts(subreddit, filter, getActivity().getApplication()).observe(getViewLifecycleOwner(), postPagingData -> {
             mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), postPagingData);
         });
     }

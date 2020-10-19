@@ -1,8 +1,6 @@
-package io.github.gusandrianos.foxforreddit.ui;
+package io.github.gusandrianos.foxforreddit.ui.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,30 +13,28 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
 
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.time.Instant;
 
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 
-import io.github.gusandrianos.foxforreddit.data.models.singlepost.SinglePostResponse;
-import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.ChildrenItem;
-import io.github.gusandrianos.foxforreddit.data.models.singlepost.comments.Comments;
-import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren;
-import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.ThingsItem;
-import io.github.gusandrianos.foxforreddit.data.models.singlepost.post.Data;
+import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentGroup;
+import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentItem;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
@@ -77,29 +73,34 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         viewModel.getSinglePost("r/AskReddit", "j9hojh", "if_you_had_30_minutes_to_hide_from_a_nuclear", mToken)
-                .observe(getViewLifecycleOwner(), new Observer<SinglePostResponse>() {
-                    @Override
-                    public void onChanged(SinglePostResponse singlePostResponse) {
-                        Data singlePostData = singlePostResponse.getSinglepost().getData().getChildren().get(0).getData();
-                        mTxtPostSubreddit.setText(singlePostData.getSubredditNamePrefixed());
-                        String user = "Posted by User "+singlePostData.getAuthor();
-                        mTxtPostUser.setText(user);
-                        mTxtTimePosted.setText(DateUtils.getRelativeTimeSpanString((long)singlePostData.getCreatedUtc()*1000).toString());
-                        mTxtPostTitle.setText(singlePostData.getTitle());
-                        mTxtPostScore.setText(formatValue(singlePostData.getScore()));
-                        if (singlePostData.getLikes() != null)
-                            if (singlePostData.getLikes()) {
-                                mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange);
-                                mTxtPostScore.setTextColor(Color.parseColor("#FFE07812"));
-                            } else {
-                                mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24_blue);
-                                mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"));
-                            }
-                        mBtnPostNumComments.setText(formatValue(singlePostData.getNumComments()));
+                .observe(getViewLifecycleOwner(), commentListing -> {
+//                    mTxtPostSubreddit.setText(singlePostData.getSubredditNamePrefixed());
+//                    String user = "Posted by User "+singlePostData.getAuthor();
+//                    mTxtPostUser.setText(user);
+//                    mTxtTimePosted.setText(DateUtils.getRelativeTimeSpanString((long)singlePostData.getCreatedUtc()*1000).toString());
+//                    mTxtPostTitle.setText(singlePostData.getTitle());
+//                    mTxtPostScore.setText(formatValue(singlePostData.getScore()));
+//                    if (singlePostData.getLikes() != null)
+//                        if (singlePostData.getLikes()) {
+//                            mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange);
+//                            mTxtPostScore.setTextColor(Color.parseColor("#FFE07812"));
+//                        } else {
+//                            mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24_blue);
+//                            mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"));
+//                        }
+//                    mBtnPostNumComments.setText(formatValue(singlePostData.getNumComments()));
 
-                        for (ChildrenItem child : singlePostResponse.getComments().getData().getChildren()) {
-                            groupAdapter.add(new ExpandableCommentGroup(child, child.getData().getDepth(), "t3_jbmf8f", SinglePostFragment.this::onLoadMoreClicked));
+                    for (Object child : commentListing.getData().getChildren()) {
+                        ChildrenItem item;
+                        if(child instanceof String) {
+                            item = new ChildrenItem((String) child);
+                        } else {
+                            Type childType = new TypeToken<ChildrenItem>() {}.getType();
+                            Gson gson = new Gson();
+                            item = gson.fromJson(gson.toJsonTree(child).getAsJsonObject(), childType);
                         }
+
+                        groupAdapter.add(new ExpandableCommentGroup(item, item.getData().getDepth(), "t3_jbmf8f", SinglePostFragment.this::onLoadMoreClicked));
                     }
                 });
 

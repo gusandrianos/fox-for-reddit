@@ -75,10 +75,10 @@ object UserRepository {
         return trophies
     }
 
-    fun getSubreddits(application: Application, where: String) =
+    fun getSubreddits(application: Application, location: String) =
             Pager(
                     config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-                    pagingSourceFactory = { PostPagingSource(where, getBearer(application)) }
+                    pagingSourceFactory = { PostPagingSource(location, getBearer(application)) }
             ).liveData
 
     private fun getBearer(application: Application): String {

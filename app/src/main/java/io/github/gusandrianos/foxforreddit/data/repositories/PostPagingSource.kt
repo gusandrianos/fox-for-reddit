@@ -18,7 +18,7 @@ class PostPagingSource() : PagingSource<String, Data>() {
     private lateinit var mSubreddit: String
     private lateinit var mFilter: String
     private lateinit var mBearer: String
-    private lateinit var mWhere: String
+    private lateinit var mLocation: String
     private var MODE: Int = 0
 
 
@@ -31,7 +31,7 @@ class PostPagingSource() : PagingSource<String, Data>() {
 
     constructor (where: String, bearer: String): this() {
         mBearer = bearer
-        mWhere = where
+        mLocation = where
         MODE = MODE_SUBREDDIT
     }
 
@@ -43,7 +43,7 @@ class PostPagingSource() : PagingSource<String, Data>() {
             if (MODE == MODE_POST)
                 response = redditAPI.getPostList(mSubreddit, mFilter, position, params.loadSize, mBearer)
             else if (MODE == MODE_SUBREDDIT)
-                response = redditAPI.getSubreddits(mBearer, mWhere, position, params.loadSize)
+                response = redditAPI.getSubreddits(mBearer, mLocation, position, params.loadSize)
             val items = response.data.children?.map { it.data } ?: emptyList()
 
             LoadResult.Page(

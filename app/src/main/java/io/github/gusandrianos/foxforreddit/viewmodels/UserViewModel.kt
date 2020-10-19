@@ -38,10 +38,10 @@ class UserViewModel(private val mUserRepository: UserRepository, private val mAp
         return trophies!!
     }
 
-    fun getSubreddits(application: Application, where: String): LiveData<PagingData<Data>> {
+    fun getSubreddits(application: Application, location: String): LiveData<PagingData<Data>> {
         if (subreddits != null)
             return subreddits!!
-        subreddits = mUserRepository.getSubreddits(application, where).cachedIn(viewModelScope)
+        subreddits = mUserRepository.getSubreddits(application, location).cachedIn(viewModelScope)
         return subreddits!!
     }
 }

@@ -2,18 +2,18 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_user_profile"
+    android:id="@+id/nav_single_post"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ui.fragments.SinglePostFragment">
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/fragment_profile"
+        android:id="@+id/fragment_single_post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:elevation="0dp">
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/profile_collapsing_toolbar"
+            android:id="@+id/single_post_collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
@@ -21,7 +21,7 @@
             app:expandedTitleTextAppearance="@style/CollapsingToolbarLayoutExpandedTextStyle"
             app:layout_scrollFlags="scroll">
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/profile_toolbar"
+                android:id="@+id/single_post_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="top|end"

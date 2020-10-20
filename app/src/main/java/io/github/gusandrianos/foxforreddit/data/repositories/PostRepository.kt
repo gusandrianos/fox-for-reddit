@@ -1,6 +1,7 @@
 package io.github.gusandrianos.foxforreddit.data.repositories
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.Pager
@@ -44,9 +45,9 @@ object PostRepository {
         })
     }
 
-    fun getSinglePost(subreddit: String, commentID: String, article: String, token: Token): LiveData<CommentListing> {
-        val bearer = " " + token.tokenType + " " + token.accessToken
-        val singlePost = redditAPI.getSinglePost(subreddit, commentID, article, bearer)
+    fun getSinglePost(permalink: String, application: Application): LiveData<CommentListing> {
+        val bearer = getBearer(application)
+        val singlePost = redditAPI.getSinglePost(bearer, permalink)
         singlePost.enqueue(object : Callback<List<Any>> {
             override fun onResponse(call: Call<List<Any>>, response: Response<List<Any>>) {
                 if (response.isSuccessful) {
@@ -55,6 +56,7 @@ object PostRepository {
                     val comments = gson.fromJson<CommentListing>(gson.toJsonTree(response.body()!![1]).asJsonObject, commentsType)
                     commentsData.value = comments
                 }
+                Log.i("SinglePost", "onResponse: ${response.message()}")
             }
 
             override fun onFailure(call: Call<List<Any>>, t: Throwable) {

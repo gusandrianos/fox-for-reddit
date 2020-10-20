@@ -24,15 +24,15 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
         return posts!!
     }
 
-    fun votePost(dir: String, id: String, token: Token){
+    fun votePost(dir: String, id: String, token: Token) {
         mPostRepository.votePost(dir, id, token)
     }
 
-    fun getSinglePost(subreddit: String, commentId: String, article: String, token: Token): LiveData<CommentListing>{
-        return mPostRepository.getSinglePost(subreddit, commentId, article, token)
+    fun getSinglePost(permalink: String, application: Application): LiveData<CommentListing> {
+        return mPostRepository.getSinglePost(permalink, application)
     }
 
-    fun getMoreChildren(linkId: String, children: String, token: Token): LiveData<MoreChildren>{
+    fun getMoreChildren(linkId: String, children: String, token: Token): LiveData<MoreChildren> {
         Log.i("VIEWMODEL", "getMoreChildren: " + mPostRepository.getMoreChildren(linkId, children, token).toString())
         return mPostRepository.getMoreChildren(linkId, children, token)
     }

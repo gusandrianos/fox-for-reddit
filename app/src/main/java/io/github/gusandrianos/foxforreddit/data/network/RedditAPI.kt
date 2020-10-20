@@ -47,12 +47,10 @@ interface RedditAPI {
             @Header("Authorization") bearer: String,
     ): Call<Data>
 
-    @GET("{subreddit}/comments/{commentID}/{article}")
+    @GET("{permalink}")
     fun getSinglePost(
-            @Path("subreddit") subreddit: String,
-            @Path("commentID") commentID: String,
-            @Path("article") article: String,
-            @Header("Authorization") bearer: String
+            @Header("Authorization") bearer: String,
+            @Path("permalink") permalink: String
     ): Call<List<Any>>
 
     @GET("api/morechildren")

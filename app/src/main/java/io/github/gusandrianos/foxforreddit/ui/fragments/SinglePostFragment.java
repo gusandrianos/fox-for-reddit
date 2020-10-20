@@ -1,6 +1,8 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,8 +33,10 @@ import java.text.NumberFormat;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
+import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 
+import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentGroup;
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentItem;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -40,10 +44,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
 public class SinglePostFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
-    private RecyclerView mCommentsRecyclerView;
-    private View mView;
-    private GroupAdapter<GroupieViewHolder> groupAdapter = new GroupAdapter<>();
-    private GridLayoutManager groupLayoutManager;
+    private final GroupAdapter<GroupieViewHolder> groupAdapter = new GroupAdapter<>();
 
     @Nullable
     @Override
@@ -54,7 +55,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mView = view;
+        Data singlePostData = SinglePostFragmentArgs.fromBundle(getArguments()).getPost();
 
         ImageView mImgPostSubreddit = view.findViewById(R.id.img_post_subreddit);
         TextView mTxtPostSubreddit = view.findViewById(R.id.txt_post_subreddit);
@@ -67,35 +68,38 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         Button mBtnPostNumComments = view.findViewById(R.id.btn_post_num_comments);
         Button mBtnPostShare = view.findViewById(R.id.btn_post_share);
 
+        mTxtPostSubreddit.setText(singlePostData.getSubredditNamePrefixed());
+        String user = "Posted by User " + singlePostData.getAuthor();
+        mTxtPostUser.setText(user);
+        mTxtTimePosted.setText(DateUtils.getRelativeTimeSpanString((long) singlePostData.getCreatedUtc() * 1000).toString());
+        mTxtPostTitle.setText(singlePostData.getTitle());
+        mTxtPostScore.setText(formatValue(singlePostData.getScore()));
+        if (singlePostData.getLikes() != null)
+            if (singlePostData.getLikes()) {
+                mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange);
+                mTxtPostScore.setTextColor(Color.parseColor("#FFE07812"));
+            } else {
+                mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24_blue);
+                mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"));
+            }
+        mBtnPostNumComments.setText(formatValue(singlePostData.getNumComments()));
 
-        initRecyclerView();
+        initRecyclerView(view);
         Token mToken = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        viewModel.getSinglePost("r/AskReddit", "j9hojh", "if_you_had_30_minutes_to_hide_from_a_nuclear", mToken)
+        String permalink = singlePostData.getPermalink();
+
+        viewModel.getSinglePost(permalink.substring(1, permalink.length() - 1), requireActivity().getApplication())
                 .observe(getViewLifecycleOwner(), commentListing -> {
-//                    mTxtPostSubreddit.setText(singlePostData.getSubredditNamePrefixed());
-//                    String user = "Posted by User "+singlePostData.getAuthor();
-//                    mTxtPostUser.setText(user);
-//                    mTxtTimePosted.setText(DateUtils.getRelativeTimeSpanString((long)singlePostData.getCreatedUtc()*1000).toString());
-//                    mTxtPostTitle.setText(singlePostData.getTitle());
-//                    mTxtPostScore.setText(formatValue(singlePostData.getScore()));
-//                    if (singlePostData.getLikes() != null)
-//                        if (singlePostData.getLikes()) {
-//                            mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange);
-//                            mTxtPostScore.setTextColor(Color.parseColor("#FFE07812"));
-//                        } else {
-//                            mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24_blue);
-//                            mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"));
-//                        }
-//                    mBtnPostNumComments.setText(formatValue(singlePostData.getNumComments()));
 
                     for (Object child : commentListing.getData().getChildren()) {
                         ChildrenItem item;
-                        if(child instanceof String) {
+                        if (child instanceof String) {
                             item = new ChildrenItem((String) child);
                         } else {
-                            Type childType = new TypeToken<ChildrenItem>() {}.getType();
+                            Type childType = new TypeToken<ChildrenItem>() {
+                            }.getType();
                             Gson gson = new Gson();
                             item = gson.fromJson(gson.toJsonTree(child).getAsJsonObject(), childType);
                         }
@@ -106,9 +110,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     }
 
-    private void initRecyclerView() {
-        mCommentsRecyclerView = mView.findViewById(R.id.recyclerview);
-        groupLayoutManager = new GridLayoutManager(getActivity(), groupAdapter.getSpanCount());
+    private void initRecyclerView(View view) {
+        RecyclerView mCommentsRecyclerView = view.findViewById(R.id.recyclerview);
+        GridLayoutManager groupLayoutManager = new GridLayoutManager(getActivity(), groupAdapter.getSpanCount());
         groupLayoutManager.setSpanSizeLookup(groupAdapter.getSpanSizeLookup());
         mCommentsRecyclerView.setLayoutManager(groupLayoutManager);
         mCommentsRecyclerView.setAdapter(groupAdapter);
@@ -143,16 +147,16 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     public static String formatValue(double number) {
         int power;
         double value = number;
-        if(value == 0.0){
+        if (value == 0.0) {
             return "0";
         }
         String suffix = " kmbt";
         String formattedNumber = "";
         NumberFormat formatter = new DecimalFormat("#,###.#");
-        power = (int)StrictMath.log10(value);
-        value = value/(Math.pow(10,(power/3)*3));
-        formattedNumber=formatter.format(value);
-        formattedNumber = formattedNumber + suffix.charAt(power/3);
-        return formattedNumber.length()>4 ?  formattedNumber.replaceAll("\\.[0-9]+", "") : formattedNumber;
+        power = (int) StrictMath.log10(value);
+        value = value / (Math.pow(10, (power / 3) * 3));
+        formattedNumber = formatter.format(value);
+        formattedNumber = formattedNumber + suffix.charAt(power / 3);
+        return formattedNumber.length() > 4 ? formattedNumber.replaceAll("\\.[0-9]+", "") : formattedNumber;
     }
 }

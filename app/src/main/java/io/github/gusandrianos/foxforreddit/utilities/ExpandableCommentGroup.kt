@@ -11,6 +11,9 @@ import com.xwray.groupie.Item
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem
 import kotlinx.android.synthetic.main.single_post_expandable_comment.view.*
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import kotlin.math.pow
 
 class ExpandableCommentGroup constructor(
         private val mComment: ChildrenItem,
@@ -75,19 +78,19 @@ open class ExpandableCommentItem constructor(
                     moreChildren += "," + (child as String)
                 i++
             }
-            viewHolder.itemView.btn_more_childs.apply {
+            viewHolder.itemView.txt_more_childs.apply {
                 setOnClickListener {
                     listener.onLoadMoreClicked(linkId, moreChildren.removePrefix(","), position)
                 }
             }
-            viewHolder.itemView.btn_more_childs.text = "$i More Replies"
+            viewHolder.itemView.txt_more_childs.text = "$i More Replies"
         } else {
             addDepthViews(viewHolder)
             viewHolder.itemView.cl_comment.visibility = View.VISIBLE
             viewHolder.itemView.cl_loadmore.visibility = View.GONE
-            viewHolder.itemView.tv_user.text = mComment.data.author
-            viewHolder.itemView.body.text = mComment.data.body
-            viewHolder.itemView.tv_votes.text = mComment.data.score.toString()
+            viewHolder.itemView.txt_comment_user.text = mComment.data.author
+            viewHolder.itemView.comment_body.text = mComment.data.body
+            viewHolder.itemView.txt_comment_score.text = formatValue(mComment.data.score.toDouble())
             viewHolder.itemView.apply {
                 setOnClickListener {
                     expandableGroup.onToggleExpanded()
@@ -129,5 +132,20 @@ open class ExpandableCommentItem constructor(
 
     interface OnItemClickListener {
         fun onLoadMoreClicked(linkId: String, moreChildren: String, position: Int)
+    }
+
+    fun formatValue(number: Double): String {
+        var value = number
+        if (value == 0.0) {
+            return 0.toString()
+        }
+        val suffix = " kmbt"
+        var formattedNumber = ""
+        val formatter: NumberFormat = DecimalFormat("#,###.#")
+        val power: Int = StrictMath.log10(value).toInt()
+        value /= 10.0.pow(power / 3 * 3.toDouble())
+        formattedNumber = formatter.format(value)
+        formattedNumber += suffix[power / 3]
+        return if (formattedNumber.length > 4) formattedNumber.replace("\\.[0-9]+".toRegex(), "") else formattedNumber
     }
 }

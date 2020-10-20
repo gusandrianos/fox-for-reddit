@@ -22,7 +22,7 @@
 
 
         <TextView
-            android:id="@+id/tv_user"
+            android:id="@+id/txt_comment_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_horizontal_margin"
@@ -38,28 +38,29 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:layout_marginStart="4dp"
-            app:layout_constraintLeft_toRightOf="@id/tv_user"
-            android:id="@+id/textView" />
+            app:layout_constraintLeft_toRightOf="@id/txt_comment_user"
+            android:id="@+id/txt_time_commented" />
 
         <TextView
-            android:id="@+id/body"
+            android:id="@+id/comment_body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_margin="@dimen/activity_horizontal_margin"
             tools:text="Body of comment"
-            app:layout_constraintTop_toBottomOf="@id/tv_user"
+            app:layout_constraintTop_toBottomOf="@id/txt_comment_user"
             app:layout_constraintLeft_toRightOf="@id/separatorContainer" />
 
-        <TextView
-            android:id="@+id/tv_reply"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageButton
+            android:id="@+id/txt_comment_reply"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
+            android:src="@drawable/ic_round_reply_24"
+            android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:text="Reply" />
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <View
             android:id="@+id/separator1"
@@ -67,43 +68,39 @@
             android:layout_height="16dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:background="@color/design_default_color_secondary"
-            app:layout_constraintTop_toBottomOf="@id/body"
-            app:layout_constraintRight_toLeftOf="@id/tv_reply"
+            android:background="#2B2B2B"
+            app:layout_constraintTop_toBottomOf="@id/comment_body"
+            app:layout_constraintRight_toLeftOf="@id/txt_comment_reply"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
 
         <ImageButton
-            android:id="@+id/btn_down_vote"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="@android:drawable/ic_media_next"
-            app:layout_constraintTop_toBottomOf="@id/body"
+            android:id="@+id/btn_comment_down_vote"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_round_arrow_downward_24"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintTop_toBottomOf="@id/comment_body"
             app:layout_constraintRight_toLeftOf="@id/separator1"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
-            android:id="@+id/tv_votes"
+            android:id="@+id/txt_comment_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            app:layout_constraintRight_toLeftOf="@id/btn_down_vote"
+            app:layout_constraintRight_toLeftOf="@id/btn_comment_down_vote"
             app:layout_constraintBottom_toBottomOf="parent"
             android:text="1.4k" />
 
         <ImageButton
-            android:id="@+id/btn_upvote"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="@android:drawable/ic_media_next"
-            app:layout_constraintTop_toBottomOf="@id/body"
+            android:id="@+id/btn_comment_up_vote"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_round_arrow_upward_24"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintTop_toBottomOf="@id/comment_body"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/tv_votes" />
+            app:layout_constraintRight_toLeftOf="@id/txt_comment_score" />
         <!--    <Button-->
         <!--        android:id="@+id/btn_loadmore"-->
         <!--        android:layout_width="wrap_content"-->
@@ -139,15 +136,16 @@
             android:visibility="gone"
             android:orientation="horizontal"/>
 
-        <Button
-            android:id="@+id/btn_more_childs"
+        <TextView
+            android:id="@+id/txt_more_childs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-
             android:text="Load More"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-
+            android:textColor="@color/colorPrimary"
+            android:clickable="true"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
             app:layout_constraintLeft_toRightOf="@id/separatorContainer2"/>
 
 

@@ -44,7 +44,7 @@ class PostPagingSource() : PagingSource<String, Data>() {
                 response = redditAPI.getPostList(mSubreddit, mFilter, position, params.loadSize, mBearer)
             else if (MODE == MODE_SUBREDDIT)
                 response = redditAPI.getSubreddits(mBearer, mLocation, position, params.loadSize)
-            val items = response.data.children?.map { it.data } ?: emptyList()
+            val items = response.data!!.children?.map { it.data!! } ?: emptyList()
 
             LoadResult.Page(
                     data = items,

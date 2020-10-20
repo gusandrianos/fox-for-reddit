@@ -55,7 +55,7 @@ public class MainFragment extends Fragment {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
         viewPagerAdapter.addFragment(homeFragments.get(0), "HOME");
         viewPagerAdapter.addFragment(homeFragments.get(1), "POPULAR");
-        viewPagerAdapter.addFragment(new SinglePostFragment(), "Comments");
+//        viewPagerAdapter.addFragment(new SinglePostFragment(), "Comments");
 
         viewPager.setAdapter(viewPagerAdapter);
 

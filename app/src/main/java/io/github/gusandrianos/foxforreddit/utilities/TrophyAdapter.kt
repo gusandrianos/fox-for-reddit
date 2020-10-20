@@ -22,8 +22,8 @@ class TrophyAdapter(private val trophies: List<Thing>) : RecyclerView.Adapter<Vi
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.trophyTitle.text = trophies[position].data.name
-        Glide.with(holder.itemView).load(trophies[position].data.icon70).into(holder.trophyImg)
+        holder.trophyTitle.text = trophies[position].data!!.name
+        Glide.with(holder.itemView).load(trophies[position].data!!.icon70).into(holder.trophyImg)
     }
 
     override fun getItemCount(): Int {

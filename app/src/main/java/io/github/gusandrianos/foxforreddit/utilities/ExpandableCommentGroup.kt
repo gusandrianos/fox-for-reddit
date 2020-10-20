@@ -24,7 +24,7 @@ class ExpandableCommentGroup constructor(
 
     init {
         var repliesItem: ChildrenItem? = null
-        if (mComment.data.replies != null) {
+        if (mComment.data!!.replies != null) {
             if (mComment.data.replies !is String) {
                 val repliesType = object : TypeToken<ChildrenItem?>() {}.type
                 val gson = Gson()
@@ -35,16 +35,16 @@ class ExpandableCommentGroup constructor(
         }
 
         if (repliesItem != null)
-            for (comment in repliesItem.data.children) {
+            for (comment in repliesItem.data!!.children!!) {
                 var item: ChildrenItem
                 item = if (comment is String) {
-                    ChildrenItem(comment as String?)
+                    ChildrenItem(comment)
                 } else {
                     val childType = object : TypeToken<ChildrenItem?>() {}.type
                     val gson = Gson()
                     gson.fromJson(gson.toJsonTree(comment).asJsonObject, childType)
                 }
-                add(ExpandableCommentGroup(item, item.data.depth, linkId, listener)).apply { isExpanded = true }
+                add(ExpandableCommentGroup(item, item.data!!.depth, linkId, listener)).apply { isExpanded = true }
             }
     }
 }
@@ -70,10 +70,10 @@ open class ExpandableCommentItem constructor(
             addDepthViewsForLoadMore(viewHolder)
             viewHolder.itemView.cl_comment.visibility = View.GONE
             viewHolder.itemView.cl_loadmore.visibility = View.VISIBLE
-            viewHolder.itemView.cl_loadmore.tag = mComment.data.parentId
+            viewHolder.itemView.cl_loadmore.tag = mComment.data!!.parentId
             var moreChildren = ""
             var i = 0
-            for (child in mComment.data.children) {
+            for (child in mComment.data.children!!) {
                 if (i < 100)
                     moreChildren += "," + (child as String)
                 i++
@@ -88,7 +88,7 @@ open class ExpandableCommentItem constructor(
             addDepthViews(viewHolder)
             viewHolder.itemView.cl_comment.visibility = View.VISIBLE
             viewHolder.itemView.cl_loadmore.visibility = View.GONE
-            viewHolder.itemView.txt_comment_user.text = mComment.data.author
+            viewHolder.itemView.txt_comment_user.text = mComment.data!!.author
             viewHolder.itemView.comment_body.text = mComment.data.body
             viewHolder.itemView.txt_comment_score.text = formatValue(mComment.data.score.toDouble())
             viewHolder.itemView.apply {

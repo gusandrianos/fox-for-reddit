@@ -57,19 +57,19 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
                 return VIDEO
             if (currentItem?.url!!.contains("https://i."))  //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
                 return IMAGE
-            return if (currentItem.domain.contains("self."))  //IF it's nothing from the above THEN: IF it is self THEN contains domain with self. (not sure)
+            return if (currentItem.domain!!.contains("self."))  //IF it's nothing from the above THEN: IF it is self THEN contains domain with self. (not sure)
                 SELF
             else LINK
         }
-        if (currentItem.post_hint.contains("self"))
+        if (currentItem.post_hint!!.contains("self"))
             return SELF
-        if (currentItem.post_hint.contains("image"))
+        if (currentItem.post_hint!!.contains("image"))
             return IMAGE
-        if (currentItem.post_hint.contains("link"))
+        if (currentItem.post_hint!!.contains("link"))
             return LINK
-        if (currentItem.post_hint.contains("video"))
+        if (currentItem.post_hint!!.contains("video"))
             return VIDEO
-        return if (currentItem.post_hint.contains("poll"))
+        return if (currentItem.post_hint!!.contains("poll"))
             POLL
         else
             SELF    //If all the above do not feet, return SELF which is the "safest" type for binding
@@ -286,9 +286,9 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
 
         override fun onBind(post: Data) {
             super.onBind(post)
-            val votes = post.pollData.totalVoteCount.toString() + " Votes"
+            val votes = post.pollData!!.totalVoteCount.toString() + " Votes"
             mTxtPostVoteNum.text = votes
-            mTxtPostVoteTimeLeft.text = getPollEndingDate(post.pollData.votingEndTimestamp)
+            mTxtPostVoteTimeLeft.text = getPollEndingDate(post.pollData!!.votingEndTimestamp)
         }
     }
 

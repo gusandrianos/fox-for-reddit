@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
@@ -90,10 +94,10 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
     @Override
     public void onItemClick(@NotNull Data post, @NotNull String clicked) {      //ToDo improve voting system (Binding Adapter and viewModel)
-        Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        switch (clicked){
+        switch (clicked) {
             case Constants.POST_SUBREDDIT:
                 Toast.makeText(getActivity(), "Subreddit", Toast.LENGTH_SHORT).show();
                 //Todo open post
@@ -107,20 +111,20 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 //Todo open thumbnail
                 break;
             case Constants.POST_VOTE_UP:
-                if(post.getLikes()==null || !((Boolean) post.getLikes())) {  //If down or no voted
-                    viewModel.votePost("1",post.getName(),mToken);      //then send up vote
+                if (post.getLikes() == null || !((Boolean) post.getLikes())) {  //If down or no voted
+                    viewModel.votePost("1", post.getName(), mToken);      //then send up vote
                     post.setLikes(true);
-                }else{                                                       //else (up voted)
-                    viewModel.votePost("0",post.getName(),mToken);      //send no vote
+                } else {                                                       //else (up voted)
+                    viewModel.votePost("0", post.getName(), mToken);      //send no vote
                     post.setLikes(null);
                 }
                 break;
             case Constants.POST_VOTE_DOWN:
-                if(post.getLikes()==null || ((Boolean) post.getLikes())) {  //If up or no voted
-                    viewModel.votePost("-1",post.getName(),mToken);    //then send down vote
+                if (post.getLikes() == null || ((Boolean) post.getLikes())) {  //If up or no voted
+                    viewModel.votePost("-1", post.getName(), mToken);    //then send down vote
                     post.setLikes(false);
-                }else{                                                      //else (down voted)
-                    viewModel.votePost("0",post.getName(),mToken);     //send no vote
+                } else {                                                      //else (down voted)
+                    viewModel.votePost("0", post.getName(), mToken);     //send no vote
                     post.setLikes(null);
                 }
                 break;
@@ -137,8 +141,10 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 //Todo open vote post
                 break;
             default:
-                Toast.makeText(getActivity(), post.getAuthor(), Toast.LENGTH_SHORT).show();
-                //Todo open post
+//                Toast.makeText(getActivity(), post.getAuthor(), Toast.LENGTH_SHORT).show();
+                NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+                NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+                navController.navigate(R.id.action_mainFragment_to_singlePostFragment);
         }
     }
 

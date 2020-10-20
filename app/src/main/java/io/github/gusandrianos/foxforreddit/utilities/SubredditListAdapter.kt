@@ -40,10 +40,10 @@ class SubredditListAdapter : PagingDataAdapter<Data, SubredditListAdapter.ViewHo
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = getItem(position)
         holder.subredditTitle.text = data!!.displayNamePrefixed
-        if (data.iconImg.isNotEmpty())
-            Glide.with(holder.itemView).load(data.iconImg.split("\\?".toRegex())[0]).into(holder.subredditImg)
+        if (data.iconImg!!.isNotEmpty())
+            Glide.with(holder.itemView).load(data.iconImg!!.split("\\?".toRegex())[0]).into(holder.subredditImg)
         else {
-            val toLoad = data.communityIcon.split("\\?".toRegex())[0]
+            val toLoad = data.communityIcon!!.split("\\?".toRegex())[0]
             Glide.with(holder.itemView).load(toLoad).into(holder.subredditImg)
         }
     }

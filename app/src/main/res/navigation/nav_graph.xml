@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_userFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_userFragment_to_singlePostFragment"
+            app:destination="@id/singlePostFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
@@ -25,6 +28,9 @@
         <action
             android:id="@+id/action_mainFragment_to_subredditListFragment"
             app:destination="@id/subredditListFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_singlePostFragment"
+            app:destination="@id/singlePostFragment" />
     </fragment>
     <fragment
         android:id="@+id/subredditListFragment"
@@ -35,4 +41,9 @@
             android:id="@+id/action_subredditListFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/singlePostFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SinglePostFragment"
+        android:label="fragment_single_post"
+        tools:layout="@layout/fragment_single_post" />
 </navigation>

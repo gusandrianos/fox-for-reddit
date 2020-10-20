@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: "androidx.navigation.safeargs"
 
 android {
     compileSdkVersion 30
@@ -28,8 +29,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    // IMPORTANT!  Enables kotlin synthetic view properties.
-    // See: https://github.com/Kotlin/KEEP/blob/master/proposals/android-extensions-entity-caching.md
     androidExtensions {
         experimental = true
     }

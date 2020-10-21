@@ -138,6 +138,12 @@ class Data : Parcelable {
     @SerializedName("author_flair_richtext")
     val authorFlairRichtext: List<Any>? = null
 
+    @SerializedName("is_gallery")
+    val isGallery: Boolean? = null
+
+    @SerializedName("gallery_ata")
+    val galleryData: GalleryData? = null
+
     @SerializedName("over_18")
     val isOver18 = false
 

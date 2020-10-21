@@ -44,7 +44,6 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
 public class SinglePostFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
-    private final GroupAdapter<GroupieViewHolder> groupAdapter = new GroupAdapter<>();
 
     @Nullable
     @Override
@@ -84,7 +83,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             }
         mBtnPostNumComments.setText(formatValue(singlePostData.getNumComments()));
 
-        initRecyclerView(view);
+
         Token mToken = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
@@ -93,6 +92,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         viewModel.getSinglePost(permalink.substring(1, permalink.length() - 1), requireActivity().getApplication())
                 .observe(getViewLifecycleOwner(), commentListing -> {
 
+                    GroupAdapter<GroupieViewHolder> groupAdapter = new GroupAdapter<>();
+                    initRecyclerView(view, groupAdapter);
                     for (Object child : commentListing.getData().getChildren()) {
                         ChildrenItem item;
                         if (child instanceof String) {
@@ -110,7 +111,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     }
 
-    private void initRecyclerView(View view) {
+    private void initRecyclerView(View view, GroupAdapter<GroupieViewHolder> groupAdapter) {
         RecyclerView mCommentsRecyclerView = view.findViewById(R.id.recyclerview);
         GridLayoutManager groupLayoutManager = new GridLayoutManager(getActivity(), groupAdapter.getSpanCount());
         groupLayoutManager.setSpanSizeLookup(groupAdapter.getSpanSizeLookup());

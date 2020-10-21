@@ -43,26 +43,26 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
             Log.i("", "getItemViewType: I work")
             return Constants.COMMENT
         }
-        if (currentItem?.post_hint == null) {
-            if (currentItem?.pollData != null)    //IF it is poll THEN must have poll data
+        if (currentItem.post_hint == null) {
+            if (currentItem.pollData != null)    //IF it is poll THEN must have poll data
                 return Constants.POLL
-            if (currentItem?.media != null)       //IF it's not the above THEN: IF it is rich/hosted:video THEN must have Media
+            if (currentItem.media != null)       //IF it's not the above THEN: IF it is rich/hosted:video THEN must have Media
                 return Constants.VIDEO
-            if (currentItem?.url!!.contains("https://i."))  //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
+            if (currentItem.url!!.contains("https://i.") || currentItem.isGallery==true )  //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
                 return Constants.IMAGE
             return if (currentItem.domain!!.contains("self."))  //IF it's nothing from the above THEN: IF it is self THEN contains domain with self. (not sure)
                 Constants.SELF
             else Constants.LINK
         }
-        if (currentItem.post_hint!!.contains("self"))
+        if (currentItem.post_hint.contains("self"))
             return Constants.SELF
-        if (currentItem.post_hint!!.contains("image"))
+        if (currentItem.post_hint.contains("image"))
             return Constants.IMAGE
-        if (currentItem.post_hint!!.contains("link"))
+        if (currentItem.post_hint.contains("link"))
             return Constants.LINK
-        if (currentItem.post_hint!!.contains("video"))
+        if (currentItem.post_hint.contains("video"))
             return Constants.VIDEO
-        return if (currentItem.post_hint!!.contains("poll"))
+        return if (currentItem.post_hint.contains("poll"))
             Constants.POLL
         else
             Constants.SELF    //If all the above do not feet, return SELF which is the "safest" type for binding
@@ -74,27 +74,27 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
         when (viewType) {
             Constants.SELF -> {
                 view = layoutInflater.inflate(R.layout.post_self_layout, parent, false)
-                return PostSelfViewHolder(view,Constants.SELF)
+                return PostSelfViewHolder(view, Constants.SELF)
             }
             Constants.IMAGE -> {
                 view = layoutInflater.inflate(R.layout.post_image_layout, parent, false)
-                return PostImageViewHolder(view,Constants.IMAGE)
+                return PostImageViewHolder(view, Constants.IMAGE)
             }
             Constants.LINK -> {
                 view = layoutInflater.inflate(R.layout.post_link_layout, parent, false)
-                return PostLinkViewHolder(view,Constants.LINK)
+                return PostLinkViewHolder(view, Constants.LINK)
             }
             Constants.VIDEO -> {
                 view = layoutInflater.inflate(R.layout.post_video_layout, parent, false)
-                return PostVideoViewHolder(view,Constants.VIDEO)
+                return PostVideoViewHolder(view, Constants.VIDEO)
             }
             Constants.POLL -> {
                 view = layoutInflater.inflate(R.layout.post_poll_layout, parent, false)
-                return PostPollViewHolder(view,Constants.POLL)
+                return PostPollViewHolder(view, Constants.POLL)
             }
             Constants.COMMENT -> {
                 view = layoutInflater.inflate(R.layout.post_comment_layout, parent, false)
-                return PostCommentViewHolder(view,Constants.COMMENT)
+                return PostCommentViewHolder(view, Constants.COMMENT)
             }
         }
         view = layoutInflater.inflate(R.layout.post_self_layout, parent, false) //Just in case...
@@ -216,7 +216,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
         }
     }
 
-    inner class PostImageViewHolder(itemView: View, private val mPostType: Int) : AbstractPostViewHolder(itemView,mPostType) {
+    inner class PostImageViewHolder(itemView: View, private val mPostType: Int) : AbstractPostViewHolder(itemView, mPostType) {
         private val mImgPostThumbnail: ImageView = itemView.findViewById(R.id.img_post_thumbnail)
 
         init {
@@ -232,7 +232,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
         }
     }
 
-    inner class PostLinkViewHolder(itemView: View, private val mPostType: Int) : AbstractPostViewHolder(itemView,mPostType) {
+    inner class PostLinkViewHolder(itemView: View, private val mPostType: Int) : AbstractPostViewHolder(itemView, mPostType) {
         private val mFlThumbnail: FrameLayout = itemView.findViewById(R.id.fl_thumbnail)
         private val mImgPostThumbnail: ImageView = itemView.findViewById(R.id.img_post_thumbnail)
         private val mTxtPostDomain: TextView = itemView.findViewById(R.id.txt_post_domain)
@@ -267,7 +267,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
         }
     }
 
-    inner class PostPollViewHolder(itemView: View, private val mPostType: Int) : AbstractPostViewHolder(itemView,mPostType) {
+    inner class PostPollViewHolder(itemView: View, private val mPostType: Int) : AbstractPostViewHolder(itemView, mPostType) {
         private val mBtnPostVoteNow: Button = itemView.findViewById(R.id.btn_post_vote_now)
         private val mTxtPostVoteNum: TextView = itemView.findViewById(R.id.txt_post_vote_num)
         private val mTxtPostVoteTimeLeft: TextView = itemView.findViewById(R.id.txt_post_vote_time_left)

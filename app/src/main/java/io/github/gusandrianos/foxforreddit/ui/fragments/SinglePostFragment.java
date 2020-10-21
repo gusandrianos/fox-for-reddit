@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -55,6 +56,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Data singlePostData = SinglePostFragmentArgs.fromBundle(getArguments()).getPost();
+        int postType = SinglePostFragmentArgs.fromBundle(getArguments()).getPostType();
 
         ImageView mImgPostSubreddit = view.findViewById(R.id.img_post_subreddit);
         TextView mTxtPostSubreddit = view.findViewById(R.id.txt_post_subreddit);
@@ -82,7 +84,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"));
             }
         mBtnPostNumComments.setText(formatValue(singlePostData.getNumComments()));
-
+        Toast.makeText(getActivity(), String.valueOf(postType), Toast.LENGTH_SHORT).show();
 
         Token mToken = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();

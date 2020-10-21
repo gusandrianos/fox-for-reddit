@@ -49,5 +49,8 @@
         <argument
             android:name="post"
             app:argType="io.github.gusandrianos.foxforreddit.data.models.Data" />
+        <argument
+            android:name="postType"
+            app:argType="integer" />
     </fragment>
 </navigation>

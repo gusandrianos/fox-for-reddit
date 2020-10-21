@@ -35,10 +35,15 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
+import static io.github.gusandrianos.foxforreddit.Constants.BASE_OAUTH_URL;
+import static io.github.gusandrianos.foxforreddit.Constants.CLIENT_ID;
+import static io.github.gusandrianos.foxforreddit.Constants.LAUNCH_SECOND_ACTIVITY;
+import static io.github.gusandrianos.foxforreddit.Constants.REDIRECT_URI;
+import static io.github.gusandrianos.foxforreddit.Constants.STATE;
+
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static Data mUser;
-    int LAUNCH_SECOND_ACTIVITY = 1;
     Token mToken;
     private NavController navController;
     public AppBarConfiguration appBarConfiguration;
@@ -116,11 +121,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return NavigationUI.navigateUp(navController, appBarConfiguration);
     }
 
-    // TODO: Update navigation to make this work again
     public void loadLogInWebpage() {
         Intent load = new Intent(this, LoginActivity.class);
-        load.putExtra("URL", "https://www.reddit.com/api/v1/authorize.compact?client_id=n1R0bc_lPPTtVg&response_type=code&state=ggfgfgfgga&redirect_uri=https://gusandrianos.github.io/login&duration=permanent&scope=*");
+        load.putExtra("URL", constructOAuthURL());
         startActivityForResult(load, LAUNCH_SECOND_ACTIVITY);
+    }
+
+    private String constructOAuthURL() {
+        return BASE_OAUTH_URL + "?client_id=" + CLIENT_ID + "&response_type=code&state=" + STATE + "&redirect_uri=" + REDIRECT_URI + "&duration=permanent&scope=*";
     }
 
     @Override
@@ -130,8 +138,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (resultCode == Activity.RESULT_OK) {
                 String result = Objects.requireNonNull(data).getStringExtra("result");
                 String[] inputs = result.split("\\?")[1].split("&");
-                String code = inputs[1].split("=")[1];
-                mToken = InjectorUtils.getInstance().provideTokenRepository(getApplication()).getNewToken(code, "https://gusandrianos.github.io/login");
+                String state = inputs[0].split("=")[1];
+                if (state.equals(STATE)) {
+                    String code = inputs[1].split("=")[1];
+                    mToken = InjectorUtils.getInstance().provideTokenRepository(getApplication()).getNewToken(code, REDIRECT_URI);
+                }
                 setAuthorizedUI();
             }
         }

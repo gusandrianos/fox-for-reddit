@@ -11,6 +11,8 @@ import android.webkit.WebViewClient;
 
 import io.github.gusandrianos.foxforreddit.R;
 
+import static io.github.gusandrianos.foxforreddit.Constants.REDIRECT_URI;
+
 public class LoginActivity extends AppCompatActivity {
 
     @Override
@@ -26,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
             public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
                 super.doUpdateVisitedHistory(view, url, isReload);
                 Log.i("shouldOverrideUrlL", url);
-                if (url.startsWith("https://gusandrianos.github.io/login")) {
+                if (url.startsWith(REDIRECT_URI)) {
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("result", url);
                     setResult(Activity.RESULT_OK, returnIntent);

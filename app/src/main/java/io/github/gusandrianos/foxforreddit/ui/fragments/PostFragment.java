@@ -25,6 +25,7 @@ import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
+import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.PostAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -95,6 +96,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     @Override
     public void onItemClick(@NotNull Data post, @NotNull String clicked, @NotNull int postType) {      //ToDo improve voting system (Binding Adapter and viewModel)
 //        Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+        int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         switch (clicked) {
@@ -104,7 +108,13 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 break;
             case Constants.POST_USER:
                 Toast.makeText(getActivity(), "user", Toast.LENGTH_SHORT).show();
-                //Todo open user
+                String authorUsername = Objects.requireNonNull(post.getAuthor());
+
+                if (currentDestinationID == R.id.mainFragment) {
+                    MainActivity.viewingSelf = authorUsername.equals(MainActivity.currentUserUsername);
+                    MainFragmentDirections.ActionMainFragmentToUserFragment action = MainFragmentDirections.actionMainFragmentToUserFragment(null, authorUsername);
+                    navController.navigate(action);
+                }
                 break;
             case Constants.POST_THUMBNAIL:
                 Toast.makeText(getActivity(), "Thumbnail", Toast.LENGTH_SHORT).show();
@@ -142,9 +152,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 break;
             default:
 //                Toast.makeText(getActivity(), post.getAuthor(), Toast.LENGTH_SHORT).show();
-                NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-                NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-                int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
+
                 if (currentDestinationID == R.id.mainFragment) {
                     MainFragmentDirections.ActionMainFragmentToSinglePostFragment action = MainFragmentDirections.actionMainFragmentToSinglePostFragment(post, postType);
                     navController.navigate(action);
@@ -155,6 +163,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
         }
     }
+
+
 
     public static PostFragment newInstance(String subreddit, String filter) {
         PostFragment fragment = new PostFragment();

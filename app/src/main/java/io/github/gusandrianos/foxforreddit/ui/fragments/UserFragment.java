@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
@@ -36,7 +37,6 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 public class UserFragment extends Fragment {
 
-    private Data mUser;
 
     @Nullable
     @Override
@@ -47,26 +47,22 @@ public class UserFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mUser = MainActivity.mUser;
-        String username;
-
-        if (getArguments() != null)
-            username = getArguments().getString("username", "");
-        else
-            username = mUser.getName();
+        UserFragmentArgs args = UserFragmentArgs.fromBundle(requireArguments());
+        Data mUser = args.getUser();
+        String username = args.getUsername();
 
         setUpToolbar();
 
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.profile_collapsing_toolbar);
 
-        if (username.equals(mUser.getName())) {
+        if (mUser != null) {
             collapsingToolbar.setTitle(mUser.getName());
             buildUserProfile(mUser, view, true);
-        } else {
+        } else if (!username.isEmpty()) {
             UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory(requireActivity().getApplication());
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
             collapsingToolbar.setTitle(username);
-            viewModel.getUser(username).observe(getViewLifecycleOwner(), user -> buildUserProfile(user, view, user.getName().equals(mUser.getName())));
+            viewModel.getUser(username).observe(getViewLifecycleOwner(), user -> buildUserProfile(user, view, Objects.equals(user.getName(), MainActivity.currentUserUsername)));
         }
     }
 
@@ -76,6 +72,8 @@ public class UserFragment extends Fragment {
         tabLayout.setupWithViewPager(viewPager);
         if (isSelf)
             tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        else
+            tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
 
@@ -93,13 +91,14 @@ public class UserFragment extends Fragment {
         }
         ImageView profilePic = requireActivity().findViewById(R.id.profile_picture);
         ImageView coverPic = requireActivity().findViewById(R.id.profile_cover);
-        Glide.with(view).load(user.getIconImg().split("\\?")[0]).into(profilePic);
+        Glide.with(view).load(Objects.requireNonNull(user.getIconImg()).split("\\?")[0]).into(profilePic);
 
-        Type subredditType = new TypeToken<Subreddit>() {}.getType();
+        Type subredditType = new TypeToken<Subreddit>() {
+        }.getType();
         Gson gson = new Gson();
         Subreddit subreddit = gson.fromJson(gson.toJsonTree(user.getSubreddit()).getAsJsonObject(), subredditType);
 
-        Glide.with(view).load(subreddit.getBannerImg().split("\\?")[0]).into(coverPic);
+        Glide.with(view).load(Objects.requireNonNull(subreddit.getBannerImg()).split("\\?")[0]).into(coverPic);
     }
 
     private void setUpToolbar() {

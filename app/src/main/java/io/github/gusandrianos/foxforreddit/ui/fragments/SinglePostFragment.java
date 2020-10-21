@@ -71,8 +71,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Data singlePostData = SinglePostFragmentArgs.fromBundle(getArguments()).getPost();
-        int postType = SinglePostFragmentArgs.fromBundle(getArguments()).getPostType();
+        SinglePostFragmentArgs args = SinglePostFragmentArgs.fromBundle(requireArguments());
+        Data singlePostData = args.getPost();
+        int postType = args.getPostType();
+
         ImageView mImgPostSubreddit = view.findViewById(R.id.img_post_subreddit);
         TextView mTxtPostSubreddit = view.findViewById(R.id.txt_post_subreddit);
         TextView mTxtPostUser = view.findViewById(R.id.txt_post_user);
@@ -123,7 +125,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 Toast.makeText(getActivity(), "SELF by default", Toast.LENGTH_SHORT).show();
                 break;
         }
-        Token mToken = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         String permalink = singlePostData.getPermalink();

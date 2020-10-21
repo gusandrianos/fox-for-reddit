@@ -47,7 +47,7 @@ public class MainFragment extends Fragment {
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
 
         ArrayList<PostFragment> homeFragments = new ArrayList<>();
-        homeFragments.add(PostFragment.newInstance("", ""));
+        homeFragments.add(PostFragment.newInstance("r/GramersOfficial", ""));
         homeFragments.add(PostFragment.newInstance("r/all", "hot"));
 
         tabLayout.setupWithViewPager(viewPager);

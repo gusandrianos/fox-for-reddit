@@ -26,7 +26,7 @@ public class Constants {
     public static final int MODE_POST = 1;
     public static final int MODE_SUBREDDIT = 2;
 
-    //Post types
+    // Post types
     public static final int SELF = 1;
     public static final int LINK = 2;
     public static final int IMAGE = 3;

@@ -78,7 +78,7 @@ object UserRepository {
     fun getSubreddits(application: Application, location: String) =
             Pager(
                     config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-                    pagingSourceFactory = { PostPagingSource(location, getBearer(application)) }
+                    pagingSourceFactory = { RedditPagingSource(location, getBearer(application)) }
             ).liveData
 
     private fun getBearer(application: Application): String {

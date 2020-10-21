@@ -10,7 +10,6 @@ import androidx.paging.liveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.github.gusandrianos.foxforreddit.data.models.CommentListing
-import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.models.Token
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
@@ -28,7 +27,7 @@ object PostRepository {
     fun getPosts(subreddit: String, filter: String, application: Application) =
             Pager(
                     config = PagingConfig(pageSize = 25, prefetchDistance = 25, enablePlaceholders = false),
-                    pagingSourceFactory = { PostPagingSource(subreddit, filter, getBearer(application)) }
+                    pagingSourceFactory = { RedditPagingSource(subreddit, filter, getBearer(application)) }
             ).liveData
 
     fun votePost(dir: String, id: String, token: Token) {

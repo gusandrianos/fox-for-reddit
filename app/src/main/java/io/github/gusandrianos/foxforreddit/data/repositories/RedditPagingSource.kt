@@ -1,6 +1,7 @@
 package io.github.gusandrianos.foxforreddit.data.repositories
 
 import androidx.paging.PagingSource
+import io.github.gusandrianos.foxforreddit.Constants.*
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
@@ -9,18 +10,14 @@ import retrofit2.HttpException
 import java.io.IOException
 
 
-class PostPagingSource() : PagingSource<String, Data>() {
-    private val STARTER_PAGE = ""
-    private val MODE_POST = 1
-    private val MODE_SUBREDDIT = 2
+class RedditPagingSource() : PagingSource<String, Data>() {
 
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     private lateinit var mSubreddit: String
     private lateinit var mFilter: String
     private lateinit var mBearer: String
     private lateinit var mLocation: String
-    private var MODE: Int = 0
-
+    private var MODE = 0
 
     constructor (subreddit: String, filter: String, bearer: String): this(){
         mSubreddit = subreddit

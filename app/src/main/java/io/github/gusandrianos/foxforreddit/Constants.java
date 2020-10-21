@@ -23,4 +23,12 @@ public class Constants {
     public static final String STARTER_PAGE = "";
     public static final int MODE_POST = 1;
     public static final int MODE_SUBREDDIT = 2;
+
+    //Post types
+    public static final int SELF = 1;
+    public static final int LINK = 2;
+    public static final int IMAGE = 3;
+    public static final int VIDEO = 4;
+    public static final int POLL = 5;
+    public static final int COMMENT = 6;
 }

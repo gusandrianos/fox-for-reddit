@@ -142,10 +142,17 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 break;
             default:
 //                Toast.makeText(getActivity(), post.getAuthor(), Toast.LENGTH_SHORT).show();
-                MainFragmentDirections.ActionMainFragmentToSinglePostFragment action = MainFragmentDirections.actionMainFragmentToSinglePostFragment(post, postType);
                 NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
                 NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-                navController.navigate(action);
+                int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
+                if (currentDestinationID == R.id.mainFragment) {
+                    MainFragmentDirections.ActionMainFragmentToSinglePostFragment action = MainFragmentDirections.actionMainFragmentToSinglePostFragment(post, postType);
+                    navController.navigate(action);
+                } else if (currentDestinationID == R.id.userFragment) {
+                    UserFragmentDirections.ActionUserFragmentToSinglePostFragment action = UserFragmentDirections.actionUserFragmentToSinglePostFragment(post, postType);
+                    navController.navigate(action);
+                }
+
         }
     }
 

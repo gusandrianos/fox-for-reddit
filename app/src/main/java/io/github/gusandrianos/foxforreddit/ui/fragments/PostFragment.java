@@ -93,7 +93,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     }
 
     @Override
-    public void onItemClick(@NotNull Data post, @NotNull String clicked) {      //ToDo improve voting system (Binding Adapter and viewModel)
+    public void onItemClick(@NotNull Data post, @NotNull String clicked, @NotNull int postType) {      //ToDo improve voting system (Binding Adapter and viewModel)
 //        Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);

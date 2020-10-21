@@ -45,7 +45,7 @@
                     android:inflatedId="@+id/layout_poll"
                     android:layout="@layout/poll"/>
                 <ViewStub
-                    android:id="@+id/stub_image"
+                    android:id="@+id/stub_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inflatedId="@+id/layout_image"

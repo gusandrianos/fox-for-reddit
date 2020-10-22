@@ -33,23 +33,15 @@
                 android:orientation="vertical">
                 <include layout="@layout/post_header" />
                 <TextView
-                    android:id="@+id/txt_single_post_title"
+                    android:id="@+id/stub_txt_post_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="This is the title"
-                    app:layout_anchor="@layout/post_header" />
+                    android:text="This is the title"/>
                 <ViewStub
-                    android:id="@+id/stub_poll"
+                    android:id="@+id/view_stub"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inflatedId="@+id/layout_poll"
-                    android:layout="@layout/poll"/>
-                <ViewStub
-                    android:id="@+id/stub_id"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inflatedId="@+id/layout_image"
-                    android:layout="@layout/image"/>
+                    android:inflatedId="@+id/layoutId"/>
             </LinearLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>

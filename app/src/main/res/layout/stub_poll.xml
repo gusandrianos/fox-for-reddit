@@ -3,44 +3,62 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:id="@+id/stub_cl_poll">
 
     <TextView
-        android:id="@+id/txt_single_post_vote_num"
-        android:layout_width="wrap_content"
+        android:id="@+id/stub_txt_post_body"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Votes"
-        app:layout_constraintStart_toStartOf="@+id/btn_single_post_vote"
-        app:layout_constraintTop_toBottomOf="@+id/btn_single_post_vote" />
+        android:text="body body bodyt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/stub_rg_post_choices"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
 
-    <TextView
-        android:id="@+id/txt_single_post_vote_time_left"
-        android:layout_width="wrap_content"
+    <RadioGroup
+        android:id="@+id/stub_rg_post_choices"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Time Left"
-        app:layout_constraintEnd_toEndOf="@+id/btn_single_post_vote"
-        app:layout_constraintTop_toBottomOf="@+id/btn_single_post_vote" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/stub_txt_post_body"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/stub_btn_post_vote"/>
 
     <Button
-        android:id="@+id/btn_single_post_vote"
-        android:layout_width="match_parent"
+        android:id="@+id/stub_btn_post_vote"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Vote"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rg_single_post_choices" />
+        app:layout_constraintTop_toBottomOf="@id/stub_rg_post_choices"
+        app:layout_constraintBottom_toBottomOf="@id/stub_txt_post_vote_time_left"/>
 
-    <RadioGroup
-        android:id="@+id/rg_single_post_choices"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/txt_single_post_body"
-        app:layout_constraintTop_toBottomOf="@id/txt_single_post_body" />
     <TextView
-        android:id="@+id/txt_single_post_body"
-        android:layout_width="match_parent"
+        android:id="@+id/stub_txt_post_vote_time_left"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"/>
+        android:text="Time Left"
+        android:textAlignment="textEnd"
+        app:layout_constraintEnd_toEndOf="@id/stub_btn_post_vote"
+        app:layout_constraintTop_toBottomOf="@id/stub_btn_post_vote"
+        app:layout_constraintStart_toEndOf="@id/stub_txt_vote_num"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/stub_txt_vote_num"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Votes"
+
+        app:layout_constraintStart_toStartOf="@id/stub_btn_post_vote"
+        app:layout_constraintTop_toBottomOf="@id/stub_btn_post_vote"
+        app:layout_constraintEnd_toStartOf="@id/stub_txt_post_vote_time_left"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

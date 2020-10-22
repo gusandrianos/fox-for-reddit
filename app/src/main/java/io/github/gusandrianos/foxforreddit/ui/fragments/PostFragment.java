@@ -108,10 +108,11 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 break;
             case Constants.POST_USER:
                 Toast.makeText(getActivity(), "user", Toast.LENGTH_SHORT).show();
-                String authorUsername = Objects.requireNonNull(post.getAuthor());
 
                 if (currentDestinationID == R.id.mainFragment) {
-                    MainActivity.viewingSelf = authorUsername.equals(MainActivity.currentUserUsername);
+                    MainActivity mainActivity = (MainActivity) requireActivity();
+                    String authorUsername = post.getAuthor();
+                    mainActivity.viewingSelf = authorUsername.equals(mainActivity.currentUserUsername);
                     MainFragmentDirections.ActionMainFragmentToUserFragment action = MainFragmentDirections.actionMainFragmentToUserFragment(null, authorUsername);
                     navController.navigate(action);
                 }
@@ -160,11 +161,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                     UserFragmentDirections.ActionUserFragmentToSinglePostFragment action = UserFragmentDirections.actionUserFragmentToSinglePostFragment(post, postType);
                     navController.navigate(action);
                 }
-
         }
     }
-
-
 
     public static PostFragment newInstance(String subreddit, String filter) {
         PostFragment fragment = new PostFragment();

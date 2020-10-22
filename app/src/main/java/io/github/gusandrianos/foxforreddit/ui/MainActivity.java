@@ -49,8 +49,8 @@ import static io.github.gusandrianos.foxforreddit.Constants.STATE;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private Data mUser;
-    public static String currentUserUsername;
-    public static boolean viewingSelf = false;
+    public String currentUserUsername;
+    public boolean viewingSelf = false;
     private Token mToken;
     private NavController navController;
     public AppBarConfiguration appBarConfiguration;
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavOptions options;
     List<Integer> topLevelDestinationIds;
     int itemSelectedID = 0;
-    DrawerLayout drawer;
+    public DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,12 +88,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (destination.getId() != R.id.userFragment) {
+                drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                 viewingSelf = false;
                 navigationView.setCheckedItem(destination.getId());
-            } else if (!viewingSelf) {
-                MenuItem checked = navigationView.getCheckedItem();
-                if (checked != null)
-                    checked.setChecked(false);
             } else {
                 navigationView.setCheckedItem(destination.getId());
             }
@@ -136,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onSupportNavigateUp() {
-        return NavigationUI.navigateUp(navController, appBarConfiguration);
+        return NavigationUI.navigateUp(navController, drawer) || super.onSupportNavigateUp();
     }
 
     public void loadLogInWebpage() {

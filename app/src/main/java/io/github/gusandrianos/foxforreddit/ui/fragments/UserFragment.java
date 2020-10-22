@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -37,7 +38,6 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 public class UserFragment extends Fragment {
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -62,7 +62,8 @@ public class UserFragment extends Fragment {
             UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory(requireActivity().getApplication());
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
             collapsingToolbar.setTitle(username);
-            viewModel.getUser(username).observe(getViewLifecycleOwner(), user -> buildUserProfile(user, view, Objects.equals(user.getName(), MainActivity.currentUserUsername)));
+            MainActivity mainActivity = (MainActivity) requireActivity();
+            viewModel.getUser(username).observe(getViewLifecycleOwner(), user -> buildUserProfile(user, view, Objects.equals(user.getName(), mainActivity.currentUserUsername)));
         }
     }
 
@@ -104,9 +105,14 @@ public class UserFragment extends Fragment {
     private void setUpToolbar() {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
-        AppBarConfiguration appBarConfiguration = mainActivity.appBarConfiguration;
         Toolbar toolbar = requireActivity().findViewById(R.id.profile_toolbar);
-        CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.profile_collapsing_toolbar);
-        NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController, appBarConfiguration);
+        if (mainActivity.viewingSelf)
+            NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
+        else {
+            mainActivity.setSupportActionBar(toolbar);
+            DrawerLayout drawer = mainActivity.drawer;
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            NavigationUI.setupActionBarWithNavController(mainActivity, navController, drawer);
+        }
     }
 }

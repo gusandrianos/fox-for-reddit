@@ -47,7 +47,7 @@ public class MainFragment extends Fragment {
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
 
         ArrayList<PostFragment> homeFragments = new ArrayList<>();
-        homeFragments.add(PostFragment.newInstance("r/GramersOfficial", ""));
+        homeFragments.add(PostFragment.newInstance("", ""));
         homeFragments.add(PostFragment.newInstance("r/all", "hot"));
 
         tabLayout.setupWithViewPager(viewPager);
@@ -64,8 +64,7 @@ public class MainFragment extends Fragment {
     private void setUpToolbar() {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
-        AppBarConfiguration appBarConfiguration = mainActivity.appBarConfiguration;
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_main);
-        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
     }
 }

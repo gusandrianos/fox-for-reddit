@@ -38,9 +38,6 @@
         <action
             android:id="@+id/action_mainFragment_to_singlePostFragment"
             app:destination="@id/singlePostFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_subredditFragment"
-            app:destination="@id/subredditFragment" />
     </fragment>
     <fragment
         android:id="@+id/subredditListFragment"

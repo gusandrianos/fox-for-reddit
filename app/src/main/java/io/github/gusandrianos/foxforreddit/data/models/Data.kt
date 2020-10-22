@@ -141,7 +141,7 @@ class Data : Parcelable {
     @SerializedName("is_gallery")
     val isGallery: Boolean? = null
 
-    @SerializedName("gallery_ata")
+    @SerializedName("gallery_data")
     val galleryData: GalleryData? = null
 
     @SerializedName("over_18")

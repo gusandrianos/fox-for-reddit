@@ -1,5 +1,7 @@
 package io.github.gusandrianos.foxforreddit;
 
+import android.content.res.Resources;
+
 public class Constants {
     // Activities
     public static final String REDIRECT_URI = "https://gusandrianos.github.io/login";

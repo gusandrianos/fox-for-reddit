@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/stub_cl_link"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/stub_cl_link">
+    android:layout_height="wrap_content">
 
     <FrameLayout
         android:id="@+id/stub_fl_thumbnail"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clickable="true"
-        app:layout_constraintDimensionRatio="H,16:10"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="H,16:10"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/stub_img_post_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher_background"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            />
+            android:src="@drawable/ic_launcher_background" />
 
         <TextView
             android:id="@+id/stub_txt_post_domain"
@@ -34,7 +33,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="domain.com"
-            android:drawableEnd="@drawable/ic_round_open_in_new_16"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            app:drawableEndCompat="@drawable/ic_round_open_in_new_16" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

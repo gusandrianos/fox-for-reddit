@@ -70,6 +70,7 @@ public class UserFragment extends Fragment {
 
     private void buildUserProfile(Data user, View view, boolean isSelf) {
         ViewPager viewPager = view.findViewById(R.id.profile_view_pager);
+        viewPager.setOffscreenPageLimit(3);
         TabLayout tabLayout = view.findViewById(R.id.profile_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
         if (isSelf)

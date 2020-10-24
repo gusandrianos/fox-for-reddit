@@ -75,9 +75,9 @@ interface RedditAPI {
             @Query("count") count: Int
     ): Listing
 
-    @GET("r/{subreddit}/about")
+    @GET("{subreddit_prefixed}/about")
     fun getSubreddit(
             @Header("Authorization") bearer: String,
-            @Path("subreddit") subreddit: String
+            @Path("subreddit_prefixed") subreddit: String
     ): Call<Thing>
 }

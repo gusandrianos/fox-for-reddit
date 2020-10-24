@@ -27,7 +27,6 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 
 public class MainFragment extends Fragment {
 
-    Token mToken;
 
     @Nullable
     @Override
@@ -41,13 +40,11 @@ public class MainFragment extends Fragment {
 
         setUpToolbar();
 
-        mToken = InjectorUtils.getInstance().provideTokenRepository(requireActivity().getApplication()).getToken();
-
         ViewPager viewPager = view.findViewById(R.id.view_pager);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
 
         ArrayList<PostFragment> homeFragments = new ArrayList<>();
-        homeFragments.add(PostFragment.newInstance("", ""));
+        homeFragments.add(PostFragment.newInstance("r/spotted", "new"));
         homeFragments.add(PostFragment.newInstance("r/all", "hot"));
 
         tabLayout.setupWithViewPager(viewPager);
@@ -55,10 +52,8 @@ public class MainFragment extends Fragment {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
         viewPagerAdapter.addFragment(homeFragments.get(0), "HOME");
         viewPagerAdapter.addFragment(homeFragments.get(1), "POPULAR");
-//        viewPagerAdapter.addFragment(new SinglePostFragment(), "Comments");
 
         viewPager.setAdapter(viewPagerAdapter);
-
     }
 
     private void setUpToolbar() {

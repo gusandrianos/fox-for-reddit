@@ -52,7 +52,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mView = getView();
-        mToken = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
+        mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
         page = getArguments().getInt("page", 0);
         subreddit = getArguments().getString("subreddit", "");
         filter = getArguments().getString("filter", "");
@@ -85,7 +85,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     @Override
     public void onResume() {
         super.onResume();
-        Token token = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
+        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
         if (!mToken.getAccessToken().equals(token.getAccessToken())) {
             mToken = token;
             initRecycleView();
@@ -94,7 +94,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     }
 
     @Override
-    public void onItemClick(@NotNull Data post, @NotNull String clicked, @NotNull int postType) {      //ToDo improve voting system (Binding Adapter and viewModel)
+    public void onItemClick(@NotNull Data post, @NotNull String clicked, int postType) {      //ToDo improve voting system (Binding Adapter and viewModel)
 //        Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();

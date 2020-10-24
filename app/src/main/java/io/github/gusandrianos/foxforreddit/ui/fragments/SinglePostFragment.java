@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -216,7 +215,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             Glide.with(inflated).load(url).into(imgPostImage);
         } else {
             List<String> imagesId = new ArrayList<>();
-            if(singlePostData.getGalleryData()!=null) {
+            if (singlePostData.getGalleryData() != null) {
                 for (GalleryItem galleryItem : singlePostData.getGalleryData().getItems()) {
                     imagesId.add(galleryItem.getMediaId());
                     Toast.makeText(getActivity(), galleryItem.getMediaId(), Toast.LENGTH_SHORT).show();
@@ -229,7 +228,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 viewPager.setAdapter(adapter);
                 TabLayout tabLayout = inflated.findViewById(R.id.tab_dots);
                 new TabLayoutMediator(tabLayout, viewPager,
-                        (tab, position) -> {}
+                        (tab, position) -> {
+                        }
                 ).attach();
             }
         }
@@ -301,10 +301,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     @Override
     public void onLoadMoreClicked(@NotNull String linkId, @NotNull String moreChildren, int position) {
-        Token mToken = InjectorUtils.getInstance().provideTokenRepository(getActivity().getApplication()).getToken();
+        Token mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         Log.i("LISTENER", "Before observe " + position);
-        viewModel.getMoreChildren(linkId, moreChildren, mToken);
+        viewModel.getMoreChildren(linkId, moreChildren, requireActivity().getApplication());
     }
 }

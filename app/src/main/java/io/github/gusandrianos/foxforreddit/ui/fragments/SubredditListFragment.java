@@ -47,11 +47,11 @@ public class SubredditListFragment extends Fragment {
     }
 
     private void initializeUI() {
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory(getActivity().getApplication());
+        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
-        Token token = InjectorUtils.getInstance().provideTokenRepository(requireActivity().getApplication()).getToken();
+        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
         String location = "mine/subscriber";
-        if(token.getRefreshToken() == null){
+        if (token.getRefreshToken() == null) {
             location = "default";
         }
 

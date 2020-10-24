@@ -1,12 +1,13 @@
 package io.github.gusandrianos.foxforreddit.utilities;
 
-import android.app.Application;
 import android.util.Log;
 
 import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository;
+import io.github.gusandrianos.foxforreddit.data.repositories.SubredditRepository;
 import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.data.repositories.UserRepository;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
+import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 public class InjectorUtils {
@@ -32,15 +33,18 @@ public class InjectorUtils {
         return new PostViewModelFactory(postRepository);
     }
 
-    public TokenRepository provideTokenRepository(Application application) {
-        TokenRepository tokenRepository = TokenRepository.getInstance();
-        tokenRepository.setApplication(application);
-        return tokenRepository;
+    public TokenRepository provideTokenRepository() {
+        return TokenRepository.getInstance();
     }
 
-    public UserViewModelFactory provideUserViewModelFactory(Application application) {
+    public UserViewModelFactory provideUserViewModelFactory() {
         UserRepository userRepository = UserRepository.INSTANCE;
-        return new UserViewModelFactory(userRepository, application);
+        return new UserViewModelFactory(userRepository);
+    }
+
+    public SubredditViewModelFactory provideSubredditViewModelFactory() {
+        SubredditRepository subredditRepository = SubredditRepository.INSTANCE;
+        return new SubredditViewModelFactory(subredditRepository);
     }
 }
 

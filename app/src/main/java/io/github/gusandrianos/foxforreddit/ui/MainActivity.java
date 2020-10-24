@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setAuthorizedUI() {
         if (mToken == null) {
-            mToken = InjectorUtils.getInstance().provideTokenRepository(getApplication()).getToken();
+            mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(getApplication());
         }
         if (mToken.getRefreshToken() != null) {
             getCurrentUser();
@@ -111,9 +111,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void getCurrentUser() {
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory(getApplication());
+        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
-        viewModel.getMe().observe(this, user -> {
+        viewModel.getMe(getApplication()).observe(this, user -> {
             if (user != null) {
                 String username = user.getName();
                 if (username != null) {
@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String state = inputs[0].split("=")[1];
                 if (state.equals(STATE)) {
                     String code = inputs[1].split("=")[1];
-                    mToken = InjectorUtils.getInstance().provideTokenRepository(getApplication()).getNewToken(code, REDIRECT_URI);
+                    mToken = InjectorUtils.getInstance().provideTokenRepository().getNewToken(getApplication(), code, REDIRECT_URI);
                 }
                 setAuthorizedUI();
             }

@@ -41,7 +41,7 @@ public class AboutUserFragment extends Fragment {
         postKarma.setText(String.valueOf(postKarmaValue));
         commentKarma.setText(String.valueOf(commentKarmaValue));
 
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory(getActivity().getApplication());
+        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
         viewModel.getTrophies(getActivity().getApplication(), username).observe(getViewLifecycleOwner(), trophies -> {
             if (trophies != null) {

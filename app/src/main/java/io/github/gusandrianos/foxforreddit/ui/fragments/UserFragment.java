@@ -1,5 +1,6 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,11 +60,11 @@ public class UserFragment extends Fragment {
             collapsingToolbar.setTitle(mUser.getName());
             buildUserProfile(mUser, view, true);
         } else if (!username.isEmpty()) {
-            UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory(requireActivity().getApplication());
+            UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
             collapsingToolbar.setTitle(username);
             MainActivity mainActivity = (MainActivity) requireActivity();
-            viewModel.getUser(username).observe(getViewLifecycleOwner(), user -> buildUserProfile(user, view, Objects.equals(user.getName(), mainActivity.currentUserUsername)));
+            viewModel.getUser(requireActivity().getApplication(), username).observe(getViewLifecycleOwner(), user -> buildUserProfile(user, view, Objects.equals(user.getName(), mainActivity.currentUserUsername)));
         }
     }
 

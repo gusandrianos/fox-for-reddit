@@ -791,4 +791,7 @@ class Data : Parcelable {
 
     @SerializedName("category")
     val category: Any? = null
+
+    @SerializedName("user_flair_richtext")
+    val userFlairRichtext: List<Any?>? = null
 }

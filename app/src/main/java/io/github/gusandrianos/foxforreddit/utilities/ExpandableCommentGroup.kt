@@ -69,8 +69,8 @@ open class ExpandableCommentItem constructor(
         if (mComment.kind.equals("more")) {
             addDepthViewsForLoadMore(viewHolder)
             viewHolder.itemView.cl_comment.visibility = View.GONE
-            viewHolder.itemView.cl_loadmore.visibility = View.VISIBLE
-            viewHolder.itemView.cl_loadmore.tag = mComment.data!!.parentId
+            viewHolder.itemView.cl_load_more.visibility = View.VISIBLE
+            viewHolder.itemView.cl_load_more.tag = mComment.data!!.parentId
             var moreChildren = ""
             var i = 0
             for (child in mComment.data.children!!) {
@@ -78,16 +78,16 @@ open class ExpandableCommentItem constructor(
                     moreChildren += "," + (child as String)
                 i++
             }
-            viewHolder.itemView.txt_more_childs.apply {
+            viewHolder.itemView.txt_more_children.apply {
                 setOnClickListener {
                     listener.onLoadMoreClicked(linkId, moreChildren.removePrefix(","), position)
                 }
             }
-            viewHolder.itemView.txt_more_childs.text = "$i More Replies"
+            viewHolder.itemView.txt_more_children.text = "$i More Replies"
         } else {
             addDepthViews(viewHolder)
             viewHolder.itemView.cl_comment.visibility = View.VISIBLE
-            viewHolder.itemView.cl_loadmore.visibility = View.GONE
+            viewHolder.itemView.cl_load_more.visibility = View.GONE
             viewHolder.itemView.txt_comment_user.text = mComment.data!!.author
             viewHolder.itemView.comment_body.text = mComment.data.body
             viewHolder.itemView.txt_comment_score.text = formatValue(mComment.data.score.toDouble())

@@ -10,7 +10,6 @@ import androidx.paging.liveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.github.gusandrianos.foxforreddit.data.models.CommentListing
-import io.github.gusandrianos.foxforreddit.data.models.Token
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
@@ -30,16 +29,14 @@ object PostRepository {
                     pagingSourceFactory = { RedditPagingSource(subreddit, filter, getBearer(application)) }
             ).liveData
 
-    fun votePost(dir: String, id: String, token: Token) {
-        val bearer = " " + token.tokenType + " " + token.accessToken
+    fun votePost(dir: String, id: String, application: Application) {
+        val bearer = getBearer(application)
         val vote = redditAPI.votePost(bearer, dir, id, 123)
         vote.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                //ToDo votePost onResponse
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                //ToDo votePost onFailure
             }
         })
     }
@@ -64,14 +61,13 @@ object PostRepository {
         return commentsData
     }
 
-    fun getMoreChildren(linkId: String, children: String, token: Token): LiveData<MoreChildren> {
-        val bearer = " " + token.tokenType + " " + token.accessToken
+    fun getMoreChildren(linkId: String, children: String, application: Application): LiveData<MoreChildren> {
+        val bearer = getBearer(application)
         val moreChildren = redditAPI.getMoreChildren(bearer, linkId, children, "json")
         moreChildren.enqueue(object : Callback<MoreChildren> {
             override fun onResponse(call: Call<MoreChildren>, response: Response<MoreChildren>) {
-                if (response.isSuccessful) {
+                if (response.isSuccessful)
                     dataMoreChildren.value = response.body()
-                }
             }
 
             override fun onFailure(call: Call<MoreChildren>, t: Throwable) {

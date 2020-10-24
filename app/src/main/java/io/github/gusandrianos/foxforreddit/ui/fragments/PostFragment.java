@@ -123,19 +123,19 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 break;
             case Constants.POST_VOTE_UP:
                 if (post.getLikes() == null || !((Boolean) post.getLikes())) {  //If down or no voted
-                    viewModel.votePost("1", post.getName(), mToken);      //then send up vote
+                    viewModel.votePost("1", post.getName(), requireActivity().getApplication());      //then send up vote
                     post.setLikes(true);
                 } else {                                                       //else (up voted)
-                    viewModel.votePost("0", post.getName(), mToken);      //send no vote
+                    viewModel.votePost("0", post.getName(), requireActivity().getApplication());      //send no vote
                     post.setLikes(null);
                 }
                 break;
             case Constants.POST_VOTE_DOWN:
                 if (post.getLikes() == null || ((Boolean) post.getLikes())) {  //If up or no voted
-                    viewModel.votePost("-1", post.getName(), mToken);    //then send down vote
+                    viewModel.votePost("-1", post.getName(), requireActivity().getApplication());    //then send down vote
                     post.setLikes(false);
                 } else {                                                      //else (down voted)
-                    viewModel.votePost("0", post.getName(), mToken);     //send no vote
+                    viewModel.votePost("0", post.getName(), requireActivity().getApplication());     //send no vote
                     post.setLikes(null);
                 }
                 break;

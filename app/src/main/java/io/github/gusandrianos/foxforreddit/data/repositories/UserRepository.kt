@@ -28,9 +28,8 @@ object UserRepository {
         val about = redditAPI.getUser(username, bearer)
         about.enqueue(object : Callback<Thing> {
             override fun onResponse(call: Call<Thing>, response: Response<Thing>) {
-                if (response.isSuccessful) {
+                if (response.isSuccessful)
                     user.value = response.body()?.data
-                }
             }
 
             override fun onFailure(call: Call<Thing>, t: Throwable) {
@@ -46,9 +45,8 @@ object UserRepository {
         val about = redditAPI.getMe(bearer)
         about.enqueue(object : Callback<Data> {
             override fun onResponse(call: Call<Data>, response: Response<Data>) {
-                if (response.isSuccessful) {
+                if (response.isSuccessful)
                     me.value = response.body()
-                }
             }
 
             override fun onFailure(call: Call<Data>, t: Throwable) {
@@ -63,9 +61,8 @@ object UserRepository {
         val trophiesRequest = redditAPI.getTrophies(bearer, username)
         trophiesRequest.enqueue(object : Callback<Thing> {
             override fun onResponse(call: Call<Thing>, response: Response<Thing>) {
-                if (response.isSuccessful) {
+                if (response.isSuccessful)
                     trophies.value = response.body()?.data?.trophies
-                }
             }
 
             override fun onFailure(call: Call<Thing>, t: Throwable) {

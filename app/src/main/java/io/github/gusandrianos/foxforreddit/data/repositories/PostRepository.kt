@@ -14,7 +14,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Token
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -78,10 +78,5 @@ object PostRepository {
             }
         })
         return dataMoreChildren
-    }
-
-    private fun getBearer(application: Application): String {
-        val token = InjectorUtils.getInstance().provideTokenRepository(application).token
-        return " " + token.tokenType + " " + token.accessToken
     }
 }

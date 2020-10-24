@@ -11,7 +11,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
 
 import retrofit2.Call
 import retrofit2.Callback
@@ -80,9 +80,4 @@ object UserRepository {
                     config = PagingConfig(pageSize = 10, enablePlaceholders = false),
                     pagingSourceFactory = { RedditPagingSource(location, getBearer(application)) }
             ).liveData
-
-    private fun getBearer(application: Application): String {
-        val token = InjectorUtils.getInstance().provideTokenRepository(application).token
-        return " " + token.tokenType + " " + token.accessToken
-    }
 }

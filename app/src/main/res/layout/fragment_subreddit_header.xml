@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="200dp">
+
+    <com.google.android.material.appbar.CollapsingToolbarLayout
+        android:id="@+id/subreddit_collapsing_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@android:color/white"
+        app:expandedTitleGravity="center|bottom"
+        app:expandedTitleTextAppearance="@style/CollapsingToolbarLayoutExpandedTextStyle"
+        app:layout_scrollFlags="scroll|enterAlways|snap">
+
+        <ImageView
+            android:id="@+id/subreddit_cover"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:layout_gravity="top"
+            android:background="#FF4500"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/subreddit_cover_gradient"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:layout_gravity="top"
+            android:background="@android:color/transparent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/subreddit_picture"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="0dp"
+            android:scaleType="centerCrop" />
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/subreddit_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="top|end"
+            android:background="@android:color/transparent"
+            app:layout_collapseMode="pin" />
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
+</com.google.android.material.appbar.AppBarLayout>

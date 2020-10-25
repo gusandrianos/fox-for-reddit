@@ -95,7 +95,6 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
     @Override
     public void onItemClick(@NotNull Data post, @NotNull String clicked, int postType) {      //ToDo improve voting system (Binding Adapter and viewModel)
-//        Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
         int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
@@ -103,12 +102,16 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         switch (clicked) {
             case Constants.POST_SUBREDDIT:
-                Toast.makeText(getActivity(), "Subreddit", Toast.LENGTH_SHORT).show();
-                //Todo open post
+                String subredditNamePrefixed = post.getSubredditNamePrefixed();
+                if (currentDestinationID == R.id.mainFragment) {
+                    MainFragmentDirections.ActionMainFragmentToSubredditFragment action = MainFragmentDirections.actionMainFragmentToSubredditFragment(subredditNamePrefixed);
+                    navController.navigate(action);
+                } else if (currentDestinationID == R.id.userFragment) {
+                    UserFragmentDirections.ActionUserFragmentToSubredditFragment action = UserFragmentDirections.actionUserFragmentToSubredditFragment(subredditNamePrefixed);
+                    navController.navigate(action);
+                }
                 break;
             case Constants.POST_USER:
-                Toast.makeText(getActivity(), "user", Toast.LENGTH_SHORT).show();
-
                 if (currentDestinationID == R.id.mainFragment) {
                     MainActivity mainActivity = (MainActivity) requireActivity();
                     String authorUsername = post.getAuthor();

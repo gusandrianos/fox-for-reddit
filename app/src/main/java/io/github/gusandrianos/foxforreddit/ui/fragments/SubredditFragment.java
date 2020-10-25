@@ -17,12 +17,14 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
-
 public class SubredditFragment extends Fragment {
+    FoxToolkit toolkit = FoxToolkit.INSTANCE;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_subreddit, container, false);
@@ -65,29 +67,22 @@ public class SubredditFragment extends Fragment {
         String bannerImageURI = subredditInfo.getBannerImg();
         String bannerBackgroundImageURI = subredditInfo.getBannerBackgroundImage();
 
-        if (iconImageURI == null)
-            iconImageURI = "";
-
-        if (communityIconURI == null)
-            communityIconURI = "";
-
-        if (bannerImageURI == null)
-            bannerImageURI = "";
-
-        if (bannerBackgroundImageURI == null)
-            bannerBackgroundImageURI = "";
+        iconImageURI = iconImageURI == null ? "" : iconImageURI;
+        communityIconURI = communityIconURI == null ? "" : communityIconURI;
+        bannerImageURI = bannerImageURI == null ? "" : bannerImageURI;
+        bannerBackgroundImageURI = bannerBackgroundImageURI == null ? "" : bannerBackgroundImageURI;
 
         if (!iconImageURI.isEmpty())
-            Glide.with(view).load(iconImageURI.split("\\?")[0]).into(pic);
+            Glide.with(view).load(toolkit.getRawImageURI(iconImageURI)).into(pic);
         else if (!communityIconURI.isEmpty())
-            Glide.with(view).load(communityIconURI.split("\\?")[0]).into(pic);
+            Glide.with(view).load(toolkit.getRawImageURI(communityIconURI)).into(pic);
         else
             pic.setImageResource(R.drawable.default_subreddit_image);
 
         if (!bannerImageURI.isEmpty())
-            Glide.with(view).load(bannerImageURI.split("\\?")[0]).into(cover);
+            Glide.with(view).load(toolkit.getRawImageURI(bannerImageURI)).into(cover);
         else if (!bannerBackgroundImageURI.isEmpty())
-            Glide.with(view).load(bannerBackgroundImageURI.split("\\?")[0]).into(cover);
+            Glide.with(view).load(toolkit.getRawImageURI(bannerBackgroundImageURI)).into(cover);
         else
             cover.setImageResource(0);
 

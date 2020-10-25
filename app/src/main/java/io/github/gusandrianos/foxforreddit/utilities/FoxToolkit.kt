@@ -7,4 +7,8 @@ object FoxToolkit {
         val token = InjectorUtils.getInstance().provideTokenRepository().getToken(application)
         return " " + token.tokenType + " " + token.accessToken
     }
+
+    fun getRawImageURI(imageURI: String): String {
+        return imageURI.split("\\?".toRegex()).toTypedArray()[0]
+    }
 }

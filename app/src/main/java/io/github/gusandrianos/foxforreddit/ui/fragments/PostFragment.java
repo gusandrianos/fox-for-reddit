@@ -112,12 +112,18 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 }
                 break;
             case Constants.POST_USER:
-                if (currentDestinationID == R.id.mainFragment) {
+                if (currentDestinationID != R.id.userFragment) {
                     MainActivity mainActivity = (MainActivity) requireActivity();
                     String authorUsername = post.getAuthor();
                     mainActivity.viewingSelf = authorUsername.equals(mainActivity.currentUserUsername);
-                    MainFragmentDirections.ActionMainFragmentToUserFragment action = MainFragmentDirections.actionMainFragmentToUserFragment(null, authorUsername);
-                    navController.navigate(action);
+
+                    if (currentDestinationID == R.id.mainFragment) {
+                        MainFragmentDirections.ActionMainFragmentToUserFragment action = MainFragmentDirections.actionMainFragmentToUserFragment(null, authorUsername);
+                        navController.navigate(action);
+                    } else if (currentDestinationID == R.id.subredditFragment) {
+                        SubredditFragmentDirections.ActionSubredditFragmentToUserFragment action = SubredditFragmentDirections.actionSubredditFragmentToUserFragment(null, authorUsername);
+                        navController.navigate(action);
+                    }
                 }
                 break;
             case Constants.POST_THUMBNAIL:
@@ -162,6 +168,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                     navController.navigate(action);
                 } else if (currentDestinationID == R.id.userFragment) {
                     UserFragmentDirections.ActionUserFragmentToSinglePostFragment action = UserFragmentDirections.actionUserFragmentToSinglePostFragment(post, postType);
+                    navController.navigate(action);
+                } else if (currentDestinationID == R.id.subredditFragment) {
+                    SubredditFragmentDirections.ActionSubredditFragmentToSinglePostFragment action = SubredditFragmentDirections.actionSubredditFragmentToSinglePostFragment(post, postType);
                     navController.navigate(action);
                 }
         }

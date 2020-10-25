@@ -11,9 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+
+import java.text.NumberFormat;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
@@ -55,6 +58,25 @@ public class SubredditFragment extends Fragment {
 
     void setupHeader(Data subredditInfo, View view) {
         setupImages(subredditInfo, view);
+        setupUserCounters(subredditInfo, view);
+    }
+
+    void setupUserCounters(Data subredditInfo, View view) {
+        TextView members = view.findViewById(R.id.text_member_count);
+        TextView online = view.findViewById(R.id.text_users_online_count);
+
+        members.setText(NumberFormat.getInstance().format(subredditInfo.getSubscribers()));
+        if (subredditInfo.getAccountsActive() != null)
+            online.setText(NumberFormat.getInstance().format(subredditInfo.getAccountsActive()));
+        else if (subredditInfo.getActiveUserCount() != null)
+            online.setText(NumberFormat.getInstance().format(subredditInfo.getActiveUserCount()));
+        else {
+            TextView divider = view.findViewById(R.id.text_count_divider);
+            TextView onlineDescription = view.findViewById(R.id.text_users_online_description);
+            divider.setVisibility(View.GONE);
+            online.setVisibility(View.GONE);
+            onlineDescription.setVisibility(View.GONE);
+        }
     }
 
     void setupImages(Data subredditInfo, View view) {

@@ -415,10 +415,10 @@ class Data : Parcelable {
     val keyColor: String? = null
 
     @SerializedName("active_user_count")
-    val activeUserCount: Any? = null
+    val activeUserCount: Int? = null
 
     @SerializedName("accounts_active")
-    val accountsActive: Any? = null
+    val accountsActive: Int? = null
 
     @SerializedName("user_is_banned")
     val isUserIsBanned = false

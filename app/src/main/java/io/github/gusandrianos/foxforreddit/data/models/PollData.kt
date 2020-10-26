@@ -13,7 +13,7 @@ class PollData {
     val isIsPrediction = false
 
     @SerializedName("user_selection")
-    val userSelection: Any? = null
+    val userSelection: String? = null
 
     @SerializedName("options")
     val options: List<OptionsItem>? = null

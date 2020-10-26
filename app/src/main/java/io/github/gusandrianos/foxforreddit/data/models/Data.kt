@@ -25,7 +25,7 @@ class Data : Parcelable {
     val linkTitle: String? = null
 
     @SerializedName("secure_media")
-    val secureMedia: Any? = null
+    val secureMedia: SecureMedia? = null
 
     @SerializedName("poll_data")
     val pollData: PollData? = null

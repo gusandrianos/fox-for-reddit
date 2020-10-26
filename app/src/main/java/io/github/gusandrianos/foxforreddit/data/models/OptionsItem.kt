@@ -8,4 +8,7 @@ class OptionsItem {
 
     @SerializedName("id")
     val id: String? = null
+
+    @SerializedName("vote_count")
+    val voteCount: Int? = null
 }

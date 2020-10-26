@@ -17,7 +17,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -29,13 +28,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
-import io.github.gusandrianos.foxforreddit.ui.fragments.MainFragmentDirections;
-import io.github.gusandrianos.foxforreddit.ui.fragments.SinglePostFragmentDirections;
-import io.github.gusandrianos.foxforreddit.ui.fragments.SubredditListFragmentDirections;
-import io.github.gusandrianos.foxforreddit.ui.fragments.UserFragmentDirections;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
@@ -208,22 +204,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     itemSelectedID = -1;
                 } else if (itemSelectedID == R.id.userFragment) {
                     if (isValidDestination(itemSelectedID)) {
-                        int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
                         viewingSelf = true;
-
-                        if (currentDestinationID == R.id.mainFragment) {
-                            MainFragmentDirections.ActionMainFragmentToUserFragment action = MainFragmentDirections.actionMainFragmentToUserFragment(mUser, "");
-                            navController.navigate(action);
-                        } else if (currentDestinationID == R.id.subredditListFragment) {
-                            SubredditListFragmentDirections.ActionSubredditListFragmentToUserFragment action = SubredditListFragmentDirections.actionSubredditListFragmentToUserFragment(mUser, "");
-                            navController.navigate(action);
-                        } else if (currentDestinationID == R.id.userFragment) {
-                            UserFragmentDirections.ActionUserFragmentSelf action = UserFragmentDirections.actionUserFragmentSelf(mUser, "");
-                            navController.navigate(action);
-                        } else if (currentDestinationID == R.id.singlePostFragment) {
-                            SinglePostFragmentDirections.ActionSinglePostFragmentToUserFragment action = SinglePostFragmentDirections.actionSinglePostFragmentToUserFragment(mUser, "");
-                            navController.navigate(action);
-                        }
+                        NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
+                        navController.navigate(action);
                     }
                     itemSelectedID = -1;
                 } else if (itemSelectedID == R.id.subredditListFragment) {

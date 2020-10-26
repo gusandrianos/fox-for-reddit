@@ -48,11 +48,13 @@ public class SubredditFragment extends Fragment {
         viewModel.getSubreddit(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
         {
             setupHeader(subredditInfo, view);
-            getChildFragmentManager().beginTransaction()
-                    .replace(R.id.subreddit_posts_fragment,
-                            PostFragment.newInstance(subredditName, ""),
-                            "SubredditPostFragment")
-                    .commitNow();
+            if (savedInstanceState == null) {
+                getChildFragmentManager().beginTransaction()
+                        .replace(R.id.subreddit_posts_fragment,
+                                PostFragment.newInstance(subredditName, ""),
+                                "SubredditPostFragment")
+                        .commitNow();
+            }
         });
     }
 

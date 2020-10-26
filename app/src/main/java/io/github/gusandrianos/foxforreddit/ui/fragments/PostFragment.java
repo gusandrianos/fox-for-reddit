@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.Constants;
+import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
@@ -102,12 +103,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         switch (clicked) {
             case Constants.POST_SUBREDDIT:
-                String subredditNamePrefixed = post.getSubredditNamePrefixed();
-                if (currentDestinationID == R.id.mainFragment) {
-                    MainFragmentDirections.ActionMainFragmentToSubredditFragment action = MainFragmentDirections.actionMainFragmentToSubredditFragment(subredditNamePrefixed);
-                    navController.navigate(action);
-                } else if (currentDestinationID == R.id.userFragment) {
-                    UserFragmentDirections.ActionUserFragmentToSubredditFragment action = UserFragmentDirections.actionUserFragmentToSubredditFragment(subredditNamePrefixed);
+                if (currentDestinationID != R.id.subredditFragment) {
+                    String subredditNamePrefixed = post.getSubredditNamePrefixed();
+                    NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(subredditNamePrefixed);
                     navController.navigate(action);
                 }
                 break;
@@ -117,13 +115,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                     String authorUsername = post.getAuthor();
                     mainActivity.viewingSelf = authorUsername.equals(mainActivity.currentUserUsername);
 
-                    if (currentDestinationID == R.id.mainFragment) {
-                        MainFragmentDirections.ActionMainFragmentToUserFragment action = MainFragmentDirections.actionMainFragmentToUserFragment(null, authorUsername);
-                        navController.navigate(action);
-                    } else if (currentDestinationID == R.id.subredditFragment) {
-                        SubredditFragmentDirections.ActionSubredditFragmentToUserFragment action = SubredditFragmentDirections.actionSubredditFragmentToUserFragment(null, authorUsername);
-                        navController.navigate(action);
-                    }
+                    NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, authorUsername);
+                    navController.navigate(action);
                 }
                 break;
             case Constants.POST_THUMBNAIL:
@@ -161,18 +154,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 //Todo open vote post
                 break;
             default:
-//                Toast.makeText(getActivity(), post.getAuthor(), Toast.LENGTH_SHORT).show();
-
-                if (currentDestinationID == R.id.mainFragment) {
-                    MainFragmentDirections.ActionMainFragmentToSinglePostFragment action = MainFragmentDirections.actionMainFragmentToSinglePostFragment(post, postType);
-                    navController.navigate(action);
-                } else if (currentDestinationID == R.id.userFragment) {
-                    UserFragmentDirections.ActionUserFragmentToSinglePostFragment action = UserFragmentDirections.actionUserFragmentToSinglePostFragment(post, postType);
-                    navController.navigate(action);
-                } else if (currentDestinationID == R.id.subredditFragment) {
-                    SubredditFragmentDirections.ActionSubredditFragmentToSinglePostFragment action = SubredditFragmentDirections.actionSubredditFragmentToSinglePostFragment(post, postType);
-                    navController.navigate(action);
-                }
+                NavGraphDirections.ActionGlobalSinglePostFragment action = NavGraphDirections.actionGlobalSinglePostFragment(post, postType);
+                navController.navigate(action);
         }
     }
 

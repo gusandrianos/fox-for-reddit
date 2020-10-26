@@ -141,10 +141,6 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                     post.setLikes(null);
                 }
                 break;
-            case Constants.POST_COMMENTS_NUM:
-                Toast.makeText(getActivity(), "CommentsNum", Toast.LENGTH_SHORT).show();
-                //Todo open post
-                break;
             case Constants.POST_SHARE:
                 Toast.makeText(getActivity(), "Share", Toast.LENGTH_SHORT).show();
                 //Todo share

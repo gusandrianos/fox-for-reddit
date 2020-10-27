@@ -15,11 +15,13 @@ import androidx.navigation.ui.NavigationUI;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.button.MaterialButton;
 
 import java.text.NumberFormat;
 
@@ -68,6 +70,15 @@ public class SubredditFragment extends Fragment {
     void setupHeader(Data subredditInfo, View view) {
         setupImages(subredditInfo, view);
         setupUserCounters(subredditInfo, view);
+        setupButton(subredditInfo, view);
+    }
+
+    void setupButton(Data subredditInfo, View view) {
+        MaterialButton subUnsubButton = view.findViewById(R.id.button_subreddit_sub_unsub);
+        if (subredditInfo.getUserIsSubscriber())
+            subUnsubButton.setIconResource(R.drawable.unsubscribe_subreddit);
+        else
+            subUnsubButton.setIconResource(R.drawable.subscribe_subreddit);
     }
 
     void setupUserCounters(Data subredditInfo, View view) {

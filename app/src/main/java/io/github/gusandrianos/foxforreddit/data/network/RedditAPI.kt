@@ -80,4 +80,12 @@ interface RedditAPI {
             @Header("Authorization") bearer: String,
             @Path("subreddit_prefixed") subreddit: String
     ): Call<Thing>
+
+    @FormUrlEncoded
+    @POST("api/subscribe")
+    fun toggleSubscribe(
+            @Header("Authorization") bearer: String,
+            @Field("action") action: String,
+            @Field("sr_name") sr_name: String
+    ): Call<Void>
 }

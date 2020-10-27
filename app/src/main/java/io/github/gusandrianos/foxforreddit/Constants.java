@@ -5,7 +5,7 @@ import android.content.res.Resources;
 public class Constants {
     // Activities
     public static final String REDIRECT_URI = "https://gusandrianos.github.io/login";
-    public static final int  LAUNCH_SECOND_ACTIVITY = 1;
+    public static final int LAUNCH_SECOND_ACTIVITY = 1;
     public static final String CLIENT_ID = "n1R0bc_lPPTtVg";
     public static final String BASE_OAUTH_URL = "https://www.reddit.com/api/v1/authorize.compact";
     public static final String STATE = "foxForReddit";
@@ -33,4 +33,8 @@ public class Constants {
     public static final int VIDEO = 4;
     public static final int POLL = 5;
     public static final int COMMENT = 6;
+
+    // Subreddit Repository
+    public static final int ACTION_SUBSCRIBE = 0;
+    public static final int ACTION_UNSUBSCRIBE = 1;
 }

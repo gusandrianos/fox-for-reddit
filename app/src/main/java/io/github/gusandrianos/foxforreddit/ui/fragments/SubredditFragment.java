@@ -4,8 +4,13 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +25,7 @@ import java.text.NumberFormat;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
@@ -39,8 +45,9 @@ public class SubredditFragment extends Fragment {
         SubredditFragmentArgs args = SubredditFragmentArgs.fromBundle(requireArguments());
         String subredditName = args.getSubredditName();
 
-        CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.subreddit_collapsing_toolbar);
-        collapsingToolbar.setTitle(subredditName);
+        TextView titleTextView = view.findViewById(R.id.text_subreddit_title);
+        titleTextView.setText(subredditName);
+        setUpToolbar(view, subredditName);
 
         SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
         SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
@@ -111,5 +118,17 @@ public class SubredditFragment extends Fragment {
             cover.setImageResource(0);
 
         Glide.with(view).load(R.drawable.cover_gradient).into(gradient);
+    }
+
+    private void setUpToolbar(View view, String subredditName) {
+        CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.subreddit_collapsing_toolbar);
+        collapsingToolbar.setTitle(subredditName);
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        NavController navController = NavHostFragment.findNavController(this);
+        Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);
+        mainActivity.setSupportActionBar(toolbar);
+        DrawerLayout drawer = mainActivity.drawer;
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        NavigationUI.setupActionBarWithNavController(mainActivity, navController, mainActivity.appBarConfiguration);
     }
 }

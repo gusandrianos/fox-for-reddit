@@ -13,7 +13,7 @@
         app:contentScrim="@android:color/white"
         app:expandedTitleGravity="center|start"
         app:expandedTitleTextAppearance="@style/CollapsingToolbarLayoutExpandedTextStyle"
-        app:layout_scrollFlags="scroll"
+        app:layout_scrollFlags="scroll|enterAlways|snap"
         app:scrimAnimationDuration="200"
         app:scrimVisibleHeightTrigger="160dp">
 

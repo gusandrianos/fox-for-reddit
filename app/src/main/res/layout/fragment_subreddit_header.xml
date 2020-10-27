@@ -9,9 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:background="@android:color/white"
+        app:contentScrim="@android:color/white"
         app:expandedTitleGravity="center|bottom"
         app:expandedTitleTextAppearance="@style/CollapsingToolbarLayoutExpandedTextStyle"
-        app:layout_scrollFlags="scroll|enterAlways|snap">
+        app:layout_scrollFlags="scroll|enterAlways|snap"
+        app:scrimAnimationDuration="200"
+        app:scrimVisibleHeightTrigger="150dp">
 
         <ImageView
             android:id="@+id/subreddit_cover"
@@ -35,6 +38,17 @@
             android:layout_gravity="center"
             android:layout_marginBottom="0dp"
             android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/text_subreddit_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="60dp"
+            android:text="Display name"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="normal" />
 
         <LinearLayout
             android:layout_width="wrap_content"

@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -32,6 +33,9 @@ import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
+
+import static io.github.gusandrianos.foxforreddit.Constants.ACTION_SUBSCRIBE;
+import static io.github.gusandrianos.foxforreddit.Constants.ACTION_UNSUBSCRIBE;
 
 public class SubredditFragment extends Fragment {
     FoxToolkit toolkit = FoxToolkit.INSTANCE;
@@ -70,15 +74,37 @@ public class SubredditFragment extends Fragment {
     void setupHeader(Data subredditInfo, View view) {
         setupImages(subredditInfo, view);
         setupUserCounters(subredditInfo, view);
-        setupButton(subredditInfo, view);
+
+        MaterialButton subUnsubButton = view.findViewById(R.id.button_subreddit_sub_unsub);
+
+        int finalAction = setupButton(subredditInfo, view);
+        subUnsubButton.setOnClickListener(button -> {
+            SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+            SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+            viewModel.toggleSubscribed(finalAction,
+                    subredditInfo.getDisplayName(),
+                    requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), status -> {
+                        if (status) {
+                            subredditInfo.setUserIsSubscriber(!subredditInfo.getUserIsSubscriber());
+                            setupButton(subredditInfo, view);
+                        }
+                    });
+        });
     }
 
-    void setupButton(Data subredditInfo, View view) {
+    int setupButton(Data subredditInfo, View view) {
         MaterialButton subUnsubButton = view.findViewById(R.id.button_subreddit_sub_unsub);
-        if (subredditInfo.getUserIsSubscriber())
+        int action = 0;
+        if (subredditInfo.getUserIsSubscriber()) {
             subUnsubButton.setIconResource(R.drawable.unsubscribe_subreddit);
-        else
+            action = ACTION_UNSUBSCRIBE;
+        } else {
             subUnsubButton.setIconResource(R.drawable.subscribe_subreddit);
+            action = ACTION_SUBSCRIBE;
+        }
+
+        return action;
     }
 
     void setupUserCounters(Data subredditInfo, View view) {

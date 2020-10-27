@@ -113,7 +113,7 @@ public class UserFragment extends Fragment {
         Data userSubreddit = getUserSubreddit(user);
 
         Button button = view.findViewById(R.id.button_follow_unfollow);
-        if (userSubreddit.isUserIsSubscriber())
+        if (userSubreddit.getUserIsSubscriber())
             button.setText("Unfollow");
         else
             button.setText("Follow");

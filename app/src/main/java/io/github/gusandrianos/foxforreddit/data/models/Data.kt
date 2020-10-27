@@ -445,7 +445,7 @@ class Data : Parcelable {
     val isIsCrosspostableSubreddit = false
 
     @SerializedName("user_is_subscriber")
-    val isUserIsSubscriber = false
+    val userIsSubscriber = false
 
     @SerializedName("whitelist_status")
     val whitelistStatus: Any? = null

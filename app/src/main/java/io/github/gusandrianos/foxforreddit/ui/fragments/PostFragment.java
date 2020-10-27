@@ -110,11 +110,12 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 }
                 break;
             case Constants.POST_USER:
+                MainActivity mainActivity = (MainActivity) requireActivity();
+                String authorUsername = post.getAuthor();
                 if (currentDestinationID != R.id.userFragment) {
-                    MainActivity mainActivity = (MainActivity) requireActivity();
-                    String authorUsername = post.getAuthor();
-                    mainActivity.viewingSelf = authorUsername.equals(mainActivity.currentUserUsername);
-
+                    NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, authorUsername);
+                    navController.navigate(action);
+                } else if (!authorUsername.equals(subreddit.split("/")[1])) {
                     NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, authorUsername);
                     navController.navigate(action);
                 }

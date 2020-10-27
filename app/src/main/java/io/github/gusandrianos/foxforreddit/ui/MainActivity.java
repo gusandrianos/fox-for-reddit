@@ -204,7 +204,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     itemSelectedID = -1;
                 } else if (itemSelectedID == R.id.userFragment) {
                     if (isValidDestination(itemSelectedID)) {
-                        viewingSelf = true;
                         NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
                         navController.navigate(action);
                     }

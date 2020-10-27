@@ -43,7 +43,7 @@ public class AboutUserFragment extends Fragment {
 
         UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
-        viewModel.getTrophies(getActivity().getApplication(), username).observe(getViewLifecycleOwner(), trophies -> {
+        viewModel.getTrophies(requireActivity().getApplication(), username).observe(getViewLifecycleOwner(), trophies -> {
             if (trophies != null) {
                 RecyclerView trophiesRV = view.findViewById(R.id.recycler_trophies);
                 TrophyAdapter adapter = new TrophyAdapter(trophies);

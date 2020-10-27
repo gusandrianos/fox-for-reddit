@@ -49,8 +49,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inflatedId="@+id/layoutId" />
+
             </LinearLayout>
+
         </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        <ViewStub
+            android:id="@+id/view_stub2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inflatedId="@+id/layoutId" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
@@ -68,5 +77,7 @@
             android:clipToPadding="false"
             android:overScrollMode="never"
             android:paddingBottom="8dp" />
+
     </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

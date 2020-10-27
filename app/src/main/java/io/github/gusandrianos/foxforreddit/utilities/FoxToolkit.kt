@@ -11,4 +11,8 @@ object FoxToolkit {
     fun getRawImageURI(imageURI: String): String {
         return imageURI.split("\\?".toRegex()).toTypedArray()[0]
     }
+
+    fun getIsGif(imageUri: String): Boolean {
+        return imageUri.endsWith(".gif")
+    }
 }

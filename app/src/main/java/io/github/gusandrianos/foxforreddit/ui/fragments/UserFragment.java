@@ -152,7 +152,7 @@ public class UserFragment extends Fragment {
             mainActivity.setSupportActionBar(toolbar);
             DrawerLayout drawer = mainActivity.drawer;
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            NavigationUI.setupActionBarWithNavController(mainActivity, navController, drawer);
+            NavigationUI.setupActionBarWithNavController(mainActivity, navController);
         }
     }
 }

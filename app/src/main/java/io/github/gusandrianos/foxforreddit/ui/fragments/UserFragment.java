@@ -21,6 +21,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -36,8 +37,13 @@ import io.github.gusandrianos.foxforreddit.data.models.Subreddit;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
+
+import static io.github.gusandrianos.foxforreddit.Constants.ACTION_SUBSCRIBE;
+import static io.github.gusandrianos.foxforreddit.Constants.ACTION_UNSUBSCRIBE;
 
 public class UserFragment extends Fragment {
 
@@ -112,11 +118,37 @@ public class UserFragment extends Fragment {
 
         Data userSubreddit = getUserSubreddit(user);
 
-        Button button = view.findViewById(R.id.button_follow_unfollow);
-        if (userSubreddit.getUserIsSubscriber())
-            button.setText("Unfollow");
-        else
-            button.setText("Follow");
+        MaterialButton followUnfollow = view.findViewById(R.id.button_follow_unfollow);
+        int finalAction = setupButton(userSubreddit, view);
+
+        followUnfollow.setOnClickListener(button -> {
+            SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+            SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+            viewModel.toggleSubscribed(finalAction,
+                    userSubreddit.getDisplayName(),
+                    requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), status -> {
+                        if (status) {
+                            userSubreddit.setUserIsSubscriber(!userSubreddit.getUserIsSubscriber());
+                            setupButton(userSubreddit, view);
+                        }
+                    });
+        });
+    }
+
+    int setupButton(Data userSubreddit, View view) {
+        MaterialButton followUnfollow = view.findViewById(R.id.button_follow_unfollow);
+        int action = 0;
+
+        if (userSubreddit.getUserIsSubscriber()) {
+            action = ACTION_UNSUBSCRIBE;
+            followUnfollow.setText("Unfollow");
+        } else {
+            action = ACTION_SUBSCRIBE;
+            followUnfollow.setText("Follow");
+        }
+
+        return action;
     }
 
     void setUserNames(@NotNull View view, Data user, String username) {

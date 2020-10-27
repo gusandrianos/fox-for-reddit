@@ -1,5 +1,6 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -59,6 +60,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Token;
 
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentGroup;
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentItem;
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.ImageGalleryAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
@@ -69,6 +71,7 @@ import static io.github.gusandrianos.foxforreddit.utilities.PostAdapterKt.format
 public class SinglePostFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
 
     SimpleExoPlayer player = null;
+    ImageView imgPlay;
     DisplayMetrics displayMetrics = new DisplayMetrics();
 
     @Nullable
@@ -84,31 +87,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         Data singlePostData = singlePostFragmentArgs.getPost();
         int postType = singlePostFragmentArgs.getPostType();
 
-        bindHeaderAndFooter(singlePostData, view);
-
-        switch (postType) {
-            case Constants.SELF:
-                bindAsSelf(singlePostData, view);
-                break;
-            case Constants.LINK:
-                bindAsLink(singlePostData, view);
-                break;
-            case Constants.IMAGE:
-                bindAsImage(singlePostData, view);
-                break;
-            case Constants.VIDEO:
-                bindAsVideo(singlePostData, view);
-                break;
-            case Constants.POLL:
-                bindAsPoll(singlePostData, view);
-                break;
-            case Constants.COMMENT:
-                Toast.makeText(getActivity(), "COMMENT", Toast.LENGTH_SHORT).show();
-                break;
-            default:
-                Toast.makeText(getActivity(), "SELF by default", Toast.LENGTH_SHORT).show();
-                break;
-        }
+        initializeUI(singlePostData, view, postType);
 
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
@@ -130,6 +109,37 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                         groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), "t3_jbmf8f", SinglePostFragment.this));
                     }
                 });
+    }
+
+    private void initializeUI(Data singlePostData, View view, int postType) {
+        bindHeaderAndFooter(singlePostData, view);
+
+        switch (postType) {
+            case Constants.SELF:
+                bindAsSelf(singlePostData, view);
+                break;
+            case Constants.LINK:
+                bindAsLink(singlePostData, view);
+                break;
+            case Constants.IMAGE:
+                if (FoxToolkit.INSTANCE.getIsGif(singlePostData.getUrlOverriddenByDest()))
+                    bindasGif(singlePostData, view);
+                else
+                    bindAsImage(singlePostData, view);
+                break;
+            case Constants.VIDEO:
+                bindAsVideo(singlePostData, view);
+                break;
+            case Constants.POLL:
+                bindAsPoll(singlePostData, view);
+                break;
+            case Constants.COMMENT:
+                Toast.makeText(getActivity(), "COMMENT", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                Toast.makeText(getActivity(), "SELF by default", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 
     private void bindHeaderAndFooter(Data singlePostData, View view) {
@@ -206,37 +216,21 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         }
     }
 
+    private void bindasGif(Data singlePostData, View view) {
+        ViewStub stub = view.findViewById(R.id.view_stub);
+        stub.setLayoutResource(R.layout.stub_image);
+        View inflated = stub.inflate();
+        ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
+        Glide.with(inflated).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
+    }
+
     private void bindAsImage(Data singlePostData, View view) {
         if (singlePostData.isGallery() == null || !singlePostData.isGallery()) {
             ViewStub stub = view.findViewById(R.id.view_stub);
             stub.setLayoutResource(R.layout.stub_image);
             View inflated = stub.inflate();
             ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
-            requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            int width = displayMetrics.widthPixels;
-            int height = displayMetrics.heightPixels;
-            int bestWidthDiff = width;
-            int widthDiff;
-            int res = 0;
-            int i = 0;
-            for (ResolutionsItem item : singlePostData.getPreview().getImages().get(0).getResolutions()) {
-                widthDiff = Math.abs(width - item.getWidth());
-                if (widthDiff < bestWidthDiff) {
-                    bestWidthDiff = widthDiff;
-                    res = i;
-                }
-                i++;
-            }
-            String url = singlePostData.getPreview().getImages().get(0).getResolutions().get(res).getUrl();
-            url = url.replace("amp;", "");
-//            if (height >= singlePostData.getPreview().getImages().get(0).getResolutions().get(res).getHeight())
-            imgPostImage.getLayoutParams().height = singlePostData.getPreview().getImages().get(0).getResolutions().get(res).getHeight();
-//            else
-//                imgPostImage.getLayoutParams().height = height;
-            Toast.makeText(getActivity(), displayMetrics.widthPixels + " " + displayMetrics.heightPixels, Toast.LENGTH_SHORT).show();
-            Toast.makeText(getActivity(), singlePostData.getPreview().getImages().get(0).getResolutions().get(res).getWidth() + " " + singlePostData.getPreview().getImages().get(0).getResolutions().get(res).getHeight(), Toast.LENGTH_SHORT).show();
-            Glide.with(inflated).load(url).into(imgPostImage);
-
+            Glide.with(inflated).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
         } else {
             List<String> imagesId = new ArrayList<>();
 
@@ -284,12 +278,18 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
             Glide.with(inflated).load(singlePostData.getMedia().getOembed().getThumbnailUrl()).placeholder(R.drawable.ic_launcher_background).into(imgPostImage);
         } else {
-            ViewStub stub = view.findViewById(R.id.view_stub);
+            ViewStub stub;
+            int orientation = getResources().getConfiguration().orientation;
+            if (orientation == Configuration.ORIENTATION_PORTRAIT)
+                stub = view.findViewById(R.id.view_stub2);
+            else
+                stub = view.findViewById(R.id.view_stub);
+
             stub.setLayoutResource(R.layout.stub_video);
             View inflated = stub.inflate();
             Handler handler = new Handler();
             PlayerView playerView = inflated.findViewById(R.id.video_player);
-            ImageView imgPlay = playerView.findViewById(R.id.exo_img_play);
+            imgPlay = playerView.findViewById(R.id.exo_img_play);
             ImageView imgFullScreen = playerView.findViewById(R.id.exo_img_fullscreen);
             ProgressBar progressBar = inflated.findViewById(R.id.progress_bar);
             SeekBar videoSeekBar = inflated.findViewById(R.id.video_seek_bar);
@@ -408,15 +408,17 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     @Override
     public void onPause() {
         super.onPause();
-        if (player != null)
+        if (player != null) {
             player.setPlayWhenReady(false);
+            imgPlay.setImageResource(R.drawable.exo_icon_play);
+        }
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (player != null)
-            player.setPlayWhenReady(true);
+
     }
 
     @Override
@@ -431,5 +433,22 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 //        if (player != null)
 //            player.release();
         super.onDestroy();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (player != null) {
+            outState.putLong("a", player.getCurrentPosition());
+            outState.putBoolean("b", player.getPlayWhenReady());
+        }
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null && player != null) {
+            player.seekTo(savedInstanceState.getLong("a"));
+            player.setPlayWhenReady(savedInstanceState.getBoolean("b"));
+        }
     }
 }

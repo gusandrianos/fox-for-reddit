@@ -17,9 +17,13 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.appbar.CollapsingToolbarLayout;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
+import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.SubredditListAdapter;
@@ -27,7 +31,7 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
-public class SubredditListFragment extends Fragment {
+public class SubredditListFragment extends Fragment implements SubredditListAdapter.OnItemClickListener {
 
     SubredditListAdapter mSubredditListAdapter;
     RecyclerView mSubredditsRV;
@@ -62,7 +66,7 @@ public class SubredditListFragment extends Fragment {
 
     private void initRecycleView(View view) {
         mSubredditsRV = view.findViewById(R.id.subreddit_list_recycler);
-        mSubredditListAdapter = new SubredditListAdapter();
+        mSubredditListAdapter = new SubredditListAdapter(this);
         mSubredditListAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY); //keep recyclerview on position
         mSubredditsRV.setHasFixedSize(true);
         mSubredditsRV.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -75,5 +79,20 @@ public class SubredditListFragment extends Fragment {
         AppBarConfiguration appBarConfiguration = mainActivity.appBarConfiguration;
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_subreddits);
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
+    }
+
+    @Override
+    public void onItemClick(@NotNull Data item) {
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+        String subredditNamePrefixed = item.getDisplayNamePrefixed();
+
+        if (subredditNamePrefixed.startsWith("r/")) {
+            NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(subredditNamePrefixed);
+            navController.navigate(action);
+        } else {
+            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, subredditNamePrefixed.split("/")[1]);
+            navController.navigate(action);
+        }
     }
 }

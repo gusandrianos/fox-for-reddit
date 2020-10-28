@@ -37,4 +37,14 @@ public class Constants {
     // Subreddit Repository
     public static final int ACTION_SUBSCRIBE = 0;
     public static final int ACTION_UNSUBSCRIBE = 1;
+
+    //Video Type
+    public static final int REDDIT_VIDEO = 1;
+    public static final int PLAYABLE_VIDEO = 2;
+    public static final int UNPLAYABLE_VIDEO = 3;
+
+    //Image Type
+    public static final int IS_IMAGE= 1;
+    public static final int IS_GALLERY = 2;
+    public static final int IS_GIF = 3;
 }

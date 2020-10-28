@@ -119,12 +119,12 @@ public class UserFragment extends Fragment {
         Data userSubreddit = getUserSubreddit(user);
 
         MaterialButton followUnfollow = view.findViewById(R.id.button_follow_unfollow);
-        int finalAction = setupButton(userSubreddit, view);
 
+        setupButton(userSubreddit, view);
         followUnfollow.setOnClickListener(button -> {
             SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
             SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
-            viewModel.toggleSubscribed(finalAction,
+            viewModel.toggleSubscribed(getFinalAction(userSubreddit),
                     userSubreddit.getDisplayName(),
                     requireActivity().getApplication())
                     .observe(getViewLifecycleOwner(), status -> {
@@ -136,19 +136,20 @@ public class UserFragment extends Fragment {
         });
     }
 
-    int setupButton(Data userSubreddit, View view) {
+    void setupButton(Data userSubreddit, View view) {
         MaterialButton followUnfollow = view.findViewById(R.id.button_follow_unfollow);
-        int action = 0;
 
-        if (userSubreddit.getUserIsSubscriber()) {
-            action = ACTION_UNSUBSCRIBE;
+        if (userSubreddit.getUserIsSubscriber())
             followUnfollow.setText("Unfollow");
-        } else {
-            action = ACTION_SUBSCRIBE;
+        else
             followUnfollow.setText("Follow");
-        }
+    }
 
-        return action;
+    int getFinalAction(Data userSubreddit) {
+        if (userSubreddit.getUserIsSubscriber())
+            return ACTION_UNSUBSCRIBE;
+        else
+            return ACTION_SUBSCRIBE;
     }
 
     void setUserNames(@NotNull View view, Data user, String username) {

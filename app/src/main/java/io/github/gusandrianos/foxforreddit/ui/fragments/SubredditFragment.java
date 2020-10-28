@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -16,7 +15,6 @@ import androidx.navigation.ui.NavigationUI;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -77,11 +75,11 @@ public class SubredditFragment extends Fragment {
 
         MaterialButton subUnsubButton = view.findViewById(R.id.button_subreddit_sub_unsub);
 
-        int finalAction = setupButton(subredditInfo, view);
+        setupButton(subredditInfo, view);
         subUnsubButton.setOnClickListener(button -> {
             SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
             SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
-            viewModel.toggleSubscribed(finalAction,
+            viewModel.toggleSubscribed(getFinalAction(subredditInfo),
                     subredditInfo.getDisplayName(),
                     requireActivity().getApplication())
                     .observe(getViewLifecycleOwner(), status -> {
@@ -93,18 +91,19 @@ public class SubredditFragment extends Fragment {
         });
     }
 
-    int setupButton(Data subredditInfo, View view) {
+    void setupButton(Data subredditInfo, View view) {
         MaterialButton subUnsubButton = view.findViewById(R.id.button_subreddit_sub_unsub);
-        int action = 0;
-        if (subredditInfo.getUserIsSubscriber()) {
+        if (subredditInfo.getUserIsSubscriber())
             subUnsubButton.setIconResource(R.drawable.unsubscribe_subreddit);
-            action = ACTION_UNSUBSCRIBE;
-        } else {
+        else
             subUnsubButton.setIconResource(R.drawable.subscribe_subreddit);
-            action = ACTION_SUBSCRIBE;
-        }
+    }
 
-        return action;
+    int getFinalAction(Data subredditInfo) {
+        if (subredditInfo.getUserIsSubscriber())
+            return ACTION_UNSUBSCRIBE;
+        else
+            return ACTION_SUBSCRIBE;
     }
 
     void setupUserCounters(Data subredditInfo, View view) {

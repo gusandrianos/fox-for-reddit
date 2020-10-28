@@ -16,7 +16,8 @@
         app:layout_constraintDimensionRatio="H,16:10"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contextClickable="true"/>
 
     <TextView
         android:id="@+id/stub_txt_post_domain"
@@ -32,6 +33,7 @@
         app:layout_constraintEnd_toEndOf="@id/stub_img_post_thumbnail"
         app:layout_constraintStart_toStartOf="@id/stub_img_post_thumbnail"
         app:layout_constraintTop_toTopOf="@id/stub_img_post_thumbnail"
-        app:layout_constraintVertical_bias="1" />
+        app:layout_constraintVertical_bias="1"
+        android:clickable="true"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -35,6 +34,8 @@ import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
@@ -69,9 +70,22 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import static io.github.gusandrianos.foxforreddit.utilities.PostAdapterKt.formatValue;
 
 public class SinglePostFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
+    private boolean wasPlaying;
+
+    ViewStub stub;
+    View inflated;
+
+    AppBarLayout appBarLayout;
+    View includeSinglePostFooter;
+    CollapsingToolbarLayout singlePostCollapsingToolbar;
 
     SimpleExoPlayer player = null;
     ImageView imgPlay;
+    SeekBar videoSeekBar;
+
+    RecyclerView mCommentsRecyclerView;
+    GroupAdapter<GroupieViewHolder> groupAdapter;
+
     DisplayMetrics displayMetrics = new DisplayMetrics();
 
     @Nullable
@@ -83,9 +97,11 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         SinglePostFragmentArgs singlePostFragmentArgs = SinglePostFragmentArgs.fromBundle(requireArguments());
         Data singlePostData = singlePostFragmentArgs.getPost();
         int postType = singlePostFragmentArgs.getPostType();
+        mCommentsRecyclerView = view.findViewById(R.id.recyclerview_single_post);
 
         initializeUI(singlePostData, view, postType);
 
@@ -94,7 +110,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         String permalink = singlePostData.getPermalink();
         viewModel.getSinglePost(Objects.requireNonNull(permalink).substring(1, permalink.length() - 1), requireActivity().getApplication())
                 .observe(getViewLifecycleOwner(), commentListing -> {
-                    GroupAdapter<GroupieViewHolder> groupAdapter = new GroupAdapter<>();
+                    groupAdapter = new GroupAdapter<>();
                     initRecyclerView(view, groupAdapter);
                     for (Object child : commentListing.getData().getChildren()) {
                         ChildrenItem item;
@@ -122,13 +138,22 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 bindAsLink(singlePostData, view);
                 break;
             case Constants.IMAGE:
-                if (FoxToolkit.INSTANCE.getIsGif(singlePostData.getUrlOverriddenByDest()))
-                    bindasGif(singlePostData, view);
-                else
-                    bindAsImage(singlePostData, view);
+                switch (FoxToolkit.INSTANCE.getTypeOfImage(singlePostData)) {
+                    case Constants.IS_GIF:
+                        bindAsGif(singlePostData, view);
+                        break;
+                    case Constants.IS_GALLERY:
+                        bindAsGallery(singlePostData, view);
+                        break;
+                    default:
+                        bindAsImage(singlePostData, view);
+                }
                 break;
             case Constants.VIDEO:
-                bindAsVideo(singlePostData, view);
+                if (FoxToolkit.INSTANCE.getTypeOfVideo(singlePostData) == Constants.UNPLAYABLE_VIDEO)
+                    bindAsUnplayableVideo(singlePostData, view);
+                else
+                    bindAsVideo(singlePostData, view);
                 break;
             case Constants.POLL:
                 bindAsPoll(singlePostData, view);
@@ -143,6 +168,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void bindHeaderAndFooter(Data singlePostData, View view) {
+        singlePostCollapsingToolbar = view.findViewById(R.id.single_post_collapsing_toolbar);
         ImageView mImgPostSubreddit = view.findViewById(R.id.img_post_subreddit);
         TextView mTxtPostSubreddit = view.findViewById(R.id.txt_post_subreddit);
         TextView mTxtPostUser = view.findViewById(R.id.txt_post_user);
@@ -153,6 +179,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         ImageButton mImgBtnPostVoteDown = view.findViewById(R.id.imgbtn_post_vote_down);
         Button mBtnPostNumComments = view.findViewById(R.id.btn_post_num_comments);
         Button mBtnPostShare = view.findViewById(R.id.btn_post_share);
+
         mTxtPostSubreddit.setText(singlePostData.getSubredditNamePrefixed());
         String user = "Posted by User " + singlePostData.getAuthor();
         mTxtPostUser.setText(user);
@@ -171,12 +198,19 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         }
 
         mBtnPostNumComments.setText(formatValue(singlePostData.getNumComments()));
+
+        mImgPostSubreddit.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "SUBREDDIT", Toast.LENGTH_SHORT).show());
+        mTxtPostSubreddit.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "SUBREDDIT", Toast.LENGTH_SHORT).show());
+        mTxtPostUser.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "USER", Toast.LENGTH_SHORT).show());
+        mImgBtnPostVoteUp.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "UP VOTE", Toast.LENGTH_SHORT).show());
+        mImgBtnPostVoteDown.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "DOWN VOTE", Toast.LENGTH_SHORT).show());
+        mBtnPostShare.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "SHARE", Toast.LENGTH_SHORT).show());
     }
 
     private void bindAsSelf(Data singlePostData, View view) {
-        ViewStub stub = view.findViewById(R.id.view_stub);
+        stub = view.findViewById(R.id.view_stub);
         stub.setLayoutResource(R.layout.stub_self);
-        View inflated = stub.inflate();
+        inflated = stub.inflate();
 
         if (singlePostData.getSelftext() != null) {
             TextView txtPostBody = inflated.findViewById(R.id.stub_txt_post_body);
@@ -186,9 +220,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void bindAsLink(Data singlePostData, View view) {
-        ViewStub stub = view.findViewById(R.id.view_stub);
+        stub = view.findViewById(R.id.view_stub);
         stub.setLayoutResource(R.layout.stub_link);
-        View inflated = stub.inflate();
+        inflated = stub.inflate();
         ImageView imgPostThumbnail = inflated.findViewById(R.id.stub_img_post_thumbnail);
         TextView txtPostDomain = inflated.findViewById(R.id.stub_txt_post_domain);
         txtPostDomain.setText(singlePostData.getDomain());
@@ -214,49 +248,58 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         } else {
             imgPostThumbnail.setVisibility(View.GONE);
         }
+
+        imgPostThumbnail.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "Open Article (image clicked)", Toast.LENGTH_SHORT).show());
+        txtPostDomain.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "Open Article (text clicked", Toast.LENGTH_SHORT).show());
     }
 
-    private void bindasGif(Data singlePostData, View view) {
-        ViewStub stub = view.findViewById(R.id.view_stub);
-        stub.setLayoutResource(R.layout.stub_image);
-        View inflated = stub.inflate();
-        ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
-        Glide.with(inflated).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
-    }
+    private void bindAsGallery(Data singlePostData, View view) {
+        List<String> imagesId = new ArrayList<>();
 
-    private void bindAsImage(Data singlePostData, View view) {
-        if (singlePostData.isGallery() == null || !singlePostData.isGallery()) {
-            ViewStub stub = view.findViewById(R.id.view_stub);
-            stub.setLayoutResource(R.layout.stub_image);
-            View inflated = stub.inflate();
-            ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
-            Glide.with(inflated).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
-        } else {
-            List<String> imagesId = new ArrayList<>();
-
-            if (singlePostData.getGalleryData() != null) {
-                for (GalleryItem galleryItem : singlePostData.getGalleryData().getItems()) {
-                    imagesId.add(galleryItem.getMediaId());
-                }
-                ViewStub stub = view.findViewById(R.id.view_stub);
-                stub.setLayoutResource(R.layout.stub_view_pager_image_gallery);
-                View inflated = stub.inflate();
-                ImageGalleryAdapter adapter = new ImageGalleryAdapter(imagesId);
-                ViewPager2 viewPager = inflated.findViewById(R.id.viewpager_image_gallery);
-                viewPager.setAdapter(adapter);
-                TabLayout tabLayout = inflated.findViewById(R.id.tab_dots);
-                new TabLayoutMediator(tabLayout, viewPager,
-                        (tab, position) -> {
-                        }
-                ).attach();
+        if (singlePostData.getGalleryData() != null) {
+            for (GalleryItem galleryItem : singlePostData.getGalleryData().getItems()) {
+                imagesId.add(galleryItem.getMediaId());
             }
+            ViewStub stub = view.findViewById(R.id.view_stub);
+            stub.setLayoutResource(R.layout.stub_view_pager_image_gallery);
+            View inflated = stub.inflate();
+            ImageGalleryAdapter adapter = new ImageGalleryAdapter(imagesId);
+            ViewPager2 viewPager = inflated.findViewById(R.id.viewpager_image_gallery);
+            viewPager.setAdapter(adapter);
+            TabLayout tabLayout = inflated.findViewById(R.id.tab_dots);
+            new TabLayoutMediator(tabLayout, viewPager,
+                    (tab, position) -> {
+                    }
+            ).attach();
         }
     }
 
+    private void bindAsGif(Data singlePostData, View view) {
+        stub = view.findViewById(R.id.view_stub);
+        stub.setLayoutResource(R.layout.stub_image);
+        inflated = stub.inflate();
+
+        ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
+        Glide.with(inflated).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
+
+        imgPostImage.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "Open new Fragment Fullscreen", Toast.LENGTH_SHORT).show());
+    }
+
+    private void bindAsImage(Data singlePostData, View view) {
+        stub = view.findViewById(R.id.view_stub);
+        stub.setLayoutResource(R.layout.stub_image);
+        inflated = stub.inflate();
+
+        ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
+        Glide.with(inflated).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
+
+        imgPostImage.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "Open new Fragment Fullscreen", Toast.LENGTH_SHORT).show());
+    }
+
     private void bindAsPoll(Data singlePostData, View view) {
-        ViewStub stub = view.findViewById(R.id.view_stub);
+        stub = view.findViewById(R.id.view_stub);
         stub.setLayoutResource(R.layout.stub_self);
-        View inflated = stub.inflate();
+        inflated = stub.inflate();
 
         if (singlePostData.getSelftext() != null) {
             TextView txtPostBody = inflated.findViewById(R.id.stub_txt_post_body);
@@ -265,131 +308,182 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         }
     }
 
+    private void bindAsUnplayableVideo(Data singlePostData, View view) {
+        stub = view.findViewById(R.id.view_stub);
+        stub.setLayoutResource(R.layout.stub_image);
+        inflated = stub.inflate();
+
+        ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
+        ImageView imgPostPlayButton = inflated.findViewById(R.id.stub_img_post_play_button);
+        imgPostPlayButton.setVisibility(View.VISIBLE);
+        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        imgPostImage.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
+
+        Glide.with(inflated).load(singlePostData.getMedia().getOembed().getThumbnailUrl()).placeholder(R.drawable.ic_launcher_background).into(imgPostImage);
+
+        imgPostImage.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "Open original video", Toast.LENGTH_SHORT).show());
+    }
+
     private void bindAsVideo(Data singlePostData, View view) {
-        if (singlePostData.getPreview() != null && singlePostData.getPreview().getRedditVideoPreview() == null && !singlePostData.isVideo()) {
-            ViewStub stub = view.findViewById(R.id.view_stub);
-            stub.setLayoutResource(R.layout.stub_image);
-            View inflated = stub.inflate();
-            ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
-            ImageView imgPostPlayButton = inflated.findViewById(R.id.stub_img_post_play_button);
-            imgPostPlayButton.setVisibility(View.VISIBLE);
-            requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            imgPostImage.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
-
-            Glide.with(inflated).load(singlePostData.getMedia().getOembed().getThumbnailUrl()).placeholder(R.drawable.ic_launcher_background).into(imgPostImage);
+        int videoType;
+        if (singlePostData.isVideo()) {
+            videoType = Constants.REDDIT_VIDEO;
         } else {
-            ViewStub stub;
-            int orientation = getResources().getConfiguration().orientation;
-            if (orientation == Configuration.ORIENTATION_PORTRAIT)
-                stub = view.findViewById(R.id.view_stub2);
-            else
-                stub = view.findViewById(R.id.view_stub);
+            videoType = Constants.PLAYABLE_VIDEO;
+        }
+        createVideoPlayer(singlePostData, view, videoType);
+    }
 
-            stub.setLayoutResource(R.layout.stub_video);
-            View inflated = stub.inflate();
-            Handler handler = new Handler();
-            PlayerView playerView = inflated.findViewById(R.id.video_player);
-            imgPlay = playerView.findViewById(R.id.exo_img_play);
-            ImageView imgFullScreen = playerView.findViewById(R.id.exo_img_fullscreen);
-            ProgressBar progressBar = inflated.findViewById(R.id.progress_bar);
-            SeekBar videoSeekBar = inflated.findViewById(R.id.video_seek_bar);
+    private void createVideoPlayer(Data singlePostData, View view, int videoType) {
+        stub = view.findViewById(R.id.view_stub2);
+        stub.setLayoutResource(R.layout.stub_video);
+        inflated = stub.inflate();
+        Handler handler = new Handler();
+        PlayerView playerView = inflated.findViewById(R.id.video_player);
+        imgPlay = playerView.findViewById(R.id.exo_img_play);
+        TextView txtVideoOpenInNew = playerView.findViewById(R.id.txt_video_open_in_new);
+        ProgressBar progressBar = inflated.findViewById(R.id.progress_bar);
+        videoSeekBar = inflated.findViewById(R.id.video_seek_bar);
+        TextView txtVideoCurrentTime = inflated.findViewById(R.id.txt_video_current_time);
+        TextView txtVideoDuration = inflated.findViewById(R.id.txt_video_duration);
+
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             playerView.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
-            Uri videoUri;
-            if (singlePostData.isVideo()) {
-                player = new SimpleExoPlayer.Builder(requireActivity()).build();
-                requireActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        } else {
+            hideViews(view, playerView);
+        }
 
-                if (singlePostData.getSecureMedia().getRedditVideo().getHlsUrl() != null) {
-                    videoUri = Uri.parse(singlePostData.getSecureMedia().getRedditVideo().getHlsUrl());
-                } else {
-                    videoUri = Uri.parse(singlePostData.getSecureMedia().getRedditVideo().getFallbackUrl());
-                }
+        Uri videoUri;
+        int videoDuration;
+        String domain;
+        if (videoType == Constants.REDDIT_VIDEO) {
+            if (singlePostData.getSecureMedia().getRedditVideo().getHlsUrl() != null) {
+                videoUri = Uri.parse(singlePostData.getSecureMedia().getRedditVideo().getHlsUrl());
             } else {
-                player = new SimpleExoPlayer.Builder(requireActivity()).build();
-                requireActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                videoUri = Uri.parse(singlePostData.getSecureMedia().getRedditVideo().getFallbackUrl());
+            }
+            videoDuration = (int) singlePostData.getSecureMedia().getRedditVideo().getDuration();
+            domain = "Fullscreen";
+        } else {
+            if (singlePostData.getPreview().getRedditVideoPreview().getHlsUrl() != null) {
+                videoUri = Uri.parse(singlePostData.getPreview().getRedditVideoPreview().getHlsUrl());
+            } else {
+                videoUri = Uri.parse(singlePostData.getPreview().getRedditVideoPreview().getFallbackUrl());
+            }
+            videoDuration = (int) singlePostData.getPreview().getRedditVideoPreview().getDuration();
+            domain = singlePostData.getDomain();
 
-                if (singlePostData.getPreview().getRedditVideoPreview().getHlsUrl() != null) {
-                    videoUri = Uri.parse(singlePostData.getPreview().getRedditVideoPreview().getHlsUrl());
-                } else {
-                    videoUri = Uri.parse(singlePostData.getPreview().getRedditVideoPreview().getFallbackUrl());
+        }
+        txtVideoOpenInNew.setText(domain);
+        txtVideoOpenInNew.setVisibility(View.VISIBLE);
+        txtVideoOpenInNew.setOnClickListener(view12 -> {
+            if(videoType== Constants.REDDIT_VIDEO){
+                Toast.makeText(requireActivity(), "Open new Fragment Fullscreen", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(requireActivity(), "Open Original", Toast.LENGTH_SHORT).show();
+            }
+        });
+        videoSeekBar.setMax(videoDuration);
+        txtVideoDuration.setText(getTimeOfVideo(videoDuration));
+
+        player = new SimpleExoPlayer.Builder(requireActivity()).build();
+        MediaItem mediaItem = MediaItem.fromUri(videoUri);
+        playerView.setPlayer(player);
+        playerView.setKeepScreenOn(true);
+        player.setMediaItem(mediaItem);
+        player.prepare();
+        player.addListener(new Player.EventListener() {
+            @Override
+            public void onPlaybackStateChanged(int state) {
+                switch (state) {
+                    case Player.STATE_IDLE:
+                        break;
+                    case Player.STATE_BUFFERING:
+                        progressBar.setVisibility(View.VISIBLE);
+                        break;
+                    case Player.STATE_READY:
+                        progressBar.setVisibility(View.GONE);
+                        if (player.isPlaying())
+                            imgPlay.setImageResource(R.drawable.exo_icon_pause);
+                        else
+                            imgPlay.setImageResource(R.drawable.exo_icon_play);
+                        changeSeekBar(player, videoSeekBar, txtVideoCurrentTime, handler);
+                        player.setPauseAtEndOfMediaItems(false);
+                        break;
+                    case Player.STATE_ENDED:
+                        imgPlay.setImageResource(R.drawable.exo_icon_play);
+                        player.setPauseAtEndOfMediaItems(true);
+                        wasPlaying = false;
+                    default:
+                }
+            }
+        });
+
+        videoSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+                if (b) {
+                    player.seekTo(progress * 1000);
+                    txtVideoCurrentTime.setText(getTimeOfVideo(progress));
                 }
             }
 
-            MediaItem mediaItem = MediaItem.fromUri(videoUri);
-            playerView.setPlayer(player);
-            playerView.setKeepScreenOn(true);
-            player.setMediaItem(mediaItem);
-            player.prepare();
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
-            player.addListener(new Player.EventListener() {
-                @Override
-                public void onPlaybackStateChanged(int state) {
-                    switch (state) {
-                        case Player.STATE_IDLE:
-                            break;
-                        case Player.STATE_BUFFERING:
-                            progressBar.setVisibility(View.VISIBLE);
-                            break;
-                        case Player.STATE_READY:
-                            progressBar.setVisibility(View.GONE);
-                            imgPlay.setImageResource(R.drawable.exo_icon_pause);
-                            videoSeekBar.setVisibility(View.VISIBLE);
-                            videoSeekBar.setMax((int) player.getContentDuration() / 1000);
-                            player.play();
-                            changeSeekBar(player, videoSeekBar, handler);
-                            break;
-                        case Player.STATE_ENDED:
-                            imgPlay.setImageResource(R.drawable.exo_icon_play);
-                            player.setPauseAtEndOfMediaItems(true);
-                        default:
-                    }
-                }
-            });
+            }
 
-            videoSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                    if (b)
-                        player.seekTo(progress * 1000);
-                }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+        });
 
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-
-                }
-            });
-
-            imgPlay.setOnClickListener(view1 -> {
-                if (player.getPauseAtEndOfMediaItems()) {
-                    player.setPauseAtEndOfMediaItems(false);
-                    player.seekTo(0);
-                    imgPlay.setImageResource(R.drawable.exo_icon_pause);
-                } else if (player.isPlaying()) {
-                    imgPlay.setImageResource(R.drawable.exo_icon_play);
-                    player.setPlayWhenReady(false);
-                } else {
-                    imgPlay.setImageResource(R.drawable.exo_icon_pause);
-                    player.setPlayWhenReady(true);
-                }
-            });
-
-        }
+        imgPlay.setOnClickListener(view1 -> {
+            if (player.getPauseAtEndOfMediaItems()) {
+                player.setPauseAtEndOfMediaItems(false);
+                player.seekTo(0);
+                imgPlay.setImageResource(R.drawable.exo_icon_pause);
+            } else if (player.isPlaying()) {
+                imgPlay.setImageResource(R.drawable.exo_icon_play);
+                player.setPlayWhenReady(false);
+            } else {
+                imgPlay.setImageResource(R.drawable.exo_icon_pause);
+                player.setPlayWhenReady(true);
+            }
+        });
     }
 
-    private void changeSeekBar(SimpleExoPlayer player, SeekBar videoSeekBar, Handler handler) {
+    private void changeSeekBar(SimpleExoPlayer player, SeekBar videoSeekBar, TextView videoCurrentTime, Handler handler) {
         videoSeekBar.setProgress((int) player.getCurrentPosition() / 1000);
-        Runnable runnable = () -> changeSeekBar(player, videoSeekBar, handler);
+        videoCurrentTime.setText(getTimeOfVideo((int) player.getCurrentPosition() / 1000));
+        Runnable runnable = () -> changeSeekBar(player, videoSeekBar, videoCurrentTime, handler);
         handler.postDelayed(runnable, 1000);
     }
 
+    private String getTimeOfVideo(int time) {
+        int min = time / 60;
+        int sec = time - min * 60;
+        String minStr = min < 10 ? "0" + min : String.valueOf(min);
+        String secStr = sec < 10 ? "0" + sec : String.valueOf(sec);
+        return minStr + ":" + secStr;
+    }
+
+    private void hideViews(View view, PlayerView playerView) {
+        includeSinglePostFooter = view.findViewById(R.id.include_single_post_footer);
+        appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
+
+        singlePostCollapsingToolbar.setVisibility(View.GONE);
+        includeSinglePostFooter.setVisibility(View.GONE);
+        appBarLayout.setVisibility(View.GONE);
+        mCommentsRecyclerView.setVisibility(View.GONE);
+
+        playerView.setLayoutParams(new PlayerView.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT));
+    }
+
     private void initRecyclerView(View view, GroupAdapter<GroupieViewHolder> groupAdapter) {
-        RecyclerView mCommentsRecyclerView = view.findViewById(R.id.recyclerview);
         GridLayoutManager groupLayoutManager = new GridLayoutManager(getActivity(), groupAdapter.getSpanCount());
         groupLayoutManager.setSpanSizeLookup(groupAdapter.getSpanSizeLookup());
         mCommentsRecyclerView.setLayoutManager(groupLayoutManager);
@@ -407,12 +501,12 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     @Override
     public void onPause() {
-        super.onPause();
         if (player != null) {
+            wasPlaying = player.isPlaying();
             player.setPlayWhenReady(false);
             imgPlay.setImageResource(R.drawable.exo_icon_play);
         }
-
+        super.onPause();
     }
 
     @Override
@@ -423,23 +517,22 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     @Override
     public void onDetach() {
-        super.onDetach();
         if (player != null)
             player.release();
+        super.onDetach();
     }
 
     @Override
     public void onDestroy() {
-//        if (player != null)
-//            player.release();
         super.onDestroy();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         if (player != null) {
-            outState.putLong("a", player.getCurrentPosition());
-            outState.putBoolean("b", player.getPlayWhenReady());
+            outState.putLong("currentTime", player.getCurrentPosition());
+            outState.putBoolean("isPlaying", wasPlaying);
+            videoSeekBar.setProgress(0);
         }
     }
 
@@ -447,8 +540,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null && player != null) {
-            player.seekTo(savedInstanceState.getLong("a"));
-            player.setPlayWhenReady(savedInstanceState.getBoolean("b"));
+            player.seekTo(savedInstanceState.getLong("currentTime"));
+            player.setPlayWhenReady(savedInstanceState.getBoolean("isPlaying"));
         }
     }
 }

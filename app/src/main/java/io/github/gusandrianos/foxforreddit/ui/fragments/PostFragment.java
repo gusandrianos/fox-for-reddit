@@ -122,7 +122,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 break;
             case Constants.POST_THUMBNAIL:
                 Toast.makeText(getActivity(), "Thumbnail", Toast.LENGTH_SHORT).show();
-                //Todo open thumbnail
+                NavGraphDirections.ActionGlobalFullscreenFragment fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(post, postType);
+                navController.navigate(fullscreenAction);
                 break;
             case Constants.POST_VOTE_UP:
                 if (post.getLikes() == null || !((Boolean) post.getLikes())) {  //If down or no voted

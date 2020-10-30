@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -263,7 +264,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             ViewStub stub = view.findViewById(R.id.view_stub);
             stub.setLayoutResource(R.layout.stub_view_pager_image_gallery);
             View inflated = stub.inflate();
-            ImageGalleryAdapter adapter = new ImageGalleryAdapter(imagesId);
+            ImageGalleryAdapter adapter = new ImageGalleryAdapter(imagesId, Constants.NORMAL_SCREEN);
             ViewPager2 viewPager = inflated.findViewById(R.id.viewpager_image_gallery);
             viewPager.setAdapter(adapter);
             TabLayout tabLayout = inflated.findViewById(R.id.tab_dots);
@@ -335,25 +336,31 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void createVideoPlayer(Data singlePostData, View view, int videoType) {
-        stub = view.findViewById(R.id.view_stub2);
-        stub.setLayoutResource(R.layout.stub_video);
-        inflated = stub.inflate();
         Handler handler = new Handler();
-        PlayerView playerView = inflated.findViewById(R.id.video_player);
+        PlayerView playerView;
+
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            stub = view.findViewById(R.id.view_stub2);
+            stub.setLayoutResource(R.layout.stub_video);
+            inflated = stub.inflate();
+            playerView = inflated.findViewById(R.id.video_player);
+            requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            playerView.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
+        } else {
+            stub = view.findViewById(R.id.view_stub);
+            stub.setLayoutResource(R.layout.stub_video);
+            inflated = stub.inflate();
+            playerView = inflated.findViewById(R.id.video_player);
+            appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
+            appBarLayout.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT));
+        }
         imgPlay = playerView.findViewById(R.id.exo_img_play);
         TextView txtVideoOpenInNew = playerView.findViewById(R.id.txt_video_open_in_new);
         ProgressBar progressBar = inflated.findViewById(R.id.progress_bar);
         videoSeekBar = inflated.findViewById(R.id.video_seek_bar);
         TextView txtVideoCurrentTime = inflated.findViewById(R.id.txt_video_current_time);
         TextView txtVideoDuration = inflated.findViewById(R.id.txt_video_duration);
-
-        int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            playerView.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
-        } else {
-            hideViews(view, playerView);
-        }
 
         Uri videoUri;
         int videoDuration;
@@ -379,9 +386,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         txtVideoOpenInNew.setText(domain);
         txtVideoOpenInNew.setVisibility(View.VISIBLE);
         txtVideoOpenInNew.setOnClickListener(view12 -> {
-            if(videoType== Constants.REDDIT_VIDEO){
+            if (videoType == Constants.REDDIT_VIDEO) {
                 Toast.makeText(requireActivity(), "Open new Fragment Fullscreen", Toast.LENGTH_SHORT).show();
-            }else{
+            } else {
                 Toast.makeText(requireActivity(), "Open Original", Toast.LENGTH_SHORT).show();
             }
         });
@@ -469,18 +476,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         String minStr = min < 10 ? "0" + min : String.valueOf(min);
         String secStr = sec < 10 ? "0" + sec : String.valueOf(sec);
         return minStr + ":" + secStr;
-    }
-
-    private void hideViews(View view, PlayerView playerView) {
-        includeSinglePostFooter = view.findViewById(R.id.include_single_post_footer);
-        appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
-
-        singlePostCollapsingToolbar.setVisibility(View.GONE);
-        includeSinglePostFooter.setVisibility(View.GONE);
-        appBarLayout.setVisibility(View.GONE);
-        mCommentsRecyclerView.setVisibility(View.GONE);
-
-        playerView.setLayoutParams(new PlayerView.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT));
     }
 
     private void initRecyclerView(View view, GroupAdapter<GroupieViewHolder> groupAdapter) {

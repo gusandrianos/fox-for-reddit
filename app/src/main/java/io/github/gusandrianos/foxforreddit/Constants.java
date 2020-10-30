@@ -47,4 +47,8 @@ public class Constants {
     public static final int IS_IMAGE= 1;
     public static final int IS_GALLERY = 2;
     public static final int IS_GIF = 3;
+
+    //Screen Mode
+    public static final  int NORMAL_SCREEN = 0;
+    public static final  int FULLSCREEN = 1;
 }

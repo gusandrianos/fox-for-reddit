@@ -6,12 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.app.Activity;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,13 +41,10 @@ import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.GalleryItem;
+import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.ImageGalleryAdapter;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 public class FullscreenFragment extends Fragment {
     private boolean wasPlaying;
 
@@ -58,7 +54,6 @@ public class FullscreenFragment extends Fragment {
 
     ViewStub stub;
     View inflated;
-
 
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -153,6 +148,7 @@ public class FullscreenFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        lockDrawer();
 
         FullscreenFragmentArgs fullscreenFragmentArgs = FullscreenFragmentArgs.fromBundle(requireArguments());
         Data post = fullscreenFragmentArgs.getPost();
@@ -178,8 +174,8 @@ public class FullscreenFragment extends Fragment {
         // while interacting with the UI.
         view.findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
     }
-    
-    private void bindAsFullScreenImage(Data post, View view){
+
+    private void bindAsFullScreenImage(Data post, View view) {
         ViewStub stub = view.findViewById(R.id.stub_fullsceen);
         stub.setLayoutResource(R.layout.stub_image);
         View inflated = stub.inflate();
@@ -189,8 +185,8 @@ public class FullscreenFragment extends Fragment {
         imgPostImage.setClickable(false);
         Glide.with(inflated).load(post.getUrlOverriddenByDest()).into(imgPostImage);
     }
-    
-    private void bindAsFullScreenGallery(Data post, View view){
+
+    private void bindAsFullScreenGallery(Data post, View view) {
         List<String> imagesId = new ArrayList<>();
 
         if (post.getGalleryData() != null) {
@@ -210,13 +206,20 @@ public class FullscreenFragment extends Fragment {
             ).attach();
         }
     }
+
+
+    private void lockDrawer() {
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        DrawerLayout drawer = mainActivity.drawer;
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
     private void initializeUI(Data post, View view, int postType) {
 
-
         if (postType == Constants.IMAGE) {
-            if (FoxToolkit.INSTANCE.getTypeOfImage(post) == Constants.IS_GALLERY) {     
+            if (FoxToolkit.INSTANCE.getTypeOfImage(post) == Constants.IS_GALLERY) {
                 bindAsFullScreenGallery(post, view);    //Image Gallery
-            } else {                                                                    
+            } else {
                 bindAsFullScreenImage(post, view);  //Image or Gif                                      
             }
         } else {
@@ -240,9 +243,11 @@ public class FullscreenFragment extends Fragment {
         stub = view.findViewById(R.id.stub_fullsceen);
         stub.setLayoutResource(R.layout.stub_video);
         inflated = stub.inflate();
-        PlayerView playerView = inflated.findViewById(R.id.video_player);
 
+        PlayerView playerView = inflated.findViewById(R.id.video_player);
         playerView.setLayoutParams(new PlayerView.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT));
+
+
         imgPlay = playerView.findViewById(R.id.exo_img_play);
         TextView txtVideoOpenInNew = playerView.findViewById(R.id.txt_video_open_in_new);
         ProgressBar progressBar = inflated.findViewById(R.id.progress_bar);
@@ -271,17 +276,11 @@ public class FullscreenFragment extends Fragment {
             txtVideoOpenInNew.setVisibility(View.VISIBLE);
             txtVideoOpenInNew.setText(domain);
             txtVideoOpenInNew.setText(domain);
-            txtVideoOpenInNew.setOnClickListener(view12 -> {
-                if (videoType == Constants.REDDIT_VIDEO) {
-                    Toast.makeText(requireActivity(), "Open new Fragment Fullscreen", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(requireActivity(), "Open Original", Toast.LENGTH_SHORT).show();
-                }
-            });
+            txtVideoOpenInNew.setOnClickListener(view12 -> startActivity(FoxToolkit.INSTANCE.visitLink(post)));
         }
 
         videoSeekBar.setMax(videoDuration);
-        txtVideoDuration.setText(getTimeOfVideo(videoDuration));
+        txtVideoDuration.setText(FoxToolkit.INSTANCE.getTimeOfVideo(videoDuration));
 
         player = new SimpleExoPlayer.Builder(requireActivity()).build();
         MediaItem mediaItem = MediaItem.fromUri(videoUri);
@@ -289,6 +288,7 @@ public class FullscreenFragment extends Fragment {
         playerView.setKeepScreenOn(true);
         player.setMediaItem(mediaItem);
         player.prepare();
+        player.play();
         player.addListener(new Player.EventListener() {
             @Override
             public void onPlaybackStateChanged(int state) {
@@ -321,7 +321,7 @@ public class FullscreenFragment extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
                 if (b) {
                     player.seekTo(progress * 1000);
-                    txtVideoCurrentTime.setText(getTimeOfVideo(progress));
+                    txtVideoCurrentTime.setText(FoxToolkit.INSTANCE.getTimeOfVideo(progress));
                 }
             }
 
@@ -353,17 +353,9 @@ public class FullscreenFragment extends Fragment {
 
     private void changeSeekBar(SimpleExoPlayer player, SeekBar videoSeekBar, TextView videoCurrentTime, Handler handler) {
         videoSeekBar.setProgress((int) player.getCurrentPosition() / 1000);
-        videoCurrentTime.setText(getTimeOfVideo((int) player.getCurrentPosition() / 1000));
+        videoCurrentTime.setText(FoxToolkit.INSTANCE.getTimeOfVideo((int) player.getCurrentPosition() / 1000));
         Runnable runnable = () -> changeSeekBar(player, videoSeekBar, videoCurrentTime, handler);
         handler.postDelayed(runnable, 1000);
-    }
-
-    private String getTimeOfVideo(int time) {
-        int min = time / 60;
-        int sec = time - min * 60;
-        String minStr = min < 10 ? "0" + min : String.valueOf(min);
-        String secStr = sec < 10 ? "0" + sec : String.valueOf(sec);
-        return minStr + ":" + secStr;
     }
 
     @Override
@@ -376,7 +368,7 @@ public class FullscreenFragment extends Fragment {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
-        delayedHide(100);
+        delayedHide(500);
     }
 
     @Override
@@ -427,7 +419,6 @@ public class FullscreenFragment extends Fragment {
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
 
-    @SuppressLint("InlinedApi")
     private void show() {
         // Show the system bar
         mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN

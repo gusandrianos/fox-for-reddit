@@ -1,6 +1,7 @@
 package io.github.gusandrianos.foxforreddit.data.repositories
 
 import android.app.Application
+import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -49,6 +50,7 @@ object SubredditRepository {
         action.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 subscribeStatus.value = response.isSuccessful
+                Log.i(TAG, "onResponse: ${response.raw()} action: $actionString")
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {

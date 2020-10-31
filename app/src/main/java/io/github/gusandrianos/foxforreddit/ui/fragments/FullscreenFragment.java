@@ -245,7 +245,7 @@ public class FullscreenFragment extends Fragment {
         inflated = stub.inflate();
 
         PlayerView playerView = inflated.findViewById(R.id.video_player);
-        playerView.setLayoutParams(new PlayerView.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT));
+//        playerView.setLayoutParams(new PlayerView.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT));
 
 
         imgPlay = playerView.findViewById(R.id.exo_img_play);

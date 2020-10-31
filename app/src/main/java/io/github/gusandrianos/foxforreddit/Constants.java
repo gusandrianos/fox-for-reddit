@@ -3,6 +3,9 @@ package io.github.gusandrianos.foxforreddit;
 import android.content.res.Resources;
 
 public class Constants {
+    //Reddit URL
+    public static final String REDDIT_URL = "https://www.reddit.com";
+
     // Activities
     public static final String REDIRECT_URI = "https://gusandrianos.github.io/login";
     public static final int LAUNCH_SECOND_ACTIVITY = 1;

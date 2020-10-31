@@ -1,5 +1,7 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -27,6 +29,7 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.PostAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -101,6 +104,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+
         switch (clicked) {
             case Constants.POST_SUBREDDIT:
                 if (currentDestinationID != R.id.subredditFragment) {
@@ -110,7 +114,6 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 }
                 break;
             case Constants.POST_USER:
-                MainActivity mainActivity = (MainActivity) requireActivity();
                 String authorUsername = post.getAuthor();
                 if (currentDestinationID != R.id.userFragment) {
                     NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, authorUsername);
@@ -121,35 +124,39 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 }
                 break;
             case Constants.POST_THUMBNAIL:
-                Toast.makeText(getActivity(), "Thumbnail", Toast.LENGTH_SHORT).show();
-                NavGraphDirections.ActionGlobalFullscreenFragment fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(post, postType);
-                navController.navigate(fullscreenAction);
+                NavGraphDirections.ActionGlobalFullscreenFragment fullscreenAction;
+
+                switch (postType) {
+                    case Constants.IMAGE:
+                        fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(post, postType);
+                        navController.navigate(fullscreenAction);
+                        break;
+                    case Constants.VIDEO:
+                        if (FoxToolkit.INSTANCE.getTypeOfVideo(post) == Constants.PLAYABLE_VIDEO) {
+                            fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(post, postType);
+                            navController.navigate(fullscreenAction);
+                            break;
+                        } else {
+                            startActivity(FoxToolkit.INSTANCE.visitLink(post));
+                        }
+                        break;
+                    case Constants.LINK:
+                        startActivity(FoxToolkit.INSTANCE.visitLink(post));
+                        break;
+                    default:
+                }
                 break;
             case Constants.POST_VOTE_UP:
-                if (post.getLikes() == null || !((Boolean) post.getLikes())) {  //If down or no voted
-                    viewModel.votePost("1", post.getName(), requireActivity().getApplication());      //then send up vote
-                    post.setLikes(true);
-                } else {                                                       //else (up voted)
-                    viewModel.votePost("0", post.getName(), requireActivity().getApplication());      //send no vote
-                    post.setLikes(null);
-                }
+                FoxToolkit.INSTANCE.upVote(viewModel, requireActivity().getApplication(), post);
                 break;
             case Constants.POST_VOTE_DOWN:
-                if (post.getLikes() == null || ((Boolean) post.getLikes())) {  //If up or no voted
-                    viewModel.votePost("-1", post.getName(), requireActivity().getApplication());    //then send down vote
-                    post.setLikes(false);
-                } else {                                                      //else (down voted)
-                    viewModel.votePost("0", post.getName(), requireActivity().getApplication());     //send no vote
-                    post.setLikes(null);
-                }
+                FoxToolkit.INSTANCE.downVote(viewModel, requireActivity().getApplication(), post);
                 break;
             case Constants.POST_SHARE:
-                Toast.makeText(getActivity(), "Share", Toast.LENGTH_SHORT).show();
-                //Todo share
+                startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(post), "Share via"));
                 break;
             case Constants.POST_VOTE_NOW:
-                Toast.makeText(getActivity(), "Vote Now", Toast.LENGTH_SHORT).show();
-                //Todo open vote post
+                startActivity(FoxToolkit.INSTANCE.visitLink(post));
                 break;
             default:
                 NavGraphDirections.ActionGlobalSinglePostFragment action = NavGraphDirections.actionGlobalSinglePostFragment(post, postType);

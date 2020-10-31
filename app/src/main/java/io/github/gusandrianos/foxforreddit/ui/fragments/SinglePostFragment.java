@@ -1,5 +1,6 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
@@ -8,13 +9,16 @@ import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -22,9 +26,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -53,6 +61,7 @@ import java.util.List;
 import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.Constants;
+import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
@@ -72,12 +81,19 @@ import static io.github.gusandrianos.foxforreddit.utilities.PostAdapterKt.format
 
 public class SinglePostFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
     private boolean wasPlaying;
+    private Boolean isFullscreen;
+
+    private int orientation;
+
+    NavHostFragment navHostFragment;
+    NavController navController;
 
     ViewStub stub;
     View inflated;
 
     AppBarLayout appBarLayout;
-    View includeSinglePostFooter;
+    LinearLayoutCompat singlePostHeader;
+    LinearLayoutCompat singlePostFooter;
     CollapsingToolbarLayout singlePostCollapsingToolbar;
 
     SimpleExoPlayer player = null;
@@ -98,6 +114,11 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        navController = Objects.requireNonNull(navHostFragment).getNavController();
+
+        orientation = getResources().getConfiguration().orientation;
 
         SinglePostFragmentArgs singlePostFragmentArgs = SinglePostFragmentArgs.fromBundle(requireArguments());
         Data singlePostData = singlePostFragmentArgs.getPost();
@@ -200,12 +221,57 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         mBtnPostNumComments.setText(formatValue(singlePostData.getNumComments()));
 
-        mImgPostSubreddit.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "SUBREDDIT", Toast.LENGTH_SHORT).show());
-        mTxtPostSubreddit.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "SUBREDDIT", Toast.LENGTH_SHORT).show());
-        mTxtPostUser.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "USER", Toast.LENGTH_SHORT).show());
-        mImgBtnPostVoteUp.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "UP VOTE", Toast.LENGTH_SHORT).show());
-        mImgBtnPostVoteDown.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "DOWN VOTE", Toast.LENGTH_SHORT).show());
-        mBtnPostShare.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "SHARE", Toast.LENGTH_SHORT).show());
+        int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
+        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+
+        mImgPostSubreddit.setOnClickListener(view1 -> {
+            if (currentDestinationID != R.id.subredditFragment) {
+                String subredditNamePrefixed = singlePostData.getSubredditNamePrefixed();
+                NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(subredditNamePrefixed);
+                navController.navigate(action);
+            }
+        });
+
+        mTxtPostSubreddit.setOnClickListener(view1 -> {
+            if (currentDestinationID != R.id.subredditFragment) {
+                String subredditNamePrefixed = singlePostData.getSubredditNamePrefixed();
+                NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(subredditNamePrefixed);
+                navController.navigate(action);
+            }
+        });
+
+        mTxtPostUser.setOnClickListener(view1 -> {
+            String authorUsername = singlePostData.getAuthor();
+            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, authorUsername);
+            navController.navigate(action);
+        });
+
+        mImgBtnPostVoteUp.setOnClickListener(view1 -> {
+            if (singlePostData.getLikes() == null || !singlePostData.getLikes()) {
+                mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange);
+                mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24);
+                mTxtPostScore.setTextColor(Color.parseColor("#FFE07812"));
+            } else {
+                mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24);
+                mTxtPostScore.setTextColor(Color.parseColor("#AAAAAA"));
+            }
+            FoxToolkit.INSTANCE.upVote(viewModel, requireActivity().getApplication(), singlePostData);
+        });
+
+        mImgBtnPostVoteDown.setOnClickListener(view1 -> {
+            if (singlePostData.getLikes() == null || singlePostData.getLikes()) {
+                mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24_blue);
+                mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24);
+                mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"));
+            } else {
+                mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24);
+                mTxtPostScore.setTextColor(Color.parseColor("#AAAAAA"));
+            }
+            FoxToolkit.INSTANCE.downVote(viewModel, requireActivity().getApplication(), singlePostData);
+        });
+
+        mBtnPostShare.setOnClickListener(view1 -> startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(singlePostData), "Share via")));
     }
 
     private void bindAsSelf(Data singlePostData, View view) {
@@ -250,8 +316,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             imgPostThumbnail.setVisibility(View.GONE);
         }
 
-        imgPostThumbnail.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "Open Article (image clicked)", Toast.LENGTH_SHORT).show());
-        txtPostDomain.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "Open Article (text clicked", Toast.LENGTH_SHORT).show());
+        View.OnClickListener listener = view12 -> startActivity(FoxToolkit.INSTANCE.visitLink(singlePostData));
+        imgPostThumbnail.setOnClickListener(listener);
+        txtPostDomain.setOnClickListener(listener);
     }
 
     private void bindAsGallery(Data singlePostData, View view) {
@@ -283,7 +350,11 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
         Glide.with(inflated).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
 
-        imgPostImage.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "Open new Fragment Fullscreen", Toast.LENGTH_SHORT).show());
+        imgPostImage.setOnClickListener(view1 -> {
+            NavGraphDirections.ActionGlobalFullscreenFragment fullscreenAction;
+            fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(singlePostData, Constants.IMAGE);
+            navController.navigate(fullscreenAction);
+        });
     }
 
     private void bindAsImage(Data singlePostData, View view) {
@@ -294,7 +365,11 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
         Glide.with(inflated).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
 
-        imgPostImage.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "Open new Fragment Fullscreen", Toast.LENGTH_SHORT).show());
+        imgPostImage.setOnClickListener(view1 -> {
+            NavGraphDirections.ActionGlobalFullscreenFragment fullscreenAction;
+            fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(singlePostData, Constants.IMAGE);
+            navController.navigate(fullscreenAction);
+        });
     }
 
     private void bindAsPoll(Data singlePostData, View view) {
@@ -322,7 +397,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         Glide.with(inflated).load(singlePostData.getMedia().getOembed().getThumbnailUrl()).placeholder(R.drawable.ic_launcher_background).into(imgPostImage);
 
-        imgPostImage.setOnClickListener(view1 -> Toast.makeText(requireActivity(), "Open original video", Toast.LENGTH_SHORT).show());
+        imgPostImage.setOnClickListener(view1 -> startActivity(FoxToolkit.INSTANCE.visitLink(singlePostData)));
     }
 
     private void bindAsVideo(Data singlePostData, View view) {
@@ -339,7 +414,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         Handler handler = new Handler();
         PlayerView playerView;
 
-        int orientation = getResources().getConfiguration().orientation;
+
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             stub = view.findViewById(R.id.view_stub2);
             stub.setLayoutResource(R.layout.stub_video);
@@ -361,10 +436,17 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         videoSeekBar = inflated.findViewById(R.id.video_seek_bar);
         TextView txtVideoCurrentTime = inflated.findViewById(R.id.txt_video_current_time);
         TextView txtVideoDuration = inflated.findViewById(R.id.txt_video_duration);
+        ImageView imgFullscreen = inflated.findViewById(R.id.img_fullscreen);
+
+        singlePostHeader = view.findViewById(R.id.include_single_post_header);
+        singlePostFooter = view.findViewById(R.id.include_single_post_footer);
+
+        if (isFullscreen == null) {
+            isFullscreen = false;
+        }
 
         Uri videoUri;
         int videoDuration;
-        String domain;
         if (videoType == Constants.REDDIT_VIDEO) {
             if (singlePostData.getSecureMedia().getRedditVideo().getHlsUrl() != null) {
                 videoUri = Uri.parse(singlePostData.getSecureMedia().getRedditVideo().getHlsUrl());
@@ -372,28 +454,24 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 videoUri = Uri.parse(singlePostData.getSecureMedia().getRedditVideo().getFallbackUrl());
             }
             videoDuration = (int) singlePostData.getSecureMedia().getRedditVideo().getDuration();
-            domain = "Fullscreen";
         } else {
             if (singlePostData.getPreview().getRedditVideoPreview().getHlsUrl() != null) {
                 videoUri = Uri.parse(singlePostData.getPreview().getRedditVideoPreview().getHlsUrl());
             } else {
                 videoUri = Uri.parse(singlePostData.getPreview().getRedditVideoPreview().getFallbackUrl());
             }
+
+            String domain;
             videoDuration = (int) singlePostData.getPreview().getRedditVideoPreview().getDuration();
             domain = singlePostData.getDomain();
 
+            txtVideoOpenInNew.setText(domain);
+            txtVideoOpenInNew.setVisibility(View.VISIBLE);
+            txtVideoOpenInNew.setOnClickListener(view12 -> startActivity(FoxToolkit.INSTANCE.visitLink(singlePostData)));
         }
-        txtVideoOpenInNew.setText(domain);
-        txtVideoOpenInNew.setVisibility(View.VISIBLE);
-        txtVideoOpenInNew.setOnClickListener(view12 -> {
-            if (videoType == Constants.REDDIT_VIDEO) {
-                Toast.makeText(requireActivity(), "Open new Fragment Fullscreen", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(requireActivity(), "Open Original", Toast.LENGTH_SHORT).show();
-            }
-        });
+
         videoSeekBar.setMax(videoDuration);
-        txtVideoDuration.setText(getTimeOfVideo(videoDuration));
+        txtVideoDuration.setText(FoxToolkit.INSTANCE.getTimeOfVideo(videoDuration));
 
         player = new SimpleExoPlayer.Builder(requireActivity()).build();
         MediaItem mediaItem = MediaItem.fromUri(videoUri);
@@ -433,7 +511,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
                 if (b) {
                     player.seekTo(progress * 1000);
-                    txtVideoCurrentTime.setText(getTimeOfVideo(progress));
+                    txtVideoCurrentTime.setText(FoxToolkit.INSTANCE.getTimeOfVideo(progress));
                 }
             }
 
@@ -461,22 +539,95 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 player.setPlayWhenReady(true);
             }
         });
+
+        imgFullscreen.setVisibility(View.VISIBLE);
+        imgFullscreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view1) {
+                fullscreenMode(playerView, view);
+            }
+        });
     }
+
+    public void fullscreenMode(PlayerView playerView, View view) {
+        isFullscreen = !isFullscreen;
+
+        if (isFullscreen) {
+            hideViews(view);
+        } else {
+
+            showViews(view);
+
+        }
+
+    }
+
+    private void showViews(View view) {
+        TextView txtPostTitle = view.findViewById(R.id.stub_txt_post_title);
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
+            CollapsingToolbarLayout collapsingToolbarLayout = view.findViewById(R.id.single_post_collapsing_toolbar);
+            Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
+            LinearLayout llSinglePostComments = view.findViewById(R.id.ll_single_post_comments);
+            LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
+            LinearLayout llViewStub2 = view.findViewById(R.id.ll_view_stub2);
+            PlayerView playerView = view.findViewById(R.id.video_player);
+            LinearLayout llCollapsing = view.findViewById(R.id.ll_collapsing);
+
+
+
+            collapsingToolbarLayout.setVisibility(View.VISIBLE);
+            appBarLayout.setVisibility(View.VISIBLE);
+            singlePostFooter.setVisibility(View.VISIBLE);
+            txtPostTitle.setVisibility(View.VISIBLE);
+            toolbar.setVisibility(View.VISIBLE);
+            mCommentsRecyclerView.setVisibility(View.VISIBLE);
+
+            llCollapsing.setLayoutParams(new CollapsingToolbarLayout.LayoutParams(CollapsingToolbarLayout.LayoutParams.MATCH_PARENT,CollapsingToolbarLayout.LayoutParams.WRAP_CONTENT));
+            llViewStub2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            appBarLayout.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.WRAP_CONTENT));
+
+            llSinglePostComments.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.WRAP_CONTENT));
+            requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            playerView.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
+
+        } else {
+
+        }
+
+    }
+
+    public void hideViews(View view) {
+        TextView txtPostTitle = view.findViewById(R.id.stub_txt_post_title);
+
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
+            Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
+            LinearLayout llSinglePostComments = view.findViewById(R.id.ll_single_post_comments);
+            LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
+            LinearLayout llViewStub2 = view.findViewById(R.id.ll_view_stub2);
+            PlayerView playerView = view.findViewById(R.id.video_player);
+
+            appBarLayout.setVisibility(View.GONE);
+            singlePostFooter.setVisibility(View.GONE);
+            mCommentsRecyclerView.setVisibility(View.GONE);
+            txtPostTitle.setVisibility(View.GONE);
+            playerView.setLayoutParams((new FrameLayout.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT)));
+            llViewStub2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+            llSinglePostComments.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT));
+        } else {
+
+        }
+    }
+
 
     private void changeSeekBar(SimpleExoPlayer player, SeekBar videoSeekBar, TextView videoCurrentTime, Handler handler) {
         videoSeekBar.setProgress((int) player.getCurrentPosition() / 1000);
-        videoCurrentTime.setText(getTimeOfVideo((int) player.getCurrentPosition() / 1000));
+        videoCurrentTime.setText(FoxToolkit.INSTANCE.getTimeOfVideo((int) player.getCurrentPosition() / 1000));
         Runnable runnable = () -> changeSeekBar(player, videoSeekBar, videoCurrentTime, handler);
         handler.postDelayed(runnable, 1000);
     }
 
-    private String getTimeOfVideo(int time) {
-        int min = time / 60;
-        int sec = time - min * 60;
-        String minStr = min < 10 ? "0" + min : String.valueOf(min);
-        String secStr = sec < 10 ? "0" + sec : String.valueOf(sec);
-        return minStr + ":" + secStr;
-    }
 
     private void initRecyclerView(View view, GroupAdapter<GroupieViewHolder> groupAdapter) {
         GridLayoutManager groupLayoutManager = new GridLayoutManager(getActivity(), groupAdapter.getSpanCount());

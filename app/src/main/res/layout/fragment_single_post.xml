@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.fragments.SinglePostFragment">
+    tools:context=".ui.fragments.SinglePostFragment"
+    android:animateLayoutChanges="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout_fragment_single_post"
@@ -32,11 +33,14 @@
                 app:layout_collapseMode="pin" />
 
             <LinearLayout
+                android:id="@+id/ll_collapsing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <include layout="@layout/post_header" />
+                <include
+                    android:id="@+id/include_single_post_header"
+                    layout="@layout/post_header" />
 
                 <TextView
                     android:id="@+id/stub_txt_post_title"
@@ -56,21 +60,28 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
     <LinearLayout
         android:id="@+id/ll_single_post_comments"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <ViewStub
-            android:id="@+id/view_stub2"
+        <LinearLayout
+            android:id="@+id/ll_view_stub2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:inflatedId="@+id/layoutId"
-            android:overScrollMode="ifContentScrolls"/>
+            android:orientation="vertical">
+            <ViewStub
+                android:id="@+id/view_stub2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inflatedId="@+id/layoutId"
+                android:overScrollMode="ifContentScrolls" />
+        </LinearLayout>
+
+
         <include
             android:id="@+id/include_single_post_footer"
             layout="@layout/post_footer" />

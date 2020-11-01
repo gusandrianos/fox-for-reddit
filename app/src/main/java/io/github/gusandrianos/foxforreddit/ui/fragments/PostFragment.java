@@ -43,6 +43,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     private Token mToken;
     String subreddit;
     String filter;
+    String time;
     int page;
     PostAdapter mPostRecyclerViewAdapter;
 
@@ -60,6 +61,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         page = getArguments().getInt("page", 0);
         subreddit = getArguments().getString("subreddit", "");
         filter = getArguments().getString("filter", "");
+        time = getArguments().getString("time", "");
         initRecycleView();
         initializeUI();
     }
@@ -81,7 +83,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     public void initializeUI() {
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        viewModel.getPosts(subreddit, filter, getActivity().getApplication()).observe(getViewLifecycleOwner(), postPagingData -> {
+        viewModel.getPosts(subreddit, filter, time, getActivity().getApplication()).observe(getViewLifecycleOwner(), postPagingData -> {
             mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), postPagingData);
         });
     }
@@ -164,12 +166,13 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         }
     }
 
-    public static PostFragment newInstance(String subreddit, String filter) {
+    public static PostFragment newInstance(String subreddit, String filter, String time) {
         PostFragment fragment = new PostFragment();
 
         Bundle args = new Bundle();
         args.putString("subreddit", subreddit);
         args.putString("filter", filter);
+        args.putString("time", time);
         fragment.setArguments(args);
 
         return fragment;

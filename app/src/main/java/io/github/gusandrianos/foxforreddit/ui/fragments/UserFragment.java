@@ -93,16 +93,16 @@ public class UserFragment extends Fragment {
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
 
-        viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/submitted", ""), "Posts");
-        viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/comments", ""), "Comments");
+        viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/submitted", "", ""), "Posts");
+        viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/comments", "", ""), "Comments");
         viewPagerAdapter.addFragment(AboutUserFragment.newInstance(user.getName(), user.getLinkKarma(), user.getCommentKarma()), "About");
 
         viewPager.setAdapter(viewPagerAdapter);
         if (isSelf) {
-            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/upvoted", ""), "Upvoted");
-            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/downvoted", ""), "Downvoted");
-            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/hidden", ""), "Hidden");
-            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/saved", ""), "Saved");
+            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/upvoted", "", ""), "Upvoted");
+            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/downvoted", "", ""), "Downvoted");
+            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/hidden", "", ""), "Hidden");
+            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/saved", "", ""), "Saved");
             viewPagerAdapter.notifyDataSetChanged();
         }
         ImageView profilePic = view.findViewById(R.id.profile_picture);
@@ -179,13 +179,13 @@ public class UserFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
+        toolbar.inflateMenu(R.menu.sorting);
         if (mainActivity.viewingSelf)
             NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
         else {
-            mainActivity.setSupportActionBar(toolbar);
             DrawerLayout drawer = mainActivity.drawer;
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            NavigationUI.setupActionBarWithNavController(mainActivity, navController);
+            NavigationUI.setupWithNavController(toolbar, navController);
         }
     }
 }

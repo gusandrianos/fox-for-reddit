@@ -62,7 +62,7 @@ public class SubredditFragment extends Fragment {
             if (savedInstanceState == null) {
                 getChildFragmentManager().beginTransaction()
                         .replace(R.id.subreddit_posts_fragment,
-                                PostFragment.newInstance(subredditName, ""),
+                                PostFragment.newInstance(subredditName, "", ""),
                                 "SubredditPostFragment")
                         .commitNow();
             }
@@ -161,6 +161,7 @@ public class SubredditFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);
+        toolbar.inflateMenu(R.menu.sorting);
         DrawerLayout drawer = mainActivity.drawer;
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController, mainActivity.appBarConfiguration);

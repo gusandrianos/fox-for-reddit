@@ -15,18 +15,20 @@ class RedditPagingSource() : PagingSource<String, Data>() {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     private lateinit var mSubreddit: String
     private lateinit var mFilter: String
+    private lateinit var mTime: String
     private lateinit var mBearer: String
     private lateinit var mLocation: String
     private var MODE = 0
 
-    constructor (subreddit: String, filter: String, bearer: String): this(){
+    constructor (subreddit: String, filter: String, time: String, bearer: String) : this() {
         mSubreddit = subreddit
         mFilter = filter
+        mTime = time
         mBearer = bearer
         MODE = MODE_POST
     }
 
-    constructor (where: String, bearer: String): this() {
+    constructor (where: String, bearer: String) : this() {
         mBearer = bearer
         mLocation = where
         MODE = MODE_SUBREDDIT
@@ -38,7 +40,7 @@ class RedditPagingSource() : PagingSource<String, Data>() {
         return try {
             lateinit var response: Listing
             if (MODE == MODE_POST)
-                response = redditAPI.getPostList(mSubreddit, mFilter, position, params.loadSize, mBearer)
+                response = redditAPI.getPostList(mSubreddit, mFilter, position, params.loadSize, mTime, mBearer)
             else if (MODE == MODE_SUBREDDIT)
                 response = redditAPI.getSubreddits(mBearer, mLocation, position, params.loadSize)
             val items = response.data!!.children?.map { it.data!! } ?: emptyList()

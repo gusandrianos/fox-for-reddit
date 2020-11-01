@@ -1,7 +1,6 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,14 +9,15 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.paging.LoadState;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,6 @@ import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
-import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.PostAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
@@ -46,6 +45,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     String time;
     int page;
     PostAdapter mPostRecyclerViewAdapter;
+    RecyclerView mPostRecyclerView;
+    SwipeRefreshLayout pullToRefresh;
 
     @Nullable
     @Override
@@ -62,12 +63,14 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         subreddit = getArguments().getString("subreddit", "");
         filter = getArguments().getString("filter", "");
         time = getArguments().getString("time", "");
+        pullToRefresh = view.findViewById(R.id.swipe_refresh_layout_posts);
         initRecycleView();
-        initializeUI();
+        loadPosts(false);
+        initSwipeToRefresh();
     }
 
     private void initRecycleView() {
-        RecyclerView mPostRecyclerView = mView.findViewById(R.id.recyclerview);
+        mPostRecyclerView = mView.findViewById(R.id.recyclerview);
         mPostRecyclerViewAdapter = new PostAdapter(this);
         mPostRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY); //keep recyclerview on position
         mPostRecyclerView.setHasFixedSize(true);
@@ -80,11 +83,28 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         mPostRecyclerView.setAdapter(mPostRecyclerViewAdapter.withLoadStateFooter(postLoadStateAdapter));
     }
 
-    public void initializeUI() {
+    private void loadPosts(boolean requestChanged) {
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        if (requestChanged)
+            viewModel.deleteCached();
+
         viewModel.getPosts(subreddit, filter, time, getActivity().getApplication()).observe(getViewLifecycleOwner(), postPagingData -> {
             mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), postPagingData);
+            mPostRecyclerViewAdapter.addLoadStateListener(loadStates -> {
+                if (loadStates.getRefresh() instanceof LoadState.Loading)
+                    pullToRefresh.setRefreshing(true);
+                else if (loadStates.getRefresh() instanceof LoadState.NotLoading)
+                    pullToRefresh.setRefreshing(false);
+                return Unit.INSTANCE;
+            });
+        });
+    }
+
+    private void initSwipeToRefresh() {
+        pullToRefresh.setOnRefreshListener(() -> {
+            mPostRecyclerViewAdapter.refresh();
+            mPostRecyclerView.smoothScrollToPosition(0);
         });
     }
 
@@ -95,7 +115,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         if (!mToken.getAccessToken().equals(token.getAccessToken())) {
             mToken = token;
             initRecycleView();
-            initializeUI();
+            loadPosts(true);
         }
     }
 

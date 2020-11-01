@@ -21,6 +21,10 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
         return posts!!
     }
 
+    fun deleteCached() {
+        posts = null
+    }
+
     fun votePost(dir: String, id: String, application: Application) {
         mPostRepository.votePost(dir, id, application)
     }

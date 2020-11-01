@@ -31,7 +31,7 @@
         android:id="@+id/video_seek_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/txt_video_duration"
         app:layout_constraintHorizontal_weight="0.7"

@@ -18,7 +18,7 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/single_post_collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@android:color/white"
             app:expandedTitleMarginStart="16dp"
             app:expandedTitleTextAppearance="@style/CollapsingToolbarLayoutExpandedTextStyle"
@@ -30,35 +30,37 @@
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="top|end"
                 android:background="@android:color/transparent"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin"/>
 
             <LinearLayout
                 android:id="@+id/ll_collapsing"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <include
                     android:id="@+id/include_single_post_header"
-                    layout="@layout/post_header" />
+                    layout="@layout/post_header"/>
 
                 <TextView
                     android:id="@+id/stub_txt_post_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="This is the title" />
+                    android:text="This is the title"/>
 
                 <ViewStub
                     android:id="@+id/view_stub"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inflatedId="@+id/layoutId" />
+                    android:layout_height="match_parent"
+                    android:inflatedId="@+id/layoutId"/>
 
             </LinearLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
+
+
 
     <LinearLayout
         android:id="@+id/ll_single_post_comments"
@@ -67,20 +69,6 @@
         android:orientation="vertical"
         android:scrollbarAlwaysDrawVerticalTrack="true"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
-
-        <LinearLayout
-            android:id="@+id/ll_view_stub2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <ViewStub
-                android:id="@+id/view_stub2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:inflatedId="@+id/layoutId"
-                android:overScrollMode="ifContentScrolls" />
-        </LinearLayout>
-
 
         <include
             android:id="@+id/include_single_post_footer"

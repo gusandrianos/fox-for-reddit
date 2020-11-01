@@ -25,12 +25,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -107,6 +109,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        setUpToolbar(view);
 
         if (savedInstanceState != null)
             isFullscreen = savedInstanceState.getBoolean("isFullscreen");
@@ -542,6 +546,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_single_post_header);
         LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
         CollapsingToolbarLayout collapsingToolbar = view.findViewById(R.id.single_post_collapsing_toolbar);
+        Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbar.getLayoutParams();
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -557,6 +562,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
         }
 
+        toolbar.setVisibility(View.VISIBLE);
         singlePostTitle.setVisibility(View.VISIBLE);
         singlePostHeader.setVisibility(View.VISIBLE);
         singlePostFooter.setVisibility(View.VISIBLE);
@@ -576,10 +582,12 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         TextView singlePostTitle = view.findViewById(R.id.stub_txt_post_title);
         LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_single_post_header);
         LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
+        Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
 
         appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
         playerView.setLayoutParams((new FrameLayout.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT)));
 
+        toolbar.setVisibility(View.GONE);
         singlePostTitle.setVisibility(View.GONE);
         singlePostHeader.setVisibility(View.GONE);
         singlePostFooter.setVisibility(View.GONE);
@@ -666,5 +674,18 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             player.seekTo(savedInstanceState.getLong("currentTime"));
             player.setPlayWhenReady(savedInstanceState.getBoolean("isPlaying"));
         }
+    }
+
+    private void setUpToolbar(View view) {
+        CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.single_post_collapsing_toolbar);
+        collapsingToolbar.setTitleEnabled(false);
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        NavController navController = NavHostFragment.findNavController(this);
+        Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
+        toolbar.setTitle(" ");
+        mainActivity.setSupportActionBar(toolbar);
+        DrawerLayout drawer = mainActivity.drawer;
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        NavigationUI.setupWithNavController(collapsingToolbar,toolbar, navController);
     }
 }

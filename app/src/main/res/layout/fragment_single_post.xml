@@ -22,15 +22,8 @@
             android:background="@android:color/white"
             app:expandedTitleMarginStart="16dp"
             app:expandedTitleTextAppearance="@style/CollapsingToolbarLayoutExpandedTextStyle"
-            app:layout_scrollFlags="scroll">
+            app:layout_scrollFlags="exitUntilCollapsed|scroll">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/single_post_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_gravity="top|end"
-                android:background="@android:color/transparent"
-                app:layout_collapseMode="pin"/>
 
             <LinearLayout
                 android:id="@+id/ll_collapsing"
@@ -39,6 +32,9 @@
                 android:orientation="vertical">
 
                 <include
+                    android:layout_marginTop="56dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/include_single_post_header"
                     layout="@layout/post_header"/>
 
@@ -56,11 +52,17 @@
 
             </LinearLayout>
 
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/single_post_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="top|end"
+                android:background="#FFFFFF"
+                app:layout_collapseMode="pin"/>
+
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
-
-
 
     <LinearLayout
         android:id="@+id/ll_single_post_comments"

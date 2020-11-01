@@ -245,8 +245,6 @@ public class FullscreenFragment extends Fragment {
         inflated = stub.inflate();
 
         PlayerView playerView = inflated.findViewById(R.id.video_player);
-//        playerView.setLayoutParams(new PlayerView.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT));
-
 
         imgPlay = playerView.findViewById(R.id.exo_img_play);
         TextView txtVideoOpenInNew = playerView.findViewById(R.id.txt_video_open_in_new);
@@ -256,7 +254,6 @@ public class FullscreenFragment extends Fragment {
         TextView txtVideoDuration = inflated.findViewById(R.id.txt_video_duration);
 
         Uri videoUri;
-        int videoDuration;
 
         if (videoType == Constants.REDDIT_VIDEO) {
             if (post.getSecureMedia().getRedditVideo().getHlsUrl() != null) {
@@ -264,23 +261,18 @@ public class FullscreenFragment extends Fragment {
             } else {
                 videoUri = Uri.parse(post.getSecureMedia().getRedditVideo().getFallbackUrl());
             }
-            videoDuration = (int) post.getSecureMedia().getRedditVideo().getDuration();
         } else {
             if (post.getPreview().getRedditVideoPreview().getHlsUrl() != null) {
                 videoUri = Uri.parse(post.getPreview().getRedditVideoPreview().getHlsUrl());
             } else {
                 videoUri = Uri.parse(post.getPreview().getRedditVideoPreview().getFallbackUrl());
             }
-            videoDuration = (int) post.getPreview().getRedditVideoPreview().getDuration();
             String domain = post.getDomain();
             txtVideoOpenInNew.setVisibility(View.VISIBLE);
             txtVideoOpenInNew.setText(domain);
             txtVideoOpenInNew.setText(domain);
             txtVideoOpenInNew.setOnClickListener(view12 -> startActivity(FoxToolkit.INSTANCE.visitLink(post)));
         }
-
-        videoSeekBar.setMax(videoDuration);
-        txtVideoDuration.setText(FoxToolkit.INSTANCE.getTimeOfVideo(videoDuration));
 
         player = new SimpleExoPlayer.Builder(requireActivity()).build();
         MediaItem mediaItem = MediaItem.fromUri(videoUri);
@@ -306,6 +298,9 @@ public class FullscreenFragment extends Fragment {
                             imgPlay.setImageResource(R.drawable.exo_icon_play);
                         changeSeekBar(player, videoSeekBar, txtVideoCurrentTime, handler);
                         player.setPauseAtEndOfMediaItems(false);
+
+                        videoSeekBar.setMax((int) player.getDuration()/1000);
+                        txtVideoDuration.setText(FoxToolkit.INSTANCE.getTimeOfVideo(player.getDuration()/1000));
                         break;
                     case Player.STATE_ENDED:
                         imgPlay.setImageResource(R.drawable.exo_icon_play);

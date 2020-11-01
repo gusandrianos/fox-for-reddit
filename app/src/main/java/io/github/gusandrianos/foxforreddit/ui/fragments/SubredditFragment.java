@@ -51,7 +51,7 @@ public class SubredditFragment extends Fragment {
 
         TextView titleTextView = view.findViewById(R.id.text_subreddit_title);
         titleTextView.setText(subredditName);
-        setUpToolbar(view, subredditName);
+        setUpToolbar(view);
 
         SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
         SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
@@ -156,15 +156,13 @@ public class SubredditFragment extends Fragment {
         Glide.with(view).load(R.drawable.cover_gradient).into(gradient);
     }
 
-    private void setUpToolbar(View view, String subredditName) {
+    private void setUpToolbar(View view) {
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.subreddit_collapsing_toolbar);
-        collapsingToolbar.setTitle(subredditName);
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);
-        mainActivity.setSupportActionBar(toolbar);
         DrawerLayout drawer = mainActivity.drawer;
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        NavigationUI.setupActionBarWithNavController(mainActivity, navController, mainActivity.appBarConfiguration);
+        NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController, mainActivity.appBarConfiguration);
     }
 }

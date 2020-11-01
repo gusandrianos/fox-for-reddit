@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -27,8 +25,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
-import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -69,6 +67,7 @@ import io.github.gusandrianos.foxforreddit.data.models.GalleryItem;
 import io.github.gusandrianos.foxforreddit.data.models.ResolutionsItem;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 
+import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentGroup;
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentItem;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
@@ -81,8 +80,7 @@ import static io.github.gusandrianos.foxforreddit.utilities.PostAdapterKt.format
 
 public class SinglePostFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
     private boolean wasPlaying;
-    private Boolean isFullscreen;
-
+    private boolean isFullscreen;
     private int orientation;
 
     NavHostFragment navHostFragment;
@@ -90,11 +88,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     ViewStub stub;
     View inflated;
-
-    AppBarLayout appBarLayout;
-    LinearLayoutCompat singlePostHeader;
-    LinearLayoutCompat singlePostFooter;
-    CollapsingToolbarLayout singlePostCollapsingToolbar;
 
     SimpleExoPlayer player = null;
     ImageView imgPlay;
@@ -115,9 +108,13 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (savedInstanceState != null)
+            isFullscreen = savedInstanceState.getBoolean("isFullscreen");
+
         navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         navController = Objects.requireNonNull(navHostFragment).getNavController();
 
+        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         orientation = getResources().getConfiguration().orientation;
 
         SinglePostFragmentArgs singlePostFragmentArgs = SinglePostFragmentArgs.fromBundle(requireArguments());
@@ -190,7 +187,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void bindHeaderAndFooter(Data singlePostData, View view) {
-        singlePostCollapsingToolbar = view.findViewById(R.id.single_post_collapsing_toolbar);
         ImageView mImgPostSubreddit = view.findViewById(R.id.img_post_subreddit);
         TextView mTxtPostSubreddit = view.findViewById(R.id.txt_post_subreddit);
         TextView mTxtPostUser = view.findViewById(R.id.txt_post_user);
@@ -412,48 +408,35 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     private void createVideoPlayer(Data singlePostData, View view, int videoType) {
         Handler handler = new Handler();
-        PlayerView playerView;
 
+        stub = view.findViewById(R.id.view_stub);
+        stub.setLayoutResource(R.layout.stub_video);
+        inflated = stub.inflate();
 
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            stub = view.findViewById(R.id.view_stub2);
-            stub.setLayoutResource(R.layout.stub_video);
-            inflated = stub.inflate();
-            playerView = inflated.findViewById(R.id.video_player);
-            requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            playerView.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
-        } else {
-            stub = view.findViewById(R.id.view_stub);
-            stub.setLayoutResource(R.layout.stub_video);
-            inflated = stub.inflate();
-            playerView = inflated.findViewById(R.id.video_player);
-            appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
-            appBarLayout.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT));
-        }
-        imgPlay = playerView.findViewById(R.id.exo_img_play);
+        PlayerView playerView = inflated.findViewById(R.id.video_player);
         TextView txtVideoOpenInNew = playerView.findViewById(R.id.txt_video_open_in_new);
-        ProgressBar progressBar = inflated.findViewById(R.id.progress_bar);
-        videoSeekBar = inflated.findViewById(R.id.video_seek_bar);
         TextView txtVideoCurrentTime = inflated.findViewById(R.id.txt_video_current_time);
         TextView txtVideoDuration = inflated.findViewById(R.id.txt_video_duration);
         ImageView imgFullscreen = inflated.findViewById(R.id.img_fullscreen);
 
-        singlePostHeader = view.findViewById(R.id.include_single_post_header);
-        singlePostFooter = view.findViewById(R.id.include_single_post_footer);
+        imgPlay = playerView.findViewById(R.id.exo_img_play);
+        ProgressBar progressBar = inflated.findViewById(R.id.progress_bar);
+        videoSeekBar = inflated.findViewById(R.id.video_seek_bar);
 
-        if (isFullscreen == null) {
-            isFullscreen = false;
-        }
+        imgFullscreen.setVisibility(View.VISIBLE);
+
+        if (isFullscreen)
+            hideViews(view);
+        else
+            showViews(view);
 
         Uri videoUri;
-        int videoDuration;
         if (videoType == Constants.REDDIT_VIDEO) {
             if (singlePostData.getSecureMedia().getRedditVideo().getHlsUrl() != null) {
                 videoUri = Uri.parse(singlePostData.getSecureMedia().getRedditVideo().getHlsUrl());
             } else {
                 videoUri = Uri.parse(singlePostData.getSecureMedia().getRedditVideo().getFallbackUrl());
             }
-            videoDuration = (int) singlePostData.getSecureMedia().getRedditVideo().getDuration();
         } else {
             if (singlePostData.getPreview().getRedditVideoPreview().getHlsUrl() != null) {
                 videoUri = Uri.parse(singlePostData.getPreview().getRedditVideoPreview().getHlsUrl());
@@ -462,7 +445,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             }
 
             String domain;
-            videoDuration = (int) singlePostData.getPreview().getRedditVideoPreview().getDuration();
             domain = singlePostData.getDomain();
 
             txtVideoOpenInNew.setText(domain);
@@ -470,15 +452,13 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             txtVideoOpenInNew.setOnClickListener(view12 -> startActivity(FoxToolkit.INSTANCE.visitLink(singlePostData)));
         }
 
-        videoSeekBar.setMax(videoDuration);
-        txtVideoDuration.setText(FoxToolkit.INSTANCE.getTimeOfVideo(videoDuration));
-
         player = new SimpleExoPlayer.Builder(requireActivity()).build();
         MediaItem mediaItem = MediaItem.fromUri(videoUri);
         playerView.setPlayer(player);
         playerView.setKeepScreenOn(true);
         player.setMediaItem(mediaItem);
         player.prepare();
+
         player.addListener(new Player.EventListener() {
             @Override
             public void onPlaybackStateChanged(int state) {
@@ -496,6 +476,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                             imgPlay.setImageResource(R.drawable.exo_icon_play);
                         changeSeekBar(player, videoSeekBar, txtVideoCurrentTime, handler);
                         player.setPauseAtEndOfMediaItems(false);
+                        videoSeekBar.setMax((int) player.getDuration() / 1000);
+                        txtVideoDuration.setText(FoxToolkit.INSTANCE.getTimeOfVideo(player.getDuration() / 1000));
                         break;
                     case Player.STATE_ENDED:
                         imgPlay.setImageResource(R.drawable.exo_icon_play);
@@ -540,92 +522,86 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             }
         });
 
-        imgFullscreen.setVisibility(View.VISIBLE);
-        imgFullscreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view1) {
-                fullscreenMode(playerView, view);
-            }
-        });
+        imgFullscreen.setOnClickListener(view1 -> fullscreenMode(view));
     }
 
-    public void fullscreenMode(PlayerView playerView, View view) {
+    public void fullscreenMode(View view) {
         isFullscreen = !isFullscreen;
-
-        if (isFullscreen) {
+        if (isFullscreen)
             hideViews(view);
-        } else {
-
+        else
             showViews(view);
-
-        }
-
     }
 
     private void showViews(View view) {
-        TextView txtPostTitle = view.findViewById(R.id.stub_txt_post_title);
+        lockDrawer(false);
+
+        AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
+        PlayerView playerView = view.findViewById(R.id.video_player);
+        TextView singlePostTitle = view.findViewById(R.id.stub_txt_post_title);
+        LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_single_post_header);
+        LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
+        CollapsingToolbarLayout collapsingToolbar = view.findViewById(R.id.single_post_collapsing_toolbar);
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbar.getLayoutParams();
+
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
-            CollapsingToolbarLayout collapsingToolbarLayout = view.findViewById(R.id.single_post_collapsing_toolbar);
-            Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
-            LinearLayout llSinglePostComments = view.findViewById(R.id.ll_single_post_comments);
-            LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
-            LinearLayout llViewStub2 = view.findViewById(R.id.ll_view_stub2);
-            PlayerView playerView = view.findViewById(R.id.video_player);
-            LinearLayout llCollapsing = view.findViewById(R.id.ll_collapsing);
+            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL);
 
-
-
-            collapsingToolbarLayout.setVisibility(View.VISIBLE);
-            appBarLayout.setVisibility(View.VISIBLE);
-            singlePostFooter.setVisibility(View.VISIBLE);
-            txtPostTitle.setVisibility(View.VISIBLE);
-            toolbar.setVisibility(View.VISIBLE);
-            mCommentsRecyclerView.setVisibility(View.VISIBLE);
-
-            llCollapsing.setLayoutParams(new CollapsingToolbarLayout.LayoutParams(CollapsingToolbarLayout.LayoutParams.MATCH_PARENT,CollapsingToolbarLayout.LayoutParams.WRAP_CONTENT));
-            llViewStub2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            appBarLayout.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.WRAP_CONTENT));
-
-            llSinglePostComments.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.WRAP_CONTENT));
-            requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            collapsingToolbar.setLayoutParams(params);
             playerView.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
-
+            appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT)));
         } else {
+            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL);
 
+            collapsingToolbar.setLayoutParams(params);
+            appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
         }
 
+        singlePostTitle.setVisibility(View.VISIBLE);
+        singlePostHeader.setVisibility(View.VISIBLE);
+        singlePostFooter.setVisibility(View.VISIBLE);
+        mCommentsRecyclerView.setVisibility(View.VISIBLE);
     }
 
     public void hideViews(View view) {
-        TextView txtPostTitle = view.findViewById(R.id.stub_txt_post_title);
+        lockDrawer(true);
 
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
-            Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
-            LinearLayout llSinglePostComments = view.findViewById(R.id.ll_single_post_comments);
-            LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
-            LinearLayout llViewStub2 = view.findViewById(R.id.ll_view_stub2);
-            PlayerView playerView = view.findViewById(R.id.video_player);
+        CollapsingToolbarLayout collapsingToolbar = view.findViewById(R.id.single_post_collapsing_toolbar);
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbar.getLayoutParams();
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL);
+        collapsingToolbar.setLayoutParams(params);
 
-            appBarLayout.setVisibility(View.GONE);
-            singlePostFooter.setVisibility(View.GONE);
-            mCommentsRecyclerView.setVisibility(View.GONE);
-            txtPostTitle.setVisibility(View.GONE);
-            playerView.setLayoutParams((new FrameLayout.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT)));
-            llViewStub2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-            llSinglePostComments.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT));
-        } else {
+        AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
+        PlayerView playerView = view.findViewById(R.id.video_player);
+        TextView singlePostTitle = view.findViewById(R.id.stub_txt_post_title);
+        LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_single_post_header);
+        LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
 
-        }
+        appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
+        playerView.setLayoutParams((new FrameLayout.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT)));
+
+        singlePostTitle.setVisibility(View.GONE);
+        singlePostHeader.setVisibility(View.GONE);
+        singlePostFooter.setVisibility(View.GONE);
+        mCommentsRecyclerView.setVisibility(View.GONE);
+
     }
-
 
     private void changeSeekBar(SimpleExoPlayer player, SeekBar videoSeekBar, TextView videoCurrentTime, Handler handler) {
         videoSeekBar.setProgress((int) player.getCurrentPosition() / 1000);
-        videoCurrentTime.setText(FoxToolkit.INSTANCE.getTimeOfVideo((int) player.getCurrentPosition() / 1000));
+        videoCurrentTime.setText(FoxToolkit.INSTANCE.getTimeOfVideo(player.getCurrentPosition() / 1000));
         Runnable runnable = () -> changeSeekBar(player, videoSeekBar, videoCurrentTime, handler);
         handler.postDelayed(runnable, 1000);
+    }
+
+    private void lockDrawer(boolean lock) {
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        DrawerLayout drawer = mainActivity.drawer;
+        if (lock) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }else{
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
     }
 
 
@@ -678,6 +654,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         if (player != null) {
             outState.putLong("currentTime", player.getCurrentPosition());
             outState.putBoolean("isPlaying", wasPlaying);
+            outState.putBoolean("isFullscreen", isFullscreen);
             videoSeekBar.setProgress(0);
         }
     }

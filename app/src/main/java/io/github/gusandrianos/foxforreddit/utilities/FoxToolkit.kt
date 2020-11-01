@@ -68,7 +68,7 @@ object FoxToolkit {
         return intent
     }
 
-    fun getTimeOfVideo(time: Int): String? {
+    fun getTimeOfVideo(time: Long): String? {
         val min = time / 60
         val sec = time - min * 60
         val minStr = if (min < 10) "0$min" else min.toString()

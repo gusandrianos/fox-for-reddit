@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -42,6 +43,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     private Token mToken;
     String subreddit;
     String filter;
+    String timedFilter;
     String time;
     int page;
     PostAdapter mPostRecyclerViewAdapter;
@@ -83,7 +85,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         mPostRecyclerView.setAdapter(mPostRecyclerViewAdapter.withLoadStateFooter(postLoadStateAdapter));
     }
 
-    private void loadPosts(boolean requestChanged) {
+    void loadPosts(boolean requestChanged) {
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         if (requestChanged)
@@ -106,17 +108,6 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             mPostRecyclerViewAdapter.refresh();
             mPostRecyclerView.smoothScrollToPosition(0);
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
-        if (!mToken.getAccessToken().equals(token.getAccessToken())) {
-            mToken = token;
-            initRecycleView();
-            loadPosts(true);
-        }
     }
 
     @Override
@@ -186,6 +177,88 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         }
     }
 
+    private Toolbar getCurrentToolbar() {
+        if (getParentFragment() instanceof UserFragment)
+            return requireActivity().findViewById(R.id.profile_toolbar);
+        else if (getParentFragment() instanceof SubredditFragment)
+            return requireActivity().findViewById(R.id.subreddit_toolbar);
+        else
+            return requireActivity().findViewById(R.id.toolbar_main);
+    }
+
+    void setMenuItemClickForCurrentFragment() {
+        Toolbar toolbar = getCurrentToolbar();
+
+        toolbar.setOnMenuItemClickListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.sort_best:
+                    filter = "best";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_hot:
+                    filter = "hot";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_new:
+                    filter = "new";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_top:
+                    timedFilter = "top";
+                    break;
+
+                case R.id.sort_controversial:
+                    timedFilter = "controversial";
+                    break;
+
+                case R.id.sort_rising:
+                    filter = "rising";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_hour:
+                    filter = timedFilter;
+                    time = "hour";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_24h:
+                    filter = timedFilter;
+                    time = "day";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_week:
+                    filter = timedFilter;
+                    time = "week";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_month:
+                    filter = timedFilter;
+                    time = "month";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_year:
+                    filter = timedFilter;
+                    time = "year";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_all_time:
+                    filter = timedFilter;
+                    time = "all";
+                    loadPosts(true);
+                    return true;
+            }
+            return false;
+        });
+    }
+
     public static PostFragment newInstance(String subreddit, String filter, String time) {
         PostFragment fragment = new PostFragment();
 
@@ -196,5 +269,24 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
+        if (!mToken.getAccessToken().equals(token.getAccessToken())) {
+            mToken = token;
+            initRecycleView();
+            loadPosts(true);
+        }
+        setMenuItemClickForCurrentFragment();
+    }
+
+    @Override
+    public void onPause() {
+        Toolbar toolbar = getCurrentToolbar();
+        toolbar.setOnMenuItemClickListener(null);
+        super.onPause();
     }
 }

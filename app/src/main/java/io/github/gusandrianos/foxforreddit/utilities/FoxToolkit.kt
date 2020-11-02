@@ -3,8 +3,11 @@ package io.github.gusandrianos.foxforreddit.utilities
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
+import android.view.MenuItem
 import io.github.gusandrianos.foxforreddit.Constants
+import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.ui.fragments.PostFragment
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel
 
 object FoxToolkit {
@@ -53,7 +56,7 @@ object FoxToolkit {
         }
     }
 
-    fun shareLink(data: Data): Intent{
+    fun shareLink(data: Data): Intent {
         val sharingIntent = Intent(Intent.ACTION_SEND)
         sharingIntent.type = "text/plain"
         val shareBody = Constants.REDDIT_URL + data.permalink
@@ -61,7 +64,7 @@ object FoxToolkit {
         return sharingIntent
     }
 
-    fun visitLink(data: Data): Intent{
+    fun visitLink(data: Data): Intent {
         val url: String = data.url!!
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)

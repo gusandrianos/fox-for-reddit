@@ -59,10 +59,11 @@ public class SubredditFragment extends Fragment {
         viewModel.getSubreddit(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
         {
             setupHeader(subredditInfo, view);
+            PostFragment subredditPostFragment = PostFragment.newInstance(subredditName, "", "");
             if (savedInstanceState == null) {
                 getChildFragmentManager().beginTransaction()
                         .replace(R.id.subreddit_posts_fragment,
-                                PostFragment.newInstance(subredditName, "", ""),
+                                subredditPostFragment,
                                 "SubredditPostFragment")
                         .commitNow();
             }

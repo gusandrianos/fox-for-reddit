@@ -37,8 +37,8 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Subreddit;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
+import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
@@ -59,6 +59,7 @@ public class UserFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         UserFragmentArgs args = UserFragmentArgs.fromBundle(requireArguments());
+
         Data user = args.getUser();
         String username = args.getUsername();
 
@@ -87,10 +88,12 @@ public class UserFragment extends Fragment {
 
         ViewPager2 viewPager = view.findViewById(R.id.profile_view_pager);
         TabLayout tabLayout = view.findViewById(R.id.profile_tab_layout);
+
         if (isSelf)
             tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         else
             tabLayout.setTabMode(TabLayout.MODE_FIXED);
+
         ArrayList<Fragment> userFragments = new ArrayList<>();
         ArrayList<String> tabTitles = new ArrayList<>();
 
@@ -100,6 +103,28 @@ public class UserFragment extends Fragment {
         tabTitles.add("Comments");
         userFragments.add(AboutUserFragment.newInstance(user.getName(), user.getLinkKarma(), user.getCommentKarma()));
         tabTitles.add("About");
+
+        // TODO: Use appropriate API Endpoint to make this meaningful
+//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+//            @Override
+//            public void onTabSelected(TabLayout.Tab tab) {
+//                Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
+//
+//                if (tab.getPosition() < 2) {
+//                    toolbar = view.findViewById(R.id.profile_toolbar);
+//                    toolbar.getMenu().setGroupVisible(0, true);
+//                } else
+//                    toolbar.getMenu().setGroupVisible(0, false);
+//            }
+//
+//            @Override
+//            public void onTabUnselected(TabLayout.Tab tab) {
+//            }
+//
+//            @Override
+//            public void onTabReselected(TabLayout.Tab tab) {
+//            }
+//        });
 
         if (isSelf) {
             userFragments.add(PostFragment.newInstance("u/" + user.getName() + "/upvoted", "", ""));
@@ -193,7 +218,7 @@ public class UserFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
-        toolbar.inflateMenu(R.menu.sorting);
+//        toolbar.inflateMenu(R.menu.sorting);
         if (mainActivity.viewingSelf)
             NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
         else {

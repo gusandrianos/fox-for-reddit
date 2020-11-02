@@ -85,4 +85,8 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     // Custom browser tabs
     implementation "androidx.browser:browser:1.2.0"
+    // Markdown parser
+    implementation "io.noties.markwon:core:4.6.0"
+    implementation "io.noties.markwon:ext-tables:4.6.0"
+    implementation "io.noties.markwon:linkify:4.6.0"
 }

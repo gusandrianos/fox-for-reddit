@@ -52,7 +52,6 @@ import com.google.gson.reflect.TypeToken;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
 
-
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -76,6 +75,9 @@ import io.github.gusandrianos.foxforreddit.utilities.ImageGalleryAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
+import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.linkify.LinkifyPlugin;
 
 import static io.github.gusandrianos.foxforreddit.utilities.PostAdapterKt.formatValue;
 
@@ -104,6 +106,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     GroupAdapter<GroupieViewHolder> groupAdapter;
 
     DisplayMetrics displayMetrics = new DisplayMetrics();
+    Markwon markwon;
 
     @Nullable
     @Override
@@ -114,6 +117,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        markwon = Markwon.builder(requireContext())
+                .usePlugin(TablePlugin.create(requireContext()))
+                .usePlugin(LinkifyPlugin.create())
+                .build();
 
         navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         navController = Objects.requireNonNull(navHostFragment).getNavController();
@@ -281,7 +288,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         if (singlePostData.getSelftext() != null) {
             TextView txtPostBody = inflated.findViewById(R.id.stub_txt_post_body);
-            txtPostBody.setText(singlePostData.getSelftext());
+            markwon.setMarkdown(txtPostBody, singlePostData.getSelftext());
             txtPostBody.setVisibility(View.VISIBLE);
         }
     }
@@ -382,7 +389,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         if (singlePostData.getSelftext() != null) {
             TextView txtPostBody = inflated.findViewById(R.id.stub_txt_post_body);
-            txtPostBody.setText(singlePostData.getSelftext());
+            markwon.setMarkdown(txtPostBody, singlePostData.getSelftext());
             txtPostBody.setVisibility(View.VISIBLE);
         }
     }

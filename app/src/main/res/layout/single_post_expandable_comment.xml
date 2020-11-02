@@ -143,7 +143,7 @@
 
         <LinearLayout
             android:id="@+id/separatorContainer2"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
@@ -158,16 +158,18 @@
             android:id="@+id/txt_more_children"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:layout_marginBottom="@dimen/activity_horizontal_margin"
             android:clickable="true"
             android:text="Load More"
+            android:textAlignment="textStart"
+            app:layout_constraintHorizontal_bias="0"
             android:textColor="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/separatorContainer2"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

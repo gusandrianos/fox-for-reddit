@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -110,7 +111,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        setUpToolbar(view);
+        SinglePostFragmentArgs singlePostFragmentArgs = SinglePostFragmentArgs.fromBundle(requireArguments());
+        Data singlePostData = singlePostFragmentArgs.getPost();
+        int postType = singlePostFragmentArgs.getPostType();
+        mCommentsRecyclerView = view.findViewById(R.id.recyclerview_single_post);
 
         if (savedInstanceState != null)
             isFullscreen = savedInstanceState.getBoolean("isFullscreen");
@@ -121,11 +125,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         orientation = getResources().getConfiguration().orientation;
 
-        SinglePostFragmentArgs singlePostFragmentArgs = SinglePostFragmentArgs.fromBundle(requireArguments());
-        Data singlePostData = singlePostFragmentArgs.getPost();
-        int postType = singlePostFragmentArgs.getPostType();
-        mCommentsRecyclerView = view.findViewById(R.id.recyclerview_single_post);
-
+        setUpToolbar(view, singlePostData.getSubredditNamePrefixed());
         initializeUI(singlePostData, view, postType);
 
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
@@ -551,20 +551,26 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL);
-
             collapsingToolbar.setLayoutParams(params);
+
             playerView.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
             appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT)));
+            singlePostHeader.setVisibility(View.GONE);
+            LinearLayout.LayoutParams txtparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            float d = requireContext().getResources().getDisplayMetrics().density;
+            int marginTop = (int)(56 * d);
+            txtparams.setMargins(0,marginTop,0,0);
+            singlePostTitle.setLayoutParams(txtparams);
         } else {
-            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL);
-
+            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL|AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
             collapsingToolbar.setLayoutParams(params);
             appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
+            singlePostHeader.setVisibility(View.VISIBLE);
         }
 
         toolbar.setVisibility(View.VISIBLE);
         singlePostTitle.setVisibility(View.VISIBLE);
-        singlePostHeader.setVisibility(View.VISIBLE);
+//        singlePostHeader.setVisibility(View.VISIBLE);
         singlePostFooter.setVisibility(View.VISIBLE);
         mCommentsRecyclerView.setVisibility(View.VISIBLE);
     }
@@ -607,7 +613,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         DrawerLayout drawer = mainActivity.drawer;
         if (lock) {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        }else{
+        } else {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         }
     }
@@ -676,16 +682,28 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         }
     }
 
-    private void setUpToolbar(View view) {
+    private void setUpToolbar(View view, String subreddit) {
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.single_post_collapsing_toolbar);
-        collapsingToolbar.setTitleEnabled(false);
+        AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
+        Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
+        LinearLayoutCompat includeHeader = view.findViewById(R.id.include_single_post_header);
+
+        appBarLayout.addOnOffsetChangedListener((AppBarLayout.OnOffsetChangedListener) (appBarLayout1, verticalOffset) -> {
+            float normalize = (float) (1 - ((float) -verticalOffset / includeHeader.getMeasuredHeight())) * 255;
+            if (Math.abs(verticalOffset) >= includeHeader.getMeasuredHeight()) {
+                toolbar.setTitleTextColor(Color.argb(255, 0, 0, 0));
+            } else {
+                toolbar.setTitleTextColor(Color.argb((int) -normalize, 0, 0, 0));
+            }
+        });
+
+        toolbar.setTitle(subreddit);
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
-        Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
-        toolbar.setTitle(" ");
+
         mainActivity.setSupportActionBar(toolbar);
         DrawerLayout drawer = mainActivity.drawer;
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        NavigationUI.setupWithNavController(collapsingToolbar,toolbar, navController);
+        NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController);
     }
 }

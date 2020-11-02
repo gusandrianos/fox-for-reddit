@@ -5,9 +5,9 @@
     android:id="@+id/nav_single_post"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:orientation="vertical"
-    tools:context=".ui.fragments.SinglePostFragment"
-    android:animateLayoutChanges="true">
+    tools:context=".ui.fragments.SinglePostFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout_fragment_single_post"
@@ -22,8 +22,8 @@
             android:background="@android:color/white"
             app:expandedTitleMarginStart="16dp"
             app:expandedTitleTextAppearance="@style/CollapsingToolbarLayoutExpandedTextStyle"
-            app:layout_scrollFlags="exitUntilCollapsed|scroll">
-
+            app:layout_scrollFlags="exitUntilCollapsed|scroll"
+            app:titleEnabled="false">
 
             <LinearLayout
                 android:id="@+id/ll_collapsing"
@@ -32,23 +32,23 @@
                 android:orientation="vertical">
 
                 <include
-                    android:layout_marginTop="56dp"
+                    android:id="@+id/include_single_post_header"
+                    layout="@layout/post_header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/include_single_post_header"
-                    layout="@layout/post_header"/>
+                    android:layout_marginTop="56dp" />
 
                 <TextView
                     android:id="@+id/stub_txt_post_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="This is the title"/>
+                    android:text="This is the title" />
 
                 <ViewStub
                     android:id="@+id/view_stub"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:inflatedId="@+id/layoutId"/>
+                    android:inflatedId="@+id/layoutId" />
 
             </LinearLayout>
 
@@ -58,7 +58,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="top|end"
                 android:background="#FFFFFF"
-                app:layout_collapseMode="pin"/>
+                app:layout_collapseMode="pin" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 

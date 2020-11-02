@@ -11,22 +11,19 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 
 public class MainFragment extends Fragment {
-
 
     @Nullable
     @Override
@@ -40,20 +37,23 @@ public class MainFragment extends Fragment {
 
         setUpToolbar();
 
-        ViewPager viewPager = view.findViewById(R.id.view_pager);
+        ViewPager2 viewPager = view.findViewById(R.id.view_pager);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
 
-        ArrayList<PostFragment> homeFragments = new ArrayList<>();
+        ArrayList<Fragment> homeFragments = new ArrayList<>();
+        ArrayList<String> tabTitles = new ArrayList<>();
+
         homeFragments.add(PostFragment.newInstance("", "", ""));
+        tabTitles.add("Home");
         homeFragments.add(PostFragment.newInstance("r/all", "hot", ""));
+        tabTitles.add("All");
 
-        tabLayout.setupWithViewPager(viewPager);
-
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
-        viewPagerAdapter.addFragment(homeFragments.get(0), "HOME");
-        viewPagerAdapter.addFragment(homeFragments.get(1), "POPULAR");
-
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(homeFragments, tabTitles, this);
         viewPager.setAdapter(viewPagerAdapter);
+
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> tab.setText(viewPagerAdapter.getFragmentTitle(position))
+        ).attach();
     }
 
     private void setUpToolbar() {

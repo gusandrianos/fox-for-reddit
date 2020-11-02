@@ -17,26 +17,28 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Subreddit;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
-import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
@@ -82,29 +84,41 @@ public class UserFragment extends Fragment {
 
     private void buildUserProfile(Data user, View view, boolean isSelf) {
         setUserNames(view, user, user.getName());
-        ViewPager viewPager = view.findViewById(R.id.profile_view_pager);
-        viewPager.setOffscreenPageLimit(3);
+
+        ViewPager2 viewPager = view.findViewById(R.id.profile_view_pager);
         TabLayout tabLayout = view.findViewById(R.id.profile_tab_layout);
-        tabLayout.setupWithViewPager(viewPager);
         if (isSelf)
             tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         else
             tabLayout.setTabMode(TabLayout.MODE_FIXED);
+        ArrayList<Fragment> userFragments = new ArrayList<>();
+        ArrayList<String> tabTitles = new ArrayList<>();
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
+        userFragments.add(PostFragment.newInstance("u/" + user.getName() + "/submitted", "", ""));
+        tabTitles.add("Posts");
+        userFragments.add(PostFragment.newInstance("u/" + user.getName() + "/comments", "", ""));
+        tabTitles.add("Comments");
+        userFragments.add(AboutUserFragment.newInstance(user.getName(), user.getLinkKarma(), user.getCommentKarma()));
+        tabTitles.add("About");
 
-        viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/submitted", "", ""), "Posts");
-        viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/comments", "", ""), "Comments");
-        viewPagerAdapter.addFragment(AboutUserFragment.newInstance(user.getName(), user.getLinkKarma(), user.getCommentKarma()), "About");
-
-        viewPager.setAdapter(viewPagerAdapter);
         if (isSelf) {
-            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/upvoted", "", ""), "Upvoted");
-            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/downvoted", "", ""), "Downvoted");
-            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/hidden", "", ""), "Hidden");
-            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/saved", "", ""), "Saved");
-            viewPagerAdapter.notifyDataSetChanged();
+            userFragments.add(PostFragment.newInstance("u/" + user.getName() + "/upvoted", "", ""));
+            tabTitles.add("Upvoted");
+            userFragments.add(PostFragment.newInstance("u/" + user.getName() + "/downvoted", "", ""));
+            tabTitles.add("Downvoted");
+            userFragments.add(PostFragment.newInstance("u/" + user.getName() + "/hidden", "", ""));
+            tabTitles.add("Hidden");
+            userFragments.add(PostFragment.newInstance("u/" + user.getName() + "/saved", "", ""));
+            tabTitles.add("Saved");
         }
+
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(userFragments, tabTitles, this);
+        viewPager.setAdapter(viewPagerAdapter);
+
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> tab.setText(viewPagerAdapter.getFragmentTitle(position))
+        ).attach();
+
         ImageView profilePic = view.findViewById(R.id.profile_picture);
         ImageView coverPic = view.findViewById(R.id.profile_cover);
         Glide.with(view).load(Objects.requireNonNull(user.getIconImg()).split("\\?")[0]).into(profilePic);

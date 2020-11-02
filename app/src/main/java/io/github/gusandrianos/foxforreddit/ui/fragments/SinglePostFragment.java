@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -316,7 +316,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             imgPostThumbnail.setVisibility(View.GONE);
         }
 
-        View.OnClickListener listener = view12 -> startActivity(FoxToolkit.INSTANCE.visitLink(singlePostData));
+        View.OnClickListener listener = view12 -> {
+            CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+            customTabsIntent.launchUrl(requireContext(), Uri.parse(singlePostData.getUrl()));
+        };
         imgPostThumbnail.setOnClickListener(listener);
         txtPostDomain.setOnClickListener(listener);
     }
@@ -397,7 +400,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         Glide.with(inflated).load(singlePostData.getMedia().getOembed().getThumbnailUrl()).placeholder(R.drawable.ic_launcher_background).into(imgPostImage);
 
-        imgPostImage.setOnClickListener(view1 -> startActivity(FoxToolkit.INSTANCE.visitLink(singlePostData)));
+        imgPostImage.setOnClickListener(view1 -> {
+            CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+            customTabsIntent.launchUrl(requireContext(), Uri.parse(singlePostData.getUrl()));
+        });
     }
 
     private void bindAsVideo(Data singlePostData, View view) {
@@ -467,7 +473,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
             txtVideoOpenInNew.setText(domain);
             txtVideoOpenInNew.setVisibility(View.VISIBLE);
-            txtVideoOpenInNew.setOnClickListener(view12 -> startActivity(FoxToolkit.INSTANCE.visitLink(singlePostData)));
+            txtVideoOpenInNew.setOnClickListener(view12 -> {
+                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                customTabsIntent.launchUrl(requireContext(), Uri.parse(singlePostData.getUrl()));
+            });
         }
 
         videoSeekBar.setMax(videoDuration);
@@ -575,7 +584,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             LinearLayout llCollapsing = view.findViewById(R.id.ll_collapsing);
 
 
-
             collapsingToolbarLayout.setVisibility(View.VISIBLE);
             appBarLayout.setVisibility(View.VISIBLE);
             singlePostFooter.setVisibility(View.VISIBLE);
@@ -583,11 +591,11 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             toolbar.setVisibility(View.VISIBLE);
             mCommentsRecyclerView.setVisibility(View.VISIBLE);
 
-            llCollapsing.setLayoutParams(new CollapsingToolbarLayout.LayoutParams(CollapsingToolbarLayout.LayoutParams.MATCH_PARENT,CollapsingToolbarLayout.LayoutParams.WRAP_CONTENT));
+            llCollapsing.setLayoutParams(new CollapsingToolbarLayout.LayoutParams(CollapsingToolbarLayout.LayoutParams.MATCH_PARENT, CollapsingToolbarLayout.LayoutParams.WRAP_CONTENT));
             llViewStub2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            appBarLayout.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.WRAP_CONTENT));
+            appBarLayout.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT));
 
-            llSinglePostComments.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.WRAP_CONTENT));
+            llSinglePostComments.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT));
             requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             playerView.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
 
@@ -614,7 +622,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             txtPostTitle.setVisibility(View.GONE);
             playerView.setLayoutParams((new FrameLayout.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT)));
             llViewStub2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-            llSinglePostComments.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT));
+            llSinglePostComments.setLayoutParams(new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT));
         } else {
 
         }

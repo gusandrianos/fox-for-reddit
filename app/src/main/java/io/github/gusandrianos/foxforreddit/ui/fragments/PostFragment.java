@@ -1,11 +1,13 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -150,11 +152,13 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                             navController.navigate(fullscreenAction);
                             break;
                         } else {
-                            startActivity(FoxToolkit.INSTANCE.visitLink(post));
+                            CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                            customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
                         }
                         break;
                     case Constants.LINK:
-                        startActivity(FoxToolkit.INSTANCE.visitLink(post));
+                        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                        customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
                         break;
                     default:
                 }
@@ -169,7 +173,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(post), "Share via"));
                 break;
             case Constants.POST_VOTE_NOW:
-                startActivity(FoxToolkit.INSTANCE.visitLink(post));
+                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
                 break;
             default:
                 NavGraphDirections.ActionGlobalSinglePostFragment action = NavGraphDirections.actionGlobalSinglePostFragment(post, postType);

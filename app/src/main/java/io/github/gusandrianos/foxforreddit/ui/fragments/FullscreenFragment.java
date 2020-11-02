@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
@@ -275,8 +276,10 @@ public class FullscreenFragment extends Fragment {
             String domain = post.getDomain();
             txtVideoOpenInNew.setVisibility(View.VISIBLE);
             txtVideoOpenInNew.setText(domain);
-            txtVideoOpenInNew.setText(domain);
-            txtVideoOpenInNew.setOnClickListener(view12 -> startActivity(FoxToolkit.INSTANCE.visitLink(post)));
+            txtVideoOpenInNew.setOnClickListener(view12 -> {
+                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
+            });
         }
 
         videoSeekBar.setMax(videoDuration);

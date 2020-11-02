@@ -7,20 +7,60 @@
 
     <fragment
         android:id="@+id/userFragment"
-        android:name="io.github.gusandrianos.foxforreddit.ui.UserFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.UserFragment"
         android:label="UserFragment"
         tools:layout="@layout/fragment_user" >
-        <action
-            android:id="@+id/action_userFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
+        <argument
+            android:name="user"
+            app:argType="io.github.gusandrianos.foxforreddit.data.models.Data"
+            app:nullable="true" />
+        <argument
+            android:name="username"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
-        android:name="io.github.gusandrianos.foxforreddit.ui.MainFragment"
-        android:label="MainFragment"
-        tools:layout="@layout/fragment_main" >
-        <action
-            android:id="@+id/action_mainFragment_to_userFragment"
-            app:destination="@id/userFragment" />
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.MainFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_main" />
+    <fragment
+        android:id="@+id/subredditListFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SubredditListFragment"
+        android:label="Subscriptions"
+        tools:layout="@layout/fragment_subreddit_list"/>
+    <fragment
+        android:id="@+id/singlePostFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SinglePostFragment"
+        android:label="fragment_single_post"
+        tools:layout="@layout/fragment_single_post" >
+        <argument
+            android:name="post"
+            app:argType="io.github.gusandrianos.foxforreddit.data.models.Data" />
+        <argument
+            android:name="postType"
+            app:argType="integer" />
     </fragment>
+    <fragment
+        android:id="@+id/subredditFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SubredditFragment"
+        android:label="{subredditName}"
+        tools:layout="@layout/fragment_subreddit" >
+        <argument
+            android:name="subredditName"
+            app:argType="string" />
+    </fragment>
+    <action android:id="@+id/action_global_userFragment" app:destination="@id/userFragment" />
+    <action android:id="@+id/action_global_subredditFragment" app:destination="@id/subredditFragment" /><action android:id="@+id/action_global_singlePostFragment" app:destination="@id/singlePostFragment"/>
+    <fragment
+        android:id="@+id/fullscreenFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.FullscreenFragment"
+        android:label="fragment_fullscreen"
+        tools:layout="@layout/fragment_fullscreen" >
+        <argument
+            android:name="post"
+            app:argType="io.github.gusandrianos.foxforreddit.data.models.Data" />
+        <argument
+            android:name="postType"
+            app:argType="integer" />
+    </fragment><action android:id="@+id/action_global_fullscreenFragment" app:destination="@id/fullscreenFragment"/>
 </navigation>

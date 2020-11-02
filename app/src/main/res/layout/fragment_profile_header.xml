@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_profile"
+    android:id="@+id/fragment_profile_appbar"
     android:layout_width="match_parent"
     android:layout_height="248dp">
 
@@ -10,17 +10,73 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:background="@android:color/white"
-        app:expandedTitleMarginStart="16dp"
+        app:contentScrim="@android:color/white"
+        app:expandedTitleGravity="center|start"
         app:expandedTitleTextAppearance="@style/CollapsingToolbarLayoutExpandedTextStyle"
-        app:layout_scrollFlags="scroll|enterAlways|snap">
+        app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
+        app:scrimAnimationDuration="200"
+        app:scrimVisibleHeightTrigger="160dp">
 
         <ImageView
             android:id="@+id/profile_cover"
             android:layout_width="match_parent"
             android:layout_height="110dp"
             android:layout_gravity="top"
-            android:background="@color/colorAccent"
+            android:background="#FF4500"
+            android:contentDescription="TODO"
             android:scaleType="centerCrop" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|start"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="68dp"
+            android:layout_marginEnd="16dp">
+
+            <TextView
+                android:id="@+id/text_user_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Display name"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                app:layout_constraintBottom_toTopOf="@id/text_user_display_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/text_user_display_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="u/username"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="normal"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_user_username" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_profile_button"
+                style="@style/PillShapeAppearance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Follow"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toEndOf="@id/text_user_username"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearance="@style/PillShapeAppearance" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <ImageView
             android:id="@+id/profile_picture"
@@ -29,7 +85,6 @@
             android:layout_gravity="center|start"
             android:layout_margin="16dp"
             android:layout_marginBottom="0dp"
-            android:background="@android:color/darker_gray"
             android:scaleType="centerCrop" />
 
         <androidx.appcompat.widget.Toolbar

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/stub_cl_link"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/stub_img_post_thumbnail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:clickable="true"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="H,16:10"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contextClickable="true"/>
+
+    <TextView
+        android:id="@+id/stub_txt_post_domain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#80121212"
+        android:drawableEnd="@drawable/ic_round_open_in_new_16"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="domain.com"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@id/stub_img_post_thumbnail"
+        app:layout_constraintEnd_toEndOf="@id/stub_img_post_thumbnail"
+        app:layout_constraintStart_toStartOf="@id/stub_img_post_thumbnail"
+        app:layout_constraintTop_toTopOf="@id/stub_img_post_thumbnail"
+        app:layout_constraintVertical_bias="1"
+        android:clickable="true"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

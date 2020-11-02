@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/separatorContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txt_comment_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintBottom_toTopOf="@id/comment_body"
+            app:layout_constraintEnd_toStartOf="@id/txt_time_commented"
+            app:layout_constraintStart_toEndOf="@id/separatorContainer"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="/u/Username" />
+
+        <TextView
+            android:id="@+id/txt_time_commented"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            app:layout_constraintBottom_toTopOf="@id/comment_body"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/txt_comment_user"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="* 5h" />
+
+        <TextView
+            android:id="@+id/comment_body"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            app:layout_constraintBottom_toTopOf="@id/btn_comment_up_vote_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/separatorContainer"
+            app:layout_constraintTop_toBottomOf="@id/txt_comment_user"
+            tools:text="Body of comment" />
+
+        <ImageButton
+            android:id="@+id/txt_comment_reply"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginRight="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Reply"
+            android:src="@drawable/ic_round_reply_24"
+            app:layout_constraintBottom_toBottomOf="@+id/separator1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/separator1"
+            app:layout_constraintTop_toTopOf="@+id/separator1" />
+
+        <View
+            android:id="@+id/separator1"
+            android:layout_width="1dp"
+            android:layout_height="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="#2B2B2B"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_comment_down_vote"
+            app:layout_constraintEnd_toStartOf="@id/txt_comment_reply"
+            app:layout_constraintStart_toEndOf="@id/btn_comment_down_vote"
+            app:layout_constraintTop_toTopOf="@+id/btn_comment_down_vote" />
+
+        <ImageButton
+            android:id="@+id/btn_comment_down_vote"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Vote Down"
+            android:src="@drawable/ic_round_arrow_downward_24"
+            app:layout_constraintBottom_toBottomOf="@+id/txt_comment_score"
+            app:layout_constraintEnd_toStartOf="@id/separator1"
+            app:layout_constraintStart_toEndOf="@id/txt_comment_score"
+            app:layout_constraintTop_toTopOf="@+id/txt_comment_score" />
+
+        <TextView
+            android:id="@+id/txt_comment_score"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="1.4k"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_comment_up_vote_container"
+            app:layout_constraintEnd_toStartOf="@id/btn_comment_down_vote"
+            app:layout_constraintStart_toEndOf="@id/btn_comment_up_vote_container"
+            app:layout_constraintTop_toTopOf="@+id/btn_comment_up_vote_container" />
+
+        <LinearLayout
+            android:id="@+id/btn_comment_up_vote_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="end"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/txt_comment_score"
+            app:layout_constraintStart_toEndOf="@id/separatorContainer"
+            app:layout_constraintTop_toBottomOf="@id/comment_body">
+
+            <ImageButton
+                android:id="@+id/btn_comment_up_vote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Vote Up"
+                android:src="@drawable/ic_round_arrow_upward_24" />
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_load_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/separatorContainer2"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/txt_more_children"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txt_more_children"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            android:clickable="true"
+            android:text="Load More"
+            android:textAlignment="textStart"
+            app:layout_constraintHorizontal_bias="0"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/separatorContainer2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

@@ -25,7 +25,6 @@ public class TokenRepository {
     private static TokenRepository instance;
     OAuthToken tokenRequest = RetrofitService.getTokenRequestInstance();
     private TokenDao tokenDao;
-    private Application application;
     Token mToken;
 
     private TokenRepository() {
@@ -41,12 +40,12 @@ public class TokenRepository {
         return instance;
     }
 
-    public Token getNewToken(String code, String redirectURI) {
+    public Token getNewToken(Application application, String code, String redirectURI) {
         if (mToken != null && (code.isEmpty() || redirectURI.isEmpty()))
             return mToken;
 
         if (tokenDao == null) {
-            initDB();
+            initDB(application);
         }
 
         Call<Token> token;
@@ -79,21 +78,19 @@ public class TokenRepository {
                 setCachedToken(mToken);
                 logToken(mToken);
             }
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         return mToken;
     }
 
-    public Token refreshToken() {
+    public Token refreshToken(Application application) {
         if (mToken.getRefreshToken() == null) {
             mToken = null;
             return mToken;
         }
         if (tokenDao == null) {
-            initDB();
+            initDB(application);
         }
         Log.i("Token Refresh", "Token Dao created");
 
@@ -123,29 +120,27 @@ public class TokenRepository {
                 setCachedToken(mToken);
                 logToken(mToken);
             }
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
 
         return mToken;
     }
 
-    public Token getNewToken() {
-        return getNewToken("", "");
+    public Token getNewToken(Application application) {
+        return getNewToken(application, "", "");
     }
 
-    public Token getCachedToken() {
+    public Token getCachedToken(Application application) {
         if (tokenDao == null) {
-            initDB();
+            initDB(application);
         }
 
         ExecutorService service = Executors.newSingleThreadExecutor();
 
         class SelectTask implements Callable<List<Token>> {
             @Override
-            public List<Token> call() throws Exception {
+            public List<Token> call() {
                 return tokenDao.getToken();
             }
         }
@@ -154,45 +149,40 @@ public class TokenRepository {
         try {
             List<Token> result = resultFuture.get();
             if (result.size() > 0) {
-                Token cachedToken = result.get(0);
-                mToken = cachedToken;
+                mToken = result.get(0);
             }
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
 
         return mToken;
     }
 
-    public Token getToken() {
+    public Token getToken(Application application) {
         if (mToken != null) {
 
             if (!mToken.hasExpired())
                 return mToken;
             else {
-                if (refreshToken() != null)
+                if (refreshToken(application) != null)
                     return mToken;
-                else if (getNewToken() != null) {
+                else if (getNewToken(application) != null) {
                     return mToken;
                 }
             }
         }
 
-        if (getCachedToken() != null) {
+        if (getCachedToken(application) != null) {
             if (!mToken.hasExpired()) {
                 return mToken;
             } else {
-                if (refreshToken() != null) {
+                if (refreshToken(application) != null) {
                     return mToken;
                 }
             }
         }
 
-        if (getNewToken() != null) {
-            return mToken;
-        }
+        getNewToken(application);
 
         return mToken;
     }
@@ -204,11 +194,7 @@ public class TokenRepository {
         });
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
-    }
-
-    public void initDB() {
+    public void initDB(Application application) {
         if (application != null) {
             FoxDatabase foxDatabase = FoxDatabase.getInstance(application);
             tokenDao = foxDatabase.tokenDao();

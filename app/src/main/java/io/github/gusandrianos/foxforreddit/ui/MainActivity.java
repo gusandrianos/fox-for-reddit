@@ -28,25 +28,33 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
-import io.github.gusandrianos.foxforreddit.data.models.User;
+import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
+import static io.github.gusandrianos.foxforreddit.Constants.BASE_OAUTH_URL;
+import static io.github.gusandrianos.foxforreddit.Constants.CLIENT_ID;
+import static io.github.gusandrianos.foxforreddit.Constants.LAUNCH_SECOND_ACTIVITY;
+import static io.github.gusandrianos.foxforreddit.Constants.REDIRECT_URI;
+import static io.github.gusandrianos.foxforreddit.Constants.STATE;
+
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    public static User mUser;
-    int LAUNCH_SECOND_ACTIVITY = 1;
-    Token mToken;
+    private Data mUser;
+    public String currentUserUsername;
+    public boolean viewingSelf = false;
+    private Token mToken;
     private NavController navController;
-    AppBarConfiguration appBarConfiguration;
+    public AppBarConfiguration appBarConfiguration;
     NavigationView navigationView;
     NavOptions options;
     List<Integer> topLevelDestinationIds;
     int itemSelectedID = 0;
-    DrawerLayout drawer;
+    public DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +65,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.TRANSPARENT);
 
-        topLevelDestinationIds = Arrays.asList(R.id.mainFragment, R.id.userFragment);
+        topLevelDestinationIds = Arrays.asList(R.id.mainFragment, R.id.userFragment, R.id.subredditListFragment);
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         navController = Objects.requireNonNull(navHostFragment).getNavController();
 
         drawer = findViewById(R.id.drawer_layout);
-        appBarConfiguration = new AppBarConfiguration.Builder(R.id.mainFragment, R.id.userFragment).setOpenableLayout(drawer).build();
+        appBarConfiguration = new AppBarConfiguration.Builder(R.id.mainFragment, R.id.userFragment, R.id.subredditListFragment).setOpenableLayout(drawer).build();
 
         navigationView = findViewById(R.id.nav_view);
 
@@ -75,7 +83,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(new DrawerListener());
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (topLevelDestinationIds.contains(destination.getId())) {
+            if (destination.getId() != R.id.userFragment) {
+                drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                viewingSelf = false;
+                navigationView.setCheckedItem(destination.getId());
+            } else {
                 navigationView.setCheckedItem(destination.getId());
             }
         });
@@ -85,42 +97,49 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setAuthorizedUI() {
         if (mToken == null) {
-            mToken = InjectorUtils.getInstance().provideTokenRepository(getApplication()).getToken();
+            mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(getApplication());
         }
         if (mToken.getRefreshToken() != null) {
             getCurrentUser();
             navigationView.getMenu().getItem(1).setVisible(true);
-            navigationView.getMenu().getItem(2).getSubMenu().getItem(0).setVisible(false);
+            navigationView.getMenu().getItem(3).getSubMenu().getItem(0).setVisible(false);
         }
     }
 
     private void getCurrentUser() {
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory(getApplication());
+        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
-        viewModel.getMe().observe(this, user -> {
+        viewModel.getMe(getApplication()).observe(this, user -> {
             if (user != null) {
                 String username = user.getName();
-                if (username != null)
+                if (username != null) {
                     mUser = user;
+                    currentUserUsername = user.getName();
+                }
             }
             //TODO: Handle this by showing appropriate error
         });
     }
 
     boolean isValidDestination(int dest_id) {
+        if (!viewingSelf && dest_id == R.id.userFragment)
+            return true;
         return dest_id != Objects.requireNonNull(Navigation.findNavController(this, R.id.nav_host_fragment).getCurrentDestination()).getId();
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        return NavigationUI.navigateUp(navController, appBarConfiguration);
+        return NavigationUI.navigateUp(navController, drawer) || super.onSupportNavigateUp();
     }
 
-    // TODO: Update navigation to make this work again
     public void loadLogInWebpage() {
         Intent load = new Intent(this, LoginActivity.class);
-        load.putExtra("URL", "https://www.reddit.com/api/v1/authorize.compact?client_id=n1R0bc_lPPTtVg&response_type=code&state=ggfgfgfgga&redirect_uri=https://gusandrianos.github.io/login&duration=permanent&scope=*");
+        load.putExtra("URL", constructOAuthURL());
         startActivityForResult(load, LAUNCH_SECOND_ACTIVITY);
+    }
+
+    private String constructOAuthURL() {
+        return BASE_OAUTH_URL + "?client_id=" + CLIENT_ID + "&response_type=code&state=" + STATE + "&redirect_uri=" + REDIRECT_URI + "&duration=permanent&scope=*";
     }
 
     @Override
@@ -130,8 +149,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (resultCode == Activity.RESULT_OK) {
                 String result = Objects.requireNonNull(data).getStringExtra("result");
                 String[] inputs = result.split("\\?")[1].split("&");
-                String code = inputs[1].split("=")[1];
-                mToken = InjectorUtils.getInstance().provideTokenRepository(getApplication()).getNewToken(code, "https://gusandrianos.github.io/login");
+                String state = inputs[0].split("=")[1];
+                if (state.equals(STATE)) {
+                    String code = inputs[1].split("=")[1];
+                    mToken = InjectorUtils.getInstance().provideTokenRepository().getNewToken(getApplication(), code, REDIRECT_URI);
+                }
                 setAuthorizedUI();
             }
         }
@@ -157,6 +179,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             itemSelectedID = id;
             drawer.close();
             return true;
+        } else if (id == R.id.subredditListFragment) {
+            itemSelectedID = id;
+            drawer.close();
+            return true;
         } else if (id == R.id.nav_login) {
             itemSelectedID = id;
             drawer.close();
@@ -171,14 +197,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public void onDrawerClosed(@NonNull View drawerView) {
             if (itemSelectedID != -1) {
                 if (itemSelectedID == R.id.mainFragment) {
-                    if (isValidDestination(R.id.mainFragment)) {
+                    if (isValidDestination(itemSelectedID)) {
                         options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
                         navController.navigate(R.id.mainFragment, null, options);
                     }
                     itemSelectedID = -1;
                 } else if (itemSelectedID == R.id.userFragment) {
-                    if (isValidDestination(R.id.userFragment))
-                        navController.navigate(R.id.userFragment);
+                    if (isValidDestination(itemSelectedID)) {
+                        NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
+                        navController.navigate(action);
+                    }
+                    itemSelectedID = -1;
+                } else if (itemSelectedID == R.id.subredditListFragment) {
+                    if (isValidDestination(itemSelectedID))
+                        navController.navigate(R.id.subredditListFragment);
                     itemSelectedID = -1;
                 } else if (itemSelectedID == R.id.nav_login) {
                     loadLogInWebpage();

@@ -1,40 +1,45 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Objects;
 
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Subreddit;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
@@ -57,6 +62,7 @@ public class UserFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         UserFragmentArgs args = UserFragmentArgs.fromBundle(requireArguments());
+
         Data user = args.getUser();
         String username = args.getUsername();
 
@@ -72,8 +78,6 @@ public class UserFragment extends Fragment {
             setUserNames(view, user, username);
             buildUserProfile(user, view, true);
         } else if (!username.isEmpty()) {
-            Button button = view.findViewById(R.id.button_follow_unfollow);
-            button.setVisibility(View.VISIBLE);
             UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
             viewModel.getUser(requireActivity().getApplication(), username).observe(getViewLifecycleOwner(), data -> buildUserProfile(data, view, Objects.equals(data.getName(), mainActivity.currentUserUsername)));
@@ -82,29 +86,65 @@ public class UserFragment extends Fragment {
 
     private void buildUserProfile(Data user, View view, boolean isSelf) {
         setUserNames(view, user, user.getName());
-        ViewPager viewPager = view.findViewById(R.id.profile_view_pager);
-        viewPager.setOffscreenPageLimit(3);
+
+        ViewPager2 viewPager = view.findViewById(R.id.profile_view_pager);
         TabLayout tabLayout = view.findViewById(R.id.profile_tab_layout);
-        tabLayout.setupWithViewPager(viewPager);
+
         if (isSelf)
             tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         else
             tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
+        ArrayList<Fragment> userFragments = new ArrayList<>();
+        ArrayList<String> tabTitles = new ArrayList<>();
 
-        viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/submitted", ""), "Posts");
-        viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/comments", ""), "Comments");
-        viewPagerAdapter.addFragment(AboutUserFragment.newInstance(user.getName(), user.getLinkKarma(), user.getCommentKarma()), "About");
+        userFragments.add(PostFragment.newInstance("u/" + user.getName() + "/submitted", "", ""));
+        tabTitles.add("Posts");
+        userFragments.add(PostFragment.newInstance("u/" + user.getName() + "/comments", "", ""));
+        tabTitles.add("Comments");
+        userFragments.add(AboutUserFragment.newInstance(user.getName(), user.getLinkKarma(), user.getCommentKarma()));
+        tabTitles.add("About");
 
-        viewPager.setAdapter(viewPagerAdapter);
+        // TODO: Use appropriate API Endpoint to make this meaningful
+//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+//            @Override
+//            public void onTabSelected(TabLayout.Tab tab) {
+//                Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
+//
+//                if (tab.getPosition() < 2) {
+//                    toolbar = view.findViewById(R.id.profile_toolbar);
+//                    toolbar.getMenu().setGroupVisible(0, true);
+//                } else
+//                    toolbar.getMenu().setGroupVisible(0, false);
+//            }
+//
+//            @Override
+//            public void onTabUnselected(TabLayout.Tab tab) {
+//            }
+//
+//            @Override
+//            public void onTabReselected(TabLayout.Tab tab) {
+//            }
+//        });
+
         if (isSelf) {
-            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/upvoted", ""), "Upvoted");
-            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/downvoted", ""), "Downvoted");
-            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/hidden", ""), "Hidden");
-            viewPagerAdapter.addFragment(PostFragment.newInstance("u/" + user.getName() + "/saved", ""), "Saved");
-            viewPagerAdapter.notifyDataSetChanged();
+            userFragments.add(PostFragment.newInstance("u/" + user.getName() + "/upvoted", "", ""));
+            tabTitles.add("Upvoted");
+            userFragments.add(PostFragment.newInstance("u/" + user.getName() + "/downvoted", "", ""));
+            tabTitles.add("Downvoted");
+            userFragments.add(PostFragment.newInstance("u/" + user.getName() + "/hidden", "", ""));
+            tabTitles.add("Hidden");
+            userFragments.add(PostFragment.newInstance("u/" + user.getName() + "/saved", "", ""));
+            tabTitles.add("Saved");
         }
+
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(userFragments, tabTitles, this);
+        viewPager.setAdapter(viewPagerAdapter);
+
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> tab.setText(viewPagerAdapter.getFragmentTitle(position))
+        ).attach();
+
         ImageView profilePic = view.findViewById(R.id.profile_picture);
         ImageView coverPic = view.findViewById(R.id.profile_cover);
         Glide.with(view).load(Objects.requireNonNull(user.getIconImg()).split("\\?")[0]).into(profilePic);
@@ -118,31 +158,43 @@ public class UserFragment extends Fragment {
 
         Data userSubreddit = getUserSubreddit(user);
 
-        MaterialButton followUnfollow = view.findViewById(R.id.button_follow_unfollow);
+        MaterialButton profileButton = view.findViewById(R.id.button_profile_button);
 
         setupButton(userSubreddit, view);
-        followUnfollow.setOnClickListener(button -> {
-            SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-            SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
-            viewModel.toggleSubscribed(getFinalAction(userSubreddit),
-                    userSubreddit.getDisplayName(),
-                    requireActivity().getApplication())
-                    .observe(getViewLifecycleOwner(), status -> {
-                        if (status) {
-                            userSubreddit.setUserIsSubscriber(!userSubreddit.getUserIsSubscriber());
-                            setupButton(userSubreddit, view);
-                        }
-                    });
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        profileButton.setOnClickListener(button -> {
+            if (!mainActivity.viewingSelf) {
+                SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+                SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+                viewModel.toggleSubscribed(getFinalAction(userSubreddit),
+                        userSubreddit.getDisplayName(),
+                        requireActivity().getApplication())
+                        .observe(getViewLifecycleOwner(), status -> {
+                            if (status) {
+                                userSubreddit.setUserIsSubscriber(!userSubreddit.getUserIsSubscriber());
+                                setupButton(userSubreddit, view);
+                            }
+                        });
+            } else {
+                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                customTabsIntent.launchUrl(requireContext(), Uri.parse(Constants.EDIT_PROFILE_URL));
+            }
         });
     }
 
     void setupButton(Data userSubreddit, View view) {
-        MaterialButton followUnfollow = view.findViewById(R.id.button_follow_unfollow);
+        MaterialButton profileButton = view.findViewById(R.id.button_profile_button);
+        MainActivity mainActivity = (MainActivity) requireActivity();
+
+        if (mainActivity.viewingSelf) {
+            profileButton.setText("Edit");
+            return;
+        }
 
         if (userSubreddit.getUserIsSubscriber())
-            followUnfollow.setText("Unfollow");
+            profileButton.setText("Unfollow");
         else
-            followUnfollow.setText("Follow");
+            profileButton.setText("Follow");
     }
 
     int getFinalAction(Data userSubreddit) {
@@ -179,13 +231,13 @@ public class UserFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
+//        toolbar.inflateMenu(R.menu.sorting);
         if (mainActivity.viewingSelf)
             NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
         else {
-            mainActivity.setSupportActionBar(toolbar);
             DrawerLayout drawer = mainActivity.drawer;
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            NavigationUI.setupActionBarWithNavController(mainActivity, navController);
+            NavigationUI.setupWithNavController(toolbar, navController);
         }
     }
 }

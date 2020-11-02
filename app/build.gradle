@@ -42,7 +42,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
@@ -68,7 +68,7 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.2.5'
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
     // Paging
-    implementation 'androidx.paging:paging-runtime-ktx:3.0.0-alpha07'
+    implementation 'androidx.paging:paging-runtime-ktx:3.0.0-alpha08'
     // Navigation Component
     implementation "androidx.navigation:navigation-fragment-ktx:2.3.1"
     implementation "androidx.navigation:navigation-ui-ktx:2.3.1"
@@ -79,6 +79,14 @@ dependencies {
     implementation "com.xwray:groupie-kotlin-android-extensions:2.8.1"
     // Circular Image library (It's 2020 and we need a library for this, get it together Google) -_-
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-    //Exoplayer
+    // Exoplayer
     implementation 'com.google.android.exoplayer:exoplayer:2.12.0'
+    // Swiperefreshlayout
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    // Custom browser tabs
+    implementation "androidx.browser:browser:1.2.0"
+    // Markdown parser
+    implementation "io.noties.markwon:core:4.6.0"
+    implementation "io.noties.markwon:ext-tables:4.6.0"
+    implementation "io.noties.markwon:linkify:4.6.0"
 }

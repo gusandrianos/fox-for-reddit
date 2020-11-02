@@ -43,7 +43,7 @@
     <fragment
         android:id="@+id/subredditFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SubredditFragment"
-        android:label="fragment_subreddit"
+        android:label="{subredditName}"
         tools:layout="@layout/fragment_subreddit" >
         <argument
             android:name="subredditName"

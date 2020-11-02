@@ -24,6 +24,7 @@ interface RedditAPI {
             @Path("filter") filter: String,
             @Query("after") after: String,
             @Query("count") count: Int,
+            @Query("t") time: String,
             @Header("Authorization") bearer: String
     ): Listing
 

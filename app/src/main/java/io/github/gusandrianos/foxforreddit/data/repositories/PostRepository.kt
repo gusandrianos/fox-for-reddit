@@ -23,10 +23,10 @@ object PostRepository {
     private val commentsData = MutableLiveData<CommentListing>()
     private val dataMoreChildren = MutableLiveData<MoreChildren>()
 
-    fun getPosts(subreddit: String, filter: String, application: Application) =
+    fun getPosts(subreddit: String, filter: String, time: String, application: Application) =
             Pager(
                     config = PagingConfig(pageSize = 25, prefetchDistance = 25, enablePlaceholders = false),
-                    pagingSourceFactory = { RedditPagingSource(subreddit, filter, getBearer(application)) }
+                    pagingSourceFactory = { RedditPagingSource(subreddit, filter, time, getBearer(application)) }
             ).liveData
 
     fun votePost(dir: String, id: String, application: Application) {

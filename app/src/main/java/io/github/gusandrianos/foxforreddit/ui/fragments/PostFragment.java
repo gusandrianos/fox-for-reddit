@@ -6,18 +6,21 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.paging.LoadState;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +31,6 @@ import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
-import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.PostAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
@@ -43,8 +45,12 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     private Token mToken;
     String subreddit;
     String filter;
+    String timedFilter;
+    String time;
     int page;
     PostAdapter mPostRecyclerViewAdapter;
+    RecyclerView mPostRecyclerView;
+    SwipeRefreshLayout pullToRefresh;
 
     @Nullable
     @Override
@@ -60,12 +66,15 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         page = getArguments().getInt("page", 0);
         subreddit = getArguments().getString("subreddit", "");
         filter = getArguments().getString("filter", "");
+        time = getArguments().getString("time", "");
+        pullToRefresh = view.findViewById(R.id.swipe_refresh_layout_posts);
         initRecycleView();
-        initializeUI();
+        loadPosts(false);
+        initSwipeToRefresh();
     }
 
     private void initRecycleView() {
-        RecyclerView mPostRecyclerView = mView.findViewById(R.id.recyclerview);
+        mPostRecyclerView = mView.findViewById(R.id.recyclerview);
         mPostRecyclerViewAdapter = new PostAdapter(this);
         mPostRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY); //keep recyclerview on position
         mPostRecyclerView.setHasFixedSize(true);
@@ -78,23 +87,29 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         mPostRecyclerView.setAdapter(mPostRecyclerViewAdapter.withLoadStateFooter(postLoadStateAdapter));
     }
 
-    public void initializeUI() {
+    void loadPosts(boolean requestChanged) {
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        viewModel.getPosts(subreddit, filter, getActivity().getApplication()).observe(getViewLifecycleOwner(), postPagingData -> {
+        if (requestChanged)
+            viewModel.deleteCached();
+
+        viewModel.getPosts(subreddit, filter, time, getActivity().getApplication()).observe(getViewLifecycleOwner(), postPagingData -> {
             mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), postPagingData);
+            mPostRecyclerViewAdapter.addLoadStateListener(loadStates -> {
+                if (loadStates.getRefresh() instanceof LoadState.Loading)
+                    pullToRefresh.setRefreshing(true);
+                else if (loadStates.getRefresh() instanceof LoadState.NotLoading)
+                    pullToRefresh.setRefreshing(false);
+                return Unit.INSTANCE;
+            });
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
-        if (!mToken.getAccessToken().equals(token.getAccessToken())) {
-            mToken = token;
-            initRecycleView();
-            initializeUI();
-        }
+    private void initSwipeToRefresh() {
+        pullToRefresh.setOnRefreshListener(() -> {
+            mPostRecyclerViewAdapter.refresh();
+            mPostRecyclerView.smoothScrollToPosition(0);
+        });
     }
 
     @Override
@@ -137,11 +152,13 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                             navController.navigate(fullscreenAction);
                             break;
                         } else {
-                            startActivity(FoxToolkit.INSTANCE.visitLink(post));
+                            CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                            customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
                         }
                         break;
                     case Constants.LINK:
-                        startActivity(FoxToolkit.INSTANCE.visitLink(post));
+                        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                        customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
                         break;
                     default:
                 }
@@ -156,7 +173,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(post), "Share via"));
                 break;
             case Constants.POST_VOTE_NOW:
-                startActivity(FoxToolkit.INSTANCE.visitLink(post));
+                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
                 break;
             default:
                 NavGraphDirections.ActionGlobalSinglePostFragment action = NavGraphDirections.actionGlobalSinglePostFragment(post, postType);
@@ -164,14 +182,116 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         }
     }
 
-    public static PostFragment newInstance(String subreddit, String filter) {
+    private Toolbar getCurrentToolbar() {
+        if (getParentFragment() instanceof UserFragment)
+            return requireActivity().findViewById(R.id.profile_toolbar);
+        else if (getParentFragment() instanceof SubredditFragment)
+            return requireActivity().findViewById(R.id.subreddit_toolbar);
+        else
+            return requireActivity().findViewById(R.id.toolbar_main);
+    }
+
+    void setMenuItemClickForCurrentFragment() {
+        Toolbar toolbar = getCurrentToolbar();
+
+        toolbar.setOnMenuItemClickListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.sort_best:
+                    filter = "best";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_hot:
+                    filter = "hot";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_new:
+                    filter = "new";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_top:
+                    timedFilter = "top";
+                    break;
+
+                case R.id.sort_controversial:
+                    timedFilter = "controversial";
+                    break;
+
+                case R.id.sort_rising:
+                    filter = "rising";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_hour:
+                    filter = timedFilter;
+                    time = "hour";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_24h:
+                    filter = timedFilter;
+                    time = "day";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_week:
+                    filter = timedFilter;
+                    time = "week";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_month:
+                    filter = timedFilter;
+                    time = "month";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_year:
+                    filter = timedFilter;
+                    time = "year";
+                    loadPosts(true);
+                    return true;
+
+                case R.id.sort_all_time:
+                    filter = timedFilter;
+                    time = "all";
+                    loadPosts(true);
+                    return true;
+            }
+            return false;
+        });
+    }
+
+    public static PostFragment newInstance(String subreddit, String filter, String time) {
         PostFragment fragment = new PostFragment();
 
         Bundle args = new Bundle();
         args.putString("subreddit", subreddit);
         args.putString("filter", filter);
+        args.putString("time", time);
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
+        if (!mToken.getAccessToken().equals(token.getAccessToken())) {
+            mToken = token;
+            initRecycleView();
+            loadPosts(true);
+        }
+        setMenuItemClickForCurrentFragment();
+    }
+
+    @Override
+    public void onPause() {
+        Toolbar toolbar = getCurrentToolbar();
+        toolbar.setOnMenuItemClickListener(null);
+        super.onPause();
     }
 }

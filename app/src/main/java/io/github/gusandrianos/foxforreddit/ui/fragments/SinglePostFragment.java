@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -53,7 +54,6 @@ import com.google.gson.reflect.TypeToken;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
 
-
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -78,6 +78,9 @@ import io.github.gusandrianos.foxforreddit.utilities.ImageGalleryAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
+import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.linkify.LinkifyPlugin;
 
 import static io.github.gusandrianos.foxforreddit.utilities.PostAdapterKt.formatValue;
 
@@ -100,6 +103,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     GroupAdapter<GroupieViewHolder> groupAdapter;
 
     DisplayMetrics displayMetrics = new DisplayMetrics();
+    Markwon markwon;
 
     @Nullable
     @Override
@@ -110,6 +114,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        markwon = Markwon.builder(requireContext())
+                .usePlugin(TablePlugin.create(requireContext()))
+                .usePlugin(LinkifyPlugin.create())
+                .build();
 
         SinglePostFragmentArgs singlePostFragmentArgs = SinglePostFragmentArgs.fromBundle(requireArguments());
         Data singlePostData = singlePostFragmentArgs.getPost();
@@ -281,7 +289,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         if (singlePostData.getSelftext() != null) {
             TextView txtPostBody = inflated.findViewById(R.id.stub_txt_post_body);
-            txtPostBody.setText(singlePostData.getSelftext());
+            markwon.setMarkdown(txtPostBody, singlePostData.getSelftext());
             txtPostBody.setVisibility(View.VISIBLE);
         }
     }
@@ -316,7 +324,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             imgPostThumbnail.setVisibility(View.GONE);
         }
 
-        View.OnClickListener listener = view12 -> startActivity(FoxToolkit.INSTANCE.visitLink(singlePostData));
+        View.OnClickListener listener = view12 -> {
+            CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+            customTabsIntent.launchUrl(requireContext(), Uri.parse(singlePostData.getUrl()));
+        };
         imgPostThumbnail.setOnClickListener(listener);
         txtPostDomain.setOnClickListener(listener);
     }
@@ -379,7 +390,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         if (singlePostData.getSelftext() != null) {
             TextView txtPostBody = inflated.findViewById(R.id.stub_txt_post_body);
-            txtPostBody.setText(singlePostData.getSelftext());
+            markwon.setMarkdown(txtPostBody, singlePostData.getSelftext());
             txtPostBody.setVisibility(View.VISIBLE);
         }
     }
@@ -397,7 +408,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         Glide.with(inflated).load(singlePostData.getMedia().getOembed().getThumbnailUrl()).placeholder(R.drawable.ic_launcher_background).into(imgPostImage);
 
-        imgPostImage.setOnClickListener(view1 -> startActivity(FoxToolkit.INSTANCE.visitLink(singlePostData)));
+        imgPostImage.setOnClickListener(view1 -> {
+            CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+            customTabsIntent.launchUrl(requireContext(), Uri.parse(singlePostData.getUrl()));
+        });
     }
 
     private void bindAsVideo(Data singlePostData, View view) {
@@ -453,7 +467,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
             txtVideoOpenInNew.setText(domain);
             txtVideoOpenInNew.setVisibility(View.VISIBLE);
-            txtVideoOpenInNew.setOnClickListener(view12 -> startActivity(FoxToolkit.INSTANCE.visitLink(singlePostData)));
+            txtVideoOpenInNew.setOnClickListener(view12 -> {
+                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                customTabsIntent.launchUrl(requireContext(), Uri.parse(singlePostData.getUrl()));
+            });
         }
 
         player = new SimpleExoPlayer.Builder(requireActivity()).build();
@@ -570,7 +587,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         toolbar.setVisibility(View.VISIBLE);
         singlePostTitle.setVisibility(View.VISIBLE);
-//        singlePostHeader.setVisibility(View.VISIBLE);
         singlePostFooter.setVisibility(View.VISIBLE);
         mCommentsRecyclerView.setVisibility(View.VISIBLE);
     }

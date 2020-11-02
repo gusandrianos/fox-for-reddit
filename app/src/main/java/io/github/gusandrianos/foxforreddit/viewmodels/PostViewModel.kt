@@ -14,11 +14,15 @@ import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository
 class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
     var posts: LiveData<PagingData<Data>>? = null
 
-    fun getPosts(subreddit: String, filter: String, application: Application): LiveData<PagingData<Data>> {
+    fun getPosts(subreddit: String, filter: String, time: String, application: Application): LiveData<PagingData<Data>> {
         if (posts != null)
             return posts!!;
-        posts = mPostRepository.getPosts(subreddit, filter, application).cachedIn(viewModelScope)
+        posts = mPostRepository.getPosts(subreddit, filter, time, application).cachedIn(viewModelScope)
         return posts!!
+    }
+
+    fun deleteCached() {
+        posts = null
     }
 
     fun votePost(dir: String, id: String, application: Application) {

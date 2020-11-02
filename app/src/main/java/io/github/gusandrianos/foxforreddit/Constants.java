@@ -1,10 +1,11 @@
 package io.github.gusandrianos.foxforreddit;
 
-import android.content.res.Resources;
-
 public class Constants {
-    //Reddit URL
+    // Reddit URL
     public static final String REDDIT_URL = "https://www.reddit.com";
+
+    // Edit Profile URL
+    public static final String EDIT_PROFILE_URL = "https://new.reddit.com/settings/profile";
 
     // Activities
     public static final String REDIRECT_URI = "https://gusandrianos.github.io/login";
@@ -41,17 +42,17 @@ public class Constants {
     public static final int ACTION_SUBSCRIBE = 0;
     public static final int ACTION_UNSUBSCRIBE = 1;
 
-    //Video Type
+    // Video Type
     public static final int REDDIT_VIDEO = 1;
     public static final int PLAYABLE_VIDEO = 2;
     public static final int UNPLAYABLE_VIDEO = 3;
 
-    //Image Type
-    public static final int IS_IMAGE= 1;
+    // Image Type
+    public static final int IS_IMAGE = 1;
     public static final int IS_GALLERY = 2;
     public static final int IS_GIF = 3;
 
-    //Screen Mode
-    public static final  int NORMAL_SCREEN = 0;
-    public static final  int FULLSCREEN = 1;
+    // Screen Mode
+    public static final int NORMAL_SCREEN = 0;
+    public static final int FULLSCREEN = 1;
 }

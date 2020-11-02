@@ -3,11 +3,8 @@ package io.github.gusandrianos.foxforreddit.utilities
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import android.view.MenuItem
 import io.github.gusandrianos.foxforreddit.Constants
-import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
-import io.github.gusandrianos.foxforreddit.ui.fragments.PostFragment
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel
 
 object FoxToolkit {

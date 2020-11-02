@@ -1,16 +1,17 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -33,10 +34,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Subreddit;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
@@ -75,8 +78,6 @@ public class UserFragment extends Fragment {
             setUserNames(view, user, username);
             buildUserProfile(user, view, true);
         } else if (!username.isEmpty()) {
-            Button button = view.findViewById(R.id.button_follow_unfollow);
-            button.setVisibility(View.VISIBLE);
             UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
             viewModel.getUser(requireActivity().getApplication(), username).observe(getViewLifecycleOwner(), data -> buildUserProfile(data, view, Objects.equals(data.getName(), mainActivity.currentUserUsername)));
@@ -157,31 +158,43 @@ public class UserFragment extends Fragment {
 
         Data userSubreddit = getUserSubreddit(user);
 
-        MaterialButton followUnfollow = view.findViewById(R.id.button_follow_unfollow);
+        MaterialButton profileButton = view.findViewById(R.id.button_profile_button);
 
         setupButton(userSubreddit, view);
-        followUnfollow.setOnClickListener(button -> {
-            SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-            SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
-            viewModel.toggleSubscribed(getFinalAction(userSubreddit),
-                    userSubreddit.getDisplayName(),
-                    requireActivity().getApplication())
-                    .observe(getViewLifecycleOwner(), status -> {
-                        if (status) {
-                            userSubreddit.setUserIsSubscriber(!userSubreddit.getUserIsSubscriber());
-                            setupButton(userSubreddit, view);
-                        }
-                    });
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        profileButton.setOnClickListener(button -> {
+            if (!mainActivity.viewingSelf) {
+                SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+                SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+                viewModel.toggleSubscribed(getFinalAction(userSubreddit),
+                        userSubreddit.getDisplayName(),
+                        requireActivity().getApplication())
+                        .observe(getViewLifecycleOwner(), status -> {
+                            if (status) {
+                                userSubreddit.setUserIsSubscriber(!userSubreddit.getUserIsSubscriber());
+                                setupButton(userSubreddit, view);
+                            }
+                        });
+            } else {
+                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                customTabsIntent.launchUrl(requireContext(), Uri.parse(Constants.EDIT_PROFILE_URL));
+            }
         });
     }
 
     void setupButton(Data userSubreddit, View view) {
-        MaterialButton followUnfollow = view.findViewById(R.id.button_follow_unfollow);
+        MaterialButton profileButton = view.findViewById(R.id.button_profile_button);
+        MainActivity mainActivity = (MainActivity) requireActivity();
+
+        if (mainActivity.viewingSelf) {
+            profileButton.setText("Edit");
+            return;
+        }
 
         if (userSubreddit.getUserIsSubscriber())
-            followUnfollow.setText("Unfollow");
+            profileButton.setText("Unfollow");
         else
-            followUnfollow.setText("Follow");
+            profileButton.setText("Follow");
     }
 
     int getFinalAction(Data userSubreddit) {

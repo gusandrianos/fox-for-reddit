@@ -339,7 +339,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         if (singlePostData.getGalleryData() != null) {
             for (GalleryItem galleryItem : singlePostData.getGalleryData().getItems()) {
-                String imageUrl = "https://i.redd.it/"+galleryItem.getMediaId()+".jpg";
+                String imageUrl = "https://i.redd.it/" + galleryItem.getMediaId() + ".jpg";
                 imagesUrl.add(imageUrl);
             }
             ViewStub stub = view.findViewById(R.id.view_stub);
@@ -422,7 +422,11 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     private void createVideoPlayer(Data singlePostData, View view, int videoType) {
         Handler handler = new Handler();
 
-        stub = view.findViewById(R.id.view_stub);
+        if (orientation == Configuration.ORIENTATION_PORTRAIT)
+            stub = view.findViewById(R.id.view_stub2);
+        else
+            stub = view.findViewById(R.id.view_stub);
+
         stub.setLayoutResource(R.layout.stub_video);
         inflated = stub.inflate();
 
@@ -562,26 +566,18 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbar.getLayoutParams();
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL);
-            collapsingToolbar.setLayoutParams(params);
-
             playerView.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
             appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT)));
-            singlePostHeader.setVisibility(View.GONE);
-            LinearLayout.LayoutParams txtparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            float d = requireContext().getResources().getDisplayMetrics().density;
-            int marginTop = (int) (56 * d);
-            txtparams.setMargins(0, marginTop, 0, 0);
-            singlePostTitle.setLayoutParams(txtparams);
+            collapsingToolbar.setVisibility(View.VISIBLE);
         } else {
-            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
-            collapsingToolbar.setLayoutParams(params);
             appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
             singlePostHeader.setVisibility(View.VISIBLE);
+            toolbar.setVisibility(View.VISIBLE);
+            singlePostTitle.setVisibility(View.VISIBLE);
         }
 
-        toolbar.setVisibility(View.VISIBLE);
-        singlePostTitle.setVisibility(View.VISIBLE);
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
+        collapsingToolbar.setLayoutParams(params);
         singlePostFooter.setVisibility(View.VISIBLE);
         mCommentsRecyclerView.setVisibility(View.VISIBLE);
     }
@@ -593,23 +589,32 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbar.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL);
         collapsingToolbar.setLayoutParams(params);
-
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         PlayerView playerView = view.findViewById(R.id.video_player);
-        TextView singlePostTitle = view.findViewById(R.id.stub_txt_post_title);
-        LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_single_post_header);
-        LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
-        Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
 
-        appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
-        playerView.setLayoutParams((new FrameLayout.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT)));
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
 
-        toolbar.setVisibility(View.GONE);
-        singlePostTitle.setVisibility(View.GONE);
-        singlePostHeader.setVisibility(View.GONE);
-        singlePostFooter.setVisibility(View.GONE);
+            appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
+            playerView.setLayoutParams((new FrameLayout.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT)));
+
+            collapsingToolbar.setVisibility(View.GONE);
+            singlePostFooter.setVisibility(View.GONE);
+        } else {
+            TextView singlePostTitle = view.findViewById(R.id.stub_txt_post_title);
+            LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_single_post_header);
+            LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
+            Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
+
+            appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
+            playerView.setLayoutParams((new FrameLayout.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT)));
+
+            toolbar.setVisibility(View.GONE);
+            singlePostTitle.setVisibility(View.GONE);
+            singlePostHeader.setVisibility(View.GONE);
+            singlePostFooter.setVisibility(View.GONE);
+        }
         mCommentsRecyclerView.setVisibility(View.GONE);
-
     }
 
     private void changeSeekBar(SimpleExoPlayer player, SeekBar videoSeekBar, TextView videoCurrentTime, Handler handler) {

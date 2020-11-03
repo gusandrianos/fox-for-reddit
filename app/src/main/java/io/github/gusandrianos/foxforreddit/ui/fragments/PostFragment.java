@@ -143,8 +143,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
                 switch (postType) {
                     case Constants.IMAGE:
-                        fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(post, postType);
-                        navController.navigate(fullscreenAction);
+                        FoxToolkit.INSTANCE.fullscreenImage(post,requireContext());
                         break;
                     case Constants.VIDEO:
                         if (FoxToolkit.INSTANCE.getTypeOfVideo(post) == Constants.PLAYABLE_VIDEO) {

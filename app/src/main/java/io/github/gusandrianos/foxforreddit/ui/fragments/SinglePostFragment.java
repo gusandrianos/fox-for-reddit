@@ -51,6 +51,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.stfalcon.imageviewer.StfalconImageViewer;
+import com.stfalcon.imageviewer.loader.ImageLoader;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
 
@@ -333,16 +335,17 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void bindAsGallery(Data singlePostData, View view) {
-        List<String> imagesId = new ArrayList<>();
+        List<String> imagesUrl = new ArrayList<>();
 
         if (singlePostData.getGalleryData() != null) {
             for (GalleryItem galleryItem : singlePostData.getGalleryData().getItems()) {
-                imagesId.add(galleryItem.getMediaId());
+                String imageUrl = "https://i.redd.it/"+galleryItem.getMediaId()+".jpg";
+                imagesUrl.add(imageUrl);
             }
             ViewStub stub = view.findViewById(R.id.view_stub);
             stub.setLayoutResource(R.layout.stub_view_pager_image_gallery);
             View inflated = stub.inflate();
-            ImageGalleryAdapter adapter = new ImageGalleryAdapter(imagesId, Constants.NORMAL_SCREEN);
+            ImageGalleryAdapter adapter = new ImageGalleryAdapter(imagesUrl);
             ViewPager2 viewPager = inflated.findViewById(R.id.viewpager_image_gallery);
             viewPager.setAdapter(adapter);
             TabLayout tabLayout = inflated.findViewById(R.id.tab_dots);
@@ -361,11 +364,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
         Glide.with(inflated).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
 
-        imgPostImage.setOnClickListener(view1 -> {
-            NavGraphDirections.ActionGlobalFullscreenFragment fullscreenAction;
-            fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(singlePostData, Constants.IMAGE);
-            navController.navigate(fullscreenAction);
-        });
+        imgPostImage.setOnClickListener(view1 -> FoxToolkit.INSTANCE.fullscreenImage(singlePostData, requireContext()));
     }
 
     private void bindAsImage(Data singlePostData, View view) {
@@ -376,11 +375,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
         Glide.with(inflated).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
 
-        imgPostImage.setOnClickListener(view1 -> {
-            NavGraphDirections.ActionGlobalFullscreenFragment fullscreenAction;
-            fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(singlePostData, Constants.IMAGE);
-            navController.navigate(fullscreenAction);
-        });
+        imgPostImage.setOnClickListener(view1 -> FoxToolkit.INSTANCE.fullscreenImage(singlePostData, requireContext()));
     }
 
     private void bindAsPoll(Data singlePostData, View view) {
@@ -575,11 +570,11 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             singlePostHeader.setVisibility(View.GONE);
             LinearLayout.LayoutParams txtparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             float d = requireContext().getResources().getDisplayMetrics().density;
-            int marginTop = (int)(56 * d);
-            txtparams.setMargins(0,marginTop,0,0);
+            int marginTop = (int) (56 * d);
+            txtparams.setMargins(0, marginTop, 0, 0);
             singlePostTitle.setLayoutParams(txtparams);
         } else {
-            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL|AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
+            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
             collapsingToolbar.setLayoutParams(params);
             appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
             singlePostHeader.setVisibility(View.VISIBLE);

@@ -89,4 +89,6 @@ dependencies {
     implementation "io.noties.markwon:core:4.6.0"
     implementation "io.noties.markwon:ext-tables:4.6.0"
     implementation "io.noties.markwon:linkify:4.6.0"
+    //FullScreen Image Viewer
+    implementation 'com.github.stfalcon:stfalcon-imageviewer:1.0.1'
 }

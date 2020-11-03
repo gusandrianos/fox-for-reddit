@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.app.Activity;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,6 +35,9 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.squareup.picasso.Picasso;
+import com.stfalcon.imageviewer.StfalconImageViewer;
+import com.stfalcon.imageviewer.loader.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,88 +60,6 @@ public class FullscreenFragment extends Fragment {
     ViewStub stub;
     View inflated;
 
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
-    private static final boolean AUTO_HIDE = true;
-
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
-    private static final int UI_ANIMATION_DELAY = 300;
-    private final Handler mHideHandler = new Handler();
-    private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
-        @Override
-        public void run() {
-            // Delayed removal of status and navigation bar
-
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
-            int flags = View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-
-            Activity activity = getActivity();
-            if (activity != null
-                    && activity.getWindow() != null) {
-                activity.getWindow().getDecorView().setSystemUiVisibility(flags);
-            }
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.hide();
-            }
-
-        }
-    };
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
-        }
-    };
-    private View mContentView;
-    private View mControlsView;
-    private final Runnable mShowPart2Runnable = new Runnable() {
-        @Override
-        public void run() {
-            // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.show();
-            }
-            if (mControlsView != null)
-                mControlsView.setVisibility(View.VISIBLE);
-        }
-    };
-    private boolean mVisible;
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -157,54 +79,49 @@ public class FullscreenFragment extends Fragment {
 
         initializeUI(post, view, postType);
 
-        mVisible = true;
-
-        mControlsView = view.findViewById(R.id.fullscreen_content_controls);
-        mContentView = view.findViewById(R.id.fl_contentView);
-
-        // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        view.findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
     }
 
     private void bindAsFullScreenImage(Data post, View view) {
-        ViewStub stub = view.findViewById(R.id.stub_fullsceen);
-        stub.setLayoutResource(R.layout.stub_image);
-        View inflated = stub.inflate();
-        ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
-        imgPostImage.setAdjustViewBounds(true);
-        imgPostImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        imgPostImage.setClickable(false);
-        Glide.with(inflated).load(post.getUrlOverriddenByDest()).into(imgPostImage);
+
+        List<String> images = new ArrayList<>();
+        images.add(post.getUrlOverriddenByDest());
+
+        new StfalconImageViewer.Builder<>(requireContext(), images, new ImageLoader<String>() {
+            @Override
+            public void loadImage(ImageView imageView, String image) {
+                Glide.with(requireContext()).load(image).into(imageView);
+            }
+        }).show();
     }
 
     private void bindAsFullScreenGallery(Data post, View view) {
         List<String> imagesId = new ArrayList<>();
 
+//        if (post.getGalleryData() != null) {
+//            for (GalleryItem galleryItem : post.getGalleryData().getItems()) {
+//                imagesId.add(galleryItem.getMediaId());
+//            }
+//            ViewStub stub = view.findViewById(R.id.stub_fullsceen);
+//            stub.setLayoutResource(R.layout.stub_view_pager_image_gallery);
+//            View inflated = stub.inflate();
+//            ImageGalleryAdapter adapter = new ImageGalleryAdapter(imagesId, Constants.FULLSCREEN);
+//            ViewPager2 viewPager = inflated.findViewById(R.id.viewpager_image_gallery);
+//            viewPager.setAdapter(adapter);
+//            TabLayout tabLayout = inflated.findViewById(R.id.tab_dots);
+//            new TabLayoutMediator(tabLayout, viewPager,
+//                    (tab, position) -> {
+//                    }
+//            ).attach();
+
+
+        List<String> images = new ArrayList<>();
         if (post.getGalleryData() != null) {
             for (GalleryItem galleryItem : post.getGalleryData().getItems()) {
-                imagesId.add(galleryItem.getMediaId());
+                String url = "https://i.redd.it/"+galleryItem.getMediaId()+".jpg";
+                images.add(url);
             }
-            ViewStub stub = view.findViewById(R.id.stub_fullsceen);
-            stub.setLayoutResource(R.layout.stub_view_pager_image_gallery);
-            View inflated = stub.inflate();
-            ImageGalleryAdapter adapter = new ImageGalleryAdapter(imagesId, Constants.FULLSCREEN);
-            ViewPager2 viewPager = inflated.findViewById(R.id.viewpager_image_gallery);
-            viewPager.setAdapter(adapter);
-            TabLayout tabLayout = inflated.findViewById(R.id.tab_dots);
-            new TabLayoutMediator(tabLayout, viewPager,
-                    (tab, position) -> {
-                    }
-            ).attach();
+
+            FoxToolkit.INSTANCE.fullscreenImage(post,requireContext());
         }
     }
 
@@ -218,11 +135,7 @@ public class FullscreenFragment extends Fragment {
     private void initializeUI(Data post, View view, int postType) {
 
         if (postType == Constants.IMAGE) {
-            if (FoxToolkit.INSTANCE.getTypeOfImage(post) == Constants.IS_GALLERY) {
-                bindAsFullScreenGallery(post, view);    //Image Gallery
-            } else {
-                bindAsFullScreenImage(post, view);  //Image or Gif                                      
-            }
+            FoxToolkit.INSTANCE.fullscreenImage(post,requireContext());
         } else {
             bindAsFullScreenVideo(post, view);
         }
@@ -302,8 +215,8 @@ public class FullscreenFragment extends Fragment {
                         changeSeekBar(player, videoSeekBar, txtVideoCurrentTime, handler);
                         player.setPauseAtEndOfMediaItems(false);
 
-                        videoSeekBar.setMax((int) player.getDuration()/1000);
-                        txtVideoDuration.setText(FoxToolkit.INSTANCE.getTimeOfVideo(player.getDuration()/1000));
+                        videoSeekBar.setMax((int) player.getDuration() / 1000);
+                        txtVideoDuration.setText(FoxToolkit.INSTANCE.getTimeOfVideo(player.getDuration() / 1000));
                         break;
                     case Player.STATE_ENDED:
                         imgPlay.setImageResource(R.drawable.exo_icon_play);
@@ -390,16 +303,11 @@ public class FullscreenFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mContentView = null;
-        mControlsView = null;
+
     }
 
     private void toggle() {
-        if (mVisible) {
-            hide();
-        } else {
-            show();
-        }
+
     }
 
     private void hide() {
@@ -408,24 +316,12 @@ public class FullscreenFragment extends Fragment {
         if (actionBar != null) {
             actionBar.hide();
         }
-        if (mControlsView != null)
-            mControlsView.setVisibility(View.GONE);
-        mVisible = false;
 
-        // Schedule a runnable to remove the status and navigation bar after a delay
-        mHideHandler.removeCallbacks(mShowPart2Runnable);
-        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
 
     private void show() {
         // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        mVisible = true;
 
-        // Schedule a runnable to display UI elements after a delay
-        mHideHandler.removeCallbacks(mHidePart2Runnable);
-        mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.show();
@@ -437,8 +333,7 @@ public class FullscreenFragment extends Fragment {
      * previously scheduled calls.
      */
     private void delayedHide(int delayMillis) {
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
+
     }
 
     @Nullable

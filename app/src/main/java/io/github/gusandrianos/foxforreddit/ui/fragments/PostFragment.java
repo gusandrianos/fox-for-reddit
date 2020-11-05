@@ -147,8 +147,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                         break;
                     case Constants.VIDEO:
                         if (FoxToolkit.INSTANCE.getTypeOfVideo(post) == Constants.PLAYABLE_VIDEO) {
-                            fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(post, postType);
-                            navController.navigate(fullscreenAction);
+//                            fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(post, postType);
+//                            navController.navigate(fullscreenAction);
+                            navController.navigate(DialogFragmentDirections.actionGlobalDialogFragment(postType, post));
                             break;
                         } else {
                             CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();

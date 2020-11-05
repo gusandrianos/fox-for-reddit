@@ -63,4 +63,17 @@
             android:name="postType"
             app:argType="integer" />
     </fragment><action android:id="@+id/action_global_fullscreenFragment" app:destination="@id/fullscreenFragment"/>
+    <dialog
+        android:id="@+id/dialogFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.DialogFragment"
+        android:label="DialogFragment" >
+        <argument
+            android:name="type"
+            app:argType="integer" />
+        <argument
+            android:name="post"
+            app:argType="io.github.gusandrianos.foxforreddit.data.models.Data"
+            app:nullable="true" />
+    </dialog>
+    <action android:id="@+id/action_global_dialogFragment" app:destination="@id/dialogFragment" />
 </navigation>

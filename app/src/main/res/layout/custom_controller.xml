@@ -55,13 +55,13 @@
         android:id="@+id/img_fullscreen"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
+        android:src="@drawable/exo_ic_fullscreen_enter"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/video_seek_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="0.1"
-        android:src="@drawable/exo_ic_fullscreen_enter"
         app:layout_constraintStart_toEndOf="@id/txt_video_duration"
-        app:layout_constraintTop_toTopOf="@id/video_seek_bar"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toTopOf="@id/video_seek_bar" />
 
     <TextView
         android:id="@+id/txt_video_open_in_new"
@@ -71,8 +71,8 @@
         android:layout_marginEnd="8dp"
         android:clickable="true"
         android:textColor="#FFFFFF"
-        android:visibility="gone"
         android:textSize="16sp"
+        android:visibility="gone"
         app:drawableEndCompat="@drawable/ic_round_open_in_new_16"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

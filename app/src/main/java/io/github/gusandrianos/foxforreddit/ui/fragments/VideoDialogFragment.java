@@ -2,21 +2,14 @@ package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.app.Dialog;
 import android.content.res.Resources;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -24,16 +17,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -46,7 +35,7 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 
-public class DialogFragment extends BottomSheetDialogFragment {
+public class VideoDialogFragment extends BottomSheetDialogFragment {
 
     NavHostFragment navHostFragment;
     NavController navController;
@@ -61,7 +50,7 @@ public class DialogFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_dialog, container, false);
+        return inflater.inflate(R.layout.fragment_dialog_video, container, false);
     }
 
     @Nullable
@@ -88,8 +77,8 @@ public class DialogFragment extends BottomSheetDialogFragment {
         navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         navController = Objects.requireNonNull(navHostFragment).getNavController();
 
-        DialogFragmentArgs dialogFragmentArgs = DialogFragmentArgs.fromBundle(requireArguments());
-        Data post = dialogFragmentArgs.getPost();
+        VideoDialogFragmentArgs videoDialogFragmentArgs = VideoDialogFragmentArgs.fromBundle(requireArguments());
+        Data post = videoDialogFragmentArgs.getPost();
 
         int videoType;
         if (post.isVideo()) {
@@ -112,8 +101,8 @@ public class DialogFragment extends BottomSheetDialogFragment {
         TextView txtVideoCurrentTime = view.findViewById(R.id.txt_video_current_time);
         TextView txtVideoDuration = view.findViewById(R.id.txt_video_duration);
 
-        viewPlayerHolder.getLayoutParams().width=Resources.getSystem().getDisplayMetrics().widthPixels;
-        viewPlayerHolder.getLayoutParams().height=Resources.getSystem().getDisplayMetrics().heightPixels;
+        viewPlayerHolder.getLayoutParams().width = Resources.getSystem().getDisplayMetrics().widthPixels;
+        viewPlayerHolder.getLayoutParams().height = Resources.getSystem().getDisplayMetrics().heightPixels;
 
         Uri videoUri;
 
@@ -251,6 +240,5 @@ public class DialogFragment extends BottomSheetDialogFragment {
             player.seekTo(savedInstanceState.getLong("currentTime"));
             player.setPlayWhenReady(savedInstanceState.getBoolean("isPlaying"));
         }
-
     }
 }

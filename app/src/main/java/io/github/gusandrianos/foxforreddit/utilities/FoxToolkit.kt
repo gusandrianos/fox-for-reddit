@@ -89,5 +89,4 @@ object FoxToolkit {
 
         StfalconImageViewer.Builder<String>(context, images) { imageView, imageUrl -> Glide.with(context).load(imageUrl).into(imageView) }.show()
     }
-
 }

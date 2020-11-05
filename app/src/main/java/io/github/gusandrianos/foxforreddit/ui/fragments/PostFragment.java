@@ -142,11 +142,11 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
                 switch (postType) {
                     case Constants.IMAGE:
-                        FoxToolkit.INSTANCE.fullscreenImage(post,requireContext());
+                        FoxToolkit.INSTANCE.fullscreenImage(post, requireContext());
                         break;
                     case Constants.VIDEO:
                         if (FoxToolkit.INSTANCE.getTypeOfVideo(post) == Constants.PLAYABLE_VIDEO) {
-                            navController.navigate(DialogFragmentDirections.actionGlobalDialogFragment(postType, post));
+                            navController.navigate(VideoDialogFragmentDirections.actionGlobalVideoDialogFragment(postType, post));
                             break;
                         } else {
                             CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();

@@ -345,7 +345,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             ViewStub stub = view.findViewById(R.id.view_stub);
             stub.setLayoutResource(R.layout.stub_view_pager_image_gallery);
             View inflated = stub.inflate();
-            ImageGalleryAdapter adapter = new ImageGalleryAdapter(imagesUrl);
+            ImageGalleryAdapter adapter = new ImageGalleryAdapter(imagesUrl, requireContext());
             ViewPager2 viewPager = inflated.findViewById(R.id.viewpager_image_gallery);
             viewPager.setAdapter(adapter);
             TabLayout tabLayout = inflated.findViewById(R.id.tab_dots);

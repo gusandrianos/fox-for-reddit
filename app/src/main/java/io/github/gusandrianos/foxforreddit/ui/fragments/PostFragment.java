@@ -139,7 +139,6 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 }
                 break;
             case Constants.POST_THUMBNAIL:
-                NavGraphDirections.ActionGlobalFullscreenFragment fullscreenAction;
 
                 switch (postType) {
                     case Constants.IMAGE:
@@ -147,8 +146,6 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                         break;
                     case Constants.VIDEO:
                         if (FoxToolkit.INSTANCE.getTypeOfVideo(post) == Constants.PLAYABLE_VIDEO) {
-//                            fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(post, postType);
-//                            navController.navigate(fullscreenAction);
                             navController.navigate(DialogFragmentDirections.actionGlobalDialogFragment(postType, post));
                             break;
                         } else {

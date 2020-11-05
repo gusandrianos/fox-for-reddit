@@ -51,18 +51,6 @@
     </fragment>
     <action android:id="@+id/action_global_userFragment" app:destination="@id/userFragment" />
     <action android:id="@+id/action_global_subredditFragment" app:destination="@id/subredditFragment" /><action android:id="@+id/action_global_singlePostFragment" app:destination="@id/singlePostFragment"/>
-    <fragment
-        android:id="@+id/fullscreenFragment"
-        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.FullscreenFragment"
-        android:label="fragment_fullscreen"
-        tools:layout="@layout/fragment_fullscreen" >
-        <argument
-            android:name="post"
-            app:argType="io.github.gusandrianos.foxforreddit.data.models.Data" />
-        <argument
-            android:name="postType"
-            app:argType="integer" />
-    </fragment><action android:id="@+id/action_global_fullscreenFragment" app:destination="@id/fullscreenFragment"/>
     <dialog
         android:id="@+id/dialogFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.DialogFragment"

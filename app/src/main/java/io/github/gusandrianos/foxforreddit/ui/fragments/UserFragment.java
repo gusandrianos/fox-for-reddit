@@ -1,5 +1,6 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
@@ -39,7 +41,6 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Subreddit;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
-import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
@@ -179,6 +180,21 @@ public class UserFragment extends Fragment {
                 CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
                 customTabsIntent.launchUrl(requireContext(), Uri.parse(Constants.EDIT_PROFILE_URL));
             }
+        });
+
+        AppBarLayout appBarLayout = view.findViewById(R.id.fragment_profile_appbar);
+        Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
+        toolbar.setBackgroundColor(Color.argb(0, 255, 255, 255));
+
+        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
+            int alpha;
+
+            if (Math.abs(verticalOffset) >= 248)
+                alpha = 255;
+            else
+                alpha = 0;
+
+            toolbar.setBackgroundColor(Color.argb(alpha, 255, 255, 255));
         });
     }
 

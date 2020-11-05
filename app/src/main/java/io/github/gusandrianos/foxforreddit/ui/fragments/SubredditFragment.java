@@ -1,5 +1,6 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.button.MaterialButton;
 
@@ -91,6 +93,21 @@ public class SubredditFragment extends Fragment {
                             setupButton(subredditInfo, view);
                         }
                     });
+        });
+
+        AppBarLayout appBarLayout = view.findViewById(R.id.fragment_subreddit_appbar);
+        Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);
+        toolbar.setBackgroundColor(Color.argb(0, 255, 255, 255));
+
+        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
+            int alpha;
+
+            if (Math.abs(verticalOffset) >= 200)
+                alpha = 255;
+            else
+                alpha = 0;
+
+            toolbar.setBackgroundColor(Color.argb(alpha, 255, 255, 255));
         });
     }
 

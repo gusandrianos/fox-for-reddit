@@ -133,7 +133,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         orientation = getResources().getConfiguration().orientation;
 
-        setUpToolbar(view, singlePostData.getSubredditNamePrefixed());
+        setUpNavigation(view, singlePostData.getSubredditNamePrefixed());
         initializeUI(singlePostData, view, postType);
 
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
@@ -683,7 +683,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         }
     }
 
-    private void setUpToolbar(View view, String subreddit) {
+    private void setUpNavigation(View view, String subreddit) {
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.single_post_collapsing_toolbar);
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);

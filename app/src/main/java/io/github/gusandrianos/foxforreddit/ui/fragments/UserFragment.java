@@ -74,7 +74,7 @@ public class UserFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         mainActivity.viewingSelf = username.equals(mainActivity.currentUserUsername);
 
-        setUpToolbar(view);
+        setUpNavigation(view);
 
         if (user != null) {
             setUserNames(view, user, username);
@@ -244,7 +244,7 @@ public class UserFragment extends Fragment {
         return gson.fromJson(gson.toJsonTree(user.getSubreddit()).getAsJsonObject(), subredditType);
     }
 
-    private void setUpToolbar(View view) {
+    private void setUpNavigation(View view) {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);

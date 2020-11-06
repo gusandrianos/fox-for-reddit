@@ -45,7 +45,7 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setUpToolbar();
+        setUpNavigation();
         initRecycleView(view);
         initializeUI();
     }
@@ -73,14 +73,6 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
         mSubredditsRV.setAdapter(mSubredditListAdapter);
     }
 
-    private void setUpToolbar() {
-        MainActivity mainActivity = (MainActivity) requireActivity();
-        NavController navController = NavHostFragment.findNavController(this);
-        AppBarConfiguration appBarConfiguration = mainActivity.appBarConfiguration;
-        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_subreddits);
-        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
-    }
-
     @Override
     public void onItemClick(@NotNull Data item) {
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
@@ -94,5 +86,13 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
             NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, subredditNamePrefixed.split("/")[1]);
             navController.navigate(action);
         }
+    }
+
+    private void setUpNavigation() {
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        NavController navController = NavHostFragment.findNavController(this);
+        AppBarConfiguration appBarConfiguration = mainActivity.appBarConfiguration;
+        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_subreddits);
+        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
     }
 }

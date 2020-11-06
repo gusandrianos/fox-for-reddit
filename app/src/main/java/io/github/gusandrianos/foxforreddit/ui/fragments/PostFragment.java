@@ -164,17 +164,14 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 }
                 break;
             case POST_THUMBNAIL:
-                NavGraphDirections.ActionGlobalFullscreenFragment fullscreenAction;
 
                 switch (postType) {
                     case IMAGE:
-                        fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(post, postType);
-                        navController.navigate(fullscreenAction);
+                        FoxToolkit.INSTANCE.fullscreenImage(post, requireContext());
                         break;
                     case VIDEO:
                         if (FoxToolkit.INSTANCE.getTypeOfVideo(post) == PLAYABLE_VIDEO) {
-                            fullscreenAction = NavGraphDirections.actionGlobalFullscreenFragment(post, postType);
-                            navController.navigate(fullscreenAction);
+                            navController.navigate(VideoDialogFragmentDirections.actionGlobalVideoDialogFragment(postType, post));
                             break;
                         } else {
                             CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();

@@ -1,7 +1,12 @@
 package io.github.gusandrianos.foxforreddit.utilities
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
+import android.view.View
+import com.bumptech.glide.Glide
+import com.stfalcon.imageviewer.StfalconImageViewer
+import com.stfalcon.imageviewer.loader.ImageLoader
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
@@ -77,5 +82,22 @@ object FoxToolkit {
         val minStr = if (min < 10) "0$min" else min.toString()
         val secStr = if (sec < 10) "0$sec" else sec.toString()
         return "$minStr:$secStr"
+    }
+
+    fun fullscreenImage(post: Data,context: Context) {
+        val images = ArrayList<String?>()
+
+        if (getTypeOfImage(post) == Constants.IS_GALLERY) {
+            if (post.galleryData != null) {
+                for (galleryItem in post.galleryData.items!!) {
+                    val url = "https://i.redd.it/" + galleryItem.mediaId + ".jpg"
+                    images.add(url)
+                }
+            }
+        } else {
+            images.add(post.urlOverriddenByDest)
+        }
+
+        StfalconImageViewer.Builder<String>(context, images) { imageView, imageUrl -> Glide.with(context).load(imageUrl).into(imageView) }.show()
     }
 }

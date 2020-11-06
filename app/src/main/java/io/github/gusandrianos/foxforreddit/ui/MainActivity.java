@@ -27,6 +27,7 @@ import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
@@ -48,9 +49,9 @@ public class MainActivity extends AppCompatActivity implements
     private NavController navController;
     public AppBarConfiguration appBarConfiguration;
     public BottomNavigationView bottomNavView;
+    public int destinationBeforeLoginAttempt;
     NavOptions options;
     List<Integer> topLevelDestinationIds;
-    int itemSelectedID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,12 +111,6 @@ public class MainActivity extends AppCompatActivity implements
         });
     }
 
-    boolean isValidDestination(int dest_id) {
-        if (!viewingSelf && dest_id == R.id.userFragment)
-            return true;
-        return dest_id != Objects.requireNonNull(Navigation.findNavController(this, R.id.nav_host_fragment).getCurrentDestination()).getId();
-    }
-
     @Override
     public boolean onSupportNavigateUp() {
         return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
@@ -143,34 +138,29 @@ public class MainActivity extends AppCompatActivity implements
                     String code = inputs[1].split("=")[1];
                     mToken = InjectorUtils.getInstance().provideTokenRepository().getNewToken(getApplication(), code, REDIRECT_URI);
                 }
-                MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.mainFragment);
-                bottomNavMenuItem.setChecked(true);
                 setAuthorizedUI();
             }
         }
+        MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(destinationBeforeLoginAttempt);
+        bottomNavMenuItem.setChecked(true);
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.mainFragment) {
-            if (isValidDestination(itemSelectedID)) {
-                options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
-                navController.navigate(R.id.mainFragment, null, options);
-            }
+            options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
+            navController.navigate(R.id.mainFragment, null, options);
             return true;
         } else if (id == R.id.userFragment) {
-            if (isValidDestination(itemSelectedID)) {
-                NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
-                navController.navigate(action);
-            }
+            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
+            navController.navigate(action);
             return true;
         } else if (id == R.id.subredditListFragment) {
-            if (isValidDestination(itemSelectedID))
-                navController.navigate(R.id.subredditListFragment);
+            navController.navigate(R.id.subredditListFragment);
             return true;
         } else if (id == R.id.nav_login) {
-            loadLogInWebpage();
+            FoxToolkit.INSTANCE.promptLogIn(this);
             return true;
         }
         return false;
@@ -178,6 +168,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onNavigationItemReselected(@NonNull MenuItem item) {
-        // Ignore tap
+        int id = item.getItemId();
+        int currentItemID = Navigation.findNavController(this, R.id.nav_host_fragment).getCurrentDestination().getId();
+        if (id == R.id.subredditListFragment && id != currentItemID) {
+            navController.navigate(R.id.subredditListFragment);
+        }
     }
 }

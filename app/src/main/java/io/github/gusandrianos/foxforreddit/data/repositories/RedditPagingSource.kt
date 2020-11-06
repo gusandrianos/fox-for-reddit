@@ -1,7 +1,9 @@
 package io.github.gusandrianos.foxforreddit.data.repositories
 
 import androidx.paging.PagingSource
-import io.github.gusandrianos.foxforreddit.Constants.*
+import io.github.gusandrianos.foxforreddit.Constants.MODE_POST
+import io.github.gusandrianos.foxforreddit.Constants.MODE_SUBREDDIT
+import io.github.gusandrianos.foxforreddit.Constants.STARTER_PAGE
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI

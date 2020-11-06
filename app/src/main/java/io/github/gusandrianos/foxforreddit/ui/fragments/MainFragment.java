@@ -40,7 +40,7 @@ public class MainFragment extends Fragment {
 
         ViewPager2 viewPager = view.findViewById(R.id.view_pager);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
-        setUpToolbar();
+        setUpNavigation();
 
         ArrayList<Fragment> homeFragments = new ArrayList<>();
         ArrayList<String> tabTitles = new ArrayList<>();
@@ -59,7 +59,7 @@ public class MainFragment extends Fragment {
         ).attach();
     }
 
-    private void setUpToolbar() {
+    private void setUpNavigation() {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_main);

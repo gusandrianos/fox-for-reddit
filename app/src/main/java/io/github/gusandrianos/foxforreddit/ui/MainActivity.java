@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements
     public BottomNavigationView bottomNavView;
     NavOptions options;
     List<Integer> topLevelDestinationIds;
-    int itemSelectedID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,12 +109,6 @@ public class MainActivity extends AppCompatActivity implements
         });
     }
 
-    boolean isValidDestination(int dest_id) {
-        if (!viewingSelf && dest_id == R.id.userFragment)
-            return true;
-        return dest_id != Objects.requireNonNull(Navigation.findNavController(this, R.id.nav_host_fragment).getCurrentDestination()).getId();
-    }
-
     @Override
     public boolean onSupportNavigateUp() {
         return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
@@ -154,20 +147,15 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.mainFragment) {
-            if (isValidDestination(itemSelectedID)) {
-                options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
-                navController.navigate(R.id.mainFragment, null, options);
-            }
+            options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
+            navController.navigate(R.id.mainFragment, null, options);
             return true;
         } else if (id == R.id.userFragment) {
-            if (isValidDestination(itemSelectedID)) {
-                NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
-                navController.navigate(action);
-            }
+            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
+            navController.navigate(action);
             return true;
         } else if (id == R.id.subredditListFragment) {
-            if (isValidDestination(itemSelectedID))
-                navController.navigate(R.id.subredditListFragment);
+            navController.navigate(R.id.subredditListFragment);
             return true;
         } else if (id == R.id.nav_login) {
             loadLogInWebpage();
@@ -178,6 +166,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onNavigationItemReselected(@NonNull MenuItem item) {
-        // Ignore tap
+        int id = item.getItemId();
+        int currentItemID = Navigation.findNavController(this, R.id.nav_host_fragment).getCurrentDestination().getId();
+        if (id == R.id.subredditListFragment && id != currentItemID) {
+            navController.navigate(R.id.subredditListFragment);
+        }
     }
 }

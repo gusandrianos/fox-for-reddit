@@ -41,6 +41,7 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Subreddit;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
@@ -174,24 +175,27 @@ public class UserFragment extends Fragment {
 
         setupButton(userSubreddit, view);
         MainActivity mainActivity = (MainActivity) requireActivity();
-        profileButton.setOnClickListener(button -> {
-            if (!mainActivity.viewingSelf) {
-                SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-                SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
-                viewModel.toggleSubscribed(getFinalAction(userSubreddit),
-                        userSubreddit.getDisplayName(),
-                        requireActivity().getApplication())
-                        .observe(getViewLifecycleOwner(), status -> {
-                            if (status) {
-                                userSubreddit.setUserIsSubscriber(!userSubreddit.getUserIsSubscriber());
-                                setupButton(userSubreddit, view);
-                            }
-                        });
-            } else {
-                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
-                customTabsIntent.launchUrl(requireContext(), Uri.parse(EDIT_PROFILE_URL));
-            }
-        });
+        if (FoxToolkit.INSTANCE.isAuthorized(mainActivity.getApplication()))
+            profileButton.setOnClickListener(button -> {
+                if (!mainActivity.viewingSelf) {
+                    SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+                    SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+                    viewModel.toggleSubscribed(getFinalAction(userSubreddit),
+                            userSubreddit.getDisplayName(),
+                            requireActivity().getApplication())
+                            .observe(getViewLifecycleOwner(), status -> {
+                                if (status) {
+                                    userSubreddit.setUserIsSubscriber(!userSubreddit.getUserIsSubscriber());
+                                    setupButton(userSubreddit, view);
+                                }
+                            });
+                } else {
+                    CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                    customTabsIntent.launchUrl(requireContext(), Uri.parse(EDIT_PROFILE_URL));
+                }
+            });
+        else
+            profileButton.setOnClickListener(button -> FoxToolkit.INSTANCE.promptLogIn(mainActivity));
 
         AppBarLayout appBarLayout = view.findViewById(R.id.fragment_profile_appbar);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);

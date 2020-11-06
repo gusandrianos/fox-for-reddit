@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -25,13 +24,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -149,7 +148,7 @@ public class FullscreenFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        lockDrawer();
+        hideBottomNavigation();
 
         FullscreenFragmentArgs fullscreenFragmentArgs = FullscreenFragmentArgs.fromBundle(requireArguments());
         Data post = fullscreenFragmentArgs.getPost();
@@ -209,10 +208,10 @@ public class FullscreenFragment extends Fragment {
     }
 
 
-    private void lockDrawer() {
+    private void hideBottomNavigation() {
         MainActivity mainActivity = (MainActivity) requireActivity();
-        DrawerLayout drawer = mainActivity.drawer;
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
+        bottomNavigationView.setVisibility(View.GONE);
     }
 
     private void initializeUI(Data post, View view, int postType) {
@@ -302,8 +301,8 @@ public class FullscreenFragment extends Fragment {
                         changeSeekBar(player, videoSeekBar, txtVideoCurrentTime, handler);
                         player.setPauseAtEndOfMediaItems(false);
 
-                        videoSeekBar.setMax((int) player.getDuration()/1000);
-                        txtVideoDuration.setText(FoxToolkit.INSTANCE.getTimeOfVideo(player.getDuration()/1000));
+                        videoSeekBar.setMax((int) player.getDuration() / 1000);
+                        txtVideoDuration.setText(FoxToolkit.INSTANCE.getTimeOfVideo(player.getDuration() / 1000));
                         break;
                     case Player.STATE_ENDED:
                         imgPlay.setImageResource(R.drawable.exo_icon_play);

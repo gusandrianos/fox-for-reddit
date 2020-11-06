@@ -4,12 +4,23 @@ import android.app.Application
 import android.content.Intent
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel
 
 object FoxToolkit {
     fun getBearer(application: Application): String {
         val token = InjectorUtils.getInstance().provideTokenRepository().getToken(application)
         return " " + token.tokenType + " " + token.accessToken
+    }
+
+    fun isAuthorized(application: Application): Boolean {
+        val token = InjectorUtils.getInstance().provideTokenRepository().getToken(application)
+        return !token.refreshToken.isNullOrEmpty()
+    }
+
+    fun promptLogIn(mainActivity: MainActivity) {
+        mainActivity.destinationBeforeLoginAttempt = mainActivity.bottomNavView.selectedItemId
+        mainActivity.loadLogInWebpage()
     }
 
     fun getRawImageURI(imageURI: String): String {

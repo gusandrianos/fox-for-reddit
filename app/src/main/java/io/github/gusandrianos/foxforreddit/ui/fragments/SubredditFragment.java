@@ -29,6 +29,7 @@ import java.text.NumberFormat;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -79,23 +80,25 @@ public class SubredditFragment extends Fragment {
     void setupHeader(Data subredditInfo, View view) {
         setupImages(subredditInfo, view);
         setupUserCounters(subredditInfo, view);
-
         MaterialButton subUnsubButton = view.findViewById(R.id.button_subreddit_sub_unsub);
 
         setupButton(subredditInfo, view);
-        subUnsubButton.setOnClickListener(button -> {
-            SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-            SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
-            viewModel.toggleSubscribed(getFinalAction(subredditInfo),
-                    subredditInfo.getDisplayName(),
-                    requireActivity().getApplication())
-                    .observe(getViewLifecycleOwner(), status -> {
-                        if (status) {
-                            subredditInfo.setUserIsSubscriber(!subredditInfo.getUserIsSubscriber());
-                            setupButton(subredditInfo, view);
-                        }
-                    });
-        });
+        if (FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+            subUnsubButton.setOnClickListener(button -> {
+                SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+                SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+                viewModel.toggleSubscribed(getFinalAction(subredditInfo),
+                        subredditInfo.getDisplayName(),
+                        requireActivity().getApplication())
+                        .observe(getViewLifecycleOwner(), status -> {
+                            if (status) {
+                                subredditInfo.setUserIsSubscriber(!subredditInfo.getUserIsSubscriber());
+                                setupButton(subredditInfo, view);
+                            }
+                        });
+            });
+        else
+            subUnsubButton.setOnClickListener(button -> FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity()));
 
         AppBarLayout appBarLayout = view.findViewById(R.id.fragment_subreddit_appbar);
         Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);

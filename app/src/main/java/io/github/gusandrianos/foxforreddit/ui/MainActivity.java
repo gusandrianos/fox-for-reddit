@@ -27,6 +27,7 @@ import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements
     private NavController navController;
     public AppBarConfiguration appBarConfiguration;
     public BottomNavigationView bottomNavView;
+    public int destinationBeforeLoginAttempt;
     NavOptions options;
     List<Integer> topLevelDestinationIds;
 
@@ -136,11 +138,11 @@ public class MainActivity extends AppCompatActivity implements
                     String code = inputs[1].split("=")[1];
                     mToken = InjectorUtils.getInstance().provideTokenRepository().getNewToken(getApplication(), code, REDIRECT_URI);
                 }
-                MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.mainFragment);
-                bottomNavMenuItem.setChecked(true);
                 setAuthorizedUI();
             }
         }
+        MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(destinationBeforeLoginAttempt);
+        bottomNavMenuItem.setChecked(true);
     }
 
     @Override
@@ -158,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements
             navController.navigate(R.id.subredditListFragment);
             return true;
         } else if (id == R.id.nav_login) {
-            loadLogInWebpage();
+            FoxToolkit.INSTANCE.promptLogIn(this);
             return true;
         }
         return false;

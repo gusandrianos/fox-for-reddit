@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -13,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -24,6 +24,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -248,11 +249,14 @@ public class UserFragment extends Fragment {
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
 //        toolbar.inflateMenu(R.menu.sorting);
-        if (mainActivity.viewingSelf)
+        BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
+        if (mainActivity.viewingSelf) {
+            bottomNavigationView.setVisibility(View.VISIBLE);
+            MenuItem item = bottomNavigationView.getMenu().findItem(R.id.userFragment);
+            item.setChecked(true);
             NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
-        else {
-            DrawerLayout drawer = mainActivity.drawer;
-            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        } else {
+            bottomNavigationView.setVisibility(View.GONE);
             NavigationUI.setupWithNavController(toolbar, navController);
         }
     }

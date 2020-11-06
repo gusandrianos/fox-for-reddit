@@ -3,8 +3,6 @@ package io.github.gusandrianos.foxforreddit.ui;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
@@ -15,15 +13,12 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 
-import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +27,7 @@ import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
@@ -43,52 +39,44 @@ import static io.github.gusandrianos.foxforreddit.Constants.REDIRECT_URI;
 import static io.github.gusandrianos.foxforreddit.Constants.STATE;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements
+        BottomNavigationView.OnNavigationItemReselectedListener,
+        BottomNavigationView.OnNavigationItemSelectedListener {
     private Data mUser;
     public String currentUserUsername;
     public boolean viewingSelf = false;
     private Token mToken;
     private NavController navController;
     public AppBarConfiguration appBarConfiguration;
-    NavigationView navigationView;
+    public BottomNavigationView bottomNavView;
+    public int destinationBeforeLoginAttempt;
     NavOptions options;
     List<Integer> topLevelDestinationIds;
-    int itemSelectedID = 0;
-    public DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(Color.TRANSPARENT);
-
         topLevelDestinationIds = Arrays.asList(R.id.mainFragment, R.id.userFragment, R.id.subredditListFragment);
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         navController = Objects.requireNonNull(navHostFragment).getNavController();
 
-        drawer = findViewById(R.id.drawer_layout);
-        appBarConfiguration = new AppBarConfiguration.Builder(R.id.mainFragment, R.id.userFragment, R.id.subredditListFragment).setOpenableLayout(drawer).build();
+        List<Integer> navID = new ArrayList<>();
+        navID.add(R.id.mainFragment);
+        navID.add(R.id.userFragment);
+        navID.add(R.id.subredditListFragment);
 
-        navigationView = findViewById(R.id.nav_view);
+        appBarConfiguration = new AppBarConfiguration.Builder(R.id.mainFragment, R.id.userFragment, R.id.subredditListFragment).build();
 
-        if (savedInstanceState == null) {
-            navigationView.setCheckedItem(R.id.mainFragment);
-        }
-
-        navigationView.setNavigationItemSelectedListener(this);
-        drawer.addDrawerListener(new DrawerListener());
+        bottomNavView = findViewById(R.id.bottom_nav_view);
+        bottomNavView.setOnNavigationItemSelectedListener(this);
+        bottomNavView.setOnNavigationItemReselectedListener(this);
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (destination.getId() != R.id.userFragment) {
-                drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                 viewingSelf = false;
-                navigationView.setCheckedItem(destination.getId());
-            } else {
-                navigationView.setCheckedItem(destination.getId());
             }
         });
 
@@ -101,8 +89,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         if (mToken.getRefreshToken() != null) {
             getCurrentUser();
-            navigationView.getMenu().getItem(1).setVisible(true);
-            navigationView.getMenu().getItem(3).getSubMenu().getItem(0).setVisible(false);
+            bottomNavView.getMenu().getItem(2).setVisible(true);
+            bottomNavView.getMenu().getItem(3).setVisible(false);
         }
     }
 
@@ -115,21 +103,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (username != null) {
                     mUser = user;
                     currentUserUsername = user.getName();
+                    MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.userFragment);
+                    bottomNavMenuItem.setEnabled(true);
                 }
             }
             //TODO: Handle this by showing appropriate error
         });
     }
 
-    boolean isValidDestination(int dest_id) {
-        if (!viewingSelf && dest_id == R.id.userFragment)
-            return true;
-        return dest_id != Objects.requireNonNull(Navigation.findNavController(this, R.id.nav_host_fragment).getCurrentDestination()).getId();
-    }
-
     @Override
     public boolean onSupportNavigateUp() {
-        return NavigationUI.navigateUp(navController, drawer) || super.onSupportNavigateUp();
+        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
     }
 
     public void loadLogInWebpage() {
@@ -157,78 +141,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 setAuthorizedUI();
             }
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START))
-            drawer.closeDrawer(GravityCompat.START);
-        else
-            super.onBackPressed();
+        MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(destinationBeforeLoginAttempt);
+        bottomNavMenuItem.setChecked(true);
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.mainFragment) {
-            itemSelectedID = id;
-            drawer.close();
+            options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
+            navController.navigate(R.id.mainFragment, null, options);
             return true;
         } else if (id == R.id.userFragment) {
-            itemSelectedID = id;
-            drawer.close();
+            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
+            navController.navigate(action);
             return true;
         } else if (id == R.id.subredditListFragment) {
-            itemSelectedID = id;
-            drawer.close();
+            navController.navigate(R.id.subredditListFragment);
             return true;
         } else if (id == R.id.nav_login) {
-            itemSelectedID = id;
-            drawer.close();
+            FoxToolkit.INSTANCE.promptLogIn(this);
             return true;
         }
-        itemSelectedID = -1;
         return false;
     }
 
-    private class DrawerListener implements DrawerLayout.DrawerListener {
-        @Override
-        public void onDrawerClosed(@NonNull View drawerView) {
-            if (itemSelectedID != -1) {
-                if (itemSelectedID == R.id.mainFragment) {
-                    if (isValidDestination(itemSelectedID)) {
-                        options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
-                        navController.navigate(R.id.mainFragment, null, options);
-                    }
-                    itemSelectedID = -1;
-                } else if (itemSelectedID == R.id.userFragment) {
-                    if (isValidDestination(itemSelectedID)) {
-                        NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
-                        navController.navigate(action);
-                    }
-                    itemSelectedID = -1;
-                } else if (itemSelectedID == R.id.subredditListFragment) {
-                    if (isValidDestination(itemSelectedID))
-                        navController.navigate(R.id.subredditListFragment);
-                    itemSelectedID = -1;
-                } else if (itemSelectedID == R.id.nav_login) {
-                    loadLogInWebpage();
-                    itemSelectedID = -1;
-                }
-            }
-        }
-
-        @Override
-        public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-        }
-
-        @Override
-        public void onDrawerOpened(@NonNull View drawerView) {
-        }
-
-        @Override
-        public void onDrawerStateChanged(int newState) {
+    @Override
+    public void onNavigationItemReselected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        int currentItemID = Navigation.findNavController(this, R.id.nav_host_fragment).getCurrentDestination().getId();
+        if (id == R.id.subredditListFragment && id != currentItemID) {
+            navController.navigate(R.id.subredditListFragment);
         }
     }
 }

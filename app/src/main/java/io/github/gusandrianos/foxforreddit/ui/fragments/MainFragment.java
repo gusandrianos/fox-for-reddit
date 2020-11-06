@@ -2,6 +2,7 @@ package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -38,7 +40,7 @@ public class MainFragment extends Fragment {
 
         ViewPager2 viewPager = view.findViewById(R.id.view_pager);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
-        setUpToolbar();
+        setUpNavigation();
 
         ArrayList<Fragment> homeFragments = new ArrayList<>();
         ArrayList<String> tabTitles = new ArrayList<>();
@@ -57,11 +59,15 @@ public class MainFragment extends Fragment {
         ).attach();
     }
 
-    private void setUpToolbar() {
+    private void setUpNavigation() {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_main);
         toolbar.inflateMenu(R.menu.sorting);
+        BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
+        bottomNavigationView.setVisibility(View.VISIBLE);
+        MenuItem item = bottomNavigationView.getMenu().findItem(R.id.mainFragment);
+        item.setChecked(true);
         toolbar.getMenu().getItem(0).getSubMenu().getItem(0).setVisible(true);
         NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
     }

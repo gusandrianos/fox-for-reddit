@@ -1,11 +1,11 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -13,19 +13,23 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.NumberFormat;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -34,6 +38,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
 import static io.github.gusandrianos.foxforreddit.Constants.ACTION_SUBSCRIBE;
 import static io.github.gusandrianos.foxforreddit.Constants.ACTION_UNSUBSCRIBE;
+import static io.github.gusandrianos.foxforreddit.Constants.SUBREDDIT_POST_FRAGMENT_TAG;
 
 public class SubredditFragment extends Fragment {
     FoxToolkit toolkit = FoxToolkit.INSTANCE;
@@ -51,7 +56,7 @@ public class SubredditFragment extends Fragment {
 
         TextView titleTextView = view.findViewById(R.id.text_subreddit_title);
         titleTextView.setText(subredditName);
-        setUpToolbar(view);
+        setUpNavigation(view);
 
         SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
         SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
@@ -59,12 +64,14 @@ public class SubredditFragment extends Fragment {
         viewModel.getSubreddit(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
         {
             setupHeader(subredditInfo, view);
-            PostFragment subredditPostFragment = PostFragment.newInstance(subredditName, "", "");
-            if (savedInstanceState == null) {
+            PostFragment subredditPostFragment = (PostFragment) getChildFragmentManager().findFragmentByTag(SUBREDDIT_POST_FRAGMENT_TAG);
+
+            if (subredditPostFragment == null) {
+                subredditPostFragment = PostFragment.newInstance(subredditName, "", "");
                 getChildFragmentManager().beginTransaction()
                         .replace(R.id.subreddit_posts_fragment,
                                 subredditPostFragment,
-                                "SubredditPostFragment")
+                                SUBREDDIT_POST_FRAGMENT_TAG)
                         .commitNow();
             }
         });
@@ -73,22 +80,39 @@ public class SubredditFragment extends Fragment {
     void setupHeader(Data subredditInfo, View view) {
         setupImages(subredditInfo, view);
         setupUserCounters(subredditInfo, view);
-
         MaterialButton subUnsubButton = view.findViewById(R.id.button_subreddit_sub_unsub);
 
         setupButton(subredditInfo, view);
-        subUnsubButton.setOnClickListener(button -> {
-            SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-            SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
-            viewModel.toggleSubscribed(getFinalAction(subredditInfo),
-                    subredditInfo.getDisplayName(),
-                    requireActivity().getApplication())
-                    .observe(getViewLifecycleOwner(), status -> {
-                        if (status) {
-                            subredditInfo.setUserIsSubscriber(!subredditInfo.getUserIsSubscriber());
-                            setupButton(subredditInfo, view);
-                        }
-                    });
+        if (FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+            subUnsubButton.setOnClickListener(button -> {
+                SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+                SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+                viewModel.toggleSubscribed(getFinalAction(subredditInfo),
+                        subredditInfo.getDisplayName(),
+                        requireActivity().getApplication())
+                        .observe(getViewLifecycleOwner(), status -> {
+                            if (status) {
+                                subredditInfo.setUserIsSubscriber(!subredditInfo.getUserIsSubscriber());
+                                setupButton(subredditInfo, view);
+                            }
+                        });
+            });
+        else
+            subUnsubButton.setOnClickListener(button -> FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity()));
+
+        AppBarLayout appBarLayout = view.findViewById(R.id.fragment_subreddit_appbar);
+        Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);
+        toolbar.setBackgroundColor(Color.argb(0, 255, 255, 255));
+
+        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
+            int alpha;
+
+            if (Math.abs(verticalOffset) >= 200)
+                alpha = 255;
+            else
+                alpha = 0;
+
+            toolbar.setBackgroundColor(Color.argb(alpha, 255, 255, 255));
         });
     }
 
@@ -157,14 +181,16 @@ public class SubredditFragment extends Fragment {
         Glide.with(view).load(R.drawable.cover_gradient).into(gradient);
     }
 
-    private void setUpToolbar(View view) {
+    private void setUpNavigation(View view) {
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.subreddit_collapsing_toolbar);
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);
         toolbar.inflateMenu(R.menu.sorting);
-        DrawerLayout drawer = mainActivity.drawer;
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
+        bottomNavigationView.setVisibility(View.VISIBLE);
+        MenuItem item = bottomNavigationView.getMenu().findItem(R.id.subredditListFragment);
+        item.setChecked(true);
         NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController, mainActivity.appBarConfiguration);
     }
 }

@@ -29,7 +29,6 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -47,6 +46,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
@@ -135,7 +135,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         orientation = getResources().getConfiguration().orientation;
 
-        setUpToolbar(view, singlePostData.getSubredditNamePrefixed());
+        setUpNavigation(view, singlePostData.getSubredditNamePrefixed());
         initializeUI(singlePostData, view, postType);
 
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
@@ -554,8 +554,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void showViews(View view) {
-        lockDrawer(false);
-
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         PlayerView playerView = view.findViewById(R.id.video_player);
         TextView singlePostTitle = view.findViewById(R.id.stub_txt_post_title);
@@ -583,8 +581,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     public void hideViews(View view) {
-        lockDrawer(true);
-
         CollapsingToolbarLayout collapsingToolbar = view.findViewById(R.id.single_post_collapsing_toolbar);
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbar.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL);
@@ -623,17 +619,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         Runnable runnable = () -> changeSeekBar(player, videoSeekBar, videoCurrentTime, handler);
         handler.postDelayed(runnable, 1000);
     }
-
-    private void lockDrawer(boolean lock) {
-        MainActivity mainActivity = (MainActivity) requireActivity();
-        DrawerLayout drawer = mainActivity.drawer;
-        if (lock) {
-            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        } else {
-            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        }
-    }
-
 
     private void initRecyclerView(View view, GroupAdapter<GroupieViewHolder> groupAdapter) {
         GridLayoutManager groupLayoutManager = new GridLayoutManager(getActivity(), groupAdapter.getSpanCount());
@@ -698,7 +683,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         }
     }
 
-    private void setUpToolbar(View view, String subreddit) {
+    private void setUpNavigation(View view, String subreddit) {
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.single_post_collapsing_toolbar);
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
@@ -718,8 +703,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         NavController navController = NavHostFragment.findNavController(this);
 
         mainActivity.setSupportActionBar(toolbar);
-        DrawerLayout drawer = mainActivity.drawer;
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
+        bottomNavigationView.setVisibility(View.GONE);
         NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController);
     }
 }

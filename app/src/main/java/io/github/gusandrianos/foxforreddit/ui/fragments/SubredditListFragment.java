@@ -31,6 +31,9 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
+import static io.github.gusandrianos.foxforreddit.Constants.AUTHORIZED_SUB_LIST_LOCATION;
+import static io.github.gusandrianos.foxforreddit.Constants.VISITOR_SUB_LIST_LOCATION;
+
 public class SubredditListFragment extends Fragment implements SubredditListAdapter.OnItemClickListener {
 
     SubredditListAdapter mSubredditListAdapter;
@@ -54,9 +57,9 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
         UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
         Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
-        String location = "mine/subscriber";
+        String location = AUTHORIZED_SUB_LIST_LOCATION;
         if (token.getRefreshToken() == null) {
-            location = "default";
+            location = VISITOR_SUB_LIST_LOCATION;
         }
 
         viewModel.getSubreddits(getActivity().getApplication(), location).observe(getViewLifecycleOwner(), subredditPagingData -> {

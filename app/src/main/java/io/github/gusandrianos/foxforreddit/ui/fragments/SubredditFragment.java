@@ -37,6 +37,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
 import static io.github.gusandrianos.foxforreddit.Constants.ACTION_SUBSCRIBE;
 import static io.github.gusandrianos.foxforreddit.Constants.ACTION_UNSUBSCRIBE;
+import static io.github.gusandrianos.foxforreddit.Constants.SUBREDDIT_POST_FRAGMENT_TAG;
 
 public class SubredditFragment extends Fragment {
     FoxToolkit toolkit = FoxToolkit.INSTANCE;
@@ -62,14 +63,14 @@ public class SubredditFragment extends Fragment {
         viewModel.getSubreddit(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
         {
             setupHeader(subredditInfo, view);
-            PostFragment subredditPostFragment = (PostFragment) getChildFragmentManager().findFragmentByTag("SubredditPostFragment");
+            PostFragment subredditPostFragment = (PostFragment) getChildFragmentManager().findFragmentByTag(SUBREDDIT_POST_FRAGMENT_TAG);
 
             if (subredditPostFragment == null) {
                 subredditPostFragment = PostFragment.newInstance(subredditName, "", "");
                 getChildFragmentManager().beginTransaction()
                         .replace(R.id.subreddit_posts_fragment,
                                 subredditPostFragment,
-                                "SubredditPostFragment")
+                                SUBREDDIT_POST_FRAGMENT_TAG)
                         .commitNow();
             }
         });

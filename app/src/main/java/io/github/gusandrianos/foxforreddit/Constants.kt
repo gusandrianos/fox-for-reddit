@@ -75,4 +75,28 @@ object Constants {
     const val ARG_FILTER_NAME = "filter"
     const val ARG_TIME_NAME = "time"
     const val SHARE_TEXT = "Share via"
+
+    // User Fragment
+    const val USER_UI_TAB_POSTS = "Posts"
+    const val USER_UI_TAB_COMMENTS = "Comments"
+    const val USER_UI_TAB_ABOUT = "About"
+    const val USER_UI_TAB_UPVOTED = "Upvoted"
+    const val USER_UI_TAB_DOWNVOTED = "Downvoted"
+    const val USER_UI_TAB_HIDDEN = "Hidden"
+    const val USER_UI_TAB_SAVED = "Saved"
+    const val USER_UI_BUTTON_FOLLOW = "Follow"
+    const val USER_UI_BUTTON_UNFOLLOW = "Unfollow"
+    const val USER_UI_BUTTON_EDIT = "Edit"
+
+    // About User Fragment
+    const val ARG_USERNAME_NAME = "username"
+    const val ARG_POST_KARMA_NAME = "post_karma"
+    const val ARG_COMMENT_KARMA_NAME = "comment_karma"
+
+    // Subreddit Fragment
+    const val SUBREDDIT_POST_FRAGMENT_TAG = "SubredditPostFragment"
+
+    // Subreddit List Fragment
+    const val AUTHORIZED_SUB_LIST_LOCATION = "mine/subscriber"
+    const val VISITOR_SUB_LIST_LOCATION = "default"
 }

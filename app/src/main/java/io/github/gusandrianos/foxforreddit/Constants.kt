@@ -55,4 +55,24 @@ object Constants {
     // Screen Mode
     const val NORMAL_SCREEN = 0
     const val FULLSCREEN = 1
+
+    // Sorting
+    const val SORTING_BEST = "best"
+    const val SORTING_HOT = "hot"
+    const val SORTING_NEW = "new"
+    const val SORTING_TOP = "top"
+    const val SORTING_CONTROVERSIAL = "controversial"
+    const val SORTING_RISING = "rising"
+    const val TIME_HOUR = "hour"
+    const val TIME_DAY = "day"
+    const val TIME_WEEK = "week"
+    const val TIME_MONTH = "month"
+    const val TIME_YEAR = "year"
+    const val TIME_ALL = "all"
+
+    // Post Fragment
+    const val ARG_SUBREDDIT_NAME = "subreddit"
+    const val ARG_FILTER_NAME = "filter"
+    const val ARG_TIME_NAME = "time"
+    const val SHARE_TEXT = "Share via"
 }

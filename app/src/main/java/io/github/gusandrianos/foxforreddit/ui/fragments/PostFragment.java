@@ -47,7 +47,6 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     String filter;
     String timedFilter;
     String time;
-    int page;
     PostAdapter mPostRecyclerViewAdapter;
     RecyclerView mPostRecyclerView;
     SwipeRefreshLayout pullToRefresh;
@@ -63,10 +62,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         super.onViewCreated(view, savedInstanceState);
         mView = getView();
         mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
-        page = getArguments().getInt("page", 0);
-        subreddit = getArguments().getString("subreddit", "");
-        filter = getArguments().getString("filter", "");
-        time = getArguments().getString("time", "");
+        subreddit = getArguments().getString(Constants.ARG_SUBREDDIT_NAME, "");
+        filter = getArguments().getString(Constants.ARG_FILTER_NAME, "");
+        time = getArguments().getString(Constants.ARG_TIME_NAME, "");
         pullToRefresh = view.findViewById(R.id.swipe_refresh_layout_posts);
         initRecycleView();
         loadPosts(false);
@@ -170,7 +168,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 FoxToolkit.INSTANCE.downVote(viewModel, requireActivity().getApplication(), post);
                 break;
             case Constants.POST_SHARE:
-                startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(post), "Share via"));
+                startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(post), Constants.SHARE_TEXT));
                 break;
             case Constants.POST_VOTE_NOW:
                 CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
@@ -195,70 +193,57 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         Toolbar toolbar = getCurrentToolbar();
 
         toolbar.setOnMenuItemClickListener(menuItem -> {
-            switch (menuItem.getItemId()) {
-                case R.id.sort_best:
-                    filter = "best";
-                    loadPosts(true);
-                    return true;
-
-                case R.id.sort_hot:
-                    filter = "hot";
-                    loadPosts(true);
-                    return true;
-
-                case R.id.sort_new:
-                    filter = "new";
-                    loadPosts(true);
-                    return true;
-
-                case R.id.sort_top:
-                    timedFilter = "top";
-                    break;
-
-                case R.id.sort_controversial:
-                    timedFilter = "controversial";
-                    break;
-
-                case R.id.sort_rising:
-                    filter = "rising";
-                    loadPosts(true);
-                    return true;
-
-                case R.id.sort_hour:
-                    filter = timedFilter;
-                    time = "hour";
-                    loadPosts(true);
-                    return true;
-
-                case R.id.sort_24h:
-                    filter = timedFilter;
-                    time = "day";
-                    loadPosts(true);
-                    return true;
-
-                case R.id.sort_week:
-                    filter = timedFilter;
-                    time = "week";
-                    loadPosts(true);
-                    return true;
-
-                case R.id.sort_month:
-                    filter = timedFilter;
-                    time = "month";
-                    loadPosts(true);
-                    return true;
-
-                case R.id.sort_year:
-                    filter = timedFilter;
-                    time = "year";
-                    loadPosts(true);
-                    return true;
-
-                case R.id.sort_all_time:
-                    filter = timedFilter;
-                    time = "all";
-                    loadPosts(true);
-                    return true;
+            int itemItemId = menuItem.getItemId();
+            if (itemItemId == R.id.sort_best) {
+                filter = Constants.SORTING_BEST;
+                loadPosts(true);
+                return true;
+            } else if (itemItemId == R.id.sort_hot) {
+                filter = Constants.SORTING_HOT;
+                loadPosts(true);
+                return true;
+            } else if (itemItemId == R.id.sort_new) {
+                filter = Constants.SORTING_NEW;
+                loadPosts(true);
+                return true;
+            } else if (itemItemId == R.id.sort_top) {
+                timedFilter = Constants.SORTING_TOP;
+            } else if (itemItemId == R.id.sort_controversial) {
+                timedFilter = Constants.SORTING_CONTROVERSIAL;
+            } else if (itemItemId == R.id.sort_rising) {
+                filter = Constants.SORTING_RISING;
+                loadPosts(true);
+                return true;
+            } else if (itemItemId == R.id.sort_hour) {
+                filter = timedFilter;
+                time = Constants.TIME_HOUR;
+                loadPosts(true);
+                return true;
+            } else if (itemItemId == R.id.sort_24h) {
+                filter = timedFilter;
+                time = Constants.TIME_DAY;
+                loadPosts(true);
+                return true;
+            } else if (itemItemId == R.id.sort_week) {
+                filter = timedFilter;
+                time = Constants.TIME_WEEK;
+                loadPosts(true);
+                return true;
+            } else if (itemItemId == R.id.sort_month) {
+                filter = timedFilter;
+                time = Constants.TIME_MONTH;
+                loadPosts(true);
+                return true;
+            } else if (itemItemId == R.id.sort_year) {
+                filter = timedFilter;
+                time = Constants.TIME_YEAR;
+                loadPosts(true);
+                return true;
+            } else if (itemItemId == R.id.sort_all_time) {
+                filter = timedFilter;
+                time = Constants.TIME_ALL;
+                loadPosts(true);
+                return true;
             }
             return false;
         });
@@ -268,9 +253,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         PostFragment fragment = new PostFragment();
 
         Bundle args = new Bundle();
-        args.putString("subreddit", subreddit);
-        args.putString("filter", filter);
-        args.putString("time", time);
+        args.putString(Constants.ARG_SUBREDDIT_NAME, subreddit);
+        args.putString(Constants.ARG_FILTER_NAME, filter);
+        args.putString(Constants.ARG_TIME_NAME, time);
         fragment.setArguments(args);
 
         return fragment;

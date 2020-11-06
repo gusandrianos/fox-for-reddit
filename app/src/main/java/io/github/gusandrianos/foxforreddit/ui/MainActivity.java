@@ -86,12 +86,11 @@ public class MainActivity extends AppCompatActivity implements
     private void setAuthorizedUI() {
         if (mToken == null) {
             mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(getApplication());
+            MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.userFragment);
+            bottomNavMenuItem.setEnabled(true);
         }
-        if (mToken.getRefreshToken() != null) {
+        if (mToken.getRefreshToken() != null)
             getCurrentUser();
-            bottomNavView.getMenu().getItem(2).setVisible(true);
-            bottomNavView.getMenu().getItem(3).setVisible(false);
-        }
     }
 
     private void getCurrentUser() {
@@ -153,14 +152,20 @@ public class MainActivity extends AppCompatActivity implements
             navController.navigate(R.id.mainFragment, null, options);
             return true;
         } else if (id == R.id.userFragment) {
-            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
-            navController.navigate(action);
+            if (mToken.getRefreshToken() != null && !mToken.getRefreshToken().isEmpty()) {
+                NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
+                navController.navigate(action);
+            } else
+                FoxToolkit.INSTANCE.promptLogIn(this);
             return true;
         } else if (id == R.id.subredditListFragment) {
             navController.navigate(R.id.subredditListFragment);
             return true;
-        } else if (id == R.id.nav_login) {
-            FoxToolkit.INSTANCE.promptLogIn(this);
+        } else if (id == R.id.composeFragment) {
+            navController.navigate(R.id.composeFragment);
+            return true;
+        } else if (id == R.id.messagesFragment) {
+            navController.navigate(R.id.messagesFragment);
             return true;
         }
         return false;

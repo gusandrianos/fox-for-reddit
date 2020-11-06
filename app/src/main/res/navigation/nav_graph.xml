@@ -73,5 +73,14 @@
     <action
         android:id="@+id/action_global_videoDialogFragment"
         app:destination="@id/videoDialogFragment" />
-
+    <fragment
+        android:id="@+id/composeFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeFragment"
+        android:label="fragment_compose"
+        tools:layout="@layout/fragment_compose" />
+    <fragment
+        android:id="@+id/messagesFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.MessagesFragment"
+        android:label="fragment_messages"
+        tools:layout="@layout/fragment_messages" />
 </navigation>

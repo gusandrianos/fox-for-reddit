@@ -52,6 +52,7 @@ public class SubredditFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         SubredditFragmentArgs args = SubredditFragmentArgs.fromBundle(requireArguments());
         String subredditName = args.getSubredditName();
+        ((MainActivity) requireActivity()).getFoxSharedViewModel().setCurrentSubreddit(subredditName);
 
         TextView titleTextView = view.findViewById(R.id.text_subreddit_title);
         titleTextView.setText(subredditName);

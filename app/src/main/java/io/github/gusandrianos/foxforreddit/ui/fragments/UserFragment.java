@@ -44,6 +44,7 @@ import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.viewmodels.FoxSharedViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
@@ -83,7 +84,8 @@ public class UserFragment extends Fragment {
             username = user.getName();
 
         MainActivity mainActivity = (MainActivity) requireActivity();
-        mainActivity.viewingSelf = username.equals(mainActivity.currentUserUsername);
+        FoxSharedViewModel sharedViewModel = mainActivity.getFoxSharedViewModel();
+        sharedViewModel.setViewingSelf(username.equals(sharedViewModel.getCurrentUserUsername()));
 
         setUpNavigation(view);
 
@@ -93,7 +95,11 @@ public class UserFragment extends Fragment {
         } else if (!username.isEmpty()) {
             UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
-            viewModel.getUser(requireActivity().getApplication(), username).observe(getViewLifecycleOwner(), data -> buildUserProfile(data, view, Objects.equals(data.getName(), mainActivity.currentUserUsername)));
+            viewModel.getUser(requireActivity().getApplication(), username).
+                    observe(getViewLifecycleOwner(),
+                            data -> buildUserProfile(
+                                    data, view, Objects.equals(data.getName(),
+                                            mainActivity.getFoxSharedViewModel().getCurrentUserUsername())));
         }
     }
 
@@ -177,7 +183,7 @@ public class UserFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         if (FoxToolkit.INSTANCE.isAuthorized(mainActivity.getApplication()))
             profileButton.setOnClickListener(button -> {
-                if (!mainActivity.viewingSelf) {
+                if (!mainActivity.getFoxSharedViewModel().getViewingSelf()) {
                     SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
                     SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
                     viewModel.toggleSubscribed(getFinalAction(userSubreddit),
@@ -221,7 +227,7 @@ public class UserFragment extends Fragment {
         MaterialButton profileButton = view.findViewById(R.id.button_profile_button);
         MainActivity mainActivity = (MainActivity) requireActivity();
 
-        if (mainActivity.viewingSelf) {
+        if (mainActivity.getFoxSharedViewModel().getViewingSelf()) {
             profileButton.setText(USER_UI_BUTTON_EDIT);
             return;
         }
@@ -268,7 +274,7 @@ public class UserFragment extends Fragment {
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
 //        toolbar.inflateMenu(R.menu.sorting);
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
-        if (mainActivity.viewingSelf) {
+        if (mainActivity.getFoxSharedViewModel().getViewingSelf()) {
             bottomNavigationView.setVisibility(View.VISIBLE);
             MenuItem item = bottomNavigationView.getMenu().findItem(R.id.userFragment);
             item.setChecked(true);

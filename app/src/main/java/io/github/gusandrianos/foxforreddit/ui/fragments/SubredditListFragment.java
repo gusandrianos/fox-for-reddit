@@ -81,13 +81,19 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
         String subredditNamePrefixed = item.getDisplayNamePrefixed();
+        boolean modeSelectSubreddit = SubredditListFragmentArgs.fromBundle(requireArguments()).getModeSelectSubreddit();
 
-        if (subredditNamePrefixed.startsWith("r/")) {
-            NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(subredditNamePrefixed);
-            navController.navigate(action);
+        if (modeSelectSubreddit) {
+            ((MainActivity) requireActivity()).getFoxSharedViewModel().setSubredditChoice(subredditNamePrefixed);
+            requireActivity().onBackPressed();
         } else {
-            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, subredditNamePrefixed.split("/")[1]);
-            navController.navigate(action);
+            if (subredditNamePrefixed.startsWith("r/")) {
+                NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(subredditNamePrefixed);
+                navController.navigate(action);
+            } else {
+                NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, subredditNamePrefixed.split("/")[1]);
+                navController.navigate(action);
+            }
         }
     }
 

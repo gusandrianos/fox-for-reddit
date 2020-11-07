@@ -99,4 +99,10 @@ object Constants {
     // Subreddit List Fragment
     const val AUTHORIZED_SUB_LIST_LOCATION = "mine/subscriber"
     const val VISITOR_SUB_LIST_LOCATION = "default"
+
+    // Compose types
+    const val COMPOSE_TEXT = 0
+    const val COMPOSE_IMAGE = 1
+    const val COMPOSE_LINK = 2
+    const val COMPOSE_VIDEO = 3
 }

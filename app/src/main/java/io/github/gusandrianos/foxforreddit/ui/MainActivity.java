@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
@@ -29,6 +30,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.viewmodels.FoxSharedViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
@@ -43,13 +45,10 @@ public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemReselectedListener,
         BottomNavigationView.OnNavigationItemSelectedListener {
     private Data mUser;
-    public String currentUserUsername;
-    public boolean viewingSelf = false;
     private Token mToken;
     private NavController navController;
     public AppBarConfiguration appBarConfiguration;
     public BottomNavigationView bottomNavView;
-    public int destinationBeforeLoginAttempt;
     NavOptions options;
     List<Integer> topLevelDestinationIds;
 
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (destination.getId() != R.id.userFragment) {
-                viewingSelf = false;
+                getFoxSharedViewModel().setViewingSelf(false);
             }
         });
 
@@ -101,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements
                 String username = user.getName();
                 if (username != null) {
                     mUser = user;
-                    currentUserUsername = user.getName();
+                    getFoxSharedViewModel().setCurrentUserUsername(user.getName());
                     MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.userFragment);
                     bottomNavMenuItem.setEnabled(true);
                 }
@@ -113,6 +112,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onSupportNavigateUp() {
         return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
+    }
+
+    public FoxSharedViewModel getFoxSharedViewModel() {
+        NavBackStackEntry backStackEntry = navController.getBackStackEntry(R.id.nav_graph);
+        return new ViewModelProvider(backStackEntry).get(FoxSharedViewModel.class);
     }
 
     public void loadLogInWebpage() {
@@ -140,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements
                 setAuthorizedUI();
             }
         }
-        MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(destinationBeforeLoginAttempt);
+        MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(getFoxSharedViewModel().getDestinationBeforeLoginAttempt());
         bottomNavMenuItem.setChecked(true);
     }
 
@@ -161,8 +165,14 @@ public class MainActivity extends AppCompatActivity implements
         } else if (id == R.id.subredditListFragment) {
             navController.navigate(R.id.subredditListFragment);
             return true;
-        } else if (id == R.id.composeFragment) {
-            navController.navigate(R.id.composeFragment);
+        } else if (id == R.id.composeChooserFragment) {
+            String subreddit = "";
+            if (navController.getCurrentDestination().getId() == R.id.subredditFragment) {
+                subreddit = getFoxSharedViewModel().getCurrentSubreddit();
+            }
+            NavGraphDirections.ActionGlobalComposeChooserFragment action = NavGraphDirections.actionGlobalComposeChooserFragment(subreddit);
+            getFoxSharedViewModel().setDestinationBeforeLoginAttempt(bottomNavView.getSelectedItemId());
+            navController.navigate(action);
             return true;
         } else if (id == R.id.messagesFragment) {
             navController.navigate(R.id.messagesFragment);

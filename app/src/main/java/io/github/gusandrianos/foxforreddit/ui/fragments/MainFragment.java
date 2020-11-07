@@ -22,6 +22,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
+import java.util.zip.GZIPOutputStream;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
@@ -67,6 +68,7 @@ public class MainFragment extends Fragment {
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_main);
 
         setUpToolbar(toolbar);
+
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.VISIBLE);
         MenuItem item = bottomNavigationView.getMenu().findItem(R.id.mainFragment);
@@ -78,22 +80,13 @@ public class MainFragment extends Fragment {
     private void setUpToolbar(Toolbar toolbar) {
         toolbar.inflateMenu(R.menu.menu_with_search_bar);
         MenuItem menuItem = toolbar.getMenu().getItem(0);
-        SearchView searchView = (SearchView) menuItem.getActionView();
-        toolbar.getMenu().getItem(1).getSubMenu().getItem(0).setVisible(true);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                if (query != null){
-                    Toast.makeText(getContext(), "SEARCHING", Toast.LENGTH_SHORT).show();
-                    searchView.clearFocus();
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onMenuItemClick(MenuItem item) {
+                Toast.makeText(requireContext(), "HALO DEAR IdEa", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
+        toolbar.getMenu().getItem(1).getSubMenu().getItem(0).setVisible(true);
     }
 }

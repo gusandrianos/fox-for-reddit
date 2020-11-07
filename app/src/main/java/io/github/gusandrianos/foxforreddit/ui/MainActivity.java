@@ -34,11 +34,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.FoxSharedViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
-import static io.github.gusandrianos.foxforreddit.Constants.BASE_OAUTH_URL;
-import static io.github.gusandrianos.foxforreddit.Constants.CLIENT_ID;
-import static io.github.gusandrianos.foxforreddit.Constants.LAUNCH_SECOND_ACTIVITY;
-import static io.github.gusandrianos.foxforreddit.Constants.REDIRECT_URI;
-import static io.github.gusandrianos.foxforreddit.Constants.STATE;
+import io.github.gusandrianos.foxforreddit.Constants;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -122,24 +118,27 @@ public class MainActivity extends AppCompatActivity implements
     public void loadLogInWebpage() {
         Intent load = new Intent(this, LoginActivity.class);
         load.putExtra("URL", constructOAuthURL());
-        startActivityForResult(load, LAUNCH_SECOND_ACTIVITY);
+        startActivityForResult(load, Constants.LAUNCH_SECOND_ACTIVITY);
     }
 
     private String constructOAuthURL() {
-        return BASE_OAUTH_URL + "?client_id=" + CLIENT_ID + "&response_type=code&state=" + STATE + "&redirect_uri=" + REDIRECT_URI + "&duration=permanent&scope=*";
+        return Constants.BASE_OAUTH_URL +
+                "?client_id=" + Constants.CLIENT_ID +
+                "&response_type=code&state=" + Constants.STATE +
+                "&redirect_uri=" + Constants.REDIRECT_URI + "&duration=permanent&scope=*";
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == LAUNCH_SECOND_ACTIVITY) {
+        if (requestCode == Constants.LAUNCH_SECOND_ACTIVITY) {
             if (resultCode == Activity.RESULT_OK) {
                 String result = Objects.requireNonNull(data).getStringExtra("result");
                 String[] inputs = result.split("\\?")[1].split("&");
                 String state = inputs[0].split("=")[1];
-                if (state.equals(STATE)) {
+                if (state.equals(Constants.STATE)) {
                     String code = inputs[1].split("=")[1];
-                    mToken = InjectorUtils.getInstance().provideTokenRepository().getNewToken(getApplication(), code, REDIRECT_URI);
+                    mToken = InjectorUtils.getInstance().provideTokenRepository().getNewToken(getApplication(), code, Constants.REDIRECT_URI);
                 }
                 setAuthorizedUI();
             }

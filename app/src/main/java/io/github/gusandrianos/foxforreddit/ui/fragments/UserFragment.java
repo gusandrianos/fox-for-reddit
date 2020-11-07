@@ -50,19 +50,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
-import static io.github.gusandrianos.foxforreddit.Constants.ACTION_SUBSCRIBE;
-import static io.github.gusandrianos.foxforreddit.Constants.ACTION_UNSUBSCRIBE;
-import static io.github.gusandrianos.foxforreddit.Constants.EDIT_PROFILE_URL;
-import static io.github.gusandrianos.foxforreddit.Constants.USER_UI_BUTTON_EDIT;
-import static io.github.gusandrianos.foxforreddit.Constants.USER_UI_BUTTON_FOLLOW;
-import static io.github.gusandrianos.foxforreddit.Constants.USER_UI_BUTTON_UNFOLLOW;
-import static io.github.gusandrianos.foxforreddit.Constants.USER_UI_TAB_ABOUT;
-import static io.github.gusandrianos.foxforreddit.Constants.USER_UI_TAB_COMMENTS;
-import static io.github.gusandrianos.foxforreddit.Constants.USER_UI_TAB_DOWNVOTED;
-import static io.github.gusandrianos.foxforreddit.Constants.USER_UI_TAB_HIDDEN;
-import static io.github.gusandrianos.foxforreddit.Constants.USER_UI_TAB_POSTS;
-import static io.github.gusandrianos.foxforreddit.Constants.USER_UI_TAB_SAVED;
-import static io.github.gusandrianos.foxforreddit.Constants.USER_UI_TAB_UPVOTED;
+import io.github.gusandrianos.foxforreddit.Constants;
 
 public class UserFragment extends Fragment {
 
@@ -118,11 +106,11 @@ public class UserFragment extends Fragment {
         ArrayList<String> tabTitles = new ArrayList<>();
 
         userFragments.add(PostFragment.newInstance(buildURL(user.getName(), "/submitted"), "", ""));
-        tabTitles.add(USER_UI_TAB_POSTS);
+        tabTitles.add(Constants.USER_UI_TAB_POSTS);
         userFragments.add(PostFragment.newInstance(buildURL(user.getName(), "/comments"), "", ""));
-        tabTitles.add(USER_UI_TAB_COMMENTS);
+        tabTitles.add(Constants.USER_UI_TAB_COMMENTS);
         userFragments.add(AboutUserFragment.newInstance(user.getName(), user.getLinkKarma(), user.getCommentKarma()));
-        tabTitles.add(USER_UI_TAB_ABOUT);
+        tabTitles.add(Constants.USER_UI_TAB_ABOUT);
 
         // TODO: Use appropriate API Endpoint to make this meaningful
 //        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -148,13 +136,13 @@ public class UserFragment extends Fragment {
 
         if (isSelf) {
             userFragments.add(PostFragment.newInstance(buildURL(user.getName(), "/upvoted"), "", ""));
-            tabTitles.add(USER_UI_TAB_UPVOTED);
+            tabTitles.add(Constants.USER_UI_TAB_UPVOTED);
             userFragments.add(PostFragment.newInstance(buildURL(user.getName(), "/downvoted"), "", ""));
-            tabTitles.add(USER_UI_TAB_DOWNVOTED);
+            tabTitles.add(Constants.USER_UI_TAB_DOWNVOTED);
             userFragments.add(PostFragment.newInstance(buildURL(user.getName(), "/hidden"), "", ""));
-            tabTitles.add(USER_UI_TAB_HIDDEN);
+            tabTitles.add(Constants.USER_UI_TAB_HIDDEN);
             userFragments.add(PostFragment.newInstance(buildURL(user.getName(), "/saved"), "", ""));
-            tabTitles.add(USER_UI_TAB_SAVED);
+            tabTitles.add(Constants.USER_UI_TAB_SAVED);
         }
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(userFragments, tabTitles, this);
@@ -197,7 +185,7 @@ public class UserFragment extends Fragment {
                             });
                 } else {
                     CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
-                    customTabsIntent.launchUrl(requireContext(), Uri.parse(EDIT_PROFILE_URL));
+                    customTabsIntent.launchUrl(requireContext(), Uri.parse(Constants.EDIT_PROFILE_URL));
                 }
             });
         else
@@ -228,21 +216,21 @@ public class UserFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
 
         if (mainActivity.getFoxSharedViewModel().getViewingSelf()) {
-            profileButton.setText(USER_UI_BUTTON_EDIT);
+            profileButton.setText(Constants.USER_UI_BUTTON_EDIT);
             return;
         }
 
         if (userSubreddit.getUserIsSubscriber())
-            profileButton.setText(USER_UI_BUTTON_UNFOLLOW);
+            profileButton.setText(Constants.USER_UI_BUTTON_UNFOLLOW);
         else
-            profileButton.setText(USER_UI_BUTTON_FOLLOW);
+            profileButton.setText(Constants.USER_UI_BUTTON_FOLLOW);
     }
 
     int getFinalAction(Data userSubreddit) {
         if (userSubreddit.getUserIsSubscriber())
-            return ACTION_UNSUBSCRIBE;
+            return Constants.ACTION_UNSUBSCRIBE;
         else
-            return ACTION_SUBSCRIBE;
+            return Constants.ACTION_SUBSCRIBE;
     }
 
     void setUserNames(@NotNull View view, Data user, String username) {

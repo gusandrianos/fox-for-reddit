@@ -14,15 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.utilities.TrophyAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
-
-import static io.github.gusandrianos.foxforreddit.Constants.ARG_COMMENT_KARMA_NAME;
-import static io.github.gusandrianos.foxforreddit.Constants.ARG_POST_KARMA_NAME;
-import static io.github.gusandrianos.foxforreddit.Constants.ARG_USERNAME_NAME;
 
 public class AboutUserFragment extends Fragment {
 
@@ -36,9 +33,9 @@ public class AboutUserFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        String username = getArguments().getString(ARG_USERNAME_NAME, "");
-        int postKarmaValue = getArguments().getInt(ARG_POST_KARMA_NAME, 0);
-        int commentKarmaValue = getArguments().getInt(ARG_COMMENT_KARMA_NAME, 0);
+        String username = getArguments().getString(Constants.ARG_USERNAME_NAME, "");
+        int postKarmaValue = getArguments().getInt(Constants.ARG_POST_KARMA_NAME, 0);
+        int commentKarmaValue = getArguments().getInt(Constants.ARG_COMMENT_KARMA_NAME, 0);
 
         TextView postKarma = view.findViewById(R.id.txt_post_karma);
         TextView commentKarma = view.findViewById(R.id.txt_comment_karma);
@@ -64,9 +61,9 @@ public class AboutUserFragment extends Fragment {
     public static AboutUserFragment newInstance(String username, int postKarma, int commentKarma) {
         AboutUserFragment fragment = new AboutUserFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_USERNAME_NAME, username);
-        args.putInt(ARG_POST_KARMA_NAME, postKarma);
-        args.putInt(ARG_COMMENT_KARMA_NAME, commentKarma);
+        args.putString(Constants.ARG_USERNAME_NAME, username);
+        args.putInt(Constants.ARG_POST_KARMA_NAME, postKarma);
+        args.putInt(Constants.ARG_COMMENT_KARMA_NAME, commentKarma);
         fragment.setArguments(args);
         return fragment;
     }

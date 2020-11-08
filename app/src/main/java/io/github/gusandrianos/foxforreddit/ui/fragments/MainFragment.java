@@ -22,8 +22,10 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.zip.GZIPOutputStream;
 
+import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
@@ -65,9 +67,21 @@ public class MainFragment extends Fragment {
     private void setUpNavigation() {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
-        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_main);
 
-        setUpToolbar(toolbar);
+        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_main);
+        toolbar.inflateMenu(R.menu.menu_with_search_bar);
+        toolbar.getMenu().getItem(1).getSubMenu().getItem(0).setVisible(true);
+
+        MenuItem searchButton = toolbar.getMenu().getItem(0);
+        searchButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+                NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+                navController.navigate(NavGraphDirections.actionGlobalSearchFragment());
+                return true;
+            }
+        });
 
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.VISIBLE);
@@ -75,18 +89,5 @@ public class MainFragment extends Fragment {
         item.setChecked(true);
 
         NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
-    }
-
-    private void setUpToolbar(Toolbar toolbar) {
-        toolbar.inflateMenu(R.menu.menu_with_search_bar);
-        MenuItem menuItem = toolbar.getMenu().getItem(0);
-        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(requireContext(), "HALO DEAR IdEa", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
-        toolbar.getMenu().getItem(1).getSubMenu().getItem(0).setVisible(true);
     }
 }

@@ -18,4 +18,8 @@ class FoxSharedViewModel : ViewModel() {
     fun setSubredditChoice(subreddit: String) {
         subredditChoice.value = subreddit
     }
+
+    fun clearComposeData() {
+        subredditChoice.value = "u_${currentUserUsername}"
+    }
 }

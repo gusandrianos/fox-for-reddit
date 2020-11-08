@@ -165,11 +165,13 @@ public class MainActivity extends AppCompatActivity implements
             navController.navigate(R.id.subredditListFragment);
             return true;
         } else if (id == R.id.composeChooserFragment) {
-            String subreddit = "";
+            String postTo = "Reddit";
             if (navController.getCurrentDestination().getId() == R.id.subredditFragment) {
-                subreddit = getFoxSharedViewModel().getCurrentSubreddit();
+                postTo = getFoxSharedViewModel().getCurrentSubreddit();
+            } else {
+                getFoxSharedViewModel().clearComposeData();
             }
-            NavGraphDirections.ActionGlobalComposeChooserFragment action = NavGraphDirections.actionGlobalComposeChooserFragment(subreddit);
+            NavGraphDirections.ActionGlobalComposeChooserFragment action = NavGraphDirections.actionGlobalComposeChooserFragment(postTo);
             getFoxSharedViewModel().setPreviousDestination(bottomNavView.getSelectedItemId());
             navController.navigate(action);
             return true;

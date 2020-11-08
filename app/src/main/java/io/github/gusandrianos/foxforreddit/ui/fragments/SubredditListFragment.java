@@ -61,7 +61,7 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
             location = Constants.VISITOR_SUB_LIST_LOCATION;
         }
 
-        viewModel.getSubreddits(getActivity().getApplication(), location).observe(getViewLifecycleOwner(), subredditPagingData -> {
+        viewModel.getSubreddits(requireActivity().getApplication(), location).observe(getViewLifecycleOwner(), subredditPagingData -> {
             mSubredditListAdapter.submitData(getViewLifecycleOwner().getLifecycle(), subredditPagingData);
         });
     }
@@ -83,7 +83,7 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
         boolean modeSelectSubreddit = SubredditListFragmentArgs.fromBundle(requireArguments()).getModeSelectSubreddit();
 
         if (modeSelectSubreddit) {
-            ((MainActivity) requireActivity()).getFoxSharedViewModel().setSubredditChoice(subredditNamePrefixed);
+            ((MainActivity) requireActivity()).getFoxSharedViewModel().setCurrentSubreddit(subredditNamePrefixed);
             requireActivity().onBackPressed();
         } else {
             if (subredditNamePrefixed.startsWith("r/")) {

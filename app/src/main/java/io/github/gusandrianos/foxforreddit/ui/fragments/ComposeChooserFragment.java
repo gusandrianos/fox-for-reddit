@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
@@ -33,7 +34,15 @@ public class ComposeChooserFragment extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setUpPromptText(view);
         composeOptionsListeners(view);
+    }
+
+    void setUpPromptText(View view) {
+        String postTo = ComposeChooserFragmentArgs.fromBundle(requireArguments()).getPostTo();
+        TextView chooserPrompt = view.findViewById(R.id.text_compose_chooser_prompt);
+        String promptText = "Post to " + postTo;
+        chooserPrompt.setText(promptText);
     }
 
     void composeOptionsListeners(View view) {
@@ -51,9 +60,8 @@ public class ComposeChooserFragment extends BottomSheetDialogFragment {
     void compose(int postType) {
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-        String subreddit = ComposeChooserFragmentArgs.fromBundle(requireArguments()).getSubreddit();
 
-        ComposeChooserFragmentDirections.ActionComposeChooserFragmentToComposeFragment action = ComposeChooserFragmentDirections.actionComposeChooserFragmentToComposeFragment(postType, subreddit);
+        ComposeChooserFragmentDirections.ActionComposeChooserFragmentToComposeFragment action = ComposeChooserFragmentDirections.actionComposeChooserFragmentToComposeFragment(postType);
         navController.navigate(action);
     }
 

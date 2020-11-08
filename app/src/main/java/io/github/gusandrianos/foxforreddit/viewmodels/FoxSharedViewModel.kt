@@ -12,16 +12,12 @@ class FoxSharedViewModel : ViewModel() {
     var previousDestination: Int = 0
 
     fun getSubredditChoice(): LiveData<String> {
-        if (subredditChoice.value.isNullOrEmpty())
             subredditChoice.value = currentSubreddit
         return subredditChoice
     }
 
-    fun setSubredditChoice(subreddit: String) {
-        subredditChoice.value = subreddit
-    }
-
     fun clearComposeData() {
         subredditChoice.value = ""
+        currentSubreddit = ""
     }
 }

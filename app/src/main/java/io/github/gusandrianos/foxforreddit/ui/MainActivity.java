@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements
                 setAuthorizedUI();
             }
         }
-        MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(getFoxSharedViewModel().getDestinationBeforeLoginAttempt());
+        MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(getFoxSharedViewModel().getPreviousDestination());
         bottomNavMenuItem.setChecked(true);
     }
 
@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements
                 subreddit = getFoxSharedViewModel().getCurrentSubreddit();
             }
             NavGraphDirections.ActionGlobalComposeChooserFragment action = NavGraphDirections.actionGlobalComposeChooserFragment(subreddit);
-            getFoxSharedViewModel().setDestinationBeforeLoginAttempt(bottomNavView.getSelectedItemId());
+            getFoxSharedViewModel().setPreviousDestination(bottomNavView.getSelectedItemId());
             navController.navigate(action);
             return true;
         } else if (id == R.id.messagesFragment) {

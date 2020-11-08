@@ -3,10 +3,8 @@ package io.github.gusandrianos.foxforreddit.utilities
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.view.View
 import com.bumptech.glide.Glide
 import com.stfalcon.imageviewer.StfalconImageViewer
-import com.stfalcon.imageviewer.loader.ImageLoader
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
@@ -24,7 +22,7 @@ object FoxToolkit {
     }
 
     fun promptLogIn(mainActivity: MainActivity) {
-        mainActivity.foxSharedViewModel.destinationBeforeLoginAttempt = mainActivity.bottomNavView.selectedItemId
+        mainActivity.foxSharedViewModel.previousDestination = mainActivity.bottomNavView.selectedItemId
         mainActivity.loadLogInWebpage()
     }
 

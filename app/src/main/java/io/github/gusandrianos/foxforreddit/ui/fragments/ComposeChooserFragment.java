@@ -61,7 +61,7 @@ public class ComposeChooserFragment extends BottomSheetDialogFragment {
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
         MainActivity mainActivity = (MainActivity) requireActivity();
-        MenuItem bottomNavMenuItem = mainActivity.bottomNavView.getMenu().findItem(mainActivity.getFoxSharedViewModel().getDestinationBeforeLoginAttempt());
+        MenuItem bottomNavMenuItem = mainActivity.bottomNavView.getMenu().findItem(mainActivity.getFoxSharedViewModel().getPreviousDestination());
         bottomNavMenuItem.setChecked(true);
     }
 }

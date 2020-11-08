@@ -76,8 +76,6 @@ public class MainFragment extends Fragment {
         searchButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-                NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
                 navController.navigate(NavGraphDirections.actionGlobalSearchFragment());
                 return true;
             }

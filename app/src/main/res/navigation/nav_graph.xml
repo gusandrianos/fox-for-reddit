@@ -92,7 +92,7 @@
             android:id="@+id/action_composeChooserFragment_to_composeFragment"
             app:destination="@id/composeFragment" />
         <argument
-            android:name="subreddit"
+            android:name="postTo"
             app:argType="string" />
     </dialog>
     <fragment
@@ -103,9 +103,6 @@
         <argument
             android:name="composeType"
             app:argType="integer" />
-        <argument
-            android:name="subreddit"
-            app:argType="string" />
         <action
             android:id="@+id/action_composeFragment_to_subredditListFragment"
             app:destination="@id/subredditListFragment" >

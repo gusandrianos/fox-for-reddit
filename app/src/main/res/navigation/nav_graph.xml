@@ -61,7 +61,8 @@
     <dialog
         android:id="@+id/videoDialogFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.VideoDialogFragment"
-        android:label="VideoDialogFragment">
+        android:label="VideoDialogFragment"
+        tools:layout="@layout/fragment_dialog_video">
         <argument
             android:name="type"
             app:argType="integer" />
@@ -73,5 +74,21 @@
     <action
         android:id="@+id/action_global_videoDialogFragment"
         app:destination="@id/videoDialogFragment" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_searchResultsFragment"
+            app:destination="@id/searchResultsFragment"
+            app:launchSingleTop="true" />
+    </fragment>
+    <action android:id="@+id/action_global_searchFragment" app:destination="@id/searchFragment" />
+    <fragment
+        android:id="@+id/searchResultsFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SearchResultsFragment"
+        android:label="fragment_results_search"
+        tools:layout="@layout/fragment_results_search" />
 
 </navigation>

@@ -16,7 +16,7 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
 
     fun getPosts(subreddit: String, filter: String, time: String, application: Application): LiveData<PagingData<Data>> {
         if (posts != null)
-            return posts!!;
+            return posts!!
         posts = mPostRepository.getPosts(subreddit, filter, time, application).cachedIn(viewModelScope)
         return posts!!
     }

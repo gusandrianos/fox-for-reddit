@@ -11,27 +11,18 @@ import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.repositories.UserRepository
 
 class UserViewModel(private val mUserRepository: UserRepository) : ViewModel() {
-    private var user: LiveData<Data>? = null
-    private var me: LiveData<Data>? = null
     private var subreddits: LiveData<PagingData<Data>>? = null
 
-
     fun getUser(application: Application, username: String): LiveData<Data> {
-        if (user != null)
-            return user!!
-        user = mUserRepository.getUser(username, application)
-        return user!!
+        return mUserRepository.getUser(username, application)
     }
 
     fun getMe(application: Application): LiveData<Data> {
-        if (me != null)
-            return me!!
-        me = mUserRepository.getMe(application)
-        return me!!
+        return mUserRepository.getMe(application)
     }
 
     fun getTrophies(application: Application, username: String): LiveData<List<Thing>> {
-       return mUserRepository.getTrophies(application, username)
+        return mUserRepository.getTrophies(application, username)
     }
 
     fun getSubreddits(application: Application, location: String): LiveData<PagingData<Data>> {

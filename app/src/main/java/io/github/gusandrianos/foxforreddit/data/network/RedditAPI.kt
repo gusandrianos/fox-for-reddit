@@ -1,8 +1,11 @@
 package io.github.gusandrianos.foxforreddit.data.network
 
+import androidx.lifecycle.LiveData
 import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.data.models.SubmitResponse
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
@@ -89,4 +92,17 @@ interface RedditAPI {
             @Field("action") action: String,
             @Field("sr_name") sr_name: String
     ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("api/submit")
+    fun submitText(
+            @Header("Authorization") bearer: String,
+            @Field("kind") kind: String,
+            @Field("sr") subreddit: String,
+            @Field("title") title: String,
+            @Field("text") text: String,
+//            @Field("spoiler") spoiler: Boolean,
+//            @Field("nsfw") nsfw: Boolean,
+            @Field("api_type") apiType: String,
+    ): Call<SubmitResponse>
 }

@@ -8,6 +8,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import io.github.gusandrianos.foxforreddit.data.models.CommentListing
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.data.models.SubmitResponse
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository
 
@@ -35,5 +36,9 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
 
     fun getMoreChildren(linkId: String, children: String, application: Application): LiveData<MoreChildren> {
         return mPostRepository.getMoreChildren(linkId, children, application)
+    }
+
+    fun submitText(subreddit: String, title: String, url: String, text: String, application: Application): LiveData<SubmitResponse> {
+        return mPostRepository.submitText(subreddit, title, url, text, application)
     }
 }

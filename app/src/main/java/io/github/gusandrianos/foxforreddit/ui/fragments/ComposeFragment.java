@@ -6,14 +6,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
@@ -23,9 +27,12 @@ import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
+import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.FoxSharedViewModel;
 
 import io.github.gusandrianos.foxforreddit.Constants;
+import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
 public class ComposeFragment extends Fragment {
     @Override
@@ -47,7 +54,9 @@ public class ComposeFragment extends Fragment {
 
         MaterialButton chooseSubredditButton = view.findViewById(R.id.button_compose_choose_subreddit);
         chooseSubredditButton.setOnClickListener(view1 -> {
-            NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                    .getSupportFragmentManager()
+                    .findFragmentById(R.id.nav_host_fragment);
             NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
             navController.navigate(ComposeFragmentDirections.actionComposeFragmentToSubredditListFragment());
         });
@@ -55,27 +64,56 @@ public class ComposeFragment extends Fragment {
 
     private void setUpBodyStub(View view, int type) {
         ViewStub stub = view.findViewById(R.id.stub_compose_body);
+        Toolbar toolbar = view.findViewById(R.id.toolbar_compose);
+
 
         if (type == Constants.COMPOSE_TEXT) {
             stub.setLayoutResource(R.layout.stub_compose_text);
+            View inflated = stub.inflate();
+            toolbar.getMenu().findItem(R.id.button_submit_post).setOnMenuItemClickListener(menuItem -> {
+                return textTypePostAction(view, inflated);
+            });
         } else if (type == Constants.COMPOSE_IMAGE) {
-            stub = view.findViewById(R.id.stub_compose_body);
             stub.setLayoutResource(R.layout.stub_compose_image);
+            View inflated = stub.inflate();
         } else if (type == Constants.COMPOSE_LINK) {
-            stub = view.findViewById(R.id.stub_compose_body);
             stub.setLayoutResource(R.layout.stub_compose_link);
+            View inflated = stub.inflate();
         } else {
-            stub = view.findViewById(R.id.stub_compose_body);
             stub.setLayoutResource(R.layout.stub_compose_video);
+            View inflated = stub.inflate();
         }
+    }
 
-        View inflated = stub.inflate();
+    private boolean textTypePostAction(View view, View inflated) {
+        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subredddit_field);
+        TextInputEditText titleTextField = view.findViewById(R.id.edit_compose_title_field);
+        TextInputEditText textBody = inflated.findViewById(R.id.edit_compose_text_body);
+
+        String subreddit = subredditTextField.getText().toString().trim();
+        String title = titleTextField.getText().toString().trim();
+        String text = textBody.getText().toString().trim();
+
+        //TODO: Sanitize inputs
+
+        viewModel.submitText(subreddit, title, "", text, requireActivity().getApplication()).observe(getViewLifecycleOwner(), posted -> {
+            if (posted.getJson().getErrors().isEmpty()) {
+                // SinglePost needs refactoring to support navigating to it from links, for now, navigating back.
+                Toast.makeText(requireContext(), "Posted to " + subredditTextField.getText().toString(), Toast.LENGTH_SHORT).show();
+                requireActivity().onBackPressed();
+            } else
+                Toast.makeText(requireContext(), "That didn't work", Toast.LENGTH_SHORT).show();
+        });
+        return true;
     }
 
     private void setUpNavigation(View view, int type) {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar_compose);
+        toolbar.inflateMenu(R.menu.button_submit_post);
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.GONE);
         NavigationUI.setupWithNavController(toolbar, navController);

@@ -6,6 +6,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -89,4 +90,13 @@ interface RedditAPI {
             @Field("action") action: String,
             @Field("sr_name") sr_name: String
     ): Call<Void>
+
+    @GET("api/subreddit_autocomplete_v2")
+    fun searchTopSubreddits(
+            @Header("Authorization") bearer: String,
+            @Query("query") query: String,
+            @Query("include_over_18") includeOver18: Boolean,
+            @Query("include_profiles") includeProfiles: Boolean,
+            @Query("typeahead_active") typeahead_active: Boolean
+    ): Call<Listing>
 }

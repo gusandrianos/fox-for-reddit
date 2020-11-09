@@ -13,6 +13,7 @@ import androidx.navigation.ui.NavigationUI;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
@@ -38,7 +39,10 @@ public class ComposeFragment extends Fragment {
         TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subredddit_field);
         FoxSharedViewModel foxViewModel = ((MainActivity) requireActivity()).getFoxSharedViewModel();
         int composeType = ComposeFragmentArgs.fromBundle(requireArguments()).getComposeType();
+
         setUpNavigation(view, composeType);
+        setUpBodyStub(view, composeType);
+
         foxViewModel.getSubredditChoice().observe(getViewLifecycleOwner(), subredditTextField::setText);
 
         MaterialButton chooseSubredditButton = view.findViewById(R.id.button_compose_choose_subreddit);
@@ -47,6 +51,25 @@ public class ComposeFragment extends Fragment {
             NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
             navController.navigate(ComposeFragmentDirections.actionComposeFragmentToSubredditListFragment());
         });
+    }
+
+    private void setUpBodyStub(View view, int type) {
+        ViewStub stub = view.findViewById(R.id.stub_compose_body);
+
+        if (type == Constants.COMPOSE_TEXT) {
+            stub.setLayoutResource(R.layout.stub_compose_text);
+        } else if (type == Constants.COMPOSE_IMAGE) {
+            stub = view.findViewById(R.id.stub_compose_body);
+            stub.setLayoutResource(R.layout.stub_compose_image);
+        } else if (type == Constants.COMPOSE_LINK) {
+            stub = view.findViewById(R.id.stub_compose_body);
+            stub.setLayoutResource(R.layout.stub_compose_link);
+        } else {
+            stub = view.findViewById(R.id.stub_compose_body);
+            stub.setLayoutResource(R.layout.stub_compose_video);
+        }
+
+        View inflated = stub.inflate();
     }
 
     private void setUpNavigation(View view, int type) {

@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.fragments.ComposeFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_compose"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintBottom_toTopOf="@id/button_compose_choose_subreddit"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="?attr/actionBarSize">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_compose"
@@ -24,40 +21,50 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/edit_compose_subredddit_field"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Subreddit"
-        app:layout_constraintBottom_toBottomOf="@id/button_compose_choose_subreddit"
-        app:layout_constraintEnd_toStartOf="@id/button_compose_choose_subreddit"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/button_compose_choose_subreddit"
-        app:layout_constraintVertical_bias="0" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_compose_choose_subreddit"
-        style="?attr/borderlessButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Choose"
-        android:textAllCaps="false"
-        app:layout_constraintBottom_toTopOf="@id/edit_compose_title_field"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/edit_compose_subredddit_field"
-        app:layout_constraintTop_toBottomOf="@id/appbar_compose"
-        app:layout_constraintVertical_bias="0" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/edit_compose_title_field"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="An interesting title..."
-        android:maxLength="250"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edit_compose_subredddit_field"
-        app:layout_constraintVertical_bias="0" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_compose_subredddit_field"
+                android:maxLength="22"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:hint="Subreddit" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_compose_choose_subreddit"
+            style="?attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|end"
+            android:text="Choose"
+            android:textAllCaps="false" />
+    </FrameLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_compose_title_field"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:hint="An interesting title..."
+            android:maxLength="250" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ViewStub
+        android:id="@+id/stub_compose_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

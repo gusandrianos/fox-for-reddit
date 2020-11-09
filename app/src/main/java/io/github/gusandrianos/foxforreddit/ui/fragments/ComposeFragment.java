@@ -4,14 +4,17 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -20,6 +23,8 @@ import java.util.Objects;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.viewmodels.FoxSharedViewModel;
+
+import io.github.gusandrianos.foxforreddit.Constants;
 
 public class ComposeFragment extends Fragment {
     @Override
@@ -32,8 +37,8 @@ public class ComposeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subredddit_field);
         FoxSharedViewModel foxViewModel = ((MainActivity) requireActivity()).getFoxSharedViewModel();
-
-        subredditTextField.setText(foxViewModel.getCurrentSubreddit());
+        int composeType = ComposeFragmentArgs.fromBundle(requireArguments()).getComposeType();
+        setUpNavigation(view, composeType);
         foxViewModel.getSubredditChoice().observe(getViewLifecycleOwner(), subredditTextField::setText);
 
         MaterialButton chooseSubredditButton = view.findViewById(R.id.button_compose_choose_subreddit);
@@ -42,5 +47,27 @@ public class ComposeFragment extends Fragment {
             NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
             navController.navigate(ComposeFragmentDirections.actionComposeFragmentToSubredditListFragment());
         });
+    }
+
+    private void setUpNavigation(View view, int type) {
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        NavController navController = NavHostFragment.findNavController(this);
+        Toolbar toolbar = view.findViewById(R.id.toolbar_compose);
+        BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
+        bottomNavigationView.setVisibility(View.GONE);
+        NavigationUI.setupWithNavController(toolbar, navController);
+
+        String toolbarTitle = "New";
+        if (type == Constants.COMPOSE_TEXT)
+            toolbarTitle += " text ";
+        else if (type == Constants.COMPOSE_IMAGE)
+            toolbarTitle += " image ";
+        else if (type == Constants.COMPOSE_LINK)
+            toolbarTitle += " link ";
+        else
+            toolbarTitle += " video ";
+        toolbarTitle += "post";
+
+        toolbar.setTitle(toolbarTitle);
     }
 }

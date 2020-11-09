@@ -6,6 +6,24 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.ComposeFragment">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar_compose"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintBottom_toTopOf="@id/button_compose_choose_subreddit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_compose"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/white"
+            app:layout_scrollFlags="scroll|enterAlways|snap" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/edit_compose_subredddit_field"
         android:layout_width="0dp"
@@ -27,7 +45,7 @@
         app:layout_constraintBottom_toTopOf="@id/edit_compose_title_field"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/edit_compose_subredddit_field"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appbar_compose"
         app:layout_constraintVertical_bias="0" />
 
     <com.google.android.material.textfield.TextInputEditText

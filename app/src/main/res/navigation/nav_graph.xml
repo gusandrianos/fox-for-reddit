@@ -98,7 +98,6 @@
     <fragment
         android:id="@+id/composeFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeFragment"
-        android:label="fragment_compose"
         tools:layout="@layout/fragment_compose">
         <argument
             android:name="composeType"

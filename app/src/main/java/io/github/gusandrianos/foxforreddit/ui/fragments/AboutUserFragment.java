@@ -50,10 +50,8 @@ public class AboutUserFragment extends Fragment {
                 TrophyAdapter adapter = new TrophyAdapter(trophies);
                 adapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
                 trophiesRV.setHasFixedSize(true);
-                trophiesRV.setLayoutManager(new LinearLayoutManager(getActivity()));
+                trophiesRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
                 trophiesRV.setAdapter(adapter);
-            } else {
-                //TODO: Handle this by showing appropriate error
             }
         });
     }

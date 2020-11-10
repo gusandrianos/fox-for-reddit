@@ -115,6 +115,6 @@ object FoxToolkit {
         value /= 10.0.pow(power / 3 * 3.toDouble())
         formattedNumber = formatter.format(value)
         formattedNumber += suffix[power / 3]
-        return if (formattedNumber.length > 4) formattedNumber.replace("\\.[0-9]+".toRegex(), "") else formattedNumber
+        return if (formattedNumber.length > 4) formattedNumber.replace("\\.[0-9]+".toRegex(), "").trim() else formattedNumber.trim()
     }
 }

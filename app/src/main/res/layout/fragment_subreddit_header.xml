@@ -125,6 +125,9 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top|end"
             android:background="@android:color/transparent"
+            android:contentInsetStart="0dp"
+            app:contentInsetStart="0dp"
+            app:contentInsetStartWithNavigation="0dp"
             app:layout_collapseMode="pin" />
     </com.google.android.material.appbar.CollapsingToolbarLayout>
 </com.google.android.material.appbar.AppBarLayout>

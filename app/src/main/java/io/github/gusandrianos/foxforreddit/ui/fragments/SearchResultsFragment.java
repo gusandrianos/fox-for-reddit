@@ -42,7 +42,7 @@ public class SearchResultsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setUpNavigation();
+        setUpNavigation(view);
 
         SearchResultsFragmentArgs searchResultsFragmentArgs = SearchResultsFragmentArgs.fromBundle(requireArguments());
         String query = searchResultsFragmentArgs.getSearchQuery();
@@ -86,21 +86,18 @@ public class SearchResultsFragment extends Fragment {
 
     }
 
-    private void setUpNavigation() {
+    private void setUpNavigation(View view) {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
 
-        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_fragment_results_search);
-        toolbar.inflateMenu(R.menu.menu_with_search_bar);
+        Toolbar toolbar = view.findViewById(R.id.toolbar_fragment_results_search);
+        toolbar.inflateMenu(R.menu.sorting_and_search_button);
         toolbar.getMenu().getItem(1).getSubMenu().getItem(0).setVisible(true);
 
         MenuItem searchButton = toolbar.getMenu().getItem(0);
-        searchButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                navController.navigate(NavGraphDirections.actionGlobalSearchFragment());
-                return true;
-            }
+        searchButton.setOnMenuItemClickListener(item -> {
+            navController.navigate(NavGraphDirections.actionGlobalSearchFragment());
+            return true;
         });
 
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;

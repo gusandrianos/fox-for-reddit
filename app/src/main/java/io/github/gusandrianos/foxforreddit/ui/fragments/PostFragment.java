@@ -29,7 +29,6 @@ import java.util.Objects;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
-import io.github.gusandrianos.foxforreddit.data.models.Listing;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.PostAdapter;
@@ -253,6 +252,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             return requireActivity().findViewById(R.id.subreddit_toolbar);
         else if (getParentFragment() instanceof SearchResultsFragment)
             return requireActivity().findViewById(R.id.toolbar_fragment_results_search);
+        else if (getParentFragment() instanceof SubredditSearchResultsFragment)
+            return requireActivity().findViewById(R.id.toolbar_fragment_results_search_subreddit);
         else
             return requireActivity().findViewById(R.id.toolbar_main);
     }

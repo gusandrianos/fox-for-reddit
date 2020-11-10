@@ -53,7 +53,7 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setUpNavigation();
+        setUpNavigation(view);
 
         search = view.findViewById(R.id.recycler_fragment_search);
         setUpSearchView(searchBarItem);
@@ -76,11 +76,11 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
         search.setAdapter(searchAdapter);
     }
 
-    private void setUpNavigation() {
+    private void setUpNavigation(View view) {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
 
-        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_fragment_search);
+        Toolbar toolbar = view.findViewById(R.id.toolbar_fragment_search);
         toolbar.inflateMenu(R.menu.search);
         searchBarItem = toolbar.getMenu().getItem(0);
         NavigationUI.setupWithNavController(toolbar, navController);
@@ -91,7 +91,6 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
 
     private void setUpSearchView(MenuItem searchBarItem) {
         SearchView searchView = (SearchView) searchBarItem.getActionView();
-
         searchView.setQueryHint("Search...");
         searchView.setIconifiedByDefault(true);
         searchView.setIconified(false);

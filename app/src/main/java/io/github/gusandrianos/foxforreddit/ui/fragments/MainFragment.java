@@ -5,11 +5,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -22,8 +20,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.zip.GZIPOutputStream;
 
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
@@ -69,16 +65,13 @@ public class MainFragment extends Fragment {
         NavController navController = NavHostFragment.findNavController(this);
 
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_main);
-        toolbar.inflateMenu(R.menu.menu_with_search_bar);
+        toolbar.inflateMenu(R.menu.sorting_and_search_button);
         toolbar.getMenu().getItem(1).getSubMenu().getItem(0).setVisible(true);
 
         MenuItem searchButton = toolbar.getMenu().getItem(0);
-        searchButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                navController.navigate(NavGraphDirections.actionGlobalSearchFragment());
-                return true;
-            }
+        searchButton.setOnMenuItemClickListener(item -> {
+            navController.navigate(NavGraphDirections.actionGlobalSearchFragment());
+            return true;
         });
 
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;

@@ -29,6 +29,7 @@ import java.util.Objects;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.data.models.Listing;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.PostAdapter;
@@ -36,11 +37,19 @@ import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
+import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModelFactory;
 import kotlin.Unit;
 
+import static io.github.gusandrianos.foxforreddit.Constants.ACTION_POST;
+import static io.github.gusandrianos.foxforreddit.Constants.ACTION_SEARCH;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_FILTER_NAME;
+import static io.github.gusandrianos.foxforreddit.Constants.ARG_QUERY_STRING;
+import static io.github.gusandrianos.foxforreddit.Constants.ARG_SR_RESTRICT_BOOLEAN;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_SUBREDDIT_NAME;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_TIME_NAME;
+import static io.github.gusandrianos.foxforreddit.Constants.ARG_SEARCH_TYPE;
+import static io.github.gusandrianos.foxforreddit.Constants.ARG_TYPE_OF_ACTION;
 import static io.github.gusandrianos.foxforreddit.Constants.IMAGE;
 import static io.github.gusandrianos.foxforreddit.Constants.LINK;
 import static io.github.gusandrianos.foxforreddit.Constants.PLAYABLE_VIDEO;
@@ -70,10 +79,17 @@ import static io.github.gusandrianos.foxforreddit.Constants.VIDEO;
 public class PostFragment extends Fragment implements PostAdapter.OnItemClickListener {
     private View mView;
     private Token mToken;
+
+    String type_of_action;
     String subreddit;
     String filter;
     String timedFilter;
     String time;
+
+    String query;
+    boolean sr_restrict;
+    String searchType;
+
     PostAdapter mPostRecyclerViewAdapter;
     RecyclerView mPostRecyclerView;
     SwipeRefreshLayout pullToRefresh;
@@ -89,6 +105,13 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         super.onViewCreated(view, savedInstanceState);
         mView = getView();
         mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
+        type_of_action = getArguments().getString(ARG_TYPE_OF_ACTION, ACTION_POST);
+
+        if (type_of_action.equals(ACTION_SEARCH)) {
+            query = getArguments().getString(ARG_QUERY_STRING, "");
+            sr_restrict = getArguments().getBoolean(ARG_SR_RESTRICT_BOOLEAN);
+            searchType = getArguments().getString(ARG_SEARCH_TYPE);
+        }
         subreddit = getArguments().getString(ARG_SUBREDDIT_NAME, "");
         filter = getArguments().getString(ARG_FILTER_NAME, "");
         time = getArguments().getString(ARG_TIME_NAME, "");
@@ -113,21 +136,40 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     }
 
     void loadPosts(boolean requestChanged) {
-        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
-        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        if (requestChanged)
-            viewModel.deleteCached();
+        if (type_of_action.equals(ACTION_POST)) {
+            PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+            PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+            if (requestChanged)
+                viewModel.deleteCached();
 
-        viewModel.getPosts(subreddit, filter, time, getActivity().getApplication()).observe(getViewLifecycleOwner(), postPagingData -> {
-            mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), postPagingData);
-            mPostRecyclerViewAdapter.addLoadStateListener(loadStates -> {
-                if (loadStates.getRefresh() instanceof LoadState.Loading)
-                    pullToRefresh.setRefreshing(true);
-                else if (loadStates.getRefresh() instanceof LoadState.NotLoading)
-                    pullToRefresh.setRefreshing(false);
-                return Unit.INSTANCE;
+            viewModel.getPosts(subreddit, filter, time, getActivity().getApplication()).observe(getViewLifecycleOwner(), postPagingData -> {
+                mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), postPagingData);
+                mPostRecyclerViewAdapter.addLoadStateListener(loadStates -> {
+                    if (loadStates.getRefresh() instanceof LoadState.Loading)
+                        pullToRefresh.setRefreshing(true);
+                    else if (loadStates.getRefresh() instanceof LoadState.NotLoading)
+                        pullToRefresh.setRefreshing(false);
+                    return Unit.INSTANCE;
+                });
             });
-        });
+        } else {
+            SearchViewModelFactory factory = InjectorUtils.getInstance().provideSearchViewModelFactory();
+            SearchViewModel viewModel = new ViewModelProvider(this, factory).get(SearchViewModel.class);
+
+            if (requestChanged)
+                viewModel.deleteCached();
+
+            viewModel.searchResults(query, filter, time, sr_restrict, searchType, subreddit, getActivity().getApplication()).observe(getViewLifecycleOwner(), searchPostPagingData -> {
+                mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), searchPostPagingData);
+                mPostRecyclerViewAdapter.addLoadStateListener(loadStates -> {
+                    if (loadStates.getRefresh() instanceof LoadState.Loading)
+                        pullToRefresh.setRefreshing(true);
+                    else if (loadStates.getRefresh() instanceof LoadState.NotLoading)
+                        pullToRefresh.setRefreshing(false);
+                    return Unit.INSTANCE;
+                });
+            });
+        }
     }
 
     private void initSwipeToRefresh() {
@@ -209,6 +251,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             return requireActivity().findViewById(R.id.profile_toolbar);
         else if (getParentFragment() instanceof SubredditFragment)
             return requireActivity().findViewById(R.id.subreddit_toolbar);
+        else if (getParentFragment() instanceof SearchResultsFragment)
+            return requireActivity().findViewById(R.id.toolbar_fragment_results_search);
         else
             return requireActivity().findViewById(R.id.toolbar_main);
     }
@@ -280,6 +324,23 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         args.putString(ARG_SUBREDDIT_NAME, subreddit);
         args.putString(ARG_FILTER_NAME, filter);
         args.putString(ARG_TIME_NAME, time);
+        args.putString(ARG_TYPE_OF_ACTION, ACTION_POST);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    public static PostFragment newSearchInstance(String query, String sort, String time, Boolean restrict_sr, String type, String subreddit) {
+        PostFragment fragment = new PostFragment();
+
+        Bundle args = new Bundle();
+        args.putString(ARG_SUBREDDIT_NAME, subreddit);
+        args.putString(ARG_QUERY_STRING, query);
+        args.putString(ARG_FILTER_NAME, sort);
+        args.putString(ARG_TIME_NAME, time);
+        args.putBoolean(ARG_SR_RESTRICT_BOOLEAN, restrict_sr);
+        args.putString(ARG_SEARCH_TYPE, type);
+        args.putString(ARG_TYPE_OF_ACTION, ACTION_SEARCH);
         fragment.setArguments(args);
 
         return fragment;

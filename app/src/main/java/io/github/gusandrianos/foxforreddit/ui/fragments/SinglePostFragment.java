@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +16,9 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
@@ -51,8 +47,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.stfalcon.imageviewer.StfalconImageViewer;
-import com.stfalcon.imageviewer.loader.ImageLoader;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
 
@@ -70,7 +64,6 @@ import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.GalleryItem;
 import io.github.gusandrianos.foxforreddit.data.models.ResolutionsItem;
-import io.github.gusandrianos.foxforreddit.data.models.Token;
 
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentGroup;
@@ -83,8 +76,6 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
-
-import static io.github.gusandrianos.foxforreddit.utilities.PostAdapterKt.formatValue;
 
 public class SinglePostFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
     private boolean wasPlaying;
@@ -155,7 +146,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                             Gson gson = new Gson();
                             item = gson.fromJson(gson.toJsonTree(child).getAsJsonObject(), childType);
                         }
-                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), "t3_jbmf8f", SinglePostFragment.this));
+                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), Objects.requireNonNull(item.getData().getLinkId()), SinglePostFragment.this));
                     }
                 });
     }
@@ -164,9 +155,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         bindHeaderAndFooter(singlePostData, view);
 
         switch (postType) {
-            case Constants.SELF:
-                bindAsSelf(singlePostData, view);
-                break;
             case Constants.LINK:
                 bindAsLink(singlePostData, view);
                 break;
@@ -191,11 +179,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             case Constants.POLL:
                 bindAsPoll(singlePostData, view);
                 break;
-            case Constants.COMMENT:
-                Toast.makeText(getActivity(), "COMMENT", Toast.LENGTH_SHORT).show();
-                break;
-            default:
-                Toast.makeText(getActivity(), "SELF by default", Toast.LENGTH_SHORT).show();
+            default: //Self by default  //ToDo Comment
+                bindAsSelf(singlePostData, view);
                 break;
         }
     }
@@ -217,7 +202,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         mTxtPostUser.setText(user);
         mTxtTimePosted.setText(DateUtils.getRelativeTimeSpanString((long) singlePostData.getCreatedUtc() * 1000).toString());
         txtPostTitle.setText(singlePostData.getTitle());
-        mTxtPostScore.setText(formatValue(singlePostData.getScore()));
+        mTxtPostScore.setText(FoxToolkit.INSTANCE.formatValue(singlePostData.getScore()));
 
         if (singlePostData.getLikes() != null) {
             if (singlePostData.getLikes()) {
@@ -229,7 +214,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             }
         }
 
-        mBtnPostNumComments.setText(formatValue(singlePostData.getNumComments()));
+        mBtnPostNumComments.setText(FoxToolkit.INSTANCE.formatValue(singlePostData.getNumComments()));
 
         int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
@@ -629,10 +614,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     @Override
     public void onLoadMoreClicked(@NotNull String linkId, @NotNull String moreChildren, int position) {
-        Token mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        Log.i("LISTENER", "Before observe " + position);
         viewModel.getMoreChildren(linkId, moreChildren, requireActivity().getApplication());
     }
 

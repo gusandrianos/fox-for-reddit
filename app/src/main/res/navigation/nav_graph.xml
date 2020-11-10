@@ -80,15 +80,19 @@
         tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_searchResultsFragment"
-            app:destination="@id/searchResultsFragment"
-            app:launchSingleTop="true" />
+            app:destination="@id/searchResultsFragment" />
     </fragment>
     <action
         android:id="@+id/action_global_searchFragment"
-        app:destination="@id/searchFragment" />
+        app:destination="@id/searchFragment"
+        app:launchSingleTop="true" />
     <fragment
         android:id="@+id/searchResultsFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SearchResultsFragment"
-        android:label="fragment_results_search"
-        tools:layout="@layout/fragment_results_search" />
+        android:label="Search Results"
+        tools:layout="@layout/fragment_results_search">
+        <argument
+            android:name="searchQuery"
+            app:argType="string" />
+    </fragment>
 </navigation>

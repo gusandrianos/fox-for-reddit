@@ -1,7 +1,6 @@
 package io.github.gusandrianos.foxforreddit.data.repositories
 
 import android.app.Application
-import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,11 +12,9 @@ import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
 
 object SubredditRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
@@ -34,7 +31,6 @@ object SubredditRepository {
             }
 
             override fun onFailure(call: Call<Thing>, t: Throwable) {
-                Log.i("SUBREDDIT REPOSITORY", "getSubreddit() onFailure: ${t.message}")
             }
         })
         return subreddit
@@ -60,20 +56,5 @@ object SubredditRepository {
             }
         })
         return subscribeStatus
-    }
-
-    fun searchTopSubreddits(query: String, includeOver18: Boolean, includeProfiles: Boolean, application: Application): LiveData<Listing> {
-        val bearer = getBearer(application)
-        val search = redditAPI.searchTopSubreddits(bearer, query, includeOver18, includeProfiles, true)
-        search.enqueue(object : Callback<Listing> {
-            override fun onResponse(call: Call<Listing>, response: Response<Listing>) {
-                Log.i("resulthere", "onResponse: " + response.code() + response.raw() + bearer)
-                searchTopSubreddits.value = response.body()
-            }
-
-            override fun onFailure(call: Call<Listing>, t: Throwable) {
-            }
-        })
-        return searchTopSubreddits
     }
 }

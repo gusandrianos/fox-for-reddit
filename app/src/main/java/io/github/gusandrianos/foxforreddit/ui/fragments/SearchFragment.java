@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,8 +33,8 @@ import io.github.gusandrianos.foxforreddit.data.models.Listing;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.utilities.SearchAdapter;
-import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
+import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModelFactory;
 
 public class SearchFragment extends Fragment implements SearchAdapter.OnSearchItemClickListener {
     TextView txtResultsFromSearch;
@@ -66,7 +65,6 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
                 openResultsFromSearch(txtResultsFromSearch.getTag().toString());
             }
         });
-
     }
 
     private void initRecyclerView(Listing searchData) {
@@ -98,8 +96,8 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
         searchView.setIconifiedByDefault(true);
         searchView.setIconified(false);
 
-        SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+        SearchViewModelFactory factory = InjectorUtils.getInstance().provideSearchViewModelFactory();
+        SearchViewModel viewModel = new ViewModelProvider(this, factory).get(SearchViewModel.class);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -112,9 +110,14 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
             public boolean onQueryTextChange(String newText) {
                 viewModel.searchTopSubreddits(newText, true, true, requireActivity().getApplication()).observe(getViewLifecycleOwner(), searchData -> {
                     initRecyclerView(searchData);
-                    String resultsFromSearch = "Results for \"" + newText + "\"";
-                    txtResultsFromSearch.setText(resultsFromSearch);
-                    txtResultsFromSearch.setTag(newText);
+                    if (!newText.trim().isEmpty()) {
+                        String resultsFromSearch = "Results for \"" + newText.trim() + "\"";
+                        txtResultsFromSearch.setText(resultsFromSearch);
+                        txtResultsFromSearch.setTag(newText);
+                        txtResultsFromSearch.setVisibility(View.VISIBLE);
+                    } else {
+                        txtResultsFromSearch.setVisibility(View.GONE);
+                    }
                 });
                 return true;
             }
@@ -130,22 +133,31 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
         });
     }
 
-
     @Override
     public void onSearchItemClick(@NotNull String destination, @NotNull String type) {
-            NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-            NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
 
-            if(type.equals("t5")){
-                NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(destination);
-                navController.navigate(action);
-            }else{
-                NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, destination);
-                navController.navigate(action);
-            }
+        if (type.equals("t5")) {
+            NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(destination);
+            navController.navigate(action);
+        } else {
+            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, destination);
+            navController.navigate(action);
+        }
     }
 
-    public void openResultsFromSearch(String searched){
-        Toast.makeText(getActivity(), searched, Toast.LENGTH_SHORT).show();
+    public void openResultsFromSearch(String searched) {
+        if (!searched.trim().isEmpty()) {
+            if (searched.length() < 3) {    //ifsearch String is < 3,  Reddit Search returns empty String and app stops
+                StringBuilder searchedBuilder = new StringBuilder(searched);
+                while (searchedBuilder.length() < 3)
+                    searchedBuilder.append(" ");
+                searched = searchedBuilder.toString();
+            }
+            NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+            navController.navigate(SearchFragmentDirections.actionSearchFragmentToSearchResultsFragment(searched));
+        }
     }
 }

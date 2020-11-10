@@ -38,7 +38,8 @@ class SearchAdapter(private val listener: OnSearchItemClickListener, private val
 
         } else {
             val prefixefName = "u/${child.data.name}"
-            val karma = "${formatValue(child.data.totalKarma.toDouble())} karma"
+            val totalKarma = data.awardeeKarma + data.awarderKarma + data.commentKarma + data.linkKarma
+            val karma = "${formatValue(totalKarma.toDouble())} karma"
             holder.txtName.text = prefixefName
             holder.txtInfo.text = karma
             holder.name = child.data.name!!

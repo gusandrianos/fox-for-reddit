@@ -15,6 +15,7 @@
             android:id="@+id/toolbar_fragment_results_search_subreddit"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/white"
             android:contentInsetStart="0dp"
             app:contentInsetStart="0dp"
             app:contentInsetStartWithNavigation="0dp"

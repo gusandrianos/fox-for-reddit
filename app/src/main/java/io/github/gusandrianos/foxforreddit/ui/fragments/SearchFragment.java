@@ -59,12 +59,7 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
         setUpSearchView(searchBarItem);
 
         txtResultsFromSearch = view.findViewById(R.id.txt_results_from_search);
-        txtResultsFromSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openResultsFromSearch(txtResultsFromSearch.getTag().toString());
-            }
-        });
+        txtResultsFromSearch.setOnClickListener(v -> openResultsFromSearch(txtResultsFromSearch.getTag().toString()));
     }
 
     private void initRecyclerView(Listing searchData) {

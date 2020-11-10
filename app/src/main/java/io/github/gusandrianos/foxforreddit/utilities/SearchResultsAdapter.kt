@@ -32,19 +32,6 @@ class SearchResultsAdapter(private val mKind: String, private val listener: OnSe
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.search_item, parent, false))
     }
 
-//    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-//        val data = getItem(position)
-//        holder.subredditTitle.text = data!!.displayNamePrefixed
-//        if (data.iconImg!!.isNotEmpty())
-//            Glide.with(holder.itemView).load(data.iconImg.split("\\?".toRegex())[0]).into(holder.subredditImg)
-//        else if (data.communityIcon!!.isNotEmpty()) {
-//            val toLoad = data.communityIcon.split("\\?".toRegex())[0]
-//            Glide.with(holder.itemView).load(toLoad).into(holder.subredditImg)
-//        } else {
-//            holder.subredditImg.setImageResource(R.drawable.default_subreddit_image)
-//        }
-//    }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = getItem(position)
 
@@ -62,7 +49,8 @@ class SearchResultsAdapter(private val mKind: String, private val listener: OnSe
                 holder.icon.setImageResource(R.drawable.default_subreddit_image)
         } else {
             val prefixefName = "u/${data?.name}"
-            val karma = "${formatValue(data?.totalKarma!!.toDouble())} karma"
+            val totalKarma = data?.awardeeKarma!! + data.awarderKarma+ data.commentKarma + data.linkKarma
+            val karma = "${formatValue(totalKarma.toDouble())} karma"
             holder.txtName.text = prefixefName
             holder.txtInfo.text = karma
             holder.name = data.name!!
@@ -72,37 +60,6 @@ class SearchResultsAdapter(private val mKind: String, private val listener: OnSe
             else
                 holder.icon.setImageResource(R.drawable.default_profile_image)
         }
-//        val child = results.data?.children!![position]
-//        val kind = child.kind
-//        val data = child.data!!
-
-//        if (kind.equals("t5")) {
-//            val members = "${child.data.subscribers.toDouble()} members"
-//            holder.txtName.text = child.data.displayNamePrefixed
-//            holder.txtInfo.text = members
-//            holder.name = child.data.displayNamePrefixed!!
-//
-//            if (!data.iconImg.isNullOrEmpty())
-//                Glide.with(holder.itemView).load(data.iconImg.split("\\?".toRegex())[0]).into(holder.icon)
-//            else if (!data.communityIcon.isNullOrEmpty())
-//                Glide.with(holder.itemView).load(data.communityIcon.split("\\?".toRegex())[0]).into(holder.icon)
-//            else
-//                holder.icon.setImageResource(R.drawable.default_subreddit_image)
-//
-//        } else {
-//            val prefixefName = "u/${child.data.name}"
-//            val karma = "${formatValue(child.data.totalKarma.toDouble())} karma"
-//            holder.txtName.text = prefixefName
-//            holder.txtInfo.text = karma
-//            holder.name = child.data.name!!
-//
-//            if (!data.iconImg.isNullOrEmpty())
-//                Glide.with(holder.itemView).load(data.iconImg).into(holder.icon)
-//            else
-//                holder.icon.setImageResource(R.drawable.default_profile_image)
-//        }
-//
-//        holder.kind = kind!!
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

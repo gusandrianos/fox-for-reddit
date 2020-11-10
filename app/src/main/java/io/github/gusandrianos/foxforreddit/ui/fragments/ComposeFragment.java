@@ -70,35 +70,42 @@ public class ComposeFragment extends Fragment {
         if (type == Constants.COMPOSE_TEXT) {
             stub.setLayoutResource(R.layout.stub_compose_text);
             View inflated = stub.inflate();
-            toolbar.getMenu().findItem(R.id.button_submit_post).setOnMenuItemClickListener(menuItem -> {
-                return textTypePostAction(view, inflated);
-            });
+            toolbar.getMenu().findItem(R.id.button_submit_post).setOnMenuItemClickListener(menuItem -> textTypePostAction(view, inflated, type));
         } else if (type == Constants.COMPOSE_IMAGE) {
             stub.setLayoutResource(R.layout.stub_compose_image);
             View inflated = stub.inflate();
         } else if (type == Constants.COMPOSE_LINK) {
             stub.setLayoutResource(R.layout.stub_compose_link);
             View inflated = stub.inflate();
+            toolbar.getMenu().findItem(R.id.button_submit_post).setOnMenuItemClickListener(menuItem -> textTypePostAction(view, inflated, type));
         } else {
             stub.setLayoutResource(R.layout.stub_compose_video);
             View inflated = stub.inflate();
         }
     }
 
-    private boolean textTypePostAction(View view, View inflated) {
+    private boolean textTypePostAction(View view, View inflated, int composeType) {
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subredddit_field);
         TextInputEditText titleTextField = view.findViewById(R.id.edit_compose_title_field);
-        TextInputEditText textBody = inflated.findViewById(R.id.edit_compose_text_body);
 
         String subreddit = subredditTextField.getText().toString().trim();
         String title = titleTextField.getText().toString().trim();
-        String text = textBody.getText().toString().trim();
+        String text = "";
+        String url = "";
+        String type = "self";
 
-        //TODO: Sanitize inputs
+        if (composeType == Constants.COMPOSE_TEXT) {
+            TextInputEditText textBody = inflated.findViewById(R.id.edit_compose_text_body);
+            text = textBody.getText().toString().trim();
+        } else {
+            TextInputEditText linkBody = inflated.findViewById(R.id.edit_compose_link_body);
+            url = linkBody.getText().toString().trim();
+            type = "link";
+        }
 
-        viewModel.submitText(subreddit, title, "", text, requireActivity().getApplication()).observe(getViewLifecycleOwner(), posted -> {
+        viewModel.submitText(type, subreddit, title, url, text, requireActivity().getApplication()).observe(getViewLifecycleOwner(), posted -> {
             if (posted.getJson().getErrors().isEmpty()) {
                 // SinglePost needs refactoring to support navigating to it from links, for now, navigating back.
                 Toast.makeText(requireContext(), "Posted to " + subredditTextField.getText().toString(), Toast.LENGTH_SHORT).show();
@@ -106,6 +113,10 @@ public class ComposeFragment extends Fragment {
             } else
                 Toast.makeText(requireContext(), "That didn't work", Toast.LENGTH_SHORT).show();
         });
+
+        //TODO: Sanitize inputs
+        //TODO: https://www.reddit.com/dev/api/#GET_api_v1_{subreddit}_post_requirements
+
         return true;
     }
 

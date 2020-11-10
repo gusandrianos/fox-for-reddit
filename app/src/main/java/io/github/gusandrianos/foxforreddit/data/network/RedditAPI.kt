@@ -100,9 +100,11 @@ interface RedditAPI {
             @Field("kind") kind: String,
             @Field("sr") subreddit: String,
             @Field("title") title: String,
+            @Field("url") url: String,
             @Field("text") text: String,
 //            @Field("spoiler") spoiler: Boolean,
 //            @Field("nsfw") nsfw: Boolean,
             @Field("api_type") apiType: String,
+            @Field("resubmit") resubmit: Boolean
     ): Call<SubmitResponse>
 }

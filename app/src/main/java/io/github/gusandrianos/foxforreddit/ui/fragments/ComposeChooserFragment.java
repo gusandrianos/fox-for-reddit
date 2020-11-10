@@ -47,14 +47,10 @@ public class ComposeChooserFragment extends BottomSheetDialogFragment {
 
     void composeOptionsListeners(View view) {
         MaterialButton textOption = view.findViewById(R.id.button_compose_text);
-        MaterialButton imageOption = view.findViewById(R.id.button_compose_image);
         MaterialButton linkOption = view.findViewById(R.id.button_compose_link);
-        MaterialButton videoOption = view.findViewById(R.id.button_compose_video);
 
         textOption.setOnClickListener(view1 -> compose(Constants.COMPOSE_TEXT));
-        imageOption.setOnClickListener(view2 -> compose(Constants.COMPOSE_IMAGE));
         linkOption.setOnClickListener(view3 -> compose(Constants.COMPOSE_LINK));
-        videoOption.setOnClickListener(view4 -> compose(Constants.COMPOSE_VIDEO));
     }
 
     void compose(int postType) {

@@ -28,22 +28,8 @@
         android:textAllCaps="false"
         app:iconPadding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/button_compose_image"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_compose_chooser_prompt" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_compose_image"
-        style="?attr/borderlessButtonStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:drawableTop="@drawable/ic_round_image_32"
-        android:text="Image"
-        android:textAllCaps="false"
-        app:iconPadding="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/button_compose_link"
-        app:layout_constraintStart_toEndOf="@id/button_compose_text"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_compose_chooser_prompt" />
 
     <com.google.android.material.button.MaterialButton
@@ -56,22 +42,8 @@
         android:textAllCaps="false"
         app:iconPadding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/button_compose_video"
-        app:layout_constraintStart_toEndOf="@id/button_compose_image"
-        app:layout_constraintTop_toBottomOf="@id/text_compose_chooser_prompt" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_compose_video"
-        style="?attr/borderlessButtonStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:drawableTop="@drawable/ic_round_videocam_32"
-        android:text="Video"
-        android:textAllCaps="false"
-        app:iconPadding="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/button_compose_link"
+        app:layout_constraintStart_toEndOf="@id/button_compose_text"
         app:layout_constraintTop_toBottomOf="@id/text_compose_chooser_prompt" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,9 +11,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -66,25 +64,16 @@ public class ComposeFragment extends Fragment {
         ViewStub stub = view.findViewById(R.id.stub_compose_body);
         Toolbar toolbar = view.findViewById(R.id.toolbar_compose);
 
-
-        if (type == Constants.COMPOSE_TEXT) {
+        if (type == Constants.COMPOSE_TEXT)
             stub.setLayoutResource(R.layout.stub_compose_text);
-            View inflated = stub.inflate();
-            toolbar.getMenu().findItem(R.id.button_submit_post).setOnMenuItemClickListener(menuItem -> textTypePostAction(view, inflated, type));
-        } else if (type == Constants.COMPOSE_IMAGE) {
-            stub.setLayoutResource(R.layout.stub_compose_image);
-            View inflated = stub.inflate();
-        } else if (type == Constants.COMPOSE_LINK) {
+        else
             stub.setLayoutResource(R.layout.stub_compose_link);
-            View inflated = stub.inflate();
-            toolbar.getMenu().findItem(R.id.button_submit_post).setOnMenuItemClickListener(menuItem -> textTypePostAction(view, inflated, type));
-        } else {
-            stub.setLayoutResource(R.layout.stub_compose_video);
-            View inflated = stub.inflate();
-        }
+
+        View inflated = stub.inflate();
+        toolbar.getMenu().findItem(R.id.button_submit_post).setOnMenuItemClickListener(menuItem -> postAction(view, inflated, type));
     }
 
-    private boolean textTypePostAction(View view, View inflated, int composeType) {
+    private boolean postAction(View view, View inflated, int composeType) {
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subredddit_field);
@@ -107,16 +96,19 @@ public class ComposeFragment extends Fragment {
 
         viewModel.submitText(type, subreddit, title, url, text, requireActivity().getApplication()).observe(getViewLifecycleOwner(), posted -> {
             if (posted.getJson().getErrors().isEmpty()) {
-                // SinglePost needs refactoring to support navigating to it from links, for now, navigating back.
+                // TODO: SinglePost needs refactoring to support navigating to it from links, for now, navigating back.
                 Toast.makeText(requireContext(), "Posted to " + subredditTextField.getText().toString(), Toast.LENGTH_SHORT).show();
                 requireActivity().onBackPressed();
             } else
                 Toast.makeText(requireContext(), "That didn't work", Toast.LENGTH_SHORT).show();
         });
 
-        //TODO: Sanitize inputs
-        //TODO: https://www.reddit.com/dev/api/#GET_api_v1_{subreddit}_post_requirements
-
+        // TODO: Sanitize inputs
+        // TODO: https://www.reddit.com/dev/api/#GET_api_v1_{subreddit}_post_requirements
+        /* TODO: In a land of myth and a time of magic, one could upload pictures and videos from storage
+            but reddit decided not to make the API public and make you jump through hoops to do it yourself.
+            Someday, we will implement this functionality.
+         */
         return true;
     }
 
@@ -132,12 +124,8 @@ public class ComposeFragment extends Fragment {
         String toolbarTitle = "New";
         if (type == Constants.COMPOSE_TEXT)
             toolbarTitle += " text ";
-        else if (type == Constants.COMPOSE_IMAGE)
-            toolbarTitle += " image ";
-        else if (type == Constants.COMPOSE_LINK)
-            toolbarTitle += " link ";
         else
-            toolbarTitle += " video ";
+            toolbarTitle += " link ";
         toolbarTitle += "post";
 
         toolbar.setTitle(toolbarTitle);

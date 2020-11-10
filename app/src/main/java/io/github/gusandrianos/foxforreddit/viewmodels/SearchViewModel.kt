@@ -19,7 +19,7 @@ class SearchViewModel(private val mSearchRepository: SearchRepository) : ViewMod
 
     fun searchResults(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String, application: Application): LiveData<PagingData<Data>> {
         if (searchPost != null)
-            return searchPost!!;
+            return searchPost!!
         searchPost = mSearchRepository.searchResults(query, sort, time, restrict_sr, type, subreddit, application).cachedIn(viewModelScope)
         return searchPost!!
     }

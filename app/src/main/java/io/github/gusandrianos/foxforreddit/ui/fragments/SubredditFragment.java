@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -29,7 +30,6 @@ import java.text.NumberFormat;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
-import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -56,7 +56,7 @@ public class SubredditFragment extends Fragment {
 
         TextView titleTextView = view.findViewById(R.id.text_subreddit_title);
         titleTextView.setText(subredditName);
-        setUpNavigation(view);
+        setUpNavigation(view, subredditName);
 
         SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
         SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
@@ -181,12 +181,30 @@ public class SubredditFragment extends Fragment {
         Glide.with(view).load(R.drawable.cover_gradient).into(gradient);
     }
 
-    private void setUpNavigation(View view) {
+    private void setUpNavigation(View view, String subreddit) {
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.subreddit_collapsing_toolbar);
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
+
         Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);
-        toolbar.inflateMenu(R.menu.sorting);
+        toolbar.inflateMenu(R.menu.sorting_and_search_bar);
+
+        MenuItem searchItem = toolbar.getMenu().getItem(0);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setQueryHint("Search in " + subreddit);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                navController.navigate(SubredditFragmentDirections.actionSubredditFragmentToSubredditSearchResultsFragment(subreddit, query));
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return true;
+            }
+        });
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.VISIBLE);
         MenuItem item = bottomNavigationView.getMenu().findItem(R.id.subredditListFragment);

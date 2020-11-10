@@ -146,7 +146,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                             Gson gson = new Gson();
                             item = gson.fromJson(gson.toJsonTree(child).getAsJsonObject(), childType);
                         }
-                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), Objects.requireNonNull(item.getData().getLinkId()), SinglePostFragment.this));
+                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(),"", SinglePostFragment.this));
                     }
                 });
     }

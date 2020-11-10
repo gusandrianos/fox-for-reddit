@@ -43,8 +43,8 @@ object FoxToolkit {
     }
 
     fun getTypeOfVideo(data: Data): Int {
-        return if( (data.preview != null && data.preview.redditVideoPreview == null && !data.isVideo)
-                || (data.preview == null) )
+        return if ((data.preview != null && data.preview.redditVideoPreview == null && !data.isVideo)
+                || (data.preview == null && !data.isVideo))
             Constants.UNPLAYABLE_VIDEO
         else
             Constants.PLAYABLE_VIDEO

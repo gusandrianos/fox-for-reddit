@@ -48,6 +48,9 @@
         <argument
             android:name="subredditName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_subredditFragment_to_subredditSearchResultsFragment"
+            app:destination="@id/subredditSearchResultsFragment" />
     </fragment>
     <action
         android:id="@+id/action_global_userFragment"
@@ -94,5 +97,20 @@
         <argument
             android:name="searchQuery"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/subredditSearchResultsFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SubredditSearchResultsFragment"
+        android:label="{subreddit}"
+        tools:layout="@layout/fragment_results_search_subreddit">
+        <argument
+            android:name="subreddit"
+            app:argType="string" />
+        <argument
+            android:name="query"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_subredditSearchResultsFragment_self"
+            app:destination="@id/subredditSearchResultsFragment" />
     </fragment>
 </navigation>

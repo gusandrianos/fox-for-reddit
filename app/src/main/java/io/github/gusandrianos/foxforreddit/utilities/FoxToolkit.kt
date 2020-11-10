@@ -3,14 +3,15 @@ package io.github.gusandrianos.foxforreddit.utilities
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.view.View
 import com.bumptech.glide.Glide
 import com.stfalcon.imageviewer.StfalconImageViewer
-import com.stfalcon.imageviewer.loader.ImageLoader
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import kotlin.math.pow
 
 object FoxToolkit {
     fun getBearer(application: Application): String {
@@ -42,7 +43,8 @@ object FoxToolkit {
     }
 
     fun getTypeOfVideo(data: Data): Int {
-        return if (data.preview != null && data.preview.redditVideoPreview == null && !data.isVideo)
+        return if( (data.preview != null && data.preview.redditVideoPreview == null && !data.isVideo)
+                || (data.preview == null) )
             Constants.UNPLAYABLE_VIDEO
         else
             Constants.PLAYABLE_VIDEO
@@ -84,7 +86,7 @@ object FoxToolkit {
         return "$minStr:$secStr"
     }
 
-    fun fullscreenImage(post: Data,context: Context) {
+    fun fullscreenImage(post: Data, context: Context) {
         val images = ArrayList<String?>()
 
         if (getTypeOfImage(post) == Constants.IS_GALLERY) {
@@ -99,5 +101,20 @@ object FoxToolkit {
         }
 
         StfalconImageViewer.Builder<String>(context, images) { imageView, imageUrl -> Glide.with(context).load(imageUrl).into(imageView) }.show()
+    }
+
+    fun formatValue(number: Double): String {
+        var value = number
+        if (value == 0.0) {
+            return 0.toString()
+        }
+        val suffix = " kmbt"
+        var formattedNumber = ""
+        val formatter: NumberFormat = DecimalFormat("#,###.#")
+        val power: Int = StrictMath.log10(value).toInt()
+        value /= 10.0.pow(power / 3 * 3.toDouble())
+        formattedNumber = formatter.format(value)
+        formattedNumber += suffix[power / 3]
+        return if (formattedNumber.length > 4) formattedNumber.replace("\\.[0-9]+".toRegex(), "") else formattedNumber
     }
 }

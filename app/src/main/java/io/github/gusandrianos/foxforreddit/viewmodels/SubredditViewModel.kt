@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import io.github.gusandrianos.foxforreddit.data.models.Data
-import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.repositories.SubredditRepository
 
 class SubredditViewModel(private val mSubredditRepository: SubredditRepository) : ViewModel() {
@@ -19,9 +18,5 @@ class SubredditViewModel(private val mSubredditRepository: SubredditRepository) 
 
     fun toggleSubscribed(action: Int, subredditName: String, application: Application): LiveData<Boolean> {
         return mSubredditRepository.toggleSubscribed(action, subredditName, application)
-    }
-
-    fun searchTopSubreddits(query: String, includeOver18: Boolean, includeProfiles: Boolean, application: Application): LiveData<Listing> {
-        return mSubredditRepository.searchTopSubreddits(query, includeOver18, includeProfiles, application)
     }
 }

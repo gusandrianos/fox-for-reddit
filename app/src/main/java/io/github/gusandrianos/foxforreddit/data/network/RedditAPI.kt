@@ -1,12 +1,10 @@
 package io.github.gusandrianos.foxforreddit.data.network
 
-import com.google.gson.JsonArray
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -99,4 +97,17 @@ interface RedditAPI {
             @Query("include_profiles") includeProfiles: Boolean,
             @Query("typeahead_active") typeahead_active: Boolean
     ): Call<Listing>
+
+    @GET("{subreddit}/search")
+    suspend fun searchResults(
+            @Header("Authorization") bearer: String,
+            @Path("subreddit") subreddit: String,
+            @Query("q") query: String,
+            @Query("sort") sort: String,
+            @Query("t") time: String,
+            @Query("restrict_sr") restrict_sr: Boolean,
+            @Query("type") type: String,
+            @Query("count") count: Int,
+            @Query("after") after: String
+    ): Listing
 }

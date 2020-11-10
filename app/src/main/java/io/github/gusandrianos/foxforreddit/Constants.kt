@@ -29,6 +29,7 @@ object Constants {
     const val STARTER_PAGE = ""
     const val MODE_POST = 1
     const val MODE_SUBREDDIT = 2
+    const val MODE_SEARCH_RESULTS = 3
 
     // Post types
     const val SELF = 1
@@ -52,10 +53,6 @@ object Constants {
     const val IS_GALLERY = 2
     const val IS_GIF = 3
 
-    // Screen Mode
-    const val NORMAL_SCREEN = 0
-    const val FULLSCREEN = 1
-
     // Sorting
     const val SORTING_BEST = "best"
     const val SORTING_HOT = "hot"
@@ -71,9 +68,15 @@ object Constants {
     const val TIME_ALL = "all"
 
     // Post Fragment
+    const val ACTION_POST = "post"
+    const val ACTION_SEARCH = "search"
+    const val ARG_TYPE_OF_ACTION = "type_of_action"
     const val ARG_SUBREDDIT_NAME = "subreddit"
     const val ARG_FILTER_NAME = "filter"
     const val ARG_TIME_NAME = "time"
+    const val ARG_QUERY_STRING = "query"
+    const val ARG_SR_RESTRICT_BOOLEAN = "sr_restrict"
+    const val ARG_SEARCH_TYPE = "type"
     const val SHARE_TEXT = "Share via"
 
     // User Fragment
@@ -99,4 +102,9 @@ object Constants {
     // Subreddit List Fragment
     const val AUTHORIZED_SUB_LIST_LOCATION = "mine/subscriber"
     const val VISITOR_SUB_LIST_LOCATION = "default"
+
+    // SearchResultsFragment
+    const val KIND_USER = "user"
+    const val KIND_SUBREDDIT = "sr"
+    const val KIND_POST = "link"
 }

@@ -9,7 +9,7 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/sorting"
+        android:id="@+id/search_sorting"
         android:icon="@drawable/ic_baseline_sort_24"
         android:title="Sorting"
         app:showAsAction="always">

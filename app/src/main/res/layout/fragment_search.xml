@@ -47,6 +47,7 @@
             android:layout_marginTop="16dp"
             android:clickable="true"
             android:text="show More"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"

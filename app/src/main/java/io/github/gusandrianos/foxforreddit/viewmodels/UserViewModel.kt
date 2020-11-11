@@ -8,14 +8,17 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
+import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
 import io.github.gusandrianos.foxforreddit.data.repositories.UserRepository
+import org.json.JSONObject
+import org.json.JSONStringer
 
 class UserViewModel(private val mUserRepository: UserRepository) : ViewModel() {
     private var user: LiveData<Data>? = null
     private var me: LiveData<Data>? = null
     private var trophies: LiveData<List<Thing>>? = null
     private var subreddits: LiveData<PagingData<Data>>? = null
-
+    private var userPrefs: LiveData<UserPrefs>? = null
 
     fun getUser(application: Application, username: String): LiveData<Data> {
         if (user != null)
@@ -43,5 +46,10 @@ class UserViewModel(private val mUserRepository: UserRepository) : ViewModel() {
             return subreddits!!
         subreddits = mUserRepository.getSubreddits(application, location).cachedIn(viewModelScope)
         return subreddits!!
+    }
+
+    fun getPrefs(application: Application): LiveData<UserPrefs> {
+        userPrefs = mUserRepository.getPrefs(application)
+        return userPrefs!!
     }
 }

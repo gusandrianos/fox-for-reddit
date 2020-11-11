@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemReselectedListener,
         BottomNavigationView.OnNavigationItemSelectedListener {
     private Data mUser;
+    public String mIncludeOver18;
     public String currentUserUsername;
     public boolean viewingSelf = false;
     private Token mToken;
@@ -108,6 +109,10 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
             //TODO: Handle this by showing appropriate error
+        });
+
+        viewModel.getPrefs(getApplication()).observe(this, prefs -> {
+            mIncludeOver18 = prefs.getSearchIncludeOver18();
         });
     }
 

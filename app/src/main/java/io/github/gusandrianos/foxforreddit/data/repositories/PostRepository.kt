@@ -10,6 +10,7 @@ import androidx.paging.liveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.github.gusandrianos.foxforreddit.data.models.CommentListing
+import io.github.gusandrianos.foxforreddit.data.models.SubmitResponse
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
@@ -22,6 +23,7 @@ object PostRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     private val commentsData = MutableLiveData<CommentListing>()
     private val dataMoreChildren = MutableLiveData<MoreChildren>()
+    private val submissionData = MutableLiveData<SubmitResponse>()
 
     fun getPosts(subreddit: String, filter: String, time: String, application: Application) =
             Pager(
@@ -74,5 +76,21 @@ object PostRepository {
             }
         })
         return dataMoreChildren
+    }
+
+    fun submitText(type: String, subreddit: String, title: String, url: String, text: String, nsfw: Boolean, spoiler: Boolean, application: Application): LiveData<SubmitResponse> {
+        val bearer = getBearer(application)
+        val submit = redditAPI.submitText(bearer, type, subreddit, title, url, text, nsfw, spoiler, "json", true)
+        submit.enqueue(object : Callback<SubmitResponse> {
+            override fun onResponse(call: Call<SubmitResponse>, response: Response<SubmitResponse>) {
+                Log.i("postResponse", "onResponse: ${response.body()}")
+                if (response.isSuccessful)
+                    submissionData.value = response.body()
+            }
+
+            override fun onFailure(call: Call<SubmitResponse>, t: Throwable) {
+            }
+        })
+        return submissionData
     }
 }

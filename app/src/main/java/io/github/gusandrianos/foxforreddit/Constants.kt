@@ -107,4 +107,8 @@ object Constants {
     const val KIND_USER = "user"
     const val KIND_SUBREDDIT = "sr"
     const val KIND_POST = "link"
+
+    // Compose types
+    const val COMPOSE_TEXT = 0
+    const val COMPOSE_LINK = 2
 }

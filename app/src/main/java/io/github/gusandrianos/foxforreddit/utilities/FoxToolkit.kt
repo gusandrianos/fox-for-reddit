@@ -25,7 +25,7 @@ object FoxToolkit {
     }
 
     fun promptLogIn(mainActivity: MainActivity) {
-        mainActivity.destinationBeforeLoginAttempt = mainActivity.bottomNavView.selectedItemId
+        mainActivity.foxSharedViewModel.previousDestination = mainActivity.bottomNavView.selectedItemId
         mainActivity.loadLogInWebpage()
     }
 

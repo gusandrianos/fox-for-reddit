@@ -2,18 +2,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@id/mainFragment"
-        android:icon="@drawable/ic_baseline_home_24" />
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="Home" />
     <item
         android:id="@id/subredditListFragment"
-        android:icon="@drawable/ic_baseline_list_24"/>
+        android:icon="@drawable/ic_baseline_list_24"
+        android:title="Subscriptions" />
+
     <item
-        android:visible="false"
-        android:enabled="false"
+        android:id="@id/composeChooserFragment"
+        android:icon="@drawable/ic_baseline_add_circle_24"
+        android:title="Compose" />
+
+    <item
+        android:id="@id/messagesFragment"
+        android:icon="@drawable/ic_baseline_email_24"
+        android:title="Messages" />
+
+    <item
         android:id="@id/userFragment"
-        android:icon="@drawable/ic_baseline_account_circle_24" />
-    <item
-        android:id="@+id/nav_login"
+        android:enabled="false"
         android:icon="@drawable/ic_baseline_account_circle_24"
-        android:title="Log in"
-        android:visible="true" />
+        android:title="User" />
 </menu>

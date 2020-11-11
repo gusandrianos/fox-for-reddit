@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
@@ -49,30 +50,6 @@ import static io.github.gusandrianos.foxforreddit.Constants.ARG_SUBREDDIT_NAME;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_TIME_NAME;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_SEARCH_TYPE;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_TYPE_OF_ACTION;
-import static io.github.gusandrianos.foxforreddit.Constants.IMAGE;
-import static io.github.gusandrianos.foxforreddit.Constants.LINK;
-import static io.github.gusandrianos.foxforreddit.Constants.PLAYABLE_VIDEO;
-import static io.github.gusandrianos.foxforreddit.Constants.POST_SHARE;
-import static io.github.gusandrianos.foxforreddit.Constants.POST_SUBREDDIT;
-import static io.github.gusandrianos.foxforreddit.Constants.POST_THUMBNAIL;
-import static io.github.gusandrianos.foxforreddit.Constants.POST_USER;
-import static io.github.gusandrianos.foxforreddit.Constants.POST_VOTE_DOWN;
-import static io.github.gusandrianos.foxforreddit.Constants.POST_VOTE_NOW;
-import static io.github.gusandrianos.foxforreddit.Constants.POST_VOTE_UP;
-import static io.github.gusandrianos.foxforreddit.Constants.SHARE_TEXT;
-import static io.github.gusandrianos.foxforreddit.Constants.SORTING_BEST;
-import static io.github.gusandrianos.foxforreddit.Constants.SORTING_CONTROVERSIAL;
-import static io.github.gusandrianos.foxforreddit.Constants.SORTING_HOT;
-import static io.github.gusandrianos.foxforreddit.Constants.SORTING_NEW;
-import static io.github.gusandrianos.foxforreddit.Constants.SORTING_RISING;
-import static io.github.gusandrianos.foxforreddit.Constants.SORTING_TOP;
-import static io.github.gusandrianos.foxforreddit.Constants.TIME_ALL;
-import static io.github.gusandrianos.foxforreddit.Constants.TIME_DAY;
-import static io.github.gusandrianos.foxforreddit.Constants.TIME_HOUR;
-import static io.github.gusandrianos.foxforreddit.Constants.TIME_MONTH;
-import static io.github.gusandrianos.foxforreddit.Constants.TIME_WEEK;
-import static io.github.gusandrianos.foxforreddit.Constants.TIME_YEAR;
-import static io.github.gusandrianos.foxforreddit.Constants.VIDEO;
 
 
 public class PostFragment extends Fragment implements PostAdapter.OnItemClickListener {
@@ -111,9 +88,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             sr_restrict = getArguments().getBoolean(ARG_SR_RESTRICT_BOOLEAN);
             searchType = getArguments().getString(ARG_SEARCH_TYPE);
         }
-        subreddit = getArguments().getString(ARG_SUBREDDIT_NAME, "");
-        filter = getArguments().getString(ARG_FILTER_NAME, "");
-        time = getArguments().getString(ARG_TIME_NAME, "");
+        subreddit = getArguments().getString(Constants.ARG_SUBREDDIT_NAME, "");
+        filter = getArguments().getString(Constants.ARG_FILTER_NAME, "");
+        time = getArguments().getString(Constants.ARG_TIME_NAME, "");
         pullToRefresh = view.findViewById(R.id.swipe_refresh_layout_posts);
         initRecycleView();
         loadPosts(false);
@@ -187,14 +164,14 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
 
         switch (clicked) {
-            case POST_SUBREDDIT:
+            case Constants.POST_SUBREDDIT:
                 if (currentDestinationID != R.id.subredditFragment) {
                     String subredditNamePrefixed = post.getSubredditNamePrefixed();
                     NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(subredditNamePrefixed);
                     navController.navigate(action);
                 }
                 break;
-            case POST_USER:
+            case Constants.POST_USER:
                 String authorUsername = post.getAuthor();
                 if (currentDestinationID != R.id.userFragment) {
                     NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, authorUsername);
@@ -204,14 +181,14 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                     navController.navigate(action);
                 }
                 break;
-            case POST_THUMBNAIL:
+            case Constants.POST_THUMBNAIL:
 
                 switch (postType) {
-                    case IMAGE:
+                    case Constants.IMAGE:
                         FoxToolkit.INSTANCE.fullscreenImage(post, requireContext());
                         break;
-                    case VIDEO:
-                        if (FoxToolkit.INSTANCE.getTypeOfVideo(post) == PLAYABLE_VIDEO) {
+                    case Constants.VIDEO:
+                        if (FoxToolkit.INSTANCE.getTypeOfVideo(post) == Constants.PLAYABLE_VIDEO) {
                             navController.navigate(VideoDialogFragmentDirections.actionGlobalVideoDialogFragment(postType, post));
                             break;
                         } else {
@@ -219,23 +196,23 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                             customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
                         }
                         break;
-                    case LINK:
+                    case Constants.LINK:
                         CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
                         customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
                         break;
                     default:
                 }
                 break;
-            case POST_VOTE_UP:
+            case Constants.POST_VOTE_UP:
                 FoxToolkit.INSTANCE.upVote(viewModel, requireActivity().getApplication(), post);
                 break;
-            case POST_VOTE_DOWN:
+            case Constants.POST_VOTE_DOWN:
                 FoxToolkit.INSTANCE.downVote(viewModel, requireActivity().getApplication(), post);
                 break;
-            case POST_SHARE:
-                startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(post), SHARE_TEXT));
+            case Constants.POST_SHARE:
+                startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(post), Constants.SHARE_TEXT));
                 break;
-            case POST_VOTE_NOW:
+            case Constants.POST_VOTE_NOW:
                 CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
                 customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
                 break;
@@ -264,53 +241,53 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         toolbar.setOnMenuItemClickListener(menuItem -> {
             int itemItemId = menuItem.getItemId();
             if (itemItemId == R.id.sort_best) {
-                filter = SORTING_BEST;
+                filter = Constants.SORTING_BEST;
                 loadPosts(true);
                 return true;
             } else if (itemItemId == R.id.sort_hot) {
-                filter = SORTING_HOT;
+                filter = Constants.SORTING_HOT;
                 loadPosts(true);
                 return true;
             } else if (itemItemId == R.id.sort_new) {
-                filter = SORTING_NEW;
+                filter = Constants.SORTING_NEW;
                 loadPosts(true);
                 return true;
             } else if (itemItemId == R.id.sort_top) {
-                timedFilter = SORTING_TOP;
+                timedFilter = Constants.SORTING_TOP;
             } else if (itemItemId == R.id.sort_controversial) {
-                timedFilter = SORTING_CONTROVERSIAL;
+                timedFilter = Constants.SORTING_CONTROVERSIAL;
             } else if (itemItemId == R.id.sort_rising) {
-                filter = SORTING_RISING;
+                filter = Constants.SORTING_RISING;
                 loadPosts(true);
                 return true;
             } else if (itemItemId == R.id.sort_hour) {
                 filter = timedFilter;
-                time = TIME_HOUR;
+                time = Constants.TIME_HOUR;
                 loadPosts(true);
                 return true;
             } else if (itemItemId == R.id.sort_24h) {
                 filter = timedFilter;
-                time = TIME_DAY;
+                time = Constants.TIME_DAY;
                 loadPosts(true);
                 return true;
             } else if (itemItemId == R.id.sort_week) {
                 filter = timedFilter;
-                time = TIME_WEEK;
+                time = Constants.TIME_WEEK;
                 loadPosts(true);
                 return true;
             } else if (itemItemId == R.id.sort_month) {
                 filter = timedFilter;
-                time = TIME_MONTH;
+                time = Constants.TIME_MONTH;
                 loadPosts(true);
                 return true;
             } else if (itemItemId == R.id.sort_year) {
                 filter = timedFilter;
-                time = TIME_YEAR;
+                time = Constants.TIME_YEAR;
                 loadPosts(true);
                 return true;
             } else if (itemItemId == R.id.sort_all_time) {
                 filter = timedFilter;
-                time = TIME_ALL;
+                time = Constants.TIME_ALL;
                 loadPosts(true);
                 return true;
             }
@@ -322,9 +299,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         PostFragment fragment = new PostFragment();
 
         Bundle args = new Bundle();
-        args.putString(ARG_SUBREDDIT_NAME, subreddit);
-        args.putString(ARG_FILTER_NAME, filter);
-        args.putString(ARG_TIME_NAME, time);
+        args.putString(Constants.ARG_SUBREDDIT_NAME, subreddit);
+        args.putString(Constants.ARG_FILTER_NAME, filter);
+        args.putString(Constants.ARG_TIME_NAME, time);
         args.putString(ARG_TYPE_OF_ACTION, ACTION_POST);
         fragment.setArguments(args);
 

@@ -8,6 +8,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import io.github.gusandrianos.foxforreddit.data.models.CommentListing
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.data.models.SubmitResponse
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository
 
@@ -16,7 +17,7 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
 
     fun getPosts(subreddit: String, filter: String, time: String, application: Application): LiveData<PagingData<Data>> {
         if (posts != null)
-            return posts!!;
+            return posts!!
         posts = mPostRepository.getPosts(subreddit, filter, time, application).cachedIn(viewModelScope)
         return posts!!
     }
@@ -35,5 +36,10 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
 
     fun getMoreChildren(linkId: String, children: String, application: Application): LiveData<MoreChildren> {
         return mPostRepository.getMoreChildren(linkId, children, application)
+    }
+
+    fun submitText(type: String, subreddit: String, title: String, url: String, text: String, nsfw: Boolean,
+                   spoiler: Boolean, application: Application): LiveData<SubmitResponse> {
+        return mPostRepository.submitText(type, subreddit, title, url, text, nsfw, spoiler, application)
     }
 }

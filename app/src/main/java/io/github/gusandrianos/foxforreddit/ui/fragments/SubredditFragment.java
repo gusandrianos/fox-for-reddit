@@ -36,9 +36,7 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
-import static io.github.gusandrianos.foxforreddit.Constants.ACTION_SUBSCRIBE;
-import static io.github.gusandrianos.foxforreddit.Constants.ACTION_UNSUBSCRIBE;
-import static io.github.gusandrianos.foxforreddit.Constants.SUBREDDIT_POST_FRAGMENT_TAG;
+import io.github.gusandrianos.foxforreddit.Constants;
 
 public class SubredditFragment extends Fragment {
     FoxToolkit toolkit = FoxToolkit.INSTANCE;
@@ -53,6 +51,7 @@ public class SubredditFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         SubredditFragmentArgs args = SubredditFragmentArgs.fromBundle(requireArguments());
         String subredditName = args.getSubredditName();
+        ((MainActivity) requireActivity()).getFoxSharedViewModel().setCurrentSubreddit(subredditName);
 
         TextView titleTextView = view.findViewById(R.id.text_subreddit_title);
         titleTextView.setText(subredditName);
@@ -64,14 +63,14 @@ public class SubredditFragment extends Fragment {
         viewModel.getSubreddit(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
         {
             setupHeader(subredditInfo, view);
-            PostFragment subredditPostFragment = (PostFragment) getChildFragmentManager().findFragmentByTag(SUBREDDIT_POST_FRAGMENT_TAG);
+            PostFragment subredditPostFragment = (PostFragment) getChildFragmentManager().findFragmentByTag(Constants.SUBREDDIT_POST_FRAGMENT_TAG);
 
             if (subredditPostFragment == null) {
                 subredditPostFragment = PostFragment.newInstance(subredditName, "", "");
                 getChildFragmentManager().beginTransaction()
                         .replace(R.id.subreddit_posts_fragment,
                                 subredditPostFragment,
-                                SUBREDDIT_POST_FRAGMENT_TAG)
+                                Constants.SUBREDDIT_POST_FRAGMENT_TAG)
                         .commitNow();
             }
         });
@@ -126,9 +125,9 @@ public class SubredditFragment extends Fragment {
 
     int getFinalAction(Data subredditInfo) {
         if (subredditInfo.getUserIsSubscriber())
-            return ACTION_UNSUBSCRIBE;
+            return Constants.ACTION_UNSUBSCRIBE;
         else
-            return ACTION_SUBSCRIBE;
+            return Constants.ACTION_SUBSCRIBE;
     }
 
     void setupUserCounters(Data subredditInfo, View view) {

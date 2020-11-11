@@ -2,6 +2,7 @@ package io.github.gusandrianos.foxforreddit.data.network
 
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.data.models.SubmitResponse
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
 
@@ -116,4 +117,19 @@ interface RedditAPI {
             @Query("count") count: Int,
             @Query("after") after: String
     ): Listing
+
+    @FormUrlEncoded
+    @POST("api/submit")
+    fun submitText(
+            @Header("Authorization") bearer: String,
+            @Field("kind") kind: String,
+            @Field("sr") subreddit: String,
+            @Field("title") title: String,
+            @Field("url") url: String,
+            @Field("text") text: String,
+            @Field("nsfw") nsfw: Boolean,
+            @Field("spoiler") spoiler: Boolean,
+            @Field("api_type") apiType: String,
+            @Field("resubmit") resubmit: Boolean
+    ): Call<SubmitResponse>
 }

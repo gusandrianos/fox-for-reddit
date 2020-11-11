@@ -53,14 +53,11 @@ public class SearchResultsFragment extends Fragment {
         ArrayList<Fragment> searchResultsFragments = new ArrayList<>();
         ArrayList<String> tabTitles = new ArrayList<>();
 
-        MainActivity mainActivity = (MainActivity) requireActivity();
-        boolean includeOver18 = mainActivity.getFoxSharedViewModel().getIncludeOver18();
-
-        searchResultsFragments.add(PostFragment.newSearchInstance(query, "best", "", !includeOver18, KIND_POST, ""));
+        searchResultsFragments.add(PostFragment.newSearchInstance(query, "best", "", false, KIND_POST, ""));
         tabTitles.add("Posts");
-        searchResultsFragments.add(SearchResultsListFragment.newSearchInstance(query, "best", "", !includeOver18, KIND_SUBREDDIT));
+        searchResultsFragments.add(SearchResultsListFragment.newSearchInstance(query, "best", "", false, KIND_SUBREDDIT));
         tabTitles.add("Subreddits");
-        searchResultsFragments.add(SearchResultsListFragment.newSearchInstance(query, "best", "", !includeOver18, KIND_USER));
+        searchResultsFragments.add(SearchResultsListFragment.newSearchInstance(query, "best", "", false, KIND_USER));
         tabTitles.add("Profiles");
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(searchResultsFragments, tabTitles, this);

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.libRG.CustomTextView;
 
 import java.util.Objects;
 
@@ -33,6 +35,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
 public class ComposeFragment extends Fragment {
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_compose, container, false);
@@ -58,6 +61,51 @@ public class ComposeFragment extends Fragment {
             NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
             navController.navigate(ComposeFragmentDirections.actionComposeFragmentToSubredditListFragment());
         });
+
+        CustomTextView nsfw = view.findViewById(R.id.custom_text_nsfw);
+        CustomTextView spoiler = view.findViewById(R.id.custom_text_spoiler);
+        MainActivity mainActivity = (MainActivity) requireActivity();
+
+        // This is needed to survive rotation changes
+        setUpNSFW(mainActivity, nsfw);
+        setUpSpoiler(mainActivity, spoiler);
+
+        nsfw.setOnClickListener(nsfwToggle -> {
+            boolean isNSFW = mainActivity.getFoxSharedViewModel().isNSFW();
+            isNSFW = !isNSFW;
+            mainActivity.getFoxSharedViewModel().setNSFW(isNSFW);
+            setUpNSFW(mainActivity, nsfw);
+        });
+
+        spoiler.setOnClickListener(spoilerToggle -> {
+            boolean isSpoiler = mainActivity.getFoxSharedViewModel().isSpoiler();
+            isSpoiler = !isSpoiler;
+            mainActivity.getFoxSharedViewModel().setSpoiler(isSpoiler);
+            setUpSpoiler(mainActivity, spoiler);
+        });
+
+    }
+
+    private void setUpNSFW(MainActivity mainActivity, CustomTextView nsfw) {
+        boolean isNSFW = mainActivity.getFoxSharedViewModel().isNSFW();
+        if (isNSFW) {
+            nsfw.setBorderColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark));
+            nsfw.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark));
+        } else {
+            nsfw.setBorderColor(ContextCompat.getColor(requireContext(), android.R.color.tab_indicator_text));
+            nsfw.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.tab_indicator_text));
+        }
+    }
+
+    private void setUpSpoiler(MainActivity mainActivity, CustomTextView spoiler) {
+        boolean isSpoiler = mainActivity.getFoxSharedViewModel().isSpoiler();
+        if (isSpoiler) {
+            spoiler.setBorderColor(ContextCompat.getColor(requireContext(), android.R.color.holo_blue_dark));
+            spoiler.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_blue_dark));
+        } else {
+            spoiler.setBorderColor(ContextCompat.getColor(requireContext(), android.R.color.tab_indicator_text));
+            spoiler.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.tab_indicator_text));
+        }
     }
 
     private void setUpBodyStub(View view, int type) {
@@ -94,7 +142,11 @@ public class ComposeFragment extends Fragment {
             type = "link";
         }
 
-        viewModel.submitText(type, subreddit, title, url, text, requireActivity().getApplication()).observe(getViewLifecycleOwner(), posted -> {
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        boolean isNSFW = mainActivity.getFoxSharedViewModel().isNSFW();
+        boolean isSpoiler = mainActivity.getFoxSharedViewModel().isSpoiler();
+
+        viewModel.submitText(type, subreddit, title, url, text, isNSFW, isSpoiler, requireActivity().getApplication()).observe(getViewLifecycleOwner(), posted -> {
             if (posted.getJson().getErrors().isEmpty()) {
                 // TODO: SinglePost needs refactoring to support navigating to it from links, for now, navigating back.
                 Toast.makeText(requireContext(), "Posted to " + subredditTextField.getText().toString(), Toast.LENGTH_SHORT).show();

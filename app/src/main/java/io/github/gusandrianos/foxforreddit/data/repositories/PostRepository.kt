@@ -78,9 +78,9 @@ object PostRepository {
         return dataMoreChildren
     }
 
-    fun submitText(type: String, subreddit: String, title: String, url: String, text: String, application: Application): LiveData<SubmitResponse> {
+    fun submitText(type: String, subreddit: String, title: String, url: String, text: String, nsfw: Boolean, spoiler: Boolean, application: Application): LiveData<SubmitResponse> {
         val bearer = getBearer(application)
-        val submit = redditAPI.submitText(bearer, type, subreddit, title, url, text, "json", true)
+        val submit = redditAPI.submitText(bearer, type, subreddit, title, url, text, nsfw, spoiler, "json", true)
         submit.enqueue(object : Callback<SubmitResponse> {
             override fun onResponse(call: Call<SubmitResponse>, response: Response<SubmitResponse>) {
                 Log.i("postResponse", "onResponse: ${response.body()}")
@@ -90,7 +90,6 @@ object PostRepository {
 
             override fun onFailure(call: Call<SubmitResponse>, t: Throwable) {
             }
-
         })
         return submissionData
     }

@@ -54,6 +54,7 @@ public class ComposeChooserFragment extends BottomSheetDialogFragment {
     }
 
     void compose(int postType) {
+        ((MainActivity) requireActivity()).getFoxSharedViewModel().resetComposeOptions();
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
 

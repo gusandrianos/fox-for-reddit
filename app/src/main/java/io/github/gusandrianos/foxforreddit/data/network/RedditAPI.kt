@@ -102,8 +102,8 @@ interface RedditAPI {
             @Field("title") title: String,
             @Field("url") url: String,
             @Field("text") text: String,
-//            @Field("spoiler") spoiler: Boolean,
-//            @Field("nsfw") nsfw: Boolean,
+            @Field("nsfw") nsfw: Boolean,
+            @Field("spoiler") spoiler: Boolean,
             @Field("api_type") apiType: String,
             @Field("resubmit") resubmit: Boolean
     ): Call<SubmitResponse>

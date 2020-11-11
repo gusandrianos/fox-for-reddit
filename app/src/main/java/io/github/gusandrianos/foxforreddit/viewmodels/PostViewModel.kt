@@ -38,7 +38,8 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
         return mPostRepository.getMoreChildren(linkId, children, application)
     }
 
-    fun submitText(type: String, subreddit: String, title: String, url: String, text: String, application: Application): LiveData<SubmitResponse> {
-        return mPostRepository.submitText(type, subreddit, title, url, text, application)
+    fun submitText(type: String, subreddit: String, title: String, url: String, text: String, nsfw: Boolean,
+                   spoiler: Boolean, application: Application): LiveData<SubmitResponse> {
+        return mPostRepository.submitText(type, subreddit, title, url, text, nsfw, spoiler, application)
     }
 }

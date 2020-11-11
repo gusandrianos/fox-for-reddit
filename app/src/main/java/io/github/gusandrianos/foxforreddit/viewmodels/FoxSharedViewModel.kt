@@ -10,14 +10,21 @@ class FoxSharedViewModel : ViewModel() {
     private var subredditChoice: MutableLiveData<String> = MutableLiveData()
     var viewingSelf: Boolean = false
     var previousDestination: Int = 0
+    var isNSFW: Boolean = false
+    var isSpoiler: Boolean = false
 
     fun getSubredditChoice(): LiveData<String> {
-            subredditChoice.value = currentSubreddit
+        subredditChoice.value = currentSubreddit
         return subredditChoice
     }
 
     fun clearComposeData() {
         subredditChoice.value = ""
         currentSubreddit = ""
+    }
+
+    fun resetComposeOptions() {
+        isNSFW = false
+        isSpoiler = false
     }
 }

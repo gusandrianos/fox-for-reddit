@@ -1,12 +1,12 @@
 package io.github.gusandrianos.foxforreddit.utilities;
 
-import android.util.Log;
-
 import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository;
+import io.github.gusandrianos.foxforreddit.data.repositories.SearchRepository;
 import io.github.gusandrianos.foxforreddit.data.repositories.SubredditRepository;
 import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.data.repositories.UserRepository;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
+import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
@@ -17,9 +17,6 @@ public class InjectorUtils {
     public static InjectorUtils getInstance() {
         if (instance == null) {
             instance = new InjectorUtils();
-            Log.i("INSTANCE-INJECTOR", "created new instance");
-        } else {
-            Log.i("INSTANCE-INJECTOR", "passed same instance");
         }
         return instance;
     }
@@ -46,5 +43,9 @@ public class InjectorUtils {
         SubredditRepository subredditRepository = SubredditRepository.INSTANCE;
         return new SubredditViewModelFactory(subredditRepository);
     }
-}
 
+    public SearchViewModelFactory provideSearchViewModelFactory() {
+        SearchRepository searchRepository = SearchRepository.INSTANCE;
+        return new SearchViewModelFactory(searchRepository);
+    }
+}

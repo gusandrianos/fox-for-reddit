@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/search_bar"
+        android:icon="@drawable/ic_round_search_24"
+        android:title="Search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/search_sorting_v2"
+        android:icon="@drawable/ic_baseline_sort_24"
+        android:title="Sorting"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/sort_best"
+                android:title="Best"
+                android:visible="false" />
+
+            <item
+                android:id="@+id/sort_hot"
+                android:title="Hot" />
+
+            <item
+                android:id="@+id/sort_new"
+                android:title="New" />
+
+            <item
+                android:id="@+id/sort_top"
+                android:title="Top">
+                <menu>
+                    <item
+                        android:id="@+id/sort_hour"
+                        android:title="Past Hour" />
+                    <item
+                        android:id="@+id/sort_24h"
+                        android:title="Past 24 Hours" />
+                    <item
+                        android:id="@+id/sort_week"
+                        android:title="Past Week" />
+                    <item
+                        android:id="@+id/sort_month"
+                        android:title="Past Month" />
+                    <item
+                        android:id="@+id/sort_year"
+                        android:title="Past Year" />
+                    <item
+                        android:id="@+id/sort_all_time"
+                        android:title="All Time" />
+                </menu>
+            </item>
+
+            <item
+                android:id="@+id/sort_controversial"
+                android:title="Controversial">
+                <menu>
+                    <item
+                        android:id="@id/sort_hour"
+                        android:title="Past Hour" />
+                    <item
+                        android:id="@id/sort_24h"
+                        android:title="Past 24 Hours" />
+                    <item
+                        android:id="@id/sort_week"
+                        android:title="Past Week" />
+                    <item
+                        android:id="@id/sort_month"
+                        android:title="Past Month" />
+                    <item
+                        android:id="@id/sort_year"
+                        android:title="Past Year" />
+                    <item
+                        android:id="@id/sort_all_time"
+                        android:title="All Time" />
+                </menu>
+            </item>
+
+            <item
+                android:id="@+id/sort_rising"
+                android:title="Rising" />
+        </menu>
+    </item>
+</menu>

@@ -21,6 +21,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 
+import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
@@ -62,13 +63,22 @@ public class MainFragment extends Fragment {
     private void setUpNavigation() {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
+
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_main);
-        toolbar.inflateMenu(R.menu.sorting);
+        toolbar.inflateMenu(R.menu.sorting_and_search_button);
+        toolbar.getMenu().getItem(1).getSubMenu().getItem(0).setVisible(true);
+
+        MenuItem searchButton = toolbar.getMenu().getItem(0);
+        searchButton.setOnMenuItemClickListener(item -> {
+            navController.navigate(NavGraphDirections.actionGlobalSearchFragment());
+            return true;
+        });
+
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.VISIBLE);
         MenuItem item = bottomNavigationView.getMenu().findItem(R.id.mainFragment);
         item.setChecked(true);
-        toolbar.getMenu().getItem(0).getSubMenu().getItem(0).setVisible(true);
+
         NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
     }
 }

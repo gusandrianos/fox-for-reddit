@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startIconDrawable="@drawable/ic_baseline_link_24">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edit_compose_link_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:gravity="top"
+        android:hint="Your link here..."
+        android:inputType="textUri"
+        android:isScrollContainer="true"
+        android:scrollbars="vertical" />
+</com.google.android.material.textfield.TextInputLayout>

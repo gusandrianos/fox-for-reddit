@@ -9,6 +9,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.liveData
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
+import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
@@ -22,6 +23,7 @@ object UserRepository {
     private var user: MutableLiveData<Data> = MutableLiveData()
     private var me: MutableLiveData<Data> = MutableLiveData()
     private var trophies: MutableLiveData<List<Thing>> = MutableLiveData()
+    private var userPrefs: MutableLiveData<UserPrefs> = MutableLiveData()
 
     fun getUser(username: String, application: Application): LiveData<Data> {
         val bearer = getBearer(application)
@@ -38,7 +40,6 @@ object UserRepository {
         })
         return user
     }
-
 
     fun getMe(application: Application): LiveData<Data> {
         val bearer = getBearer(application)
@@ -77,4 +78,19 @@ object UserRepository {
                     config = PagingConfig(pageSize = 10, enablePlaceholders = false),
                     pagingSourceFactory = { RedditPagingSource(location, getBearer(application)) }
             ).liveData
+
+    fun getPrefs(application: Application): LiveData<UserPrefs> {
+        val bearer = getBearer(application)
+        val prefsRequest = redditAPI.getPrefs(bearer)
+        prefsRequest.enqueue((object : Callback<UserPrefs> {
+            override fun onResponse(call: Call<UserPrefs>, response: Response<UserPrefs>) {
+                userPrefs.value = response.body()
+            }
+
+            override fun onFailure(call: Call<UserPrefs>, t: Throwable) {
+                Log.i("PREFS", "onFailure: ${t.message}")
+            }
+        }))
+        return userPrefs
+    }
 }

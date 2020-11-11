@@ -1,9 +1,10 @@
 package io.github.gusandrianos.foxforreddit.data.network
 
-import com.google.gson.JsonArray
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.data.models.SubmitResponse
 import io.github.gusandrianos.foxforreddit.data.models.Thing
+import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
 
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import retrofit2.Call
@@ -48,6 +49,11 @@ interface RedditAPI {
             @Header("Authorization") bearer: String,
     ): Call<Data>
 
+    @GET("/api/v1/me/prefs")
+    fun getPrefs(
+            @Header("Authorization") bearer: String,
+    ): Call<UserPrefs>
+
     @GET("{permalink}")
     fun getSinglePost(
             @Header("Authorization") bearer: String,
@@ -89,4 +95,41 @@ interface RedditAPI {
             @Field("action") action: String,
             @Field("sr_name") sr_name: String
     ): Call<Void>
+
+    @GET("api/subreddit_autocomplete_v2")
+    fun searchTopSubreddits(
+            @Header("Authorization") bearer: String,
+            @Query("query") query: String,
+            @Query("include_over_18") includeOver18: Boolean,
+            @Query("include_profiles") includeProfiles: Boolean,
+            @Query("typeahead_active") typeahead_active: Boolean
+    ): Call<Listing>
+
+    @GET("{subreddit}/search")
+    suspend fun searchResults(
+            @Header("Authorization") bearer: String,
+            @Path("subreddit") subreddit: String,
+            @Query("q") query: String,
+            @Query("sort") sort: String,
+            @Query("t") time: String,
+            @Query("restrict_sr") restrict_sr: Boolean,
+            @Query("type") type: String,
+            @Query("count") count: Int,
+            @Query("after") after: String
+    ): Listing
+
+    @FormUrlEncoded
+    @POST("api/submit")
+    fun submitText(
+            @Header("Authorization") bearer: String,
+            @Field("kind") kind: String,
+            @Field("sr") subreddit: String,
+            @Field("title") title: String,
+            @Field("url") url: String,
+            @Field("text") text: String,
+            @Field("nsfw") nsfw: Boolean,
+            @Field("spoiler") spoiler: Boolean,
+            @Field("api_type") apiType: String,
+            @Field("resubmit") resubmit: Boolean
+    ): Call<SubmitResponse>
 }

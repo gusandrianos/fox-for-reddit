@@ -2,7 +2,6 @@ package io.github.gusandrianos.foxforreddit.utilities
 
 import android.graphics.Color
 import android.text.format.DateUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +13,9 @@ import com.bumptech.glide.Glide
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.formatValue
 
-
-import java.text.DecimalFormat
-import java.text.NumberFormat
 import java.time.Instant
-import kotlin.math.pow
 
 class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter<Data, RecyclerView.ViewHolder>(POST_COMPARATOR) {
 
@@ -39,16 +35,15 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
 
     override fun getItemViewType(position: Int): Int {
         val currentItem = getItem(position)
-        if (currentItem?.name!!.startsWith("t1_")) {
-            Log.i("", "getItemViewType: I work")
+        if (currentItem?.name!!.startsWith("t1_"))
             return Constants.COMMENT
-        }
+
         if (currentItem.post_hint == null) {
             if (currentItem.pollData != null)    //IF it is poll THEN must have poll data
                 return Constants.POLL
             if (currentItem.media != null)       //IF it's not the above THEN: IF it is rich/hosted:video THEN must have Media
                 return Constants.VIDEO
-            if (currentItem.url!!.contains("https://i.") || currentItem.isGallery==true )  //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
+            if (currentItem.url!!.contains("https://i.") || currentItem.isGallery == true)  //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
                 return Constants.IMAGE
             return if (currentItem.domain!!.contains("self."))  //IF it's nothing from the above THEN: IF it is self THEN contains domain with self. (not sure)
                 Constants.SELF
@@ -337,19 +332,4 @@ fun getPollEndingDate(timestamp: Long): String {
     if (now > timestamp)
         return "Poll has ended"
     return "Ends " + DateUtils.getRelativeTimeSpanString(timestamp, now, 0L, DateUtils.FORMAT_ABBREV_RELATIVE).toString()
-}
-
-fun formatValue(number: Double): String {
-    var value = number
-    if (value == 0.0) {
-        return 0.toString()
-    }
-    val suffix = " kmbt"
-    var formattedNumber = ""
-    val formatter: NumberFormat = DecimalFormat("#,###.#")
-    val power: Int = StrictMath.log10(value).toInt()
-    value /= 10.0.pow(power / 3 * 3.toDouble())
-    formattedNumber = formatter.format(value)
-    formattedNumber += suffix[power / 3]
-    return if (formattedNumber.length > 4) formattedNumber.replace("\\.[0-9]+".toRegex(), "") else formattedNumber
 }

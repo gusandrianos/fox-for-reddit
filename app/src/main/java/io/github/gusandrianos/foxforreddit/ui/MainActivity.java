@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
@@ -29,27 +30,22 @@ import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.viewmodels.FoxSharedViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
-import static io.github.gusandrianos.foxforreddit.Constants.BASE_OAUTH_URL;
-import static io.github.gusandrianos.foxforreddit.Constants.CLIENT_ID;
-import static io.github.gusandrianos.foxforreddit.Constants.LAUNCH_SECOND_ACTIVITY;
-import static io.github.gusandrianos.foxforreddit.Constants.REDIRECT_URI;
-import static io.github.gusandrianos.foxforreddit.Constants.STATE;
+import io.github.gusandrianos.foxforreddit.Constants;
 
 
 public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemReselectedListener,
         BottomNavigationView.OnNavigationItemSelectedListener {
     private Data mUser;
-    public String currentUserUsername;
-    public boolean viewingSelf = false;
+    public Boolean mIncludeOver18;
     private Token mToken;
     private NavController navController;
     public AppBarConfiguration appBarConfiguration;
     public BottomNavigationView bottomNavView;
-    public int destinationBeforeLoginAttempt;
     NavOptions options;
     List<Integer> topLevelDestinationIds;
 
@@ -76,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (destination.getId() != R.id.userFragment) {
-                viewingSelf = false;
+                getFoxSharedViewModel().setViewingSelf(false);
             }
         });
 
@@ -86,12 +82,11 @@ public class MainActivity extends AppCompatActivity implements
     private void setAuthorizedUI() {
         if (mToken == null) {
             mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(getApplication());
+            MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.userFragment);
+            bottomNavMenuItem.setEnabled(true);
         }
-        if (mToken.getRefreshToken() != null) {
+        if (mToken.getRefreshToken() != null)
             getCurrentUser();
-            bottomNavView.getMenu().getItem(2).setVisible(true);
-            bottomNavView.getMenu().getItem(3).setVisible(false);
-        }
     }
 
     private void getCurrentUser() {
@@ -102,12 +97,17 @@ public class MainActivity extends AppCompatActivity implements
                 String username = user.getName();
                 if (username != null) {
                     mUser = user;
-                    currentUserUsername = user.getName();
+                    getFoxSharedViewModel().setCurrentUserUsername(user.getName());
                     MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.userFragment);
                     bottomNavMenuItem.setEnabled(true);
                 }
             }
             //TODO: Handle this by showing appropriate error
+        });
+
+        viewModel.getPrefs(getApplication()).observe(this, prefs -> {
+            mIncludeOver18 = prefs.getSearchIncludeOver18();
+            getFoxSharedViewModel().setIncludeOver18(mIncludeOver18);
         });
     }
 
@@ -116,32 +116,40 @@ public class MainActivity extends AppCompatActivity implements
         return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
     }
 
+    public FoxSharedViewModel getFoxSharedViewModel() {
+        NavBackStackEntry backStackEntry = navController.getBackStackEntry(R.id.nav_graph);
+        return new ViewModelProvider(backStackEntry).get(FoxSharedViewModel.class);
+    }
+
     public void loadLogInWebpage() {
         Intent load = new Intent(this, LoginActivity.class);
         load.putExtra("URL", constructOAuthURL());
-        startActivityForResult(load, LAUNCH_SECOND_ACTIVITY);
+        startActivityForResult(load, Constants.LAUNCH_SECOND_ACTIVITY);
     }
 
     private String constructOAuthURL() {
-        return BASE_OAUTH_URL + "?client_id=" + CLIENT_ID + "&response_type=code&state=" + STATE + "&redirect_uri=" + REDIRECT_URI + "&duration=permanent&scope=*";
+        return Constants.BASE_OAUTH_URL +
+                "?client_id=" + Constants.CLIENT_ID +
+                "&response_type=code&state=" + Constants.STATE +
+                "&redirect_uri=" + Constants.REDIRECT_URI + "&duration=permanent&scope=*";
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == LAUNCH_SECOND_ACTIVITY) {
+        if (requestCode == Constants.LAUNCH_SECOND_ACTIVITY) {
             if (resultCode == Activity.RESULT_OK) {
                 String result = Objects.requireNonNull(data).getStringExtra("result");
                 String[] inputs = result.split("\\?")[1].split("&");
                 String state = inputs[0].split("=")[1];
-                if (state.equals(STATE)) {
+                if (state.equals(Constants.STATE)) {
                     String code = inputs[1].split("=")[1];
-                    mToken = InjectorUtils.getInstance().provideTokenRepository().getNewToken(getApplication(), code, REDIRECT_URI);
+                    mToken = InjectorUtils.getInstance().provideTokenRepository().getNewToken(getApplication(), code, Constants.REDIRECT_URI);
                 }
                 setAuthorizedUI();
             }
         }
-        MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(destinationBeforeLoginAttempt);
+        MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(getFoxSharedViewModel().getPreviousDestination());
         bottomNavMenuItem.setChecked(true);
     }
 
@@ -153,14 +161,28 @@ public class MainActivity extends AppCompatActivity implements
             navController.navigate(R.id.mainFragment, null, options);
             return true;
         } else if (id == R.id.userFragment) {
-            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
-            navController.navigate(action);
+            if (mToken.getRefreshToken() != null && !mToken.getRefreshToken().isEmpty()) {
+                NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
+                navController.navigate(action);
+            } else
+                FoxToolkit.INSTANCE.promptLogIn(this);
             return true;
         } else if (id == R.id.subredditListFragment) {
             navController.navigate(R.id.subredditListFragment);
             return true;
-        } else if (id == R.id.nav_login) {
-            FoxToolkit.INSTANCE.promptLogIn(this);
+        } else if (id == R.id.composeChooserFragment) {
+            String postTo = "Reddit";
+            if (navController.getCurrentDestination().getId() == R.id.subredditFragment) {
+                postTo = getFoxSharedViewModel().getCurrentSubreddit();
+            } else {
+                getFoxSharedViewModel().clearComposeData();
+            }
+            NavGraphDirections.ActionGlobalComposeChooserFragment action = NavGraphDirections.actionGlobalComposeChooserFragment(postTo);
+            getFoxSharedViewModel().setPreviousDestination(bottomNavView.getSelectedItemId());
+            navController.navigate(action);
+            return true;
+        } else if (id == R.id.messagesFragment) {
+            navController.navigate(R.id.messagesFragment);
             return true;
         }
         return false;

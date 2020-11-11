@@ -27,7 +27,12 @@
         android:id="@+id/subredditListFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SubredditListFragment"
         android:label="Subscriptions"
-        tools:layout="@layout/fragment_subreddit_list" />
+        tools:layout="@layout/fragment_subreddit_list">
+        <argument
+            android:name="modeSelectSubreddit"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </fragment>
     <fragment
         android:id="@+id/singlePostFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SinglePostFragment"
@@ -48,6 +53,9 @@
         <argument
             android:name="subredditName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_subredditFragment_to_subredditSearchResultsFragment"
+            app:destination="@id/subredditSearchResultsFragment" />
     </fragment>
     <action
         android:id="@+id/action_global_userFragment"
@@ -61,7 +69,8 @@
     <dialog
         android:id="@+id/videoDialogFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.VideoDialogFragment"
-        android:label="VideoDialogFragment">
+        android:label="VideoDialogFragment"
+        tools:layout="@layout/fragment_dialog_video">
         <argument
             android:name="type"
             app:argType="integer" />
@@ -73,5 +82,75 @@
     <action
         android:id="@+id/action_global_videoDialogFragment"
         app:destination="@id/videoDialogFragment" />
-
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SearchFragment"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_searchResultsFragment"
+            app:destination="@id/searchResultsFragment" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_searchFragment"
+        app:destination="@id/searchFragment"
+        app:launchSingleTop="true" />
+    <fragment
+        android:id="@+id/searchResultsFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SearchResultsFragment"
+        android:label="Search Results"
+        tools:layout="@layout/fragment_results_search">
+        <argument
+            android:name="searchQuery"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/subredditSearchResultsFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SubredditSearchResultsFragment"
+        android:label="{subreddit}"
+        tools:layout="@layout/fragment_results_search_subreddit">
+        <argument
+            android:name="subreddit"
+            app:argType="string" />
+        <argument
+            android:name="query"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_subredditSearchResultsFragment_self"
+            app:destination="@id/subredditSearchResultsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/messagesFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.MessagesFragment"
+        android:label="fragment_messages"
+        tools:layout="@layout/fragment_messages" />
+    <dialog
+        android:id="@+id/composeChooserFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeChooserFragment"
+        android:label="fragment_compose_chooser"
+        tools:layout="@layout/fragment_compose_chooser">
+        <action
+            android:id="@+id/action_composeChooserFragment_to_composeFragment"
+            app:destination="@id/composeFragment" />
+        <argument
+            android:name="postTo"
+            app:argType="string" />
+    </dialog>
+    <fragment
+        android:id="@+id/composeFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeFragment"
+        tools:layout="@layout/fragment_compose">
+        <argument
+            android:name="composeType"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_composeFragment_to_subredditListFragment"
+            app:destination="@id/subredditListFragment">
+            <argument
+                android:name="modeSelectSubreddit"
+                android:defaultValue="true" />
+        </action>
+    </fragment>
+    <action
+        android:id="@+id/action_global_composeChooserFragment"
+        app:destination="@id/composeChooserFragment" />
 </navigation>

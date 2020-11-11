@@ -10,20 +10,19 @@ import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.formatValue
 import kotlinx.android.synthetic.main.single_post_expandable_comment.view.*
-import java.text.DecimalFormat
-import java.text.NumberFormat
-import kotlin.math.pow
 
 class ExpandableCommentGroup constructor(
-        private val mComment: ChildrenItem,
-        private val depth: Int = 0,
-        private val linkId: String,
-        private val listener: ExpandableCommentItem.OnItemClickListener
+        mComment: ChildrenItem,
+        depth: Int = 0,
+        linkId: String,
+        listener: ExpandableCommentItem.OnItemClickListener
 ) : ExpandableGroup(ExpandableCommentItem(mComment, depth, linkId, listener)) {
 
     init {
         var repliesItem: ChildrenItem? = null
+
         if (mComment.data!!.replies != null) {
             if (mComment.data.replies !is String) {
                 val repliesType = object : TypeToken<ChildrenItem?>() {}.type
@@ -132,20 +131,5 @@ open class ExpandableCommentItem constructor(
 
     interface OnItemClickListener {
         fun onLoadMoreClicked(linkId: String, moreChildren: String, position: Int)
-    }
-
-    fun formatValue(number: Double): String {
-        var value = number
-        if (value == 0.0) {
-            return 0.toString()
-        }
-        val suffix = " kmbt"
-        var formattedNumber = ""
-        val formatter: NumberFormat = DecimalFormat("#,###.#")
-        val power: Int = StrictMath.log10(value).toInt()
-        value /= 10.0.pow(power / 3 * 3.toDouble())
-        formattedNumber = formatter.format(value)
-        formattedNumber += suffix[power / 3]
-        return if (formattedNumber.length > 4) formattedNumber.replace("\\.[0-9]+".toRegex(), "") else formattedNumber
     }
 }

@@ -1,18 +1,17 @@
 package io.github.gusandrianos.foxforreddit.data.repositories
 
 import android.app.Application
-import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import io.github.gusandrianos.foxforreddit.Constants.ACTION_SUBSCRIBE
+import io.github.gusandrianos.foxforreddit.Constants.ACTION_UNSUBSCRIBE
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
-import io.github.gusandrianos.foxforreddit.Constants.ACTION_SUBSCRIBE
-import io.github.gusandrianos.foxforreddit.Constants.ACTION_UNSUBSCRIBE
-
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,7 +30,6 @@ object SubredditRepository {
             }
 
             override fun onFailure(call: Call<Thing>, t: Throwable) {
-                Log.i("SUBREDDIT REPOSITORY", "getSubreddit() onFailure: ${t.message}")
             }
         })
         return subreddit

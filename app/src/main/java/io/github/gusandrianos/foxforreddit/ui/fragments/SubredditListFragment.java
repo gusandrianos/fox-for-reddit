@@ -31,8 +31,7 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
-import static io.github.gusandrianos.foxforreddit.Constants.AUTHORIZED_SUB_LIST_LOCATION;
-import static io.github.gusandrianos.foxforreddit.Constants.VISITOR_SUB_LIST_LOCATION;
+import io.github.gusandrianos.foxforreddit.Constants;
 
 public class SubredditListFragment extends Fragment implements SubredditListAdapter.OnItemClickListener {
 
@@ -57,12 +56,12 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
         UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
         Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
-        String location = AUTHORIZED_SUB_LIST_LOCATION;
+        String location = Constants.AUTHORIZED_SUB_LIST_LOCATION;
         if (token.getRefreshToken() == null) {
-            location = VISITOR_SUB_LIST_LOCATION;
+            location = Constants.VISITOR_SUB_LIST_LOCATION;
         }
 
-        viewModel.getSubreddits(getActivity().getApplication(), location).observe(getViewLifecycleOwner(), subredditPagingData -> {
+        viewModel.getSubreddits(requireActivity().getApplication(), location).observe(getViewLifecycleOwner(), subredditPagingData -> {
             mSubredditListAdapter.submitData(getViewLifecycleOwner().getLifecycle(), subredditPagingData);
         });
     }
@@ -81,13 +80,19 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
         String subredditNamePrefixed = item.getDisplayNamePrefixed();
+        boolean modeSelectSubreddit = SubredditListFragmentArgs.fromBundle(requireArguments()).getModeSelectSubreddit();
 
-        if (subredditNamePrefixed.startsWith("r/")) {
-            NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(subredditNamePrefixed);
-            navController.navigate(action);
+        if (modeSelectSubreddit) {
+            ((MainActivity) requireActivity()).getFoxSharedViewModel().setCurrentSubreddit(subredditNamePrefixed);
+            requireActivity().onBackPressed();
         } else {
-            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, subredditNamePrefixed.split("/")[1]);
-            navController.navigate(action);
+            if (subredditNamePrefixed.startsWith("r/")) {
+                NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(subredditNamePrefixed);
+                navController.navigate(action);
+            } else {
+                NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, subredditNamePrefixed.split("/")[1]);
+                navController.navigate(action);
+            }
         }
     }
 

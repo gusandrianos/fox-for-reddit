@@ -2,6 +2,7 @@ package io.github.gusandrianos.foxforreddit.data.repositories
 
 import androidx.paging.PagingSource
 import io.github.gusandrianos.foxforreddit.Constants.MODE_POST
+import io.github.gusandrianos.foxforreddit.Constants.MODE_SEARCH_RESULTS
 import io.github.gusandrianos.foxforreddit.Constants.MODE_SUBREDDIT
 import io.github.gusandrianos.foxforreddit.Constants.STARTER_PAGE
 import io.github.gusandrianos.foxforreddit.data.models.Data
@@ -20,6 +21,10 @@ class RedditPagingSource() : PagingSource<String, Data>() {
     private lateinit var mTime: String
     private lateinit var mBearer: String
     private lateinit var mLocation: String
+    private lateinit var mQuery: String
+    private var mRestrict_sr: Boolean = false
+    private lateinit var mType: String
+
     private var MODE = 0
 
     constructor (subreddit: String, filter: String, time: String, bearer: String) : this() {
@@ -36,6 +41,17 @@ class RedditPagingSource() : PagingSource<String, Data>() {
         MODE = MODE_SUBREDDIT
     }
 
+    constructor(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String, bearer: String) : this() {
+        mSubreddit = subreddit
+        mQuery = query
+        mFilter = sort
+        mTime = time
+        mRestrict_sr = restrict_sr
+        mType = type
+        mBearer = bearer
+        MODE = MODE_SEARCH_RESULTS
+    }
+
     override suspend fun load(params: LoadParams<String>): LoadResult<String, Data> {
         val position = params.key ?: STARTER_PAGE
 
@@ -45,6 +61,8 @@ class RedditPagingSource() : PagingSource<String, Data>() {
                 response = redditAPI.getPostList(mSubreddit, mFilter, position, params.loadSize, mTime, mBearer)
             else if (MODE == MODE_SUBREDDIT)
                 response = redditAPI.getSubreddits(mBearer, mLocation, position, params.loadSize)
+            else if (MODE == MODE_SEARCH_RESULTS)
+                response = redditAPI.searchResults(mBearer, mSubreddit, mQuery, mFilter, mTime, mRestrict_sr, mType, params.loadSize, position)
             val items = response.data!!.children?.map { it.data!! } ?: emptyList()
 
             LoadResult.Page(

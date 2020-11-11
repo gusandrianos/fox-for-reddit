@@ -3,6 +3,7 @@ package io.github.gusandrianos.foxforreddit.data.network
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
+import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
 
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import retrofit2.Call
@@ -46,6 +47,11 @@ interface RedditAPI {
     fun getMe(
             @Header("Authorization") bearer: String,
     ): Call<Data>
+
+    @GET("/api/v1/me/prefs")
+    fun getPrefs(
+            @Header("Authorization") bearer: String,
+    ): Call<UserPrefs>
 
     @GET("{permalink}")
     fun getSinglePost(

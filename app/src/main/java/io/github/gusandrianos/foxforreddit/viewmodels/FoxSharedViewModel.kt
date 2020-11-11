@@ -12,6 +12,7 @@ class FoxSharedViewModel : ViewModel() {
     var previousDestination: Int = 0
     var isNSFW: Boolean = false
     var isSpoiler: Boolean = false
+    var includeOver18: Boolean = false;
 
     fun getSubredditChoice(): LiveData<String> {
         subredditChoice.value = currentSubreddit

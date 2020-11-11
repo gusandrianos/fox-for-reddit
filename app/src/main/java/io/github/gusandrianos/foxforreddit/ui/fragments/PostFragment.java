@@ -31,6 +31,7 @@ import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
+import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.PostAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
@@ -134,7 +135,6 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
             if (requestChanged)
                 viewModel.deleteCached();
-
             viewModel.searchResults(query, filter, time, sr_restrict, searchType, subreddit, getActivity().getApplication()).observe(getViewLifecycleOwner(), searchPostPagingData -> {
                 mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), searchPostPagingData);
                 mPostRecyclerViewAdapter.addLoadStateListener(loadStates -> {

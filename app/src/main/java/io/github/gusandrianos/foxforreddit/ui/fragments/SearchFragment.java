@@ -102,7 +102,9 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                viewModel.searchTopSubreddits(newText, true, true, requireActivity().getApplication()).observe(getViewLifecycleOwner(), searchData -> {
+                MainActivity mainActivity = (MainActivity) requireActivity();
+                boolean includeOver18 = mainActivity.getFoxSharedViewModel().getIncludeOver18();
+                viewModel.searchTopSubreddits(newText, includeOver18, true, requireActivity().getApplication()).observe(getViewLifecycleOwner(), searchData -> {
                     initRecyclerView(searchData);
                     if (!newText.trim().isEmpty()) {
                         String resultsFromSearch = "Results for \"" + newText.trim() + "\"";

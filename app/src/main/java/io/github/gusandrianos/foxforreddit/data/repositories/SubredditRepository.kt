@@ -19,7 +19,6 @@ import retrofit2.Response
 object SubredditRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     val subreddit: MutableLiveData<Data> = MutableLiveData()
-    private val searchTopSubreddits = MutableLiveData<Listing>()
 
     fun getSubreddit(subredditName: String, application: Application): LiveData<Data> {
         val bearer = getBearer(application)

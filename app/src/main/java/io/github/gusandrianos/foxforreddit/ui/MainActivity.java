@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemReselectedListener,
         BottomNavigationView.OnNavigationItemSelectedListener {
     private Data mUser;
-    public String mIncludeOver18;
+    public Boolean mIncludeOver18;
     private Token mToken;
     private NavController navController;
     public AppBarConfiguration appBarConfiguration;
@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements
 
         viewModel.getPrefs(getApplication()).observe(this, prefs -> {
             mIncludeOver18 = prefs.getSearchIncludeOver18();
+            getFoxSharedViewModel().setIncludeOver18(mIncludeOver18);
         });
     }
 

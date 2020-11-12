@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".ui.fragments.PopUpMoreActionsDialogFragment">
+    <TextView
+        android:id="@+id/popup_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:textSize="16sp"
+        android:drawableStart="@drawable/ic_round_bookmark_border_24"
+        android:text="Save"/>
+    <TextView
+        android:id="@+id/popup_hide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:textSize="16sp"
+android:drawableStart="@drawable/ic_round_visibility_off_24"
+        android:text="Hide"/>
+    <TextView
+        android:id="@+id/popup_report"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:textSize="16sp"
+        android:drawableStart="@drawable/ic_round_report_24"
+        android:text="Report"/>
+    <TextView
+        android:id="@+id/popup_block_account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:textSize="16sp"
+        android:drawableStart="@drawable/ic_round_block_24"
+        android:text="Block Account"/>
+</LinearLayout>

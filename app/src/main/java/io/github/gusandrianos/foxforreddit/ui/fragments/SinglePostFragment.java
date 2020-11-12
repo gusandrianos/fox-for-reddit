@@ -19,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
@@ -194,8 +196,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         TextView mTxtPostScore = view.findViewById(R.id.txt_post_score);
         ImageButton mImgBtnPostVoteUp = view.findViewById(R.id.imgbtn_post_vote_up);
         ImageButton mImgBtnPostVoteDown = view.findViewById(R.id.imgbtn_post_vote_down);
-        Button mBtnPostNumComments = view.findViewById(R.id.btn_post_num_comments);
-        Button mBtnPostShare = view.findViewById(R.id.btn_post_share);
+        TextView mBtnPostNumComments = view.findViewById(R.id.btn_post_num_comments);
+        TextView mBtnPostShare = view.findViewById(R.id.btn_post_share);
+        TextView mTxtPostMoreActions = view.findViewById(R.id.txt_post_more_actions);
 
         mTxtPostSubreddit.setText(singlePostData.getSubredditNamePrefixed());
         String user = "Posted by User " + singlePostData.getAuthor();
@@ -267,6 +270,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         });
 
         mBtnPostShare.setOnClickListener(view1 -> startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(singlePostData), "Share via")));
+
+        mTxtPostMoreActions.setOnClickListener(view1 -> navController.navigate(NavGraphDirections.actionGlobalPopUpMoreActionsDialogFragment()));
     }
 
     private void bindAsSelf(Data singlePostData, View view) {

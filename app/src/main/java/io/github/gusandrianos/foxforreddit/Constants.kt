@@ -23,6 +23,7 @@ object Constants {
     const val POST_SHARE = "PostShare"
     const val POST_THUMBNAIL = "PostThumbnail"
     const val POST_VOTE_NOW = "PostVoteNow"
+    const val POST_MORE_ACTIONS = "MoreActions"
     const val POST_ITEM = "PostItem"
 
     // Reddit paging source

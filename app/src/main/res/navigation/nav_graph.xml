@@ -153,4 +153,12 @@
     <action
         android:id="@+id/action_global_composeChooserFragment"
         app:destination="@id/composeChooserFragment" />
+    <dialog
+        android:id="@+id/popUpMoreActionsDialogFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.PopUpMoreActionsDialogFragment"
+        android:label="fragment_dialog_actions_more_popup"
+        tools:layout="@layout/fragment_dialog_actions_more_popup" />
+    <action
+        android:id="@+id/action_global_popUpMoreActionsDialogFragment"
+        app:destination="@id/popUpMoreActionsDialogFragment" />
 </navigation>

@@ -21,6 +21,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -215,6 +216,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             case Constants.POST_VOTE_NOW:
                 CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
                 customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
+                break;
+            case Constants.POST_MORE_ACTIONS:
+                navController.navigate(NavGraphDirections.actionGlobalPopUpMoreActionsDialogFragment());
                 break;
             default:
                 NavGraphDirections.ActionGlobalSinglePostFragment action = NavGraphDirections.actionGlobalSinglePostFragment(post, postType);

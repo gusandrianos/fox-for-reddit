@@ -10,9 +10,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
 public class PopUpMoreActionsDialogFragment extends DialogFragment {
 
@@ -28,6 +32,9 @@ public class PopUpMoreActionsDialogFragment extends DialogFragment {
 
         PopUpMoreActionsDialogFragmentArgs popUpMoreActionsDialogFragmentArgs = PopUpMoreActionsDialogFragmentArgs.fromBundle(requireArguments());
         Data data = popUpMoreActionsDialogFragmentArgs.getData();
+
+        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
 
         TextView txtPopupSave = view.findViewById(R.id.popup_save);
         TextView txtPopupHide = view.findViewById(R.id.popup_hide);
@@ -49,13 +56,33 @@ public class PopUpMoreActionsDialogFragment extends DialogFragment {
         }
 
         txtPopupSave.setOnClickListener(view1 -> {
-            Toast.makeText(getContext(), "Save Pressed", Toast.LENGTH_SHORT).show();
-            dismiss();
+            if (data.isSaved())
+                viewModel.unSavePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                    String message = (succeed) ? "Unsave" : "Failed to Unsave";
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    dismiss();
+                });
+            else
+                viewModel.savePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                    String message = (succeed) ? "Saved" : "Failed to Save";
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    dismiss();
+                });
         });
 
         txtPopupHide.setOnClickListener(view1 -> {
-            Toast.makeText(getContext(), "Hide Pressed", Toast.LENGTH_SHORT).show();
-            dismiss();
+            if (data.getHidden())
+                viewModel.unHidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                    String message = (succeed) ? "Unhide" : "Failed to Unhide";
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    dismiss();
+                });
+            else
+                viewModel.hidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                    String message = (succeed) ? "hide" : "Failed to hide";
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    dismiss();
+                });
         });
 
         txtPopupReport.setOnClickListener(view1 -> {

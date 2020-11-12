@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -546,7 +547,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         PlayerView playerView = view.findViewById(R.id.video_player);
         TextView singlePostTitle = view.findViewById(R.id.stub_txt_post_title);
         LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_single_post_header);
-        LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
+        ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
         CollapsingToolbarLayout collapsingToolbar = view.findViewById(R.id.single_post_collapsing_toolbar);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbar.getLayoutParams();

@@ -31,7 +31,7 @@ class Data : Parcelable {
     val pollData: PollData? = null
 
     @SerializedName("saved")
-    val isSaved = false
+    var isSaved:Boolean? = null
 
     @SerializedName("hide_score")
     val hideScore = false
@@ -187,7 +187,7 @@ class Data : Parcelable {
     val preview: Preview? = null
 
     @SerializedName("hidden")
-    val hidden = false
+    var hidden = false
 
     @SerializedName("author_patreon_flair")
     val isAuthorPatreonFlair = false

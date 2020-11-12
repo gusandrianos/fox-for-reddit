@@ -59,6 +59,8 @@ public class PopUpMoreActionsDialogFragment extends DialogFragment {
             if (data.isSaved())
                 viewModel.unSavePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
                     String message = (succeed) ? "Unsave" : "Failed to Unsave";
+                    if (succeed)
+                        data.setSaved(false);
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     dismiss();
                 });
@@ -66,6 +68,8 @@ public class PopUpMoreActionsDialogFragment extends DialogFragment {
                 viewModel.savePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
                     String message = (succeed) ? "Saved" : "Failed to Save";
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    if (succeed)
+                        data.setSaved(true);
                     dismiss();
                 });
         });
@@ -74,12 +78,16 @@ public class PopUpMoreActionsDialogFragment extends DialogFragment {
             if (data.getHidden())
                 viewModel.unHidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
                     String message = (succeed) ? "Unhide" : "Failed to Unhide";
+                    if(succeed)
+                        data.setHidden(false);
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     dismiss();
                 });
             else
                 viewModel.hidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
                     String message = (succeed) ? "hide" : "Failed to hide";
+                    if(succeed)
+                        data.setHidden(true);
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     dismiss();
                 });

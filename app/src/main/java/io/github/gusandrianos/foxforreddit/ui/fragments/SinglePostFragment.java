@@ -12,14 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -148,7 +146,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                             Gson gson = new Gson();
                             item = gson.fromJson(gson.toJsonTree(child).getAsJsonObject(), childType);
                         }
-                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(),"", SinglePostFragment.this));
+                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), "", SinglePostFragment.this));
                     }
                 });
     }
@@ -271,7 +269,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         mBtnPostShare.setOnClickListener(view1 -> startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(singlePostData), "Share via")));
 
-        mTxtPostMoreActions.setOnClickListener(view1 -> navController.navigate(NavGraphDirections.actionGlobalPopUpMoreActionsDialogFragment()));
+        mTxtPostMoreActions.setOnClickListener(view1 -> navController.navigate(NavGraphDirections.actionGlobalPopUpMoreActionsDialogFragment(singlePostData)));
     }
 
     private void bindAsSelf(Data singlePostData, View view) {

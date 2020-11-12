@@ -157,7 +157,11 @@
         android:id="@+id/popUpMoreActionsDialogFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.PopUpMoreActionsDialogFragment"
         android:label="fragment_dialog_actions_more_popup"
-        tools:layout="@layout/fragment_dialog_actions_more_popup" />
+        tools:layout="@layout/fragment_dialog_actions_more_popup">
+        <argument
+            android:name="data"
+            app:argType="io.github.gusandrianos.foxforreddit.data.models.Data" />
+    </dialog>
     <action
         android:id="@+id/action_global_popUpMoreActionsDialogFragment"
         app:destination="@id/popUpMoreActionsDialogFragment" />

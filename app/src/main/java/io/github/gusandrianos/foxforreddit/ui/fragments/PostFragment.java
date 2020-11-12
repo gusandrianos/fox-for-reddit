@@ -21,7 +21,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +31,6 @@ import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
-import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.PostAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
@@ -157,7 +155,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     }
 
     @Override
-    public void onItemClick(@NotNull Data post, @NotNull String clicked, int postType) {      //ToDo improve voting system (Binding Adapter and viewModel)
+    public void onItemClick(@NotNull Data data, @NotNull String clicked, int postType) {      //ToDo improve voting system (Binding Adapter and viewModel)
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
         int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
@@ -167,13 +165,13 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         switch (clicked) {
             case Constants.POST_SUBREDDIT:
                 if (currentDestinationID != R.id.subredditFragment) {
-                    String subredditNamePrefixed = post.getSubredditNamePrefixed();
+                    String subredditNamePrefixed = data.getSubredditNamePrefixed();
                     NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(subredditNamePrefixed);
                     navController.navigate(action);
                 }
                 break;
             case Constants.POST_USER:
-                String authorUsername = post.getAuthor();
+                String authorUsername = data.getAuthor();
                 if (currentDestinationID != R.id.userFragment) {
                     NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, authorUsername);
                     navController.navigate(action);
@@ -186,42 +184,42 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
                 switch (postType) {
                     case Constants.IMAGE:
-                        FoxToolkit.INSTANCE.fullscreenImage(post, requireContext());
+                        FoxToolkit.INSTANCE.fullscreenImage(data, requireContext());
                         break;
                     case Constants.VIDEO:
-                        if (FoxToolkit.INSTANCE.getTypeOfVideo(post) == Constants.PLAYABLE_VIDEO) {
-                            navController.navigate(VideoDialogFragmentDirections.actionGlobalVideoDialogFragment(postType, post));
+                        if (FoxToolkit.INSTANCE.getTypeOfVideo(data) == Constants.PLAYABLE_VIDEO) {
+                            navController.navigate(VideoDialogFragmentDirections.actionGlobalVideoDialogFragment(postType, data));
                             break;
                         } else {
                             CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
-                            customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
+                            customTabsIntent.launchUrl(requireContext(), Uri.parse(data.getUrl()));
                         }
                         break;
                     case Constants.LINK:
                         CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
-                        customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
+                        customTabsIntent.launchUrl(requireContext(), Uri.parse(data.getUrl()));
                         break;
                     default:
                 }
                 break;
             case Constants.POST_VOTE_UP:
-                FoxToolkit.INSTANCE.upVote(viewModel, requireActivity().getApplication(), post);
+                FoxToolkit.INSTANCE.upVote(viewModel, requireActivity().getApplication(), data);
                 break;
             case Constants.POST_VOTE_DOWN:
-                FoxToolkit.INSTANCE.downVote(viewModel, requireActivity().getApplication(), post);
+                FoxToolkit.INSTANCE.downVote(viewModel, requireActivity().getApplication(), data);
                 break;
             case Constants.POST_SHARE:
-                startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(post), Constants.SHARE_TEXT));
+                startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(data), Constants.SHARE_TEXT));
                 break;
             case Constants.POST_VOTE_NOW:
                 CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
-                customTabsIntent.launchUrl(requireContext(), Uri.parse(post.getUrl()));
+                customTabsIntent.launchUrl(requireContext(), Uri.parse(data.getUrl()));
                 break;
             case Constants.POST_MORE_ACTIONS:
-                navController.navigate(NavGraphDirections.actionGlobalPopUpMoreActionsDialogFragment());
+                navController.navigate(NavGraphDirections.actionGlobalPopUpMoreActionsDialogFragment(data));
                 break;
             default:
-                NavGraphDirections.ActionGlobalSinglePostFragment action = NavGraphDirections.actionGlobalSinglePostFragment(post, postType);
+                NavGraphDirections.ActionGlobalSinglePostFragment action = NavGraphDirections.actionGlobalSinglePostFragment(data, postType);
                 navController.navigate(action);
         }
     }

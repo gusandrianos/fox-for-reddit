@@ -7,35 +7,35 @@
 
     <LinearLayout
         android:id="@+id/ll_votes"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_post_num_comments"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.AppCompatImageButton
+        <ImageButton
             android:id="@+id/imgbtn_post_vote_up"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_round_arrow_upward_24" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/txt_post_score"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="start"
-            android:text="asdasdf"
+            android:text="255.5k"
             android:textColor="#FF5A5A5A" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
+        <ImageButton
             android:id="@+id/imgbtn_post_vote_down"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_round_arrow_downward_24"           />
+            android:src="@drawable/ic_round_arrow_downward_24" />
     </LinearLayout>
 
     <TextView
@@ -43,13 +43,15 @@
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:text="asdf"
+        android:text="255.5k"
         android:textAlignment="textStart"
         android:textColor="#FF5A5A5A"
         app:drawableStartCompat="@drawable/ic_round_mode_comment_24"
+
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_post_share"
-        app:layout_constraintStart_toEndOf="@id/ll_votes"
+        app:layout_constraintEnd_toStartOf="@id/guideline2"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/guideline"
         app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -59,9 +61,11 @@
         android:layout_height="24dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:drawableStart="@drawable/ic_round_share_24"
+        android:text="Share"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/txt_post_more_actions"
-        app:layout_constraintStart_toEndOf="@id/btn_post_num_comments"
+        app:layout_constraintEnd_toStartOf="@id/guideline3"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/guideline2"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -69,11 +73,32 @@
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:drawableStart="@drawable/ic_baseline_list_24"
+        android:drawableStart="@drawable/ic_baseline_more_horiz_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/btn_post_share"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@id/guideline3"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="100dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="180dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="260dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

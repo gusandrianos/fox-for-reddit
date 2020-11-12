@@ -32,7 +32,6 @@ public class PopUpMoreActionsDialogFragment extends DialogFragment {
         TextView txtPopupSave = view.findViewById(R.id.popup_save);
         TextView txtPopupHide = view.findViewById(R.id.popup_hide);
         TextView txtPopupReport = view.findViewById(R.id.popup_report);
-        TextView txtPopupBlockUser = view.findViewById(R.id.popup_block_account);
 
         if (data.isSaved()) {
             txtPopupSave.setText("Unsave");
@@ -61,11 +60,6 @@ public class PopUpMoreActionsDialogFragment extends DialogFragment {
 
         txtPopupReport.setOnClickListener(view1 -> {
             Toast.makeText(getContext(), "Report Pressed", Toast.LENGTH_SHORT).show();
-            dismiss();
-        });
-
-        txtPopupBlockUser.setOnClickListener(view1 -> {
-            Toast.makeText(getContext(), "Block Pressed", Toast.LENGTH_SHORT).show();
             dismiss();
         });
     }

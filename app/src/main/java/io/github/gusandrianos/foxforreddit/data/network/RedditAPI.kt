@@ -132,4 +132,41 @@ interface RedditAPI {
             @Field("api_type") apiType: String,
             @Field("resubmit") resubmit: Boolean
     ): Call<SubmitResponse>
+
+    @FormUrlEncoded
+    @POST("/api/save")
+    fun savePost(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String,
+    ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/unsave")
+    fun unSavePost(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String,
+    ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/hide")
+    fun hidePost(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String,
+    ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/unhide")
+    fun unHidePost(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String,
+    ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/report")
+    fun reportPost(
+            @Header("Authorization") bearer: String,
+            @Field("thing_id") thing_id: String,
+            @Field("reason") reason: String,
+            @Field("custom_text") custom_text: String
+    ): Call<Void>
 }

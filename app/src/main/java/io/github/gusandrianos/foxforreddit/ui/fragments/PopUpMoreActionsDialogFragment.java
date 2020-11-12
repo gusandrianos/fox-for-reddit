@@ -9,8 +9,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
@@ -18,7 +19,7 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
-public class PopUpMoreActionsDialogFragment extends DialogFragment {
+public class PopUpMoreActionsDialogFragment extends BottomSheetDialogFragment {
 
     @Nullable
     @Override
@@ -78,7 +79,7 @@ public class PopUpMoreActionsDialogFragment extends DialogFragment {
             if (data.getHidden())
                 viewModel.unHidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
                     String message = (succeed) ? "Unhide" : "Failed to Unhide";
-                    if(succeed)
+                    if (succeed)
                         data.setHidden(false);
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     dismiss();
@@ -86,7 +87,7 @@ public class PopUpMoreActionsDialogFragment extends DialogFragment {
             else
                 viewModel.hidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
                     String message = (succeed) ? "hide" : "Failed to hide";
-                    if(succeed)
+                    if (succeed)
                         data.setHidden(true);
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     dismiss();

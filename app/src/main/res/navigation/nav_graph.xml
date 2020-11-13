@@ -56,6 +56,9 @@
         <action
             android:id="@+id/action_subredditFragment_to_subredditSearchResultsFragment"
             app:destination="@id/subredditSearchResultsFragment" />
+        <action
+            android:id="@+id/action_subredditFragment_to_moreInfoFragment"
+            app:destination="@id/moreInfoFragment" />
     </fragment>
     <action
         android:id="@+id/action_global_userFragment"
@@ -158,4 +161,12 @@
     <action
         android:id="@+id/action_global_composeChooserFragment"
         app:destination="@id/composeChooserFragment" />
+    <fragment
+        android:id="@+id/moreInfoFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.MoreInfoFragment"
+        tools:layout="@layout/fragment_more_info" >
+        <argument
+            android:name="mode"
+            app:argType="integer" />
+    </fragment>
 </navigation>

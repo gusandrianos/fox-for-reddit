@@ -10,9 +10,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.util.Objects;
+
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -95,8 +100,9 @@ public class PopUpMoreActionsDialogFragment extends BottomSheetDialogFragment {
         });
 
         txtPopupReport.setOnClickListener(view1 -> {
-            Toast.makeText(getContext(), "Report Pressed", Toast.LENGTH_SHORT).show();
-            dismiss();
+            NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+            navController.navigate(PopUpMoreActionsDialogFragmentDirections.actionPopUpMoreActionsDialogFragmentToReportDialogFragment(Constants.REPORT_REASON, Constants.REPORT_REASON));
         });
     }
 }

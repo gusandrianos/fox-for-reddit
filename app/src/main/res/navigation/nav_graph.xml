@@ -161,8 +161,31 @@
         <argument
             android:name="data"
             app:argType="io.github.gusandrianos.foxforreddit.data.models.Data" />
+        <action
+            android:id="@+id/action_popUpMoreActionsDialogFragment_to_reportDialogFragment"
+            app:destination="@id/reportDialogFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/popUpMoreActionsDialogFragment" />
     </dialog>
     <action
         android:id="@+id/action_global_popUpMoreActionsDialogFragment"
-        app:destination="@id/popUpMoreActionsDialogFragment" />
+        app:destination="@id/popUpMoreActionsDialogFragment"
+        app:launchSingleTop="true" />
+    <dialog
+        android:id="@+id/reportDialogFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ReportDialogFragment"
+        android:label="fragment_dialog_report"
+        tools:layout="@layout/fragment_dialog_report">
+        <argument
+            android:name="prevChoice"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_reportDialogFragment_self"
+            app:destination="@id/reportDialogFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/popUpMoreActionsDialogFragment" />
+        <argument
+            android:name="reason"
+            app:argType="string" />
+    </dialog>
 </navigation>

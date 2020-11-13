@@ -6,6 +6,9 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class Data : Parcelable {
+    @SerializedName("content_md")
+    val wikiContent: String = ""
+
     @SerializedName("children")
     val children: List<Thing>? = null
 

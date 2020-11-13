@@ -1,10 +1,6 @@
 package io.github.gusandrianos.foxforreddit.data.network
 
-import io.github.gusandrianos.foxforreddit.data.models.Listing
-import io.github.gusandrianos.foxforreddit.data.models.Data
-import io.github.gusandrianos.foxforreddit.data.models.SubmitResponse
-import io.github.gusandrianos.foxforreddit.data.models.Thing
-import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
+import io.github.gusandrianos.foxforreddit.data.models.*
 
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import retrofit2.Call
@@ -87,6 +83,18 @@ interface RedditAPI {
             @Header("Authorization") bearer: String,
             @Path("subreddit_prefixed") subreddit: String
     ): Call<Thing>
+
+    @GET("{subreddit_prefixed}/wiki/index")
+    fun getSubredditWiki(
+            @Header("Authorization") bearer: String,
+            @Path("subreddit_prefixed") subreddit: String,
+    ): Call<Thing>
+
+    @GET("{subreddit_prefixed}/about/rules")
+    fun getSubredditRules(
+            @Header("Authorization") bearer: String,
+            @Path("subreddit_prefixed") subreddit: String,
+    ): Call<RulesBundle>
 
     @FormUrlEncoded
     @POST("api/subscribe")

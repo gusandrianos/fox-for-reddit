@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.RulesBundle;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
@@ -69,8 +70,7 @@ public class MoreInfoFragment extends Fragment {
 //        else if (mode == Constants.MODE_SHOW_RULES)
 //            viewModel.getSubredditRules(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
 //            {
-//                TextView content = view.findViewById(R.id.text_more_info);
-//                content.setText(subredditInfo.getWikiContent());
+//                RulesBundle rules = subredditInfo;
 //            });
     }
 

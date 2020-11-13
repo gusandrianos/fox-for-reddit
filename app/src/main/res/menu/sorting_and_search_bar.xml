@@ -13,7 +13,7 @@
         android:id="@+id/search_sorting_v2"
         android:icon="@drawable/ic_baseline_sort_24"
         android:title="Sorting"
-        app:showAsAction="always">
+        app:showAsAction="ifRoom">
         <menu>
             <item
                 android:id="@+id/sort_best"
@@ -83,4 +83,19 @@
                 android:title="Rising" />
         </menu>
     </item>
+
+    <item
+        android:id="@+id/view_sidebar"
+        android:title="Sidebar" />
+
+    <item
+        android:id="@+id/view_rules"
+        android:title="Rules" />
+
+    <item
+        android:id="@+id/view_mods"
+        android:title="Moderators" />
+    <item
+        android:id="@+id/view_wiki"
+        android:title="Wiki" />
 </menu>

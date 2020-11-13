@@ -12,6 +12,10 @@ class SubredditViewModel(private val mSubredditRepository: SubredditRepository) 
         return mSubredditRepository.getSubreddit(subredditName, application)
     }
 
+    fun getSubredditWiki(subredditName: String, application: Application): LiveData<Data> {
+        return mSubredditRepository.getSubredditWiki(subredditName, application)
+    }
+
     fun toggleSubscribed(action: Int, subredditName: String, application: Application): LiveData<Boolean> {
         return mSubredditRepository.toggleSubscribed(action, subredditName, application)
     }

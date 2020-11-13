@@ -88,6 +88,12 @@ interface RedditAPI {
             @Path("subreddit_prefixed") subreddit: String
     ): Call<Thing>
 
+    @GET("{subreddit_prefixed}/wiki/index")
+    fun getSubredditWiki(
+            @Header("Authorization") bearer: String,
+            @Path("subreddit_prefixed") subreddit: String,
+    ): Call<Thing>
+
     @FormUrlEncoded
     @POST("api/subscribe")
     fun toggleSubscribe(

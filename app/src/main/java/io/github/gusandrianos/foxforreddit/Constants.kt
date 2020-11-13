@@ -107,8 +107,14 @@ object Constants {
     const val KIND_USER = "user"
     const val KIND_SUBREDDIT = "sr"
     const val KIND_POST = "link"
+    const val KIND_MODERATOR = "moderator"
 
     // Compose types
     const val COMPOSE_TEXT = 0
     const val COMPOSE_LINK = 2
+
+    // Subreddit more info
+    const val MODE_SHOW_RULES = 0
+    const val MODE_SHOW_MODS = 1
+    const val MODE_SHOW_WIKI = 2
 }

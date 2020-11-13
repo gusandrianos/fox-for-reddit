@@ -19,6 +19,8 @@ import retrofit2.Response
 object SubredditRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     val subreddit: MutableLiveData<Data> = MutableLiveData()
+    val subredditWiki: MutableLiveData<Data> = MutableLiveData()
+
 
     fun getSubreddit(subredditName: String, application: Application): LiveData<Data> {
         val bearer = getBearer(application)
@@ -33,6 +35,21 @@ object SubredditRepository {
             }
         })
         return subreddit
+    }
+
+    fun getSubredditWiki(subredditName: String, application: Application): LiveData<Data> {
+        val bearer = getBearer(application)
+        val about = redditAPI.getSubredditWiki(bearer, subredditName)
+        about.enqueue(object : Callback<Thing> {
+            override fun onResponse(call: Call<Thing>, response: Response<Thing>) {
+                if (response.isSuccessful)
+                    subredditWiki.value = response.body()?.data
+            }
+
+            override fun onFailure(call: Call<Thing>, t: Throwable) {
+            }
+        })
+        return subredditWiki
     }
 
     fun toggleSubscribed(action: Int, subredditName: String, application: Application): LiveData<Boolean> {

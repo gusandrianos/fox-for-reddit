@@ -22,9 +22,6 @@ class FoxSharedViewModel : ViewModel() {
     fun clearComposeData() {
         subredditChoice.value = ""
         currentSubreddit = ""
-    }
-
-    fun resetComposeOptions() {
         isNSFW = false
         isSpoiler = false
     }

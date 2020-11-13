@@ -13,6 +13,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +38,9 @@ import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
 import io.github.gusandrianos.foxforreddit.Constants;
+import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.linkify.LinkifyPlugin;
 
 public class SubredditFragment extends Fragment {
     FoxToolkit toolkit = FoxToolkit.INSTANCE;
@@ -63,6 +67,7 @@ public class SubredditFragment extends Fragment {
         viewModel.getSubreddit(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
         {
             setupHeader(subredditInfo, view);
+            setUpSidebar(subredditInfo, view);
             PostFragment subredditPostFragment = (PostFragment) getChildFragmentManager().findFragmentByTag(Constants.SUBREDDIT_POST_FRAGMENT_TAG);
 
             if (subredditPostFragment == null) {
@@ -178,6 +183,22 @@ public class SubredditFragment extends Fragment {
             cover.setImageResource(0);
 
         Glide.with(view).load(R.drawable.cover_gradient).into(gradient);
+    }
+
+    private void setUpSidebar(Data subredditInfo, View view) {
+        Markwon markwon = Markwon.builder(requireContext())
+                .usePlugin(TablePlugin.create(requireContext()))
+                .usePlugin(LinkifyPlugin.create())
+                .build();
+
+        TextView sidebarContents = view.findViewById(R.id.text_sidebar_contents);
+
+        String sidebarText = "This looks empty";
+
+        if (subredditInfo.getDescription() != null) {
+            sidebarText = subredditInfo.getDescription();
+        }
+        markwon.setMarkdown(sidebarContents, sidebarText);
     }
 
     private void setUpNavigation(View view, String subreddit) {

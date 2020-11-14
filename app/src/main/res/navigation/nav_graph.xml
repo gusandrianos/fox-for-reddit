@@ -59,6 +59,9 @@
         <action
             android:id="@+id/action_subredditFragment_to_moreInfoFragment"
             app:destination="@id/wikiFragment" />
+        <action
+            android:id="@+id/action_subredditFragment_to_rulesFragment"
+            app:destination="@id/rulesFragment" />
     </fragment>
     <action
         android:id="@+id/action_global_userFragment"
@@ -165,4 +168,11 @@
         android:id="@+id/wikiFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.WikiFragment"
         tools:layout="@layout/fragment_wiki" />
+    <fragment
+        android:id="@+id/rulesFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.RulesFragment">
+        <argument
+            android:name="subredditName"
+            app:argType="string" />
+    </fragment>
 </navigation>

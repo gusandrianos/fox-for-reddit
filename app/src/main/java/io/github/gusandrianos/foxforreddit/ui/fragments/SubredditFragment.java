@@ -62,7 +62,7 @@ public class SubredditFragment extends Fragment {
         TextView titleTextView = view.findViewById(R.id.text_subreddit_title);
         titleTextView.setText(subredditName);
         setUpNavigation(view, subredditName);
-        setUpMenuItemClicks(view);
+        setUpMenuItemClicks(view, subredditName);
 
         SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
         SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
@@ -204,7 +204,7 @@ public class SubredditFragment extends Fragment {
         markwon.setMarkdown(sidebarContents, sidebarText);
     }
 
-    private void setUpMenuItemClicks(View view) {
+    private void setUpMenuItemClicks(View view, String subredditName) {
         Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
@@ -215,10 +215,10 @@ public class SubredditFragment extends Fragment {
             return true;
         });
 
-//        toolbar.getMenu().findItem(R.id.view_rules).setOnMenuItemClickListener(menuItem -> {
-//            navController.navigate(SubredditFragmentDirections.actionSubredditFragmentToMoreInfoFragment(Constants.MODE_SHOW_RULES));
-//            return true;
-//        });
+        toolbar.getMenu().findItem(R.id.view_rules).setOnMenuItemClickListener(menuItem -> {
+            navController.navigate(SubredditFragmentDirections.actionSubredditFragmentToRulesFragment(subredditName));
+            return true;
+        });
 
 //        toolbar.getMenu().findItem(R.id.view_mods).setOnMenuItemClickListener(menuItem -> {
 //            navController.navigate(SubredditFragmentDirections.actionSubredditFragmentToMoreInfoFragment(Constants.MODE_SHOW_MODS));

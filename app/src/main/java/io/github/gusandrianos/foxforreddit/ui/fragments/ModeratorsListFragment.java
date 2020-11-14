@@ -32,6 +32,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
 public class ModeratorsListFragment extends Fragment implements ModeratorsListAdapter.OnItemClickListener {
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/popup_save"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:drawablePadding="4dp"
@@ -21,7 +21,7 @@
 
     <TextView
         android:id="@+id/popup_hide"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:drawablePadding="4dp"
@@ -31,7 +31,7 @@
 
     <TextView
         android:id="@+id/popup_report"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:drawablePadding="4dp"

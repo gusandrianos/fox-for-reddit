@@ -27,7 +27,6 @@ import io.noties.markwon.linkify.LinkifyPlugin;
 
 public class WikiFragment extends Fragment {
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

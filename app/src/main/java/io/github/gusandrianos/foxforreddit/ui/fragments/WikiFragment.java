@@ -62,17 +62,11 @@ public class WikiFragment extends Fragment {
                 markwon.setMarkdown(content, subredditInfo.getWikiContent());
             }
         });
-//        else if (mode == Constants.MODE_SHOW_RULES)
-//            viewModel.getSubredditRules(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
-//            {
-//                RulesBundle rules = subredditInfo;
-//            });
     }
 
     private void setUpNavigation(View view) {
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar_wiki);
-        toolbar.setTitle("Wiki");
         NavigationUI.setupWithNavController(toolbar, navController);
     }
 }

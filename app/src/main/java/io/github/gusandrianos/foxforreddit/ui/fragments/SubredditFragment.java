@@ -220,10 +220,10 @@ public class SubredditFragment extends Fragment {
             return true;
         });
 
-//        toolbar.getMenu().findItem(R.id.view_mods).setOnMenuItemClickListener(menuItem -> {
-//            navController.navigate(SubredditFragmentDirections.actionSubredditFragmentToMoreInfoFragment(Constants.MODE_SHOW_MODS));
-//            return true;
-//        });
+        toolbar.getMenu().findItem(R.id.view_mods).setOnMenuItemClickListener(menuItem -> {
+            navController.navigate(SubredditFragmentDirections.actionSubredditFragmentToModeratorsListFragment(subredditName));
+            return true;
+        });
 
         toolbar.getMenu().findItem(R.id.view_wiki).setOnMenuItemClickListener(menuItem -> {
             navController.navigate(SubredditFragmentDirections.actionSubredditFragmentToMoreInfoFragment());

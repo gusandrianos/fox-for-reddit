@@ -19,46 +19,45 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
-import io.github.gusandrianos.foxforreddit.utilities.RulesListAdapter;
+import io.github.gusandrianos.foxforreddit.utilities.ModeratorsListAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
-public class RulesFragment extends Fragment {
-
+public class ModeratorsListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_rules, container, false);
+        return inflater.inflate(R.layout.fragment_moderators, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String subreddit = RulesFragmentArgs.fromBundle(requireArguments()).getSubredditName();
+        String subreddit = ModeratorsListFragmentArgs.fromBundle(requireArguments()).getSubredditName();
         setUpNavigation(view);
         setUpRecyclerView(view, subreddit);
     }
 
-    private void setUpRecyclerView(View view, String subreddit) {
+    void setUpRecyclerView(View view, String subreddit) {
         SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
         SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
 
-        viewModel.getSubredditRules(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), rules -> {
-            if (rules != null) {
-                RecyclerView rulesRV = view.findViewById(R.id.recycler_rules);
-                RulesListAdapter adapter = new RulesListAdapter(rules.getRules());
+        viewModel.getSubredditModerators(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), moderators -> {
+            if (moderators != null) {
+                RecyclerView moderatorsRV = view.findViewById(R.id.recycler_moderators);
+                ModeratorsListAdapter adapter = new ModeratorsListAdapter(moderators.getModerators());
                 adapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
-                rulesRV.addItemDecoration(new DividerItemDecoration(rulesRV.getContext(), DividerItemDecoration.VERTICAL));
-                rulesRV.setHasFixedSize(true);
-                rulesRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
-                rulesRV.setAdapter(adapter);
+                moderatorsRV.addItemDecoration(new DividerItemDecoration(moderatorsRV.getContext(), DividerItemDecoration.VERTICAL));
+                moderatorsRV.setHasFixedSize(true);
+                moderatorsRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
+                moderatorsRV.setAdapter(adapter);
             }
         });
     }
 
-    private void setUpNavigation(View view) {
+    void setUpNavigation(View view) {
         NavController navController = NavHostFragment.findNavController(this);
-        Toolbar toolbar = view.findViewById(R.id.toolbar_rules);
+        Toolbar toolbar = view.findViewById(R.id.toolbar_moderators);
         NavigationUI.setupWithNavController(toolbar, navController);
     }
 }

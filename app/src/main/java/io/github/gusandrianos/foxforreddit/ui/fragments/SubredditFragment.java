@@ -226,7 +226,7 @@ public class SubredditFragment extends Fragment {
 //        });
 
         toolbar.getMenu().findItem(R.id.view_wiki).setOnMenuItemClickListener(menuItem -> {
-            navController.navigate(SubredditFragmentDirections.actionSubredditFragmentToMoreInfoFragment(Constants.MODE_SHOW_WIKI));
+            navController.navigate(SubredditFragmentDirections.actionSubredditFragmentToMoreInfoFragment());
             return true;
         });
     }

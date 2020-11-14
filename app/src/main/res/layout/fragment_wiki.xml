@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.fragments.MoreInfoFragment">
+    tools:context=".ui.fragments.WikiFragment">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_more_info"
+        android:id="@+id/toolbar_wiki"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize" />
 
@@ -16,7 +16,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/text_more_info"
+            android:id="@+id/text_wiki_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/hello_blank_fragment" />

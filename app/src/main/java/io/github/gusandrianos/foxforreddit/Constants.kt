@@ -112,9 +112,4 @@ object Constants {
     // Compose types
     const val COMPOSE_TEXT = 0
     const val COMPOSE_LINK = 2
-
-    // Subreddit more info
-    const val MODE_SHOW_RULES = 0
-    const val MODE_SHOW_MODS = 1
-    const val MODE_SHOW_WIKI = 2
 }

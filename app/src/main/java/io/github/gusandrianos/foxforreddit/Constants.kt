@@ -120,9 +120,4 @@ object Constants {
     const val SUBREDDIT_RULES = 2
     const val NAVIGATE_TO_SUBREDDIT = "Subreddit rules"
     const val REPORT_POST = "Report post"
-
-    // Subreddit more info
-    const val MODE_SHOW_RULES = 0
-    const val MODE_SHOW_MODS = 1
-    const val MODE_SHOW_WIKI = 2
 }

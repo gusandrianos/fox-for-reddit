@@ -6,10 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.github.gusandrianos.foxforreddit.Constants.ACTION_SUBSCRIBE
 import io.github.gusandrianos.foxforreddit.Constants.ACTION_UNSUBSCRIBE
-import io.github.gusandrianos.foxforreddit.data.models.Data
-import io.github.gusandrianos.foxforreddit.data.models.Listing
-import io.github.gusandrianos.foxforreddit.data.models.RulesBundle
-import io.github.gusandrianos.foxforreddit.data.models.Thing
+import io.github.gusandrianos.foxforreddit.data.models.*
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
@@ -22,6 +19,7 @@ object SubredditRepository {
     val subreddit: MutableLiveData<Data> = MutableLiveData()
     val subredditWiki: MutableLiveData<Data> = MutableLiveData()
     val subredditRules: MutableLiveData<RulesBundle> = MutableLiveData()
+    val subredditModerators: MutableLiveData<ModeratorsList> = MutableLiveData()
 
 
     fun getSubreddit(subredditName: String, application: Application): LiveData<Data> {
@@ -67,6 +65,21 @@ object SubredditRepository {
             }
         })
         return subredditRules
+    }
+
+    fun getSubredditModerators(subredditName: String, application: Application): LiveData<ModeratorsList> {
+        val bearer = getBearer(application)
+        val about = redditAPI.getSubredditModerators(bearer, subredditName)
+        about.enqueue(object : Callback<ModeratorsResponse> {
+            override fun onResponse(call: Call<ModeratorsResponse>, response: Response<ModeratorsResponse>) {
+                if (response.isSuccessful)
+                    subredditModerators.value = response.body()?.modList
+            }
+
+            override fun onFailure(call: Call<ModeratorsResponse>, t: Throwable) {
+            }
+        })
+        return subredditModerators
     }
 
     fun toggleSubscribed(action: Int, subredditName: String, application: Application): LiveData<Boolean> {

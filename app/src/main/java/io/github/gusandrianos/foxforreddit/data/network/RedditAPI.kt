@@ -96,6 +96,13 @@ interface RedditAPI {
             @Path("subreddit_prefixed") subreddit: String,
     ): Call<RulesBundle>
 
+
+    @GET("{subreddit_prefixed}/about/moderators")
+    fun getSubredditModerators(
+            @Header("Authorization") bearer: String,
+            @Path("subreddit_prefixed") subreddit: String,
+    ): Call<ModeratorsResponse>
+
     @FormUrlEncoded
     @POST("api/subscribe")
     fun toggleSubscribe(

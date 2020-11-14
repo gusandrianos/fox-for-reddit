@@ -58,7 +58,13 @@
             app:destination="@id/subredditSearchResultsFragment" />
         <action
             android:id="@+id/action_subredditFragment_to_moreInfoFragment"
-            app:destination="@id/moreInfoFragment" />
+            app:destination="@id/wikiFragment" />
+        <action
+            android:id="@+id/action_subredditFragment_to_rulesFragment"
+            app:destination="@id/rulesFragment" />
+        <action
+            android:id="@+id/action_subredditFragment_to_moderatorsListFragment"
+            app:destination="@id/moderatorsListFragment" />
     </fragment>
     <action
         android:id="@+id/action_global_userFragment"
@@ -207,11 +213,24 @@
             app:argType="string" />
     </dialog>
     <fragment
-        android:id="@+id/moreInfoFragment"
-        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.MoreInfoFragment"
-        tools:layout="@layout/fragment_more_info">
+        android:id="@+id/wikiFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.WikiFragment"
+        android:label="Wiki"
+        tools:layout="@layout/fragment_wiki" />
+    <fragment
+        android:id="@+id/rulesFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.RulesFragment"
+        android:label="Rules">
         <argument
-            android:name="mode"
-            app:argType="integer" />
+            android:name="subredditName"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/moderatorsListFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ModeratorsListFragment"
+        android:label="Moderators">
+        <argument
+            android:name="subredditName"
+            app:argType="string" />
     </fragment>
 </navigation>

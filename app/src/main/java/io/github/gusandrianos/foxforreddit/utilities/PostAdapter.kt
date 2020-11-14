@@ -135,8 +135,9 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
         private val mTxtPostScore: TextView = itemView.findViewById(R.id.txt_post_score)
         private val mImgBtnPostVoteUp: ImageButton = itemView.findViewById(R.id.imgbtn_post_vote_up)
         private val mImgBtnPostVoteDown: ImageButton = itemView.findViewById(R.id.imgbtn_post_vote_down)
-        private val mBtnPostNumComments: Button = itemView.findViewById(R.id.btn_post_num_comments)
-        private val mBtnPostShare: Button = itemView.findViewById(R.id.btn_post_share)
+        private val mTxtPostNumComments: TextView = itemView.findViewById(R.id.btn_post_num_comments)
+        private val mTxtPostShare: TextView = itemView.findViewById(R.id.btn_post_share)
+        private val mTxtPostMoreActions: TextView = itemView.findViewById(R.id.txt_post_more_actions)
 
 
         init {
@@ -174,11 +175,14 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
                 }
                 onClick(bindingAdapterPosition, Constants.POST_VOTE_DOWN, mPostType)
             }
-            mBtnPostNumComments.setOnClickListener {
+            mTxtPostNumComments.setOnClickListener {
                 onClick(bindingAdapterPosition, Constants.POST_COMMENTS_NUM, mPostType)
             }
-            mBtnPostShare.setOnClickListener {
+            mTxtPostShare.setOnClickListener {
                 onClick(bindingAdapterPosition, Constants.POST_SHARE, mPostType)
+            }
+            mTxtPostMoreActions.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_MORE_ACTIONS, mPostType)
             }
         }
 
@@ -191,7 +195,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
             mTxtTimePosted.text = DateUtils.getRelativeTimeSpanString(post.createdUtc * 1000).toString()
             mTxtPostTitle.text = post.title
             mTxtPostScore.text = formatValue(post.score.toDouble())
-            mBtnPostNumComments.text = formatValue(post.numComments.toDouble())
+            mTxtPostNumComments.text = formatValue(post.numComments.toDouble())
             if (post.likes != null) {
                 if (post.likes == true) {
                     mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)

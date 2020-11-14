@@ -23,6 +23,7 @@ object Constants {
     const val POST_SHARE = "PostShare"
     const val POST_THUMBNAIL = "PostThumbnail"
     const val POST_VOTE_NOW = "PostVoteNow"
+    const val POST_MORE_ACTIONS = "MoreActions"
     const val POST_ITEM = "PostItem"
 
     // Reddit paging source
@@ -107,8 +108,16 @@ object Constants {
     const val KIND_USER = "user"
     const val KIND_SUBREDDIT = "sr"
     const val KIND_POST = "link"
+    const val KIND_MODERATOR = "moderator"
 
     // Compose types
     const val COMPOSE_TEXT = 0
     const val COMPOSE_LINK = 2
+
+    // Report
+    const val ALL_RULES = 0
+    const val REDDIT_RULES = 1
+    const val SUBREDDIT_RULES = 2
+    const val NAVIGATE_TO_SUBREDDIT = "Subreddit rules"
+    const val REPORT_POST = "Report post"
 }

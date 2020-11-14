@@ -56,6 +56,15 @@
         <action
             android:id="@+id/action_subredditFragment_to_subredditSearchResultsFragment"
             app:destination="@id/subredditSearchResultsFragment" />
+        <action
+            android:id="@+id/action_subredditFragment_to_moreInfoFragment"
+            app:destination="@id/wikiFragment" />
+        <action
+            android:id="@+id/action_subredditFragment_to_rulesFragment"
+            app:destination="@id/rulesFragment" />
+        <action
+            android:id="@+id/action_subredditFragment_to_moderatorsListFragment"
+            app:destination="@id/moderatorsListFragment" />
     </fragment>
     <action
         android:id="@+id/action_global_userFragment"
@@ -158,4 +167,70 @@
     <action
         android:id="@+id/action_global_composeChooserFragment"
         app:destination="@id/composeChooserFragment" />
+    <dialog
+        android:id="@+id/popUpMoreActionsDialogFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.PopUpMoreActionsDialogFragment"
+        android:label="fragment_dialog_actions_more_popup"
+        tools:layout="@layout/fragment_dialog_actions_more_popup">
+        <argument
+            android:name="data"
+            app:argType="io.github.gusandrianos.foxforreddit.data.models.Data" />
+        <action
+            android:id="@+id/action_popUpMoreActionsDialogFragment_to_reportDialogFragment"
+            app:destination="@id/reportDialogFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/popUpMoreActionsDialogFragment" />
+    </dialog>
+    <action
+        android:id="@+id/action_global_popUpMoreActionsDialogFragment"
+        app:destination="@id/popUpMoreActionsDialogFragment"
+        app:launchSingleTop="true" />
+    <dialog
+        android:id="@+id/reportDialogFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ReportDialogFragment"
+        android:label="fragment_dialog_report"
+        tools:layout="@layout/fragment_dialog_report">
+        <argument
+            android:name="rulesBundle"
+            app:argType="io.github.gusandrianos.foxforreddit.data.models.RulesBundle" />
+        <action
+            android:id="@+id/action_reportDialogFragment_self"
+            app:destination="@id/reportDialogFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/popUpMoreActionsDialogFragment" />
+        <argument
+            android:name="reason"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="rulesToShow"
+            app:argType="integer" />
+        <argument
+            android:name="subredditName"
+            app:argType="string" />
+        <argument
+            android:name="thingId"
+            app:argType="string" />
+    </dialog>
+    <fragment
+        android:id="@+id/wikiFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.WikiFragment"
+        android:label="Wiki"
+        tools:layout="@layout/fragment_wiki" />
+    <fragment
+        android:id="@+id/rulesFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.RulesFragment"
+        android:label="Rules">
+        <argument
+            android:name="subredditName"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/moderatorsListFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ModeratorsListFragment"
+        android:label="Moderators">
+        <argument
+            android:name="subredditName"
+            app:argType="string" />
+    </fragment>
 </navigation>

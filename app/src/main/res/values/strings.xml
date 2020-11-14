@@ -9,4 +9,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="report_has_next" />
+    <string name="report_reason" />
 </resources>

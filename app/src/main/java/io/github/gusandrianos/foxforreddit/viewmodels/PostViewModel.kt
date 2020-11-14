@@ -42,4 +42,24 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
                    spoiler: Boolean, application: Application): LiveData<SubmitResponse> {
         return mPostRepository.submitText(type, subreddit, title, url, text, nsfw, spoiler, application)
     }
+
+    fun savePost(id: String, application: Application): LiveData<Boolean> {
+        return mPostRepository.savePost(id, application)
+    }
+
+    fun unSavePost(id: String, application: Application): LiveData<Boolean> {
+        return mPostRepository.unSavePost(id, application)
+    }
+
+    fun hidePost(id: String, application: Application): LiveData<Boolean> {
+        return mPostRepository.hidePost(id, application)
+    }
+
+    fun unHidePost(id: String, application: Application): LiveData<Boolean> {
+        return mPostRepository.unHidePost(id, application)
+    }
+
+    fun reportPost(thing_id: String, reason: String, application: Application): LiveData<Boolean> {
+        return mPostRepository.reportPost(thing_id, reason, application)
+    }
 }

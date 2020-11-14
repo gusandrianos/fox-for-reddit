@@ -1,10 +1,6 @@
 package io.github.gusandrianos.foxforreddit.data.network
 
-import io.github.gusandrianos.foxforreddit.data.models.Listing
-import io.github.gusandrianos.foxforreddit.data.models.Data
-import io.github.gusandrianos.foxforreddit.data.models.SubmitResponse
-import io.github.gusandrianos.foxforreddit.data.models.Thing
-import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
+import io.github.gusandrianos.foxforreddit.data.models.*
 
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import retrofit2.Call
@@ -88,6 +84,25 @@ interface RedditAPI {
             @Path("subreddit_prefixed") subreddit: String
     ): Call<Thing>
 
+    @GET("{subreddit_prefixed}/wiki/index")
+    fun getSubredditWiki(
+            @Header("Authorization") bearer: String,
+            @Path("subreddit_prefixed") subreddit: String,
+    ): Call<Thing>
+
+    @GET("{subreddit_prefixed}/about/rules")
+    fun getSubredditRules(
+            @Header("Authorization") bearer: String,
+            @Path("subreddit_prefixed") subreddit: String,
+    ): Call<RulesBundle>
+
+
+    @GET("{subreddit_prefixed}/about/moderators")
+    fun getSubredditModerators(
+            @Header("Authorization") bearer: String,
+            @Path("subreddit_prefixed") subreddit: String,
+    ): Call<ModeratorsResponse>
+
     @FormUrlEncoded
     @POST("api/subscribe")
     fun toggleSubscribe(
@@ -132,4 +147,40 @@ interface RedditAPI {
             @Field("api_type") apiType: String,
             @Field("resubmit") resubmit: Boolean
     ): Call<SubmitResponse>
+
+    @FormUrlEncoded
+    @POST("/api/save")
+    fun savePost(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String,
+    ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/unsave")
+    fun unSavePost(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String,
+    ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/hide")
+    fun hidePost(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String,
+    ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/unhide")
+    fun unHidePost(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String,
+    ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/report")
+    fun reportPost(
+            @Header("Authorization") bearer: String,
+            @Field("thing_id") thing_id: String,
+            @Field("reason") reason: String,
+    ): Call<Void>
 }

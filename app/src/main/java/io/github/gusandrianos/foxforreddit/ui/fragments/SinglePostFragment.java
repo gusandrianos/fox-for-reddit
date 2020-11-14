@@ -12,18 +12,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -146,7 +148,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                             Gson gson = new Gson();
                             item = gson.fromJson(gson.toJsonTree(child).getAsJsonObject(), childType);
                         }
-                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(),"", SinglePostFragment.this));
+                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), "", SinglePostFragment.this));
                     }
                 });
     }
@@ -194,8 +196,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         TextView mTxtPostScore = view.findViewById(R.id.txt_post_score);
         ImageButton mImgBtnPostVoteUp = view.findViewById(R.id.imgbtn_post_vote_up);
         ImageButton mImgBtnPostVoteDown = view.findViewById(R.id.imgbtn_post_vote_down);
-        Button mBtnPostNumComments = view.findViewById(R.id.btn_post_num_comments);
-        Button mBtnPostShare = view.findViewById(R.id.btn_post_share);
+        TextView mBtnPostNumComments = view.findViewById(R.id.btn_post_num_comments);
+        TextView mBtnPostShare = view.findViewById(R.id.btn_post_share);
+        TextView mTxtPostMoreActions = view.findViewById(R.id.txt_post_more_actions);
 
         mTxtPostSubreddit.setText(singlePostData.getSubredditNamePrefixed());
         String user = "Posted by User " + singlePostData.getAuthor();
@@ -267,6 +270,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         });
 
         mBtnPostShare.setOnClickListener(view1 -> startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(singlePostData), "Share via")));
+
+        mTxtPostMoreActions.setOnClickListener(view1 -> navController.navigate(NavGraphDirections.actionGlobalPopUpMoreActionsDialogFragment(singlePostData)));
     }
 
     private void bindAsSelf(Data singlePostData, View view) {
@@ -543,7 +548,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         PlayerView playerView = view.findViewById(R.id.video_player);
         TextView singlePostTitle = view.findViewById(R.id.stub_txt_post_title);
         LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_single_post_header);
-        LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
+        ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
         CollapsingToolbarLayout collapsingToolbar = view.findViewById(R.id.single_post_collapsing_toolbar);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbar.getLayoutParams();
@@ -574,7 +579,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         PlayerView playerView = view.findViewById(R.id.video_player);
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
+            ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
 
             appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
             playerView.setLayoutParams((new FrameLayout.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT)));
@@ -584,7 +589,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         } else {
             TextView singlePostTitle = view.findViewById(R.id.stub_txt_post_title);
             LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_single_post_header);
-            LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
+            ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
             Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
 
             appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));

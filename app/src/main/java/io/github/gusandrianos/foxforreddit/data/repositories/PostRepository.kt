@@ -93,4 +93,84 @@ object PostRepository {
         })
         return submissionData
     }
+
+    fun savePost(id: String, application: Application): LiveData<Boolean> {
+        val succeed = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val save = redditAPI.savePost(bearer, id)
+        save.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                succeed.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                succeed.value = false
+            }
+        })
+        return succeed
+    }
+
+    fun unSavePost(id: String, application: Application): LiveData<Boolean> {
+        val succeed = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val unSave = redditAPI.unSavePost(bearer, id)
+        unSave.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                succeed.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                succeed.value = false
+            }
+        })
+        return succeed
+    }
+
+    fun hidePost(id: String, application: Application): LiveData<Boolean> {
+        val succeed = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val hide = redditAPI.hidePost(bearer, id)
+        hide.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                succeed.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                succeed.value = false
+            }
+        })
+        return succeed
+    }
+
+    fun unHidePost(id: String, application: Application): LiveData<Boolean> {
+        val succeed = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val unHide = redditAPI.unHidePost(bearer, id)
+        unHide.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                succeed.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                succeed.value = false
+            }
+        })
+        return succeed
+    }
+
+    fun reportPost(thing_id: String, reason: String, application: Application): LiveData<Boolean> {
+        val succeed = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val report = redditAPI.reportPost(bearer, thing_id, reason)
+        report.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                succeed.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                succeed.value = false
+            }
+        })
+        return succeed
+    }
 }

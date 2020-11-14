@@ -158,10 +158,10 @@ object PostRepository {
         return succeed
     }
 
-    fun reportPost(thing_id: String, reason: String, custom_text: String, application: Application): LiveData<Boolean> {
+    fun reportPost(thing_id: String, reason: String, application: Application): LiveData<Boolean> {
         val succeed = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
-        val report = redditAPI.reportPost(bearer, thing_id, reason, custom_text)
+        val report = redditAPI.reportPost(bearer, thing_id, reason)
         report.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 succeed.value = response.isSuccessful

@@ -17,6 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.Objects;
 
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -98,7 +99,7 @@ public class PopUpMoreActionsDialogFragment extends BottomSheetDialogFragment {
                 });
             else
                 viewModel.hidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
-                    String message = (succeed) ? "hide" : "Failed to hide";
+                    String message = (succeed) ? "Hide" : "Failed to hide";
                     if (succeed)
                         data.setHidden(true);
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
@@ -109,7 +110,8 @@ public class PopUpMoreActionsDialogFragment extends BottomSheetDialogFragment {
         subredditViewModel.getSubredditRules(data.getSubredditNamePrefixed(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), rulesBundle -> {
             txtPopupReport.setOnClickListener(view1 -> {
                 if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
-                    navController.navigate(PopUpMoreActionsDialogFragmentDirections.actionPopUpMoreActionsDialogFragmentToReportDialogFragment(rulesBundle, null));
+                    navController.navigate(PopUpMoreActionsDialogFragmentDirections
+                            .actionPopUpMoreActionsDialogFragmentToReportDialogFragment(rulesBundle, null, Constants.ALL_RULES, data.getSubredditNamePrefixed(), data.getName()));
                 else {
                     Toast.makeText(getContext(), "Failed to report", Toast.LENGTH_SHORT).show();
                     dismiss();

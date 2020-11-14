@@ -114,7 +114,11 @@ object Constants {
     const val COMPOSE_TEXT = 0
     const val COMPOSE_LINK = 2
 
-    // Report tags
+    // Report
+    const val ALL_RULES = 0
+    const val REDDIT_RULES = 1
+    const val SUBREDDIT_RULES = 2
+    const val NAVIGATE_TO_SUBREDDIT = "Subreddit rules"
     const val REPORT_POST = "Report post"
 
     // Subreddit more info

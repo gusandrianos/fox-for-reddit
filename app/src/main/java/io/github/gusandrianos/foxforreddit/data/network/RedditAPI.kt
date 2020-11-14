@@ -175,6 +175,5 @@ interface RedditAPI {
             @Header("Authorization") bearer: String,
             @Field("thing_id") thing_id: String,
             @Field("reason") reason: String,
-            @Field("custom_text") custom_text: String
     ): Call<Void>
 }

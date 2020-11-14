@@ -15,6 +15,7 @@ import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -578,7 +579,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         PlayerView playerView = view.findViewById(R.id.video_player);
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
+            ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
 
             appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
             playerView.setLayoutParams((new FrameLayout.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT)));
@@ -588,7 +589,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         } else {
             TextView singlePostTitle = view.findViewById(R.id.stub_txt_post_title);
             LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_single_post_header);
-            LinearLayoutCompat singlePostFooter = view.findViewById(R.id.include_single_post_footer);
+            ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
             Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
 
             appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));

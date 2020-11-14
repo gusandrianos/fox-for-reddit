@@ -196,11 +196,20 @@
             android:name="reason"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="rulesToShow"
+            app:argType="integer" />
+        <argument
+            android:name="subredditName"
+            app:argType="string" />
+        <argument
+            android:name="thingId"
+            app:argType="string" />
     </dialog>
     <fragment
         android:id="@+id/moreInfoFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.MoreInfoFragment"
-        tools:layout="@layout/fragment_more_info" >
+        tools:layout="@layout/fragment_more_info">
         <argument
             android:name="mode"
             app:argType="integer" />

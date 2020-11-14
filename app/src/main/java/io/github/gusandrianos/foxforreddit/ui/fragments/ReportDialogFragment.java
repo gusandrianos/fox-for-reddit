@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -25,12 +26,19 @@ import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.NextStepReasonsItem;
 import io.github.gusandrianos.foxforreddit.data.models.RulesBundle;
+import io.github.gusandrianos.foxforreddit.data.models.RulesItem;
 import io.github.gusandrianos.foxforreddit.data.models.SiteRulesFlowItem;
+import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
 public class ReportDialogFragment extends BottomSheetDialogFragment {
 
     RulesBundle rulesBundle;
     String reason;
+    int rulesToShow;
+    String subredditName;
+    String thingId;
 
     @Nullable
     @Override
@@ -45,15 +53,45 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
         ReportDialogFragmentArgs reportDialogFragmentArgs = ReportDialogFragmentArgs.fromBundle(requireArguments());
         rulesBundle = reportDialogFragmentArgs.getRulesBundle();
         reason = reportDialogFragmentArgs.getReason();
+        rulesToShow = reportDialogFragmentArgs.getRulesToShow();
+        subredditName = reportDialogFragmentArgs.getSubredditName();
+        thingId = reportDialogFragmentArgs.getThingId();
+
 
         setUpBackButton(reason, view);
-        setUpChoices(view);
+        deActivateSubmitButton(view);
+        if (rulesToShow == Constants.SUBREDDIT_RULES)
+            setUpSubredditRules(view);
+        else
+            setUpRedditRules(view);
     }
 
-    private void setUpChoices(View view) {
+    private void setUpSubredditRules(View view) {
         List<String> reasonToShowList = new ArrayList<>();
         List<Boolean> hasNextList = new ArrayList<>();
         List<String> reasonList = new ArrayList<>();
+
+        if (rulesBundle.getRules() != null) {
+            for (RulesItem rulesItem : rulesBundle.getRules()) {
+                reasonToShowList.add(rulesItem.getShortName());
+                hasNextList.add(false);
+                reasonList.add(rulesItem.getViolationReason());
+            }
+            setUpReport("Which rule has been broken?", reasonToShowList, reasonList, hasNextList, view);
+        }
+    }
+
+    private void setUpRedditRules(View view) {
+        List<String> reasonToShowList = new ArrayList<>();
+        List<Boolean> hasNextList = new ArrayList<>();
+        List<String> reasonList = new ArrayList<>();
+
+        if (rulesToShow == Constants.ALL_RULES && rulesBundle.getRules() != null && !rulesBundle.getRules().isEmpty()) {
+            String subredditRules = "It breaks " + subredditName + " rules";
+            reasonToShowList.add(subredditRules);
+            hasNextList.add(true);
+            reasonList.add(Constants.NAVIGATE_TO_SUBREDDIT);
+        }
 
         if (reason == null) {
             for (SiteRulesFlowItem siteRulesFlowItem : rulesBundle.getSiteRulesFlow()) {
@@ -110,13 +148,14 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
             RadioButton radioButton = (RadioButton) group.getChildAt(checkedId);
             if ((boolean) radioButton.getTag(R.string.report_has_next)) {
                 deActivateSubmitButton(view);
-                navigateTo(radioButton.getText().toString());
-            } else {
+                if (radioButton.getTag(R.string.report_reason).equals(Constants.NAVIGATE_TO_SUBREDDIT))
+                    navigateToSubredditRules(radioButton.getTag(R.string.report_reason).toString());
+                else
+                    navigateToRedditRules(radioButton.getText().toString());
+            } else
                 activateSubmitButton(radioButton.getTag(R.string.report_reason).toString(), view);
-            }
         });
     }
-
 
     private void findChild(NextStepReasonsItem nextStepReasonsItem, String reason, List<String> reasonToShowList, List<String> reasonList, List<Boolean> hasNextList, View view) {
         if (nextStepReasonsItem.getNextStepReasons() != null) {
@@ -145,12 +184,15 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
         Button submit = view.findViewById(R.id.btn_submit_report);
         submit.setAlpha(1f);
         submit.setClickable(true);
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), reason, Toast.LENGTH_SHORT).show();
-            }
-        });
+
+        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+
+        submit.setOnClickListener(v -> viewModel.reportPost(thingId, reason, requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            String message = (succeed) ? "Report has been sent" : "Failed to report";
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            dismiss();
+        }));
     }
 
     private void deActivateSubmitButton(View view) {
@@ -164,10 +206,17 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
         backButton.setOnClickListener(v -> navigateBack(reason));
     }
 
-    private void navigateTo(String choice) {
+    private void navigateToRedditRules(String choice) {
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-        navController.navigate(ReportDialogFragmentDirections.actionReportDialogFragmentSelf(rulesBundle, choice));
+        navController.navigate(ReportDialogFragmentDirections.actionReportDialogFragmentSelf(rulesBundle, choice, Constants.REDDIT_RULES, subredditName, thingId));
+    }
+
+
+    private void navigateToSubredditRules(String choice) {
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+        navController.navigate(ReportDialogFragmentDirections.actionReportDialogFragmentSelf(rulesBundle, choice, Constants.SUBREDDIT_RULES, subredditName, thingId));
     }
 
     private void navigateBack(String reason) {
@@ -176,7 +225,7 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
         else {
             NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
             NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-            navController.navigate(ReportDialogFragmentDirections.actionReportDialogFragmentSelf(rulesBundle, null));
+            navController.navigate(ReportDialogFragmentDirections.actionReportDialogFragmentSelf(rulesBundle, null, Constants.ALL_RULES, subredditName, thingId));
         }
     }
 }

@@ -260,14 +260,21 @@ public class UserFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
-//        toolbar.inflateMenu(R.menu.sorting);
+        toolbar.inflateMenu(R.menu.user_options);
+
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         if (mainActivity.getFoxSharedViewModel().getViewingSelf()) {
+            toolbar.getMenu().findItem(R.id.log_out).setVisible(true);
+            toolbar.getMenu().findItem(R.id.message_user).setVisible(false);
+            toolbar.getMenu().findItem(R.id.block_user).setVisible(false);
             bottomNavigationView.setVisibility(View.VISIBLE);
             MenuItem item = bottomNavigationView.getMenu().findItem(R.id.userFragment);
             item.setChecked(true);
             NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
         } else {
+            toolbar.getMenu().findItem(R.id.log_out).setVisible(false);
+            toolbar.getMenu().findItem(R.id.message_user).setVisible(true);
+            toolbar.getMenu().findItem(R.id.block_user).setVisible(true);
             bottomNavigationView.setVisibility(View.GONE);
             NavigationUI.setupWithNavController(toolbar, navController);
         }

@@ -13,12 +13,12 @@ import io.github.gusandrianos.foxforreddit.utilities.TrophyAdapter.ViewHolder
 
 class TrophyAdapter(private val trophies: List<Thing>) : RecyclerView.Adapter<ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var trophyImg = view.findViewById(R.id.img_generic_item_icon) as ImageView
-        var trophyTitle = view.findViewById(R.id.txt_generic_item_title) as TextView
+        var trophyImg = view.findViewById(R.id.img_trophy_item_icon) as ImageView
+        var trophyTitle = view.findViewById(R.id.txt_trophy_item_title) as TextView
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.generic_item, parent, false))
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.trophies_item, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

@@ -185,8 +185,8 @@
         android:label="fragment_dialog_report"
         tools:layout="@layout/fragment_dialog_report">
         <argument
-            android:name="prevChoice"
-            app:argType="string" />
+            android:name="rulesBundle"
+            app:argType="io.github.gusandrianos.foxforreddit.data.models.RulesBundle" />
         <action
             android:id="@+id/action_reportDialogFragment_self"
             app:destination="@id/reportDialogFragment"
@@ -194,7 +194,8 @@
             app:popUpTo="@id/popUpMoreActionsDialogFragment" />
         <argument
             android:name="reason"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
     </dialog>
     <fragment
         android:id="@+id/moreInfoFragment"

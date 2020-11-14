@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,16 +17,19 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.NextStepReasonsItem;
+import io.github.gusandrianos.foxforreddit.data.models.RulesBundle;
+import io.github.gusandrianos.foxforreddit.data.models.SiteRulesFlowItem;
 
 public class ReportDialogFragment extends BottomSheetDialogFragment {
 
-    String prevChoice;
+    RulesBundle rulesBundle;
     String reason;
 
     @Nullable
@@ -39,147 +43,112 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         ReportDialogFragmentArgs reportDialogFragmentArgs = ReportDialogFragmentArgs.fromBundle(requireArguments());
-        prevChoice = reportDialogFragmentArgs.getPrevChoice();
+        rulesBundle = reportDialogFragmentArgs.getRulesBundle();
         reason = reportDialogFragmentArgs.getReason();
 
-        deActivateSubmitButton(view);
-        setUpBackButton(view);
-        setUpChoices(prevChoice, view);
+        setUpBackButton(reason, view);
+        setUpChoices(view);
     }
 
-    private void setUpBackButton(View view) {
-        Button backButton = view.findViewById(R.id.btn_back_report);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateBackTo();
-            }
-        });
-    }
+    private void setUpChoices(View view) {
+        List<String> reasonToShowList = new ArrayList<>();
+        List<Boolean> hasNextList = new ArrayList<>();
+        List<String> reasonList = new ArrayList<>();
 
-    private void setUpChoices(String prevChoice, View view) {
-        List<String> choices;
-        switch (prevChoice) {
-            case Constants.REPORT_REASON:
-                choices = Arrays.asList(Constants.REPORT_COMMUNITY_RULES
-                        , Constants.REPORT_SPAM
-                        , Constants.REPORT_MISINFORMATION
-                        , Constants.REPORT_ABUSIVE_OR_HARASSING
-                        , Constants.REPORT_OTHER_ISSUES);
-                setUpRadioGroup(choices, view);
-                break;
-            case Constants.REPORT_COMMUNITY_RULES:
-                choices = Arrays.asList("1", "2", "3");
-                setUpRadioGroup(choices, view);
-                break;
-            case Constants.REPORT_SPAM:
-                break;
-            case Constants.REPORT_MISINFORMATION:
-                break;
-            case Constants.REPORT_ABUSIVE_OR_HARASSING:
-                choices = Arrays.asList(Constants.REPORT_TARGETED_HARASSMENT
-                        , Constants.REPORT_VIOLENCE_OR_HARM
-                        , Constants.REPORT_PROMOTING_HATE
-                        , Constants.REPORT_RUDENESS
-                        , Constants.REPORT_ABUSING_REPORT);
-                setUpRadioGroup(choices, view);
-                break;
-            case Constants.REPORT_OTHER_ISSUES:
-                choices = Arrays.asList(Constants.REPORT_INFRINGES_COPYRIGHT
-                        , Constants.REPORT_INFRINGES_TRADEMARK_RIGHTS
-                        , Constants.REPORT_PERSONAL_OR_CONFIDENTIAL
-                        , Constants.REPORT_SEXUAL_OR_SUGGESTIVE
-                        , Constants.REPORT_INVOLUNTARY_PORNOGRAPHY
-                        , Constants.REPORT_TRANSACTION
-                        , Constants.REPORT_UNDER_NETZDG
-                        , Constants.REPORT_SELF_HARM);
-                setUpRadioGroup(choices, view);
-                break;
-            case Constants.REPORT_TARGETED_HARASSMENT:
-            case Constants.REPORT_VIOLENCE_OR_HARM:
-                choices = Arrays.asList(Constants.REPORT_AT_ME
-                        , Constants.REPORT_AT_SOMEONE_ELSE);
-                setUpRadioGroup(choices, view);
-                break;
-            case Constants.REPORT_PROMOTING_HATE:
-                break;
-            case Constants.REPORT_RUDENESS:
-                break;
-            case Constants.REPORT_ABUSING_REPORT:
-                break;
-            case Constants.REPORT_INFRINGES_COPYRIGHT:
-                break;
-            case Constants.REPORT_INFRINGES_TRADEMARK_RIGHTS:
-                break;
-            case Constants.REPORT_PERSONAL_OR_CONFIDENTIAL:
-                break;
-            case Constants.REPORT_SEXUAL_OR_SUGGESTIVE:
-                break;
-            case Constants.REPORT_INVOLUNTARY_PORNOGRAPHY:
-                choices = Arrays.asList(Constants.REPORT_IMAGE_OF_ME
-                        , Constants.REPORT_DO_NOT_APPEAR_IN_IMAGE);
-                setUpRadioGroup(choices, view);
-                break;
-            case Constants.REPORT_TRANSACTION:
-                break;
-            case Constants.REPORT_UNDER_NETZDG:
-                break;
-            case Constants.REPORT_SELF_HARM:
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void setUpRadioGroup(List<String> choices, View view) {
-        RadioGroup radioGroup = view.findViewById(R.id.radio_group_report);
-
-        int i = 0;
-        for (String choice : choices) {
-            RadioButton radioButton = new RadioButton(getContext());
-            radioButton.setText(choice);
-            radioButton.setId(i);
-            radioGroup.addView(radioButton);
-            i++;
-        }
-
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                RadioButton radioButton = (RadioButton) group.getChildAt(checkedId);
-                if (radioButton.getText().equals(Constants.REPORT_OTHER_ISSUES)) {
-                    deActivateSubmitButton(view);
-                    navigateTo(Constants.REPORT_OTHER_ISSUES);
-                } else if (radioButton.getText().equals(Constants.REPORT_ABUSIVE_OR_HARASSING)) {
-                    deActivateSubmitButton(view);
-                    navigateTo(Constants.REPORT_ABUSIVE_OR_HARASSING);
-                } else if (radioButton.getText().equals(Constants.REPORT_COMMUNITY_RULES)) {
-                    deActivateSubmitButton(view);
-                    navigateTo(Constants.REPORT_COMMUNITY_RULES);
-                } else if (radioButton.getText().equals(Constants.REPORT_TARGETED_HARASSMENT)) {
-                    deActivateSubmitButton(view);
-                    navigateTo(Constants.REPORT_TARGETED_HARASSMENT);
-                } else if (radioButton.getText().equals(Constants.REPORT_VIOLENCE_OR_HARM)) {
-                    deActivateSubmitButton(view);
-                    navigateTo(Constants.REPORT_VIOLENCE_OR_HARM);
-                } else if (radioButton.getText().equals(Constants.REPORT_INVOLUNTARY_PORNOGRAPHY)) {
-                    deActivateSubmitButton(view);
-                    navigateTo(Constants.REPORT_INVOLUNTARY_PORNOGRAPHY);
+        if (reason == null) {
+            for (SiteRulesFlowItem siteRulesFlowItem : rulesBundle.getSiteRulesFlow()) {
+                if (siteRulesFlowItem.getNextStepReasons() == null) {
+                    reasonToShowList.add(siteRulesFlowItem.getReasonTextToShow());
+                    hasNextList.add(false);
+                    reasonList.add(siteRulesFlowItem.getReasonText());
                 } else {
-                    activateSubmitButton(view, radioButton.getText().toString());
+                    reasonToShowList.add(siteRulesFlowItem.getReasonTextToShow());
+                    hasNextList.add(true);
+                    reasonList.add(siteRulesFlowItem.getReasonText());
                 }
             }
+            setUpReport(Constants.REPORT_POST, reasonToShowList, reasonList, hasNextList, view);
+        } else {
+            for (SiteRulesFlowItem siteRulesFlowItem : rulesBundle.getSiteRulesFlow()) {
+                if (siteRulesFlowItem.getReasonTextToShow().equals(reason)) {
+                    for (NextStepReasonsItem nextStepReasonsItem : siteRulesFlowItem.getNextStepReasons()) {
+                        if (nextStepReasonsItem.getNextStepReasons() == null) {
+                            reasonToShowList.add(nextStepReasonsItem.getReasonTextToShow());
+                            hasNextList.add(false);
+                            reasonList.add(nextStepReasonsItem.getReasonText());
+                        } else {
+                            reasonToShowList.add(nextStepReasonsItem.getReasonTextToShow());
+                            hasNextList.add(true);
+                            reasonList.add(nextStepReasonsItem.getReasonText());
+                        }
+                    }
+                    setUpReport(siteRulesFlowItem.getNextStepHeader(), reasonToShowList, reasonList, hasNextList, view);
+                } else {
+                    if (siteRulesFlowItem.getNextStepReasons() != null)
+                        for (NextStepReasonsItem nextStepReasonsItem : siteRulesFlowItem.getNextStepReasons())
+                            findChild(nextStepReasonsItem, reason, reasonToShowList, reasonList, hasNextList, view);
+                }
+            }
+        }
+    }
+
+    private void setUpReport(String header, List<String> reasonToShowList, List<String> reasonList, List<Boolean> hasNextList, View view) {
+        TextView txtHeader = view.findViewById(R.id.txt_report_header);
+        txtHeader.setText(header);
+
+        RadioGroup radioGroup = view.findViewById(R.id.radio_group_report);
+        for (int i = 0; i < reasonToShowList.size(); i++) {
+            RadioButton radioButton = new RadioButton(getContext());
+            radioButton.setId(i);
+            radioButton.setText(reasonToShowList.get(i));
+            radioButton.setTag(R.string.report_has_next, hasNextList.get(i));
+            radioButton.setTag(R.string.report_reason, reasonList.get(i));
+            radioGroup.addView(radioButton);
+        }
+
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            RadioButton radioButton = (RadioButton) group.getChildAt(checkedId);
+            if ((boolean) radioButton.getTag(R.string.report_has_next)) {
+                deActivateSubmitButton(view);
+                navigateTo(radioButton.getText().toString());
+            } else {
+                activateSubmitButton(radioButton.getTag(R.string.report_reason).toString(), view);
+            }
         });
     }
 
-    private void activateSubmitButton(View view, String addReason) {
+
+    private void findChild(NextStepReasonsItem nextStepReasonsItem, String reason, List<String> reasonToShowList, List<String> reasonList, List<Boolean> hasNextList, View view) {
+        if (nextStepReasonsItem.getNextStepReasons() != null) {
+            if (nextStepReasonsItem.getReasonTextToShow().equals(reason)) {
+                for (NextStepReasonsItem item : nextStepReasonsItem.getNextStepReasons()) {
+                    if (item.getNextStepReasons() == null) {
+                        reasonToShowList.add(item.getReasonTextToShow());
+                        hasNextList.add(false);
+                        reasonList.add(item.getReasonText());
+                    } else {
+                        reasonToShowList.add(item.getReasonTextToShow());
+                        hasNextList.add(true);
+                        reasonList.add(item.getReasonText());
+                    }
+                }
+                setUpReport(nextStepReasonsItem.getNextStepHeader(), reasonToShowList, reasonList, hasNextList, view);
+            } else {
+                for (NextStepReasonsItem item : nextStepReasonsItem.getNextStepReasons())
+                    findChild(item, reason, reasonToShowList, reasonList, hasNextList, view);
+            }
+        }
+    }
+
+
+    private void activateSubmitButton(String reason, View view) {
         Button submit = view.findViewById(R.id.btn_submit_report);
         submit.setAlpha(1f);
+        submit.setClickable(true);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), reason + addReason, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), reason, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -190,37 +159,24 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
         submit.setClickable(false);
     }
 
+    private void setUpBackButton(String reason, View view) {
+        Button backButton = view.findViewById(R.id.btn_back_report);
+        backButton.setOnClickListener(v -> navigateBack(reason));
+    }
+
     private void navigateTo(String choice) {
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-        navController.navigate(ReportDialogFragmentDirections.actionReportDialogFragmentSelf(choice, (reason + choice)));
+        navController.navigate(ReportDialogFragmentDirections.actionReportDialogFragmentSelf(rulesBundle, choice));
     }
 
-    private void navigateBackTo() {
-        String parent = findParent(prevChoice);
-        if (parent.equals(Constants.REPORT_DISMISS))
+    private void navigateBack(String reason) {
+        if (reason == null)
             dismiss();
         else {
             NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
             NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-            navController.navigate(ReportDialogFragmentDirections.actionReportDialogFragmentSelf(parent, reason.replace(prevChoice, "")));
-
-        }
-    }
-
-    private String findParent(String prevChoice) {
-        switch (prevChoice) {
-            case Constants.REPORT_COMMUNITY_RULES:
-            case Constants.REPORT_ABUSIVE_OR_HARASSING:
-            case Constants.REPORT_OTHER_ISSUES:
-                return Constants.REPORT_REASON;
-            case Constants.REPORT_TARGETED_HARASSMENT:
-            case Constants.REPORT_VIOLENCE_OR_HARM:
-                return Constants.REPORT_ABUSIVE_OR_HARASSING;
-            case Constants.REPORT_INVOLUNTARY_PORNOGRAPHY:
-                return Constants.REPORT_OTHER_ISSUES;
-            default:
-                return Constants.REPORT_DISMISS;
+            navController.navigate(ReportDialogFragmentDirections.actionReportDialogFragmentSelf(rulesBundle, null));
         }
     }
 }

@@ -114,36 +114,8 @@ object Constants {
     const val COMPOSE_TEXT = 0
     const val COMPOSE_LINK = 2
 
-    // Report kinds
-    const val REPORT_REASON = "Reason: "
-    const val REPORT_DISMISS = "dismiss"
-
-    const val REPORT_COMMUNITY_RULES = "It breaks {community} rules. "
-    const val REPORT_SPAM = "This is spam. "
-    const val REPORT_MISINFORMATION = "This is misinformation. "
-    const val REPORT_ABUSIVE_OR_HARASSING = "This is abusive or harassing. "
-    const val REPORT_OTHER_ISSUES = "Other issues. "
-
-    const val REPORT_TARGETED_HARASSMENT = "It's targeted harassment. "
-    const val REPORT_VIOLENCE_OR_HARM = "It threatens violence or physical harm. "
-    const val REPORT_PROMOTING_HATE = "It's promoting hate based on identity or vulnerability. "
-    const val REPORT_RUDENESS = "It's rude, vulgar or offensive. "
-    const val REPORT_ABUSING_REPORT = "It's abusing the report button. "
-
-    const val REPORT_INFRINGES_COPYRIGHT = "It infringes my copyright. "
-    const val REPORT_INFRINGES_TRADEMARK_RIGHTS = "It infringes my trademark rights. "
-    const val REPORT_PERSONAL_OR_CONFIDENTIAL = "It's personal and confidential information. "
-    const val REPORT_SEXUAL_OR_SUGGESTIVE = "It's sexual or suggestive content involving minors. "
-    const val REPORT_INVOLUNTARY_PORNOGRAPHY = "It's involuntary pornography. "
-    const val REPORT_TRANSACTION = "It's a transaction for prohibited goods or services. "
-    const val REPORT_UNDER_NETZDG = "Report this content under NetzDG. "
-    const val REPORT_SELF_HARM = "Someone is considering suicide or serious self-harm. "
-
-    const val REPORT_AT_ME = "At me. "
-    const val REPORT_AT_SOMEONE_ELSE = "At someone else. "
-
-    const val REPORT_IMAGE_OF_ME = "I appear in the image. "
-    const val REPORT_DO_NOT_APPEAR_IN_IMAGE = "I do not appear in the image. "
+    // Report tags
+    const val REPORT_POST = "Report post"
 
     // Subreddit more info
     const val MODE_SHOW_RULES = 0

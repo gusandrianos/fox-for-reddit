@@ -17,12 +17,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.Objects;
 
-import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
+import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
 public class PopUpMoreActionsDialogFragment extends BottomSheetDialogFragment {
 
@@ -41,6 +42,12 @@ public class PopUpMoreActionsDialogFragment extends BottomSheetDialogFragment {
 
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+
+        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+        SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
+
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
 
         TextView txtPopupSave = view.findViewById(R.id.popup_save);
         TextView txtPopupHide = view.findViewById(R.id.popup_hide);
@@ -99,10 +106,15 @@ public class PopUpMoreActionsDialogFragment extends BottomSheetDialogFragment {
                 });
         });
 
-        txtPopupReport.setOnClickListener(view1 -> {
-            NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-            NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-            navController.navigate(PopUpMoreActionsDialogFragmentDirections.actionPopUpMoreActionsDialogFragmentToReportDialogFragment(Constants.REPORT_REASON, Constants.REPORT_REASON));
+        subredditViewModel.getSubredditRules(data.getSubredditNamePrefixed(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), rulesBundle -> {
+            txtPopupReport.setOnClickListener(view1 -> {
+                if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
+                    navController.navigate(PopUpMoreActionsDialogFragmentDirections.actionPopUpMoreActionsDialogFragmentToReportDialogFragment(rulesBundle, null));
+                else {
+                    Toast.makeText(getContext(), "Failed to report", Toast.LENGTH_SHORT).show();
+                    dismiss();
+                }
+            });
         });
     }
 }

@@ -7,14 +7,23 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Moderator
-import io.github.gusandrianos.foxforreddit.data.models.RulesItem
-import io.noties.markwon.Markwon
-import io.noties.markwon.ext.tables.TablePlugin
-import io.noties.markwon.linkify.LinkifyPlugin
 
-class ModeratorsListAdapter(private val moderators: List<Moderator>) : RecyclerView.Adapter<ModeratorsListAdapter.ViewHolder>() {
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class ModeratorsListAdapter(private val moderators: List<Moderator>, private val listener: OnItemClickListener) : RecyclerView.Adapter<ModeratorsListAdapter.ViewHolder>() {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var moderatorName = view.findViewById(R.id.text_moderator_name) as TextView
+
+        init {
+            itemView.setOnClickListener {
+                onClick(bindingAdapterPosition)
+            }
+        }
+    }
+
+    fun onClick(position: Int) {
+        if (position != RecyclerView.NO_POSITION) {    //For index -1. (Ex. animation and item deleted and its position is -1)
+            val item = moderators[position]
+            listener.onItemClick(item.name!!)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,5 +36,9 @@ class ModeratorsListAdapter(private val moderators: List<Moderator>) : RecyclerV
 
     override fun getItemCount(): Int {
         return moderators.size
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(username: String)
     }
 }

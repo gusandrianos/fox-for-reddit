@@ -4,11 +4,11 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -199,6 +199,10 @@ public class UserFragment extends Fragment {
 
             toolbar.setBackgroundColor(Color.argb(alpha, 255, 255, 255));
         });
+
+        NavController navController = NavHostFragment.findNavController(this);
+
+        setUpMenu(mainActivity.getFoxSharedViewModel().getViewingSelf(), toolbar, mainActivity, navController, user);
     }
 
     private String buildURL(String username, String location) {
@@ -250,6 +254,42 @@ public class UserFragment extends Fragment {
         return gson.fromJson(gson.toJsonTree(user.getSubreddit()).getAsJsonObject(), subredditType);
     }
 
+    private void setUpMenu(boolean isSelf, Toolbar toolbar, MainActivity mainActivity, NavController navController, Data user) {
+        toolbar.getMenu().findItem(R.id.log_out).setVisible(isSelf);
+        toolbar.getMenu().findItem(R.id.message_user).setVisible(!isSelf);
+        toolbar.getMenu().findItem(R.id.block_user).setVisible(!isSelf);
+
+        if (isSelf) {
+            toolbar.getMenu().findItem(R.id.log_out).setOnMenuItemClickListener(menuItem -> {
+                InjectorUtils.getInstance().provideTokenRepository().logOut();
+                mainActivity.mToken = null;
+                navigateHome(navController);
+                return true;
+            });
+        } else {
+            toolbar.getMenu().findItem(R.id.message_user).setOnMenuItemClickListener(menuItem -> {
+                //TODO
+                return true;
+            });
+
+            // TODO: Show appropriate error when blocking someone and trying to load their profile again
+            toolbar.getMenu().findItem(R.id.block_user).setOnMenuItemClickListener(menuItem -> {
+                UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
+                UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+                viewModel.blockUser(requireActivity().getApplication(), user.getId(), user.getName()).observe(getViewLifecycleOwner(), status -> {
+                    Toast.makeText(requireContext(), "User " + user.getName() + " successfully blocked", Toast.LENGTH_SHORT).show();
+                    navigateHome(navController);
+                });
+                return true;
+            });
+        }
+    }
+
+    private void navigateHome(NavController navController) {
+        NavOptions options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
+        navController.navigate(R.id.mainFragment, null, options);
+    }
+
     private void setUpNavigation(View view) {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
@@ -259,26 +299,10 @@ public class UserFragment extends Fragment {
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
 
         if (mainActivity.getFoxSharedViewModel().getViewingSelf()) {
-            toolbar.getMenu().findItem(R.id.log_out).setVisible(true);
-            toolbar.getMenu().findItem(R.id.message_user).setVisible(false);
-            toolbar.getMenu().findItem(R.id.block_user).setVisible(false);
-
-            toolbar.getMenu().findItem(R.id.log_out).setOnMenuItemClickListener(menuItem -> {
-                InjectorUtils.getInstance().provideTokenRepository().logOut();
-                mainActivity.mToken = null;
-                NavOptions options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
-                navController.navigate(R.id.mainFragment, null, options);
-                return true;
-            });
-
             bottomNavigationView.setVisibility(View.VISIBLE);
             bottomNavigationView.getMenu().findItem(R.id.userFragment).setChecked(true);
-
             NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
         } else {
-            toolbar.getMenu().findItem(R.id.log_out).setVisible(false);
-            toolbar.getMenu().findItem(R.id.message_user).setVisible(true);
-            toolbar.getMenu().findItem(R.id.block_user).setVisible(true);
             bottomNavigationView.setVisibility(View.GONE);
             NavigationUI.setupWithNavController(toolbar, navController);
         }

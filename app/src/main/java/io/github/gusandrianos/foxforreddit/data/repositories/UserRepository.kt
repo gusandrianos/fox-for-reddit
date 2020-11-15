@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.liveData
+import com.google.gson.JsonObject
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
@@ -92,5 +93,21 @@ object UserRepository {
             }
         }))
         return userPrefs
+    }
+
+    fun blockUser(application: Application, accountId: String, name: String): LiveData<Boolean> {
+        val status = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val blockRequest = redditAPI.blockUser(bearer, accountId, "json", name)
+        blockRequest.enqueue((object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                status.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                Log.i("blockUser", "onFailure: ${t.message}")
+            }
+        }))
+        return status
     }
 }

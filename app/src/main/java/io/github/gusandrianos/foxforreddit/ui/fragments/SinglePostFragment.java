@@ -241,7 +241,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         mTxtPostUser.setOnClickListener(view1 -> {
             String authorUsername = singlePostData.getAuthor();
-            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, authorUsername);
+            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(authorUsername);
             navController.navigate(action);
         });
 

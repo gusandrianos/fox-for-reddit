@@ -16,18 +16,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
-import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.FoxSharedViewModel;
@@ -40,13 +40,11 @@ import io.github.gusandrianos.foxforreddit.Constants;
 public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemReselectedListener,
         BottomNavigationView.OnNavigationItemSelectedListener {
-    private Data mUser;
-    public Boolean mIncludeOver18;
-    private Token mToken;
+
+    public Token mToken;
     private NavController navController;
     public AppBarConfiguration appBarConfiguration;
     public BottomNavigationView bottomNavView;
-    NavOptions options;
     List<Integer> topLevelDestinationIds;
 
     @Override
@@ -59,12 +57,7 @@ public class MainActivity extends AppCompatActivity implements
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         navController = Objects.requireNonNull(navHostFragment).getNavController();
 
-        List<Integer> navID = new ArrayList<>();
-        navID.add(R.id.mainFragment);
-        navID.add(R.id.userFragment);
-        navID.add(R.id.subredditListFragment);
-
-        appBarConfiguration = new AppBarConfiguration.Builder(R.id.mainFragment, R.id.userFragment, R.id.subredditListFragment).build();
+        appBarConfiguration = new AppBarConfiguration.Builder(new HashSet<>(topLevelDestinationIds)).build();
 
         bottomNavView = findViewById(R.id.bottom_nav_view);
         bottomNavView.setOnNavigationItemSelectedListener(this);
@@ -85,18 +78,18 @@ public class MainActivity extends AppCompatActivity implements
             MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.userFragment);
             bottomNavMenuItem.setEnabled(true);
         }
-        if (mToken.getRefreshToken() != null)
+        if (FoxToolkit.INSTANCE.isAuthorized(getApplication()))
             getCurrentUser();
     }
 
     private void getCurrentUser() {
         UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+
         viewModel.getMe(getApplication()).observe(this, user -> {
             if (user != null) {
                 String username = user.getName();
                 if (username != null) {
-                    mUser = user;
                     getFoxSharedViewModel().setCurrentUserUsername(user.getName());
                     MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.userFragment);
                     bottomNavMenuItem.setEnabled(true);
@@ -105,10 +98,8 @@ public class MainActivity extends AppCompatActivity implements
             //TODO: Handle this by showing appropriate error
         });
 
-        viewModel.getPrefs(getApplication()).observe(this, prefs -> {
-            mIncludeOver18 = prefs.getSearchIncludeOver18();
-            getFoxSharedViewModel().setIncludeOver18(mIncludeOver18);
-        });
+        viewModel.getPrefs(getApplication()).observe(this, prefs ->
+                getFoxSharedViewModel().setIncludeOver18(prefs.getSearchIncludeOver18()));
     }
 
     @Override
@@ -121,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements
         return new ViewModelProvider(backStackEntry).get(FoxSharedViewModel.class);
     }
 
-    public void loadLogInWebpage() {
+    public void logInOnReddit() {
         Intent load = new Intent(this, LoginActivity.class);
         load.putExtra("URL", constructOAuthURL());
         startActivityForResult(load, Constants.LAUNCH_SECOND_ACTIVITY);
@@ -142,10 +133,17 @@ public class MainActivity extends AppCompatActivity implements
                 String result = Objects.requireNonNull(data).getStringExtra("result");
                 String[] inputs = result.split("\\?")[1].split("&");
                 String state = inputs[0].split("=")[1];
-                if (state.equals(Constants.STATE)) {
+                String error = inputs[1].split("=")[0];
+
+                // When an error is thrown, there is a line with the following formatting
+                // "error=[some error]"
+                //When all goes well, there is the line "code=[something]"
+                if (state.equals(Constants.STATE) && error.equals("code")) {
                     String code = inputs[1].split("=")[1];
                     mToken = InjectorUtils.getInstance().provideTokenRepository().getNewToken(getApplication(), code, Constants.REDIRECT_URI);
-                }
+                } else
+                    Toast.makeText(this, "Log In unsuccessful", Toast.LENGTH_SHORT).show();
+
                 setAuthorizedUI();
             }
         }
@@ -157,12 +155,12 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.mainFragment) {
-            options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
+            NavOptions options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
             navController.navigate(R.id.mainFragment, null, options);
             return true;
         } else if (id == R.id.userFragment) {
-            if (mToken.getRefreshToken() != null && !mToken.getRefreshToken().isEmpty()) {
-                NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(mUser, "");
+            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(getApplication())) {
+                NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(getFoxSharedViewModel().getCurrentUserUsername());
                 navController.navigate(action);
             } else
                 FoxToolkit.INSTANCE.promptLogIn(this);

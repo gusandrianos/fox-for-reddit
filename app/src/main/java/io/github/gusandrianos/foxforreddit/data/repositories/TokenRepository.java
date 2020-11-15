@@ -194,6 +194,11 @@ public class TokenRepository {
         });
     }
 
+    public void logOut() {
+        Executors.newSingleThreadExecutor().execute(() -> tokenDao.delete());
+        mToken = null;
+    }
+
     public void initDB(Application application) {
         if (application != null) {
             FoxDatabase foxDatabase = FoxDatabase.getInstance(application);

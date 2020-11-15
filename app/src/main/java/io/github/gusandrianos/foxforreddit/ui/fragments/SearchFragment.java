@@ -139,7 +139,7 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
             NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(destination);
             navController.navigate(action);
         } else {
-            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, destination);
+            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(destination);
             navController.navigate(action);
         }
     }

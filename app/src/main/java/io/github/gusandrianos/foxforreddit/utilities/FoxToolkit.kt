@@ -26,7 +26,7 @@ object FoxToolkit {
 
     fun promptLogIn(mainActivity: MainActivity) {
         mainActivity.foxSharedViewModel.previousDestination = mainActivity.bottomNavView.selectedItemId
-        mainActivity.loadLogInWebpage()
+        mainActivity.logInOnReddit()
     }
 
     fun getRawImageURI(imageURI: String): String {

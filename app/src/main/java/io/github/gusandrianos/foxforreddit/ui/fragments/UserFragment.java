@@ -17,6 +17,7 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager2.widget.ViewPager2;
@@ -65,11 +66,7 @@ public class UserFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         UserFragmentArgs args = UserFragmentArgs.fromBundle(requireArguments());
 
-        Data user = args.getUser();
         String username = args.getUsername();
-
-        if (username.isEmpty() && user != null)
-            username = user.getName();
 
         MainActivity mainActivity = (MainActivity) requireActivity();
         FoxSharedViewModel sharedViewModel = mainActivity.getFoxSharedViewModel();
@@ -77,17 +74,14 @@ public class UserFragment extends Fragment {
 
         setUpNavigation(view);
 
-        if (user != null) {
-            setUserNames(view, user, username);
-            buildUserProfile(user, view, true);
-        } else if (!username.isEmpty()) {
+        if (!username.isEmpty()) {
             UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
             viewModel.getUser(requireActivity().getApplication(), username).
                     observe(getViewLifecycleOwner(),
                             data -> buildUserProfile(
                                     data, view, Objects.equals(data.getName(),
-                                            mainActivity.getFoxSharedViewModel().getCurrentUserUsername())));
+                                            sharedViewModel.getCurrentUserUsername())));
         }
     }
 
@@ -267,6 +261,14 @@ public class UserFragment extends Fragment {
             toolbar.getMenu().findItem(R.id.log_out).setVisible(true);
             toolbar.getMenu().findItem(R.id.message_user).setVisible(false);
             toolbar.getMenu().findItem(R.id.block_user).setVisible(false);
+
+//            toolbar.getMenu().findItem(R.id.log_out).setOnMenuItemClickListener(menuItem -> {
+//                InjectorUtils.getInstance().provideTokenRepository().logOut();
+//                mainActivity.mToken = null;
+//                navController.navigate(R.id.mainFragment, null, new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build());
+//                return true;
+//            });
+
             bottomNavigationView.setVisibility(View.VISIBLE);
             MenuItem item = bottomNavigationView.getMenu().findItem(R.id.userFragment);
             item.setChecked(true);

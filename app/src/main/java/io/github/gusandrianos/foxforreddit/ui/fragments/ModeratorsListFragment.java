@@ -68,7 +68,7 @@ public class ModeratorsListFragment extends Fragment implements ModeratorsListAd
     public void onItemClick(@NotNull String username) {
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-        NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, username);
+        NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(username);
         navController.navigate(action);
     }
 

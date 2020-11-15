@@ -174,7 +174,7 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
             NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(Objects.requireNonNull(item.getDisplayNamePrefixed()));
             navController.navigate(action);
         } else {
-            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, Objects.requireNonNull(item.getName()));
+            NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(Objects.requireNonNull(item.getName()));
             navController.navigate(action);
         }
     }

@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.LoadState;
+import androidx.paging.PagingData;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -117,16 +118,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             if (requestChanged)
                 viewModel.deleteCached();
 
-            viewModel.getPosts(subreddit, filter, time, requireActivity().getApplication()).observe(getViewLifecycleOwner(), postPagingData -> {
-                mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), postPagingData);
-                mPostRecyclerViewAdapter.addLoadStateListener(loadStates -> {
-                    if (loadStates.getRefresh() instanceof LoadState.Loading)
-                        pullToRefresh.setRefreshing(true);
-                    else if (loadStates.getRefresh() instanceof LoadState.NotLoading)
-                        pullToRefresh.setRefreshing(false);
-                    return Unit.INSTANCE;
-                });
-            });
+            viewModel.getPosts(subreddit, filter, time, requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), this::submitToAdapter);
         } else {
             SearchViewModelFactory factory = InjectorUtils.getInstance().provideSearchViewModelFactory();
             SearchViewModel viewModel = new ViewModelProvider(this, factory).get(SearchViewModel.class);
@@ -134,17 +127,20 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             if (requestChanged)
                 viewModel.deleteCached();
 
-            viewModel.searchResults(query, filter, time, sr_restrict, searchType, subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), searchPostPagingData -> {
-                mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), searchPostPagingData);
-                mPostRecyclerViewAdapter.addLoadStateListener(loadStates -> {
-                    if (loadStates.getRefresh() instanceof LoadState.Loading)
-                        pullToRefresh.setRefreshing(true);
-                    else if (loadStates.getRefresh() instanceof LoadState.NotLoading)
-                        pullToRefresh.setRefreshing(false);
-                    return Unit.INSTANCE;
-                });
-            });
+            viewModel.searchResults(query, filter, time, sr_restrict, searchType, subreddit,
+                    requireActivity().getApplication()).observe(getViewLifecycleOwner(), this::submitToAdapter);
         }
+    }
+
+    private void submitToAdapter(PagingData pagingData) {
+        mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), pagingData);
+        mPostRecyclerViewAdapter.addLoadStateListener(loadStates -> {
+            if (loadStates.getRefresh() instanceof LoadState.Loading)
+                pullToRefresh.setRefreshing(true);
+            else if (loadStates.getRefresh() instanceof LoadState.NotLoading)
+                pullToRefresh.setRefreshing(false);
+            return Unit.INSTANCE;
+        });
     }
 
     private void initSwipeToRefresh() {

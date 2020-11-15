@@ -257,21 +257,23 @@ public class UserFragment extends Fragment {
         toolbar.inflateMenu(R.menu.user_options);
 
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
+
         if (mainActivity.getFoxSharedViewModel().getViewingSelf()) {
             toolbar.getMenu().findItem(R.id.log_out).setVisible(true);
             toolbar.getMenu().findItem(R.id.message_user).setVisible(false);
             toolbar.getMenu().findItem(R.id.block_user).setVisible(false);
 
-//            toolbar.getMenu().findItem(R.id.log_out).setOnMenuItemClickListener(menuItem -> {
-//                InjectorUtils.getInstance().provideTokenRepository().logOut();
-//                mainActivity.mToken = null;
-//                navController.navigate(R.id.mainFragment, null, new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build());
-//                return true;
-//            });
+            toolbar.getMenu().findItem(R.id.log_out).setOnMenuItemClickListener(menuItem -> {
+                InjectorUtils.getInstance().provideTokenRepository().logOut();
+                mainActivity.mToken = null;
+                NavOptions options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
+                navController.navigate(R.id.mainFragment, null, options);
+                return true;
+            });
 
             bottomNavigationView.setVisibility(View.VISIBLE);
-            MenuItem item = bottomNavigationView.getMenu().findItem(R.id.userFragment);
-            item.setChecked(true);
+            bottomNavigationView.getMenu().findItem(R.id.userFragment).setChecked(true);
+
             NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
         } else {
             toolbar.getMenu().findItem(R.id.log_out).setVisible(false);

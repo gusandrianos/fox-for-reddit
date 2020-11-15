@@ -40,4 +40,8 @@ class UserViewModel(private val mUserRepository: UserRepository) : ViewModel() {
         userPrefs = mUserRepository.getPrefs(application)
         return userPrefs!!
     }
+
+    fun blockUser(application: Application, accountId: String, name: String): LiveData<Boolean> {
+        return mUserRepository.blockUser(application, accountId, name)
+    }
 }

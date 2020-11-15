@@ -11,10 +11,6 @@
         android:label="UserFragment"
         tools:layout="@layout/fragment_user">
         <argument
-            android:name="user"
-            app:argType="io.github.gusandrianos.foxforreddit.data.models.Data"
-            app:nullable="true" />
-        <argument
             android:name="username"
             app:argType="string" />
     </fragment>

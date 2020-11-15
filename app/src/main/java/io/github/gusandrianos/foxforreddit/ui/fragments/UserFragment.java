@@ -4,11 +4,11 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +17,7 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager2.widget.ViewPager2;
@@ -65,11 +66,7 @@ public class UserFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         UserFragmentArgs args = UserFragmentArgs.fromBundle(requireArguments());
 
-        Data user = args.getUser();
         String username = args.getUsername();
-
-        if (username.isEmpty() && user != null)
-            username = user.getName();
 
         MainActivity mainActivity = (MainActivity) requireActivity();
         FoxSharedViewModel sharedViewModel = mainActivity.getFoxSharedViewModel();
@@ -77,17 +74,14 @@ public class UserFragment extends Fragment {
 
         setUpNavigation(view);
 
-        if (user != null) {
-            setUserNames(view, user, username);
-            buildUserProfile(user, view, true);
-        } else if (!username.isEmpty()) {
+        if (!username.isEmpty()) {
             UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
             viewModel.getUser(requireActivity().getApplication(), username).
                     observe(getViewLifecycleOwner(),
                             data -> buildUserProfile(
                                     data, view, Objects.equals(data.getName(),
-                                            mainActivity.getFoxSharedViewModel().getCurrentUserUsername())));
+                                            sharedViewModel.getCurrentUserUsername())));
         }
     }
 
@@ -205,6 +199,10 @@ public class UserFragment extends Fragment {
 
             toolbar.setBackgroundColor(Color.argb(alpha, 255, 255, 255));
         });
+
+        NavController navController = NavHostFragment.findNavController(this);
+
+        setUpMenu(mainActivity.getFoxSharedViewModel().getViewingSelf(), toolbar, mainActivity, navController, user);
     }
 
     private String buildURL(String username, String location) {
@@ -256,16 +254,53 @@ public class UserFragment extends Fragment {
         return gson.fromJson(gson.toJsonTree(user.getSubreddit()).getAsJsonObject(), subredditType);
     }
 
+    private void setUpMenu(boolean isSelf, Toolbar toolbar, MainActivity mainActivity, NavController navController, Data user) {
+        toolbar.getMenu().findItem(R.id.log_out).setVisible(isSelf);
+        toolbar.getMenu().findItem(R.id.message_user).setVisible(!isSelf);
+        toolbar.getMenu().findItem(R.id.block_user).setVisible(!isSelf);
+
+        if (isSelf) {
+            toolbar.getMenu().findItem(R.id.log_out).setOnMenuItemClickListener(menuItem -> {
+                InjectorUtils.getInstance().provideTokenRepository().logOut();
+                mainActivity.mToken = null;
+                navigateHome(navController);
+                return true;
+            });
+        } else {
+            toolbar.getMenu().findItem(R.id.message_user).setOnMenuItemClickListener(menuItem -> {
+                //TODO
+                return true;
+            });
+
+            // TODO: Show appropriate error when blocking someone and trying to load their profile again
+            toolbar.getMenu().findItem(R.id.block_user).setOnMenuItemClickListener(menuItem -> {
+                UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
+                UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+                viewModel.blockUser(requireActivity().getApplication(), user.getId(), user.getName()).observe(getViewLifecycleOwner(), status -> {
+                    Toast.makeText(requireContext(), "User " + user.getName() + " successfully blocked", Toast.LENGTH_SHORT).show();
+                    navigateHome(navController);
+                });
+                return true;
+            });
+        }
+    }
+
+    private void navigateHome(NavController navController) {
+        NavOptions options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
+        navController.navigate(R.id.mainFragment, null, options);
+    }
+
     private void setUpNavigation(View view) {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
-//        toolbar.inflateMenu(R.menu.sorting);
+        toolbar.inflateMenu(R.menu.user_options);
+
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
+
         if (mainActivity.getFoxSharedViewModel().getViewingSelf()) {
             bottomNavigationView.setVisibility(View.VISIBLE);
-            MenuItem item = bottomNavigationView.getMenu().findItem(R.id.userFragment);
-            item.setChecked(true);
+            bottomNavigationView.getMenu().findItem(R.id.userFragment).setChecked(true);
             NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
         } else {
             bottomNavigationView.setVisibility(View.GONE);

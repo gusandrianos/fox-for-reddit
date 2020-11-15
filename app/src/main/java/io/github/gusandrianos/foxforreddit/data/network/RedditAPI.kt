@@ -1,5 +1,6 @@
 package io.github.gusandrianos.foxforreddit.data.network
 
+import com.google.gson.JsonObject
 import io.github.gusandrianos.foxforreddit.data.models.*
 
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
@@ -37,17 +38,17 @@ interface RedditAPI {
     @GET("user/{username}/about")
     fun getUser(
             @Path("username") username: String,
-            @Header("Authorization") bearer: String?,
+            @Header("Authorization") bearer: String
     ): Call<Thing>
 
     @GET("api/v1/me")
     fun getMe(
-            @Header("Authorization") bearer: String,
+            @Header("Authorization") bearer: String
     ): Call<Data>
 
     @GET("/api/v1/me/prefs")
     fun getPrefs(
-            @Header("Authorization") bearer: String,
+            @Header("Authorization") bearer: String
     ): Call<UserPrefs>
 
     @GET("{permalink}")
@@ -87,20 +88,20 @@ interface RedditAPI {
     @GET("{subreddit_prefixed}/wiki/index")
     fun getSubredditWiki(
             @Header("Authorization") bearer: String,
-            @Path("subreddit_prefixed") subreddit: String,
+            @Path("subreddit_prefixed") subreddit: String
     ): Call<Thing>
 
     @GET("{subreddit_prefixed}/about/rules")
     fun getSubredditRules(
             @Header("Authorization") bearer: String,
-            @Path("subreddit_prefixed") subreddit: String,
+            @Path("subreddit_prefixed") subreddit: String
     ): Call<RulesBundle>
 
 
     @GET("{subreddit_prefixed}/about/moderators")
     fun getSubredditModerators(
             @Header("Authorization") bearer: String,
-            @Path("subreddit_prefixed") subreddit: String,
+            @Path("subreddit_prefixed") subreddit: String
     ): Call<ModeratorsResponse>
 
     @FormUrlEncoded
@@ -152,28 +153,28 @@ interface RedditAPI {
     @POST("/api/save")
     fun savePost(
             @Header("Authorization") bearer: String,
-            @Field("id") id: String,
+            @Field("id") id: String
     ): Call<Void>
 
     @FormUrlEncoded
     @POST("/api/unsave")
     fun unSavePost(
             @Header("Authorization") bearer: String,
-            @Field("id") id: String,
+            @Field("id") id: String
     ): Call<Void>
 
     @FormUrlEncoded
     @POST("/api/hide")
     fun hidePost(
             @Header("Authorization") bearer: String,
-            @Field("id") id: String,
+            @Field("id") id: String
     ): Call<Void>
 
     @FormUrlEncoded
     @POST("/api/unhide")
     fun unHidePost(
             @Header("Authorization") bearer: String,
-            @Field("id") id: String,
+            @Field("id") id: String
     ): Call<Void>
 
     @FormUrlEncoded
@@ -181,6 +182,15 @@ interface RedditAPI {
     fun reportPost(
             @Header("Authorization") bearer: String,
             @Field("thing_id") thing_id: String,
-            @Field("reason") reason: String,
+            @Field("reason") reason: String
     ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("api/block_user")
+    fun blockUser(
+            @Header("Authorization") bearer: String,
+            @Field("account_id") account_id: String,
+            @Field("api_type") api_type: String,
+            @Field("name") name: String
+    ): Call<JsonObject>
 }

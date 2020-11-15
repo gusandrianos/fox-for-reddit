@@ -90,7 +90,7 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
                 NavGraphDirections.ActionGlobalSubredditFragment action = NavGraphDirections.actionGlobalSubredditFragment(subredditNamePrefixed);
                 navController.navigate(action);
             } else {
-                NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, subredditNamePrefixed.split("/")[1]);
+                NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(subredditNamePrefixed.split("/")[1]);
                 navController.navigate(action);
             }
         }

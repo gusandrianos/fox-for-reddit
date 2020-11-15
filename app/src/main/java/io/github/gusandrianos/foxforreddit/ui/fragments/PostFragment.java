@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.LoadState;
+import androidx.paging.PagingData;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,7 +54,6 @@ import static io.github.gusandrianos.foxforreddit.Constants.ARG_TYPE_OF_ACTION;
 
 
 public class PostFragment extends Fragment implements PostAdapter.OnItemClickListener {
-    private View mView;
     private Token mToken;
 
     String type_of_action;
@@ -79,7 +79,6 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mView = getView();
         mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
         type_of_action = getArguments().getString(ARG_TYPE_OF_ACTION, ACTION_POST);
 
@@ -92,13 +91,13 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         filter = getArguments().getString(Constants.ARG_FILTER_NAME, "");
         time = getArguments().getString(Constants.ARG_TIME_NAME, "");
         pullToRefresh = view.findViewById(R.id.swipe_refresh_layout_posts);
-        initRecycleView();
+        initRecycleView(view);
         loadPosts(false);
         initSwipeToRefresh();
     }
 
-    private void initRecycleView() {
-        mPostRecyclerView = mView.findViewById(R.id.recyclerview);
+    private void initRecycleView(View view) {
+        mPostRecyclerView = view.findViewById(R.id.recyclerview);
         mPostRecyclerViewAdapter = new PostAdapter(this);
         mPostRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY); //keep recyclerview on position
         mPostRecyclerView.setHasFixedSize(true);
@@ -115,36 +114,33 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         if (type_of_action.equals(ACTION_POST)) {
             PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
             PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+
             if (requestChanged)
                 viewModel.deleteCached();
 
-            viewModel.getPosts(subreddit, filter, time, getActivity().getApplication()).observe(getViewLifecycleOwner(), postPagingData -> {
-                mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), postPagingData);
-                mPostRecyclerViewAdapter.addLoadStateListener(loadStates -> {
-                    if (loadStates.getRefresh() instanceof LoadState.Loading)
-                        pullToRefresh.setRefreshing(true);
-                    else if (loadStates.getRefresh() instanceof LoadState.NotLoading)
-                        pullToRefresh.setRefreshing(false);
-                    return Unit.INSTANCE;
-                });
-            });
+            viewModel.getPosts(subreddit, filter, time, requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), this::submitToAdapter);
         } else {
             SearchViewModelFactory factory = InjectorUtils.getInstance().provideSearchViewModelFactory();
             SearchViewModel viewModel = new ViewModelProvider(this, factory).get(SearchViewModel.class);
 
             if (requestChanged)
                 viewModel.deleteCached();
-            viewModel.searchResults(query, filter, time, sr_restrict, searchType, subreddit, getActivity().getApplication()).observe(getViewLifecycleOwner(), searchPostPagingData -> {
-                mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), searchPostPagingData);
-                mPostRecyclerViewAdapter.addLoadStateListener(loadStates -> {
-                    if (loadStates.getRefresh() instanceof LoadState.Loading)
-                        pullToRefresh.setRefreshing(true);
-                    else if (loadStates.getRefresh() instanceof LoadState.NotLoading)
-                        pullToRefresh.setRefreshing(false);
-                    return Unit.INSTANCE;
-                });
-            });
+
+            viewModel.searchResults(query, filter, time, sr_restrict, searchType, subreddit,
+                    requireActivity().getApplication()).observe(getViewLifecycleOwner(), this::submitToAdapter);
         }
+    }
+
+    private void submitToAdapter(PagingData pagingData) {
+        mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), pagingData);
+        mPostRecyclerViewAdapter.addLoadStateListener(loadStates -> {
+            if (loadStates.getRefresh() instanceof LoadState.Loading)
+                pullToRefresh.setRefreshing(true);
+            else if (loadStates.getRefresh() instanceof LoadState.NotLoading)
+                pullToRefresh.setRefreshing(false);
+            return Unit.INSTANCE;
+        });
     }
 
     private void initSwipeToRefresh() {
@@ -173,10 +169,10 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             case Constants.POST_USER:
                 String authorUsername = data.getAuthor();
                 if (currentDestinationID != R.id.userFragment) {
-                    NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, authorUsername);
+                    NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(authorUsername);
                     navController.navigate(action);
                 } else if (!authorUsername.equals(subreddit.split("/")[1])) {
-                    NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(null, authorUsername);
+                    NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(authorUsername);
                     navController.navigate(action);
                 }
                 break;
@@ -332,7 +328,6 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
         if (!mToken.getAccessToken().equals(token.getAccessToken())) {
             mToken = token;
-            initRecycleView();
             loadPosts(true);
         }
         setMenuItemClickForCurrentFragment();

@@ -145,6 +145,8 @@ interface RedditAPI {
             @Field("text") text: String,
             @Field("nsfw") nsfw: Boolean,
             @Field("spoiler") spoiler: Boolean,
+            @Field("flair_id") flair_id: String,
+            @Field("flair_text") flair_text: String,
             @Field("api_type") apiType: String,
             @Field("resubmit") resubmit: Boolean
     ): Call<SubmitResponse>
@@ -193,4 +195,10 @@ interface RedditAPI {
             @Field("api_type") api_type: String,
             @Field("name") name: String
     ): Call<JsonObject>
+
+    @GET("{subreddit}/api/link_flair_v2")
+    fun getSubredditLinkFlair(
+            @Header("Authorization") bearer: String,
+            @Path("subreddit") subreddit: String
+    ): Call<List<Flair>>
 }

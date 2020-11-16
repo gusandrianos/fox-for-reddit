@@ -159,6 +159,12 @@
                 android:name="modeSelectSubreddit"
                 android:defaultValue="true" />
         </action>
+        <action
+            android:id="@+id/action_composeFragment_to_linkFlairListFragment"
+            app:destination="@id/linkFlairListFragment" />
+        <action
+            android:id="@+id/action_composeFragment_to_rulesFragment"
+            app:destination="@id/rulesFragment" />
     </fragment>
     <action
         android:id="@+id/action_global_composeChooserFragment"
@@ -225,6 +231,15 @@
         android:id="@+id/moderatorsListFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ModeratorsListFragment"
         android:label="Moderators">
+        <argument
+            android:name="subredditName"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/linkFlairListFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.LinkFlairListFragment"
+        android:label="{subredditName}"
+        tools:layout="@layout/fragment_link_flair_list">
         <argument
             android:name="subredditName"
             app:argType="string" />

@@ -3,10 +3,13 @@ package io.github.gusandrianos.foxforreddit.utilities
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import com.bumptech.glide.Glide
+import com.libRG.CustomTextView
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.data.models.Flair
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel
 import java.text.DecimalFormat
@@ -116,5 +119,26 @@ object FoxToolkit {
         formattedNumber = formatter.format(value)
         formattedNumber += suffix[power / 3]
         return if (formattedNumber.length > 4) formattedNumber.replace("\\.[0-9]+".toRegex(), "").trim() else formattedNumber.trim()
+    }
+
+    fun makeFlair(item: Flair, view: CustomTextView) {
+        // TODO: Handle emoji in flair text
+        if (item.type.equals("richtext")
+                && !item.richtext.isNullOrEmpty()) {
+            for (richTextItem in item.richtext) {
+                if (richTextItem.type.equals("text")) {
+                    view.text = richTextItem.text.trim()
+                }
+            }
+        } else {
+            view.text = item.text
+        }
+
+        if (item.textColor.equals("light"))
+            view.setTextColor(Color.parseColor("#FFFFFF"))
+        if (item.backgroundColor.isNotEmpty()) {
+            view.setBackgroundColor(Color.parseColor(item.backgroundColor))
+            view.setBorderColor(Color.parseColor(item.backgroundColor))
+        }
     }
 }

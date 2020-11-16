@@ -16,16 +16,30 @@ import retrofit2.Response
 
 object SubredditRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
-    val subreddit: MutableLiveData<Data> = MutableLiveData()
-    val subredditWiki: MutableLiveData<Data> = MutableLiveData()
-    val subredditRules: MutableLiveData<RulesBundle> = MutableLiveData()
-    val subredditModerators: MutableLiveData<ModeratorsList> = MutableLiveData()
 
+    fun getSubredditLinkFlair(subredditName: String, application: Application): LiveData<List<Flair>> {
+        val subredditLinkFlair: MutableLiveData<List<Flair>> = MutableLiveData()
+        val bearer = getBearer(application)
+        val subLinkFlairCall = redditAPI.getSubredditLinkFlair(bearer, subredditName)
+        subLinkFlairCall.enqueue(object : Callback<List<Flair>> {
+            override fun onResponse(call: Call<List<Flair>>, response: Response<List<Flair>>) {
+                if (response.isSuccessful)
+                    subredditLinkFlair.value = response.body()
+            }
+
+            override fun onFailure(call: Call<List<Flair>>, t: Throwable) {
+            }
+
+        })
+        return subredditLinkFlair
+    }
 
     fun getSubreddit(subredditName: String, application: Application): LiveData<Data> {
+        val subreddit: MutableLiveData<Data> = MutableLiveData()
+
         val bearer = getBearer(application)
-        val about = redditAPI.getSubreddit(bearer, subredditName)
-        about.enqueue(object : Callback<Thing> {
+        val aboutCall = redditAPI.getSubreddit(bearer, subredditName)
+        aboutCall.enqueue(object : Callback<Thing> {
             override fun onResponse(call: Call<Thing>, response: Response<Thing>) {
                 if (response.isSuccessful)
                     subreddit.value = response.body()?.data
@@ -38,9 +52,10 @@ object SubredditRepository {
     }
 
     fun getSubredditWiki(subredditName: String, application: Application): LiveData<Data> {
+        val subredditWiki: MutableLiveData<Data> = MutableLiveData()
         val bearer = getBearer(application)
-        val about = redditAPI.getSubredditWiki(bearer, subredditName)
-        about.enqueue(object : Callback<Thing> {
+        val wikiCall = redditAPI.getSubredditWiki(bearer, subredditName)
+        wikiCall.enqueue(object : Callback<Thing> {
             override fun onResponse(call: Call<Thing>, response: Response<Thing>) {
                 if (response.isSuccessful)
                     subredditWiki.value = response.body()?.data
@@ -53,9 +68,10 @@ object SubredditRepository {
     }
 
     fun getSubredditRules(subredditName: String, application: Application): LiveData<RulesBundle> {
+        val subredditRules: MutableLiveData<RulesBundle> = MutableLiveData()
         val bearer = getBearer(application)
-        val about = redditAPI.getSubredditRules(bearer, subredditName)
-        about.enqueue(object : Callback<RulesBundle> {
+        val rulesCall = redditAPI.getSubredditRules(bearer, subredditName)
+        rulesCall.enqueue(object : Callback<RulesBundle> {
             override fun onResponse(call: Call<RulesBundle>, response: Response<RulesBundle>) {
                 if (response.isSuccessful)
                     subredditRules.value = response.body()
@@ -68,9 +84,10 @@ object SubredditRepository {
     }
 
     fun getSubredditModerators(subredditName: String, application: Application): LiveData<ModeratorsList> {
+        val subredditModerators: MutableLiveData<ModeratorsList> = MutableLiveData()
         val bearer = getBearer(application)
-        val about = redditAPI.getSubredditModerators(bearer, subredditName)
-        about.enqueue(object : Callback<ModeratorsResponse> {
+        val modsCall = redditAPI.getSubredditModerators(bearer, subredditName)
+        modsCall.enqueue(object : Callback<ModeratorsResponse> {
             override fun onResponse(call: Call<ModeratorsResponse>, response: Response<ModeratorsResponse>) {
                 if (response.isSuccessful)
                     subredditModerators.value = response.body()?.modList
@@ -91,8 +108,8 @@ object SubredditRepository {
         else if (action == ACTION_UNSUBSCRIBE)
             actionString = "unsub"
 
-        val action = redditAPI.toggleSubscribe(bearer, actionString, subredditName)
-        action.enqueue(object : Callback<Void> {
+        val subUnsubCall = redditAPI.toggleSubscribe(bearer, actionString, subredditName)
+        subUnsubCall.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 subscribeStatus.value = response.isSuccessful
             }

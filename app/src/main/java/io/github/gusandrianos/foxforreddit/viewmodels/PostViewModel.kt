@@ -15,10 +15,12 @@ import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository
 class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
     var posts: LiveData<PagingData<Data>>? = null
 
-    fun getPosts(subreddit: String, filter: String, time: String, application: Application): LiveData<PagingData<Data>> {
+    fun getPosts(subreddit: String, filter: String, time: String, application: Application)
+            : LiveData<PagingData<Data>> {
         if (posts != null)
             return posts!!
-        posts = mPostRepository.getPosts(subreddit, filter, time, application).cachedIn(viewModelScope)
+        posts = mPostRepository.getPosts(subreddit, filter, time, application)
+                .cachedIn(viewModelScope)
         return posts!!
     }
 
@@ -34,13 +36,16 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
         return mPostRepository.getSinglePost(permalink, application)
     }
 
-    fun getMoreChildren(linkId: String, children: String, application: Application): LiveData<MoreChildren> {
+    fun getMoreChildren(linkId: String, children: String, application: Application)
+            : LiveData<MoreChildren> {
         return mPostRepository.getMoreChildren(linkId, children, application)
     }
 
-    fun submitText(type: String, subreddit: String, title: String, url: String, text: String, nsfw: Boolean,
-                   spoiler: Boolean, application: Application): LiveData<SubmitResponse> {
-        return mPostRepository.submitText(type, subreddit, title, url, text, nsfw, spoiler, application)
+    fun submitText(type: String, subreddit: String, title: String, url: String, text: String,
+                   nsfw: Boolean, spoiler: Boolean, flair_id: String, flair_text: String,
+                   application: Application): LiveData<SubmitResponse> {
+        return mPostRepository.submitText(type, subreddit, title, url, text, nsfw, spoiler,
+                flair_id, flair_text, application)
     }
 
     fun savePost(id: String, application: Application): LiveData<Boolean> {

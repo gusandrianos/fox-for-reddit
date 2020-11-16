@@ -26,30 +26,33 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_compose_subredddit_field"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_compose_subredddit_field"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
+                android:focusable="false"
                 android:hint="Subreddit"
-                android:maxLength="22" />
+                android:maxLength="24" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_compose_choose_subreddit"
+            android:id="@+id/button_compose_subreddit_rules"
             style="?attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|end"
-            android:text="Choose"
+            android:text="Rules"
             android:textAllCaps="false" />
     </FrameLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_compose_title_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -92,6 +95,20 @@
             android:clickable="true"
             android:padding="4dp"
             android:text="Spoiler"
+            app:lib_setRadius="2dp"
+            app:lib_setRoundedBorderColor="@android:color/tab_indicator_text"
+            app:lib_setRoundedView="true"
+            app:lib_setShape="rectangle"
+            app:lib_setStrokeWidth="2dp" />
+
+        <com.libRG.CustomTextView
+            android:id="@+id/custom_text_link_flair"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:padding="4dp"
+            android:text="Flair"
             app:lib_setRadius="2dp"
             app:lib_setRoundedBorderColor="@android:color/tab_indicator_text"
             app:lib_setRoundedView="true"

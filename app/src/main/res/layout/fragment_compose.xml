@@ -26,30 +26,33 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_compose_subredddit_field"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_compose_subredddit_field"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
+                android:focusable="false"
                 android:hint="Subreddit"
-                android:maxLength="22" />
+                android:maxLength="24" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_compose_choose_subreddit"
+            android:id="@+id/button_compose_subreddit_rules"
             style="?attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|end"
-            android:text="Choose"
+            android:text="Rules"
             android:textAllCaps="false" />
     </FrameLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_compose_title_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

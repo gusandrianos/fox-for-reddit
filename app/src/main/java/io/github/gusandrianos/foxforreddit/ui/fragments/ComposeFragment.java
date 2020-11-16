@@ -21,12 +21,15 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.libRG.CustomTextView;
 
 import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.Flair;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.FoxSharedViewModel;
 
@@ -45,6 +48,10 @@ public class ComposeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subredddit_field);
+        TextInputLayout subredditTextInput = view.findViewById(R.id.input_compose_subredddit_field);
+        subredditTextInput.setErrorIconDrawable(null);
+        CustomTextView flairChooser = view.findViewById(R.id.custom_text_link_flair);
+
         FoxSharedViewModel foxViewModel = ((MainActivity) requireActivity()).getFoxSharedViewModel();
         int composeType = ComposeFragmentArgs.fromBundle(requireArguments()).getComposeType();
 
@@ -52,9 +59,12 @@ public class ComposeFragment extends Fragment {
         setUpBodyStub(view, composeType);
 
         foxViewModel.getSubredditChoice().observe(getViewLifecycleOwner(), subredditTextField::setText);
+        foxViewModel.getFlairChoice().observe(getViewLifecycleOwner(), flair -> {
+            if (flair != null)
+                FoxToolkit.INSTANCE.makeFlair(flair, flairChooser);
+        });
 
-        MaterialButton chooseSubredditButton = view.findViewById(R.id.button_compose_choose_subreddit);
-        chooseSubredditButton.setOnClickListener(view1 -> {
+        subredditTextField.setOnClickListener(subredditText -> {
             NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
                     .getSupportFragmentManager()
                     .findFragmentById(R.id.nav_host_fragment);
@@ -62,8 +72,33 @@ public class ComposeFragment extends Fragment {
             navController.navigate(ComposeFragmentDirections.actionComposeFragmentToSubredditListFragment());
         });
 
+        MaterialButton subredditRules = view.findViewById(R.id.button_compose_subreddit_rules);
+        subredditRules.setOnClickListener(view1 -> {
+            if (subredditTextField.getText() != null && !subredditTextField.getText().toString().isEmpty()) {
+                NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                        .getSupportFragmentManager()
+                        .findFragmentById(R.id.nav_host_fragment);
+                NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+                navController.navigate(ComposeFragmentDirections.actionComposeFragmentToRulesFragment(subredditTextField.getText().toString()));
+            } else
+                subredditTextInput.setError("Please choose a subreddit first");
+        });
+
         CustomTextView nsfw = view.findViewById(R.id.custom_text_nsfw);
         CustomTextView spoiler = view.findViewById(R.id.custom_text_spoiler);
+
+        flairChooser.setOnClickListener(listener -> {
+            if (subredditTextField.getText() != null && !subredditTextField.getText().toString().isEmpty()) {
+                NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                        .getSupportFragmentManager()
+                        .findFragmentById(R.id.nav_host_fragment);
+                NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+                if (subredditTextField.getText() != null)
+                    navController.navigate(ComposeFragmentDirections.actionComposeFragmentToLinkFlairListFragment(subredditTextField.getText().toString()));
+            } else
+                subredditTextInput.setError("Please choose a subreddit first");
+        });
+
         MainActivity mainActivity = (MainActivity) requireActivity();
 
         // This is needed to survive rotation changes
@@ -83,7 +118,6 @@ public class ComposeFragment extends Fragment {
             mainActivity.getFoxSharedViewModel().setSpoiler(isSpoiler);
             setUpSpoiler(mainActivity, spoiler);
         });
-
     }
 
     private void setUpNSFW(MainActivity mainActivity, CustomTextView nsfw) {
@@ -118,7 +152,28 @@ public class ComposeFragment extends Fragment {
             stub.setLayoutResource(R.layout.stub_compose_link);
 
         View inflated = stub.inflate();
-        toolbar.getMenu().findItem(R.id.button_submit_post).setOnMenuItemClickListener(menuItem -> postAction(view, inflated, type));
+
+        TextInputEditText titleTextField = view.findViewById(R.id.edit_compose_title_field);
+        TextInputLayout titleTextInput = view.findViewById(R.id.input_compose_title_field);
+
+        TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subredddit_field);
+        TextInputLayout subredditTextInput = view.findViewById(R.id.input_compose_subredddit_field);
+
+        titleTextInput.setErrorIconDrawable(null);
+
+        toolbar.getMenu().findItem(R.id.button_submit_post).setOnMenuItemClickListener(menuItem -> {
+            boolean titlePresent = titleTextField.getText() != null && !titleTextField.getText().toString().isEmpty();
+            boolean subredditPresent = subredditTextField.getText() != null && !subredditTextField.getText().toString().isEmpty();
+            if (titlePresent && subredditPresent)
+                postAction(view, inflated, type);
+            else {
+                if (!titlePresent)
+                    titleTextInput.setError("Title cannot be empty");
+                if (!subredditPresent)
+                    subredditTextInput.setError("Please choose a subreddit first");
+            }
+            return true;
+        });
     }
 
     private boolean postAction(View view, View inflated, int composeType) {
@@ -126,12 +181,23 @@ public class ComposeFragment extends Fragment {
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subredddit_field);
         TextInputEditText titleTextField = view.findViewById(R.id.edit_compose_title_field);
+        MainActivity mainActivity = (MainActivity) requireActivity();
 
         String subreddit = subredditTextField.getText().toString().trim();
         String title = titleTextField.getText().toString().trim();
         String text = "";
         String url = "";
         String type = "self";
+        boolean isNSFW = mainActivity.getFoxSharedViewModel().isNSFW();
+        boolean isSpoiler = mainActivity.getFoxSharedViewModel().isSpoiler();
+        String flairId = "";
+        String flairText = "";
+        Flair flair = mainActivity.getFoxSharedViewModel().getCurrentFlair();
+
+        if (flair != null) {
+            flairId = flair.getId();
+            flairText = flair.getText();
+        }
 
         if (composeType == Constants.COMPOSE_TEXT) {
             TextInputEditText textBody = inflated.findViewById(R.id.edit_compose_text_body);
@@ -142,18 +208,17 @@ public class ComposeFragment extends Fragment {
             type = "link";
         }
 
-        MainActivity mainActivity = (MainActivity) requireActivity();
-        boolean isNSFW = mainActivity.getFoxSharedViewModel().isNSFW();
-        boolean isSpoiler = mainActivity.getFoxSharedViewModel().isSpoiler();
 
-        viewModel.submitText(type, subreddit, title, url, text, isNSFW, isSpoiler, requireActivity().getApplication()).observe(getViewLifecycleOwner(), posted -> {
-            if (posted.getJson().getErrors().isEmpty()) {
-                // TODO: SinglePost needs refactoring to support navigating to it from links, for now, navigating back.
-                Toast.makeText(requireContext(), "Posted to " + subredditTextField.getText().toString(), Toast.LENGTH_SHORT).show();
-                requireActivity().onBackPressed();
-            } else
-                Toast.makeText(requireContext(), "That didn't work", Toast.LENGTH_SHORT).show();
-        });
+        viewModel.submitText(type, subreddit, title, url, text, isNSFW, isSpoiler, flairId,
+                flairText, requireActivity().getApplication()).observe(getViewLifecycleOwner(),
+                posted -> {
+                    if (posted.getJson().getErrors().isEmpty()) {
+                        // TODO: SinglePost needs refactoring to support navigating to it from links, for now, navigating back.
+                        Toast.makeText(requireContext(), "Posted to " + subredditTextField.getText().toString(), Toast.LENGTH_SHORT).show();
+                        requireActivity().onBackPressed();
+                    } else
+                        Toast.makeText(requireContext(), "That didn't work", Toast.LENGTH_SHORT).show();
+                });
 
         // TODO: Sanitize inputs
         // TODO: https://www.reddit.com/dev/api/#GET_api_v1_{subreddit}_post_requirements

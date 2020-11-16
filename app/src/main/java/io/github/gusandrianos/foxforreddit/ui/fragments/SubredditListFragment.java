@@ -83,7 +83,11 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
         boolean modeSelectSubreddit = SubredditListFragmentArgs.fromBundle(requireArguments()).getModeSelectSubreddit();
 
         if (modeSelectSubreddit) {
-            ((MainActivity) requireActivity()).getFoxSharedViewModel().setCurrentSubreddit(subredditNamePrefixed);
+            MainActivity mainActivity = (MainActivity) requireActivity();
+            if (!mainActivity.getFoxSharedViewModel().getCurrentSubreddit().equals(subredditNamePrefixed)) {
+                mainActivity.getFoxSharedViewModel().setCurrentFlair(null);
+                mainActivity.getFoxSharedViewModel().setCurrentSubreddit(subredditNamePrefixed);
+            }
             requireActivity().onBackPressed();
         } else {
             if (subredditNamePrefixed.startsWith("r/")) {

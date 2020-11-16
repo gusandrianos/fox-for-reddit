@@ -20,7 +20,23 @@ object SubredditRepository {
     val subredditWiki: MutableLiveData<Data> = MutableLiveData()
     val subredditRules: MutableLiveData<RulesBundle> = MutableLiveData()
     val subredditModerators: MutableLiveData<ModeratorsList> = MutableLiveData()
+    val subredditLinkFlair: MutableLiveData<List<Flair>> = MutableLiveData()
 
+    fun getSubredditLinkFlair(subredditName: String, application: Application): LiveData<List<Flair>> {
+        val bearer = getBearer(application)
+        val subLinkFlairCall = redditAPI.getSubredditLinkFlair(bearer, subredditName)
+        subLinkFlairCall.enqueue(object : Callback<List<Flair>> {
+            override fun onResponse(call: Call<List<Flair>>, response: Response<List<Flair>>) {
+                if (response.isSuccessful)
+                    subredditLinkFlair.value = response.body()
+            }
+
+            override fun onFailure(call: Call<List<Flair>>, t: Throwable) {
+            }
+
+        })
+        return subredditLinkFlair
+    }
 
     fun getSubreddit(subredditName: String, application: Application): LiveData<Data> {
         val bearer = getBearer(application)

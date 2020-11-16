@@ -81,7 +81,7 @@ public class LinkFlairListFragment extends Fragment implements LinkFlairListAdap
     void setUpNavigation(View view) {
         MainActivity mainActivity = (MainActivity) requireActivity();
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
-        bottomNavigationView.setVisibility(View.VISIBLE);
+        bottomNavigationView.setVisibility(View.GONE);
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar_link_flairs);
 

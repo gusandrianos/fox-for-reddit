@@ -16,13 +16,9 @@ import retrofit2.Response
 
 object SubredditRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
-    val subreddit: MutableLiveData<Data> = MutableLiveData()
-    val subredditWiki: MutableLiveData<Data> = MutableLiveData()
-    val subredditRules: MutableLiveData<RulesBundle> = MutableLiveData()
-    val subredditModerators: MutableLiveData<ModeratorsList> = MutableLiveData()
-    val subredditLinkFlair: MutableLiveData<List<Flair>> = MutableLiveData()
 
     fun getSubredditLinkFlair(subredditName: String, application: Application): LiveData<List<Flair>> {
+        val subredditLinkFlair: MutableLiveData<List<Flair>> = MutableLiveData()
         val bearer = getBearer(application)
         val subLinkFlairCall = redditAPI.getSubredditLinkFlair(bearer, subredditName)
         subLinkFlairCall.enqueue(object : Callback<List<Flair>> {
@@ -39,6 +35,8 @@ object SubredditRepository {
     }
 
     fun getSubreddit(subredditName: String, application: Application): LiveData<Data> {
+        val subreddit: MutableLiveData<Data> = MutableLiveData()
+
         val bearer = getBearer(application)
         val aboutCall = redditAPI.getSubreddit(bearer, subredditName)
         aboutCall.enqueue(object : Callback<Thing> {
@@ -54,6 +52,7 @@ object SubredditRepository {
     }
 
     fun getSubredditWiki(subredditName: String, application: Application): LiveData<Data> {
+        val subredditWiki: MutableLiveData<Data> = MutableLiveData()
         val bearer = getBearer(application)
         val wikiCall = redditAPI.getSubredditWiki(bearer, subredditName)
         wikiCall.enqueue(object : Callback<Thing> {
@@ -69,6 +68,7 @@ object SubredditRepository {
     }
 
     fun getSubredditRules(subredditName: String, application: Application): LiveData<RulesBundle> {
+        val subredditRules: MutableLiveData<RulesBundle> = MutableLiveData()
         val bearer = getBearer(application)
         val rulesCall = redditAPI.getSubredditRules(bearer, subredditName)
         rulesCall.enqueue(object : Callback<RulesBundle> {
@@ -84,6 +84,7 @@ object SubredditRepository {
     }
 
     fun getSubredditModerators(subredditName: String, application: Application): LiveData<ModeratorsList> {
+        val subredditModerators: MutableLiveData<ModeratorsList> = MutableLiveData()
         val bearer = getBearer(application)
         val modsCall = redditAPI.getSubredditModerators(bearer, subredditName)
         modsCall.enqueue(object : Callback<ModeratorsResponse> {

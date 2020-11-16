@@ -15,7 +15,6 @@ import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -65,6 +64,7 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.GalleryItem;
+import io.github.gusandrianos.foxforreddit.data.models.MoreChildrenList;
 import io.github.gusandrianos.foxforreddit.data.models.ResolutionsItem;
 
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
@@ -137,7 +137,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         viewModel.getSinglePost(Objects.requireNonNull(permalink).substring(1, permalink.length() - 1), requireActivity().getApplication())
                 .observe(getViewLifecycleOwner(), commentListing -> {
                     groupAdapter = new GroupAdapter<>();
-                    initRecyclerView(view, groupAdapter);
+                    initRecyclerView(groupAdapter);
                     for (Object child : commentListing.getData().getChildren()) {
                         ChildrenItem item;
                         if (child instanceof String) {
@@ -148,7 +148,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                             Gson gson = new Gson();
                             item = gson.fromJson(gson.toJsonTree(child).getAsJsonObject(), childType);
                         }
-                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), "", SinglePostFragment.this));
+                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), singlePostData.getName(), SinglePostFragment.this));
                     }
                 });
     }
@@ -610,7 +610,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         handler.postDelayed(runnable, 1000);
     }
 
-    private void initRecyclerView(View view, GroupAdapter<GroupieViewHolder> groupAdapter) {
+    private void initRecyclerView(GroupAdapter<GroupieViewHolder> groupAdapter) {
         GridLayoutManager groupLayoutManager = new GridLayoutManager(getActivity(), groupAdapter.getSpanCount());
         groupLayoutManager.setSpanSizeLookup(groupAdapter.getSpanSizeLookup());
         mCommentsRecyclerView.setLayoutManager(groupLayoutManager);
@@ -618,10 +618,22 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     @Override
-    public void onLoadMoreClicked(@NotNull String linkId, @NotNull String moreChildren, int position) {
-        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
-        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        viewModel.getMoreChildren(linkId, moreChildren, requireActivity().getApplication());
+    public void onLoadMoreClicked(@NotNull String linkId, @NotNull ArrayList<String> moreChildren, int position) {
+        StringBuilder loadChildren = new StringBuilder(moreChildren.get(0));
+        List<String> moreChildrenArray = new ArrayList<>();
+
+        for (int i = 1; i < moreChildren.size(); i++)
+            if (i < 100)
+                loadChildren.append(",").append(moreChildren.get(i));
+            else
+                moreChildrenArray.add(moreChildren.get(i));
+
+        MoreChildrenList moreChildrenList = new MoreChildrenList();
+        moreChildrenList.setMoreChildrenList(moreChildrenArray);
+
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+        navController.navigate(SinglePostFragmentDirections.actionSinglePostFragmentToCommentsFragment(linkId, loadChildren.toString(), moreChildrenList));
     }
 
     @Override
@@ -677,8 +689,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
         LinearLayoutCompat includeHeader = view.findViewById(R.id.include_single_post_header);
 
-        appBarLayout.addOnOffsetChangedListener((AppBarLayout.OnOffsetChangedListener) (appBarLayout1, verticalOffset) -> {
-            float normalize = (float) (1 - ((float) -verticalOffset / includeHeader.getMeasuredHeight())) * 255;
+        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
+            float normalize = 1 - ((float) -verticalOffset / includeHeader.getMeasuredHeight()) * 255;
             if (Math.abs(verticalOffset) >= includeHeader.getMeasuredHeight()) {
                 toolbar.setTitleTextColor(Color.argb(255, 0, 0, 0));
             } else {

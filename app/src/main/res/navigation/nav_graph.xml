@@ -40,6 +40,9 @@
         <argument
             android:name="postType"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_singlePostFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
     </fragment>
     <fragment
         android:id="@+id/subredditFragment"
@@ -243,5 +246,22 @@
         <argument
             android:name="subredditName"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/commentsFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.CommentsFragment"
+        tools:layout="@layout/fragment_comments">
+        <action
+            android:id="@+id/action_commentsFragment_self"
+            app:destination="@id/commentsFragment" />
+        <argument
+            android:name="linkId"
+            app:argType="string" />
+        <argument
+            android:name="loadChildren"
+            app:argType="string" />
+        <argument
+            android:name="moreChildren"
+            app:argType="io.github.gusandrianos.foxforreddit.data.models.MoreChildrenList" />
     </fragment>
 </navigation>

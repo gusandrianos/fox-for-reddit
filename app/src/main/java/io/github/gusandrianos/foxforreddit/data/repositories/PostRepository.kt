@@ -22,7 +22,6 @@ import retrofit2.Response
 object PostRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     private val commentsData = MutableLiveData<CommentListing>()
-    private val dataMoreChildren = MutableLiveData<MoreChildren>()
     private val submissionData = MutableLiveData<SubmitResponse>()
 
     fun getPosts(subreddit: String, filter: String, time: String, application: Application) =
@@ -64,6 +63,7 @@ object PostRepository {
     }
 
     fun getMoreChildren(linkId: String, children: String, application: Application): LiveData<MoreChildren> {
+        val dataMoreChildren = MutableLiveData<MoreChildren>()
         val bearer = getBearer(application)
         val moreChildren = redditAPI.getMoreChildren(bearer, linkId, children, "json")
         moreChildren.enqueue(object : Callback<MoreChildren> {

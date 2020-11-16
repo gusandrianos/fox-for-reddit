@@ -70,19 +70,19 @@ open class ExpandableCommentItem constructor(
             viewHolder.itemView.cl_comment.visibility = View.GONE
             viewHolder.itemView.cl_load_more.visibility = View.VISIBLE
             viewHolder.itemView.cl_load_more.tag = mComment.data!!.parentId
-            var moreChildren = ""
-            var i = 0
+            val moreChildren = arrayListOf<String>()
+
             for (child in mComment.data.children!!) {
-                if (i < 100)
-                    moreChildren += "," + (child as String)
-                i++
+                moreChildren.add(child as String)
             }
+
             viewHolder.itemView.txt_more_children.apply {
                 setOnClickListener {
-                    listener.onLoadMoreClicked(linkId, moreChildren.removePrefix(","), position)
+                    if (mComment.data.count > 0)
+                        listener.onLoadMoreClicked(linkId, moreChildren, position)
                 }
             }
-            viewHolder.itemView.txt_more_children.text = "$i More Replies"
+            viewHolder.itemView.txt_more_children.text = "Show more"
         } else {
             addDepthViews(viewHolder)
             viewHolder.itemView.cl_comment.visibility = View.VISIBLE
@@ -130,6 +130,6 @@ open class ExpandableCommentItem constructor(
     }
 
     interface OnItemClickListener {
-        fun onLoadMoreClicked(linkId: String, moreChildren: String, position: Int)
+        fun onLoadMoreClicked(linkId: String, moreChildren: ArrayList<String>, position: Int)
     }
 }

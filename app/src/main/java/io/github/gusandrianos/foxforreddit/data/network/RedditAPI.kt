@@ -145,6 +145,8 @@ interface RedditAPI {
             @Field("text") text: String,
             @Field("nsfw") nsfw: Boolean,
             @Field("spoiler") spoiler: Boolean,
+            @Field("flair_id") flair_id: String,
+            @Field("flair_text") flair_text: String,
             @Field("api_type") apiType: String,
             @Field("resubmit") resubmit: Boolean
     ): Call<SubmitResponse>

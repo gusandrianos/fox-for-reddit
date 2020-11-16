@@ -225,7 +225,8 @@
     <fragment
         android:id="@+id/rulesFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.RulesFragment"
-        android:label="Rules">
+        android:label="Rules"
+        tools:layout="@layout/fragment_rules">
         <argument
             android:name="subredditName"
             app:argType="string" />
@@ -233,7 +234,8 @@
     <fragment
         android:id="@+id/moderatorsListFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ModeratorsListFragment"
-        android:label="Moderators">
+        android:label="Moderators"
+        tools:layout="@layout/fragment_moderators">
         <argument
             android:name="subredditName"
             app:argType="string" />

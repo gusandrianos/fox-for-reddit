@@ -31,9 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/singlePostFragment"
-        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SinglePostFragment"
-        android:label="fragment_single_post"
-        tools:layout="@layout/fragment_single_post">
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SinglePostFragment">
         <argument
             android:name="post"
             app:argType="io.github.gusandrianos.foxforreddit.data.models.Data" />

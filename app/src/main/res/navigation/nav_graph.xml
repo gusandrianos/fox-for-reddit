@@ -264,4 +264,14 @@
             android:name="moreChildren"
             app:argType="io.github.gusandrianos.foxforreddit.data.models.MoreChildrenList" />
     </fragment>
+    <fragment
+        android:id="@+id/singlePostBuffer"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SinglePostBuffer"
+        android:label="fragment_single_post_buffer"
+        tools:layout="@layout/fragment_single_post_buffer" >
+        <argument
+            android:name="permalink"
+            app:argType="string" />
+    </fragment>
+    <action android:id="@+id/action_global_singlePostBuffer" app:destination="@id/singlePostBuffer" />
 </navigation>

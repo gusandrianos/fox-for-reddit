@@ -99,9 +99,13 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        SinglePostFragmentArgs singlePostFragmentArgs = SinglePostFragmentArgs.fromBundle(requireArguments());
-        int postType = singlePostFragmentArgs.getPostType();
-        Data singlePostData = singlePostFragmentArgs.getPost();
+        Data singlePostData = getArguments().getParcelable("data");
+        int postType = getArguments().getInt("postType");
+
+        if (singlePostData == null) {
+            postType = SinglePostFragmentArgs.fromBundle(requireArguments()).getPostType();
+            singlePostData = SinglePostFragmentArgs.fromBundle(requireArguments()).getPost();
+        }
 
         switch (postType) {
             case Constants.LINK:
@@ -129,9 +133,14 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 .usePlugin(LinkifyPlugin.create())
                 .build();
 
-        SinglePostFragmentArgs singlePostFragmentArgs = SinglePostFragmentArgs.fromBundle(requireArguments());
-        Data singlePostData = singlePostFragmentArgs.getPost();
-        int postType = singlePostFragmentArgs.getPostType();
+        Data singlePostData = getArguments().getParcelable("data");
+        int postType = getArguments().getInt("postType");
+
+        if (singlePostData == null) {
+            postType = SinglePostFragmentArgs.fromBundle(requireArguments()).getPostType();
+            singlePostData = SinglePostFragmentArgs.fromBundle(requireArguments()).getPost();
+        }
+
         mCommentsRecyclerView = view.findViewById(R.id.recyclerview_single_post);
 
         if (savedInstanceState != null)
@@ -149,7 +158,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         String permalink = singlePostData.getPermalink();
-        viewModel.getSinglePost(Objects.requireNonNull(permalink).substring(1, permalink.length() - 1), requireActivity().getApplication())
+
+        Data finalSinglePostData = singlePostData;
+        viewModel.getSinglePostComments(Objects.requireNonNull(permalink).substring(1, permalink.length() - 1), requireActivity().getApplication())
                 .observe(getViewLifecycleOwner(), commentListing -> {
                     groupAdapter = new GroupAdapter<>();
                     initRecyclerView(groupAdapter);
@@ -163,7 +174,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                             Gson gson = new Gson();
                             item = gson.fromJson(gson.toJsonTree(child).getAsJsonObject(), childType);
                         }
-                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), singlePostData.getName(), SinglePostFragment.this));
+                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), finalSinglePostData.getName(), SinglePostFragment.this));
                     }
                 });
     }
@@ -687,5 +698,16 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.GONE);
         NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController);
+    }
+
+    public static SinglePostFragment newInstance(Data data, int postType) {
+        SinglePostFragment fragment = new SinglePostFragment();
+
+        Bundle args = new Bundle();
+        args.putParcelable("data", data);
+        args.putInt("postType", postType);
+        fragment.setArguments(args);
+
+        return fragment;
     }
 }

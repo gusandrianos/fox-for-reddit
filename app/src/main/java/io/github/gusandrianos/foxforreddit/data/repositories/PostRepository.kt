@@ -9,8 +9,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.liveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import io.github.gusandrianos.foxforreddit.data.models.CommentListing
-import io.github.gusandrianos.foxforreddit.data.models.SubmitResponse
+import io.github.gusandrianos.foxforreddit.data.models.*
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
@@ -23,6 +22,7 @@ object PostRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     private val commentsData = MutableLiveData<CommentListing>()
     private val submissionData = MutableLiveData<SubmitResponse>()
+    private val singlePostData = MutableLiveData<SinglePost>()
 
     fun getPosts(subreddit: String, filter: String, time: String, application: Application) =
             Pager(
@@ -42,7 +42,31 @@ object PostRepository {
         })
     }
 
-    fun getSinglePost(permalink: String, application: Application): LiveData<CommentListing> {
+    fun getSinglePost(permalink: String, application: Application): LiveData<SinglePost> {
+        val bearer = getBearer(application)
+        val singlePost = redditAPI.getSinglePost(bearer, permalink)
+        singlePost.enqueue(object : Callback<List<Any>> {
+            override fun onResponse(call: Call<List<Any>>, response: Response<List<Any>>) {
+                if (response.isSuccessful) {
+                    val gson = Gson()
+
+                    val postType = object : TypeToken<Thing?>() {}.type
+                    val commentsType = object : TypeToken<CommentListing?>() {}.type
+                    val post = gson.fromJson<Thing>(gson.toJsonTree(response.body()!![0]).asJsonObject, postType)
+                    val comments = gson.fromJson<CommentListing>(gson.toJsonTree(response.body()!![1]).asJsonObject, commentsType)
+
+                    singlePostData.value = SinglePost(post, comments)
+                }
+                Log.i("SinglePost", "onResponse: ${response.message()}")
+            }
+
+            override fun onFailure(call: Call<List<Any>>, t: Throwable) {
+            }
+        })
+        return singlePostData
+    }
+
+    fun getSinglePostComments(permalink: String, application: Application): LiveData<CommentListing> {
         val bearer = getBearer(application)
         val singlePost = redditAPI.getSinglePost(bearer, permalink)
         singlePost.enqueue(object : Callback<List<Any>> {

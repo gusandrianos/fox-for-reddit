@@ -36,6 +36,35 @@ object FoxToolkit {
         return imageURI.split("\\?".toRegex()).toTypedArray()[0]
     }
 
+    fun getPostType(item: Data): Int {
+        if (item.name!!.startsWith("t1_"))
+            return Constants.COMMENT
+
+        if (item.post_hint == null) {
+            if (item.pollData != null)    //IF it is poll THEN must have poll data
+                return Constants.POLL
+            if (item.media != null)       //IF it's not the above THEN: IF it is rich/hosted:video THEN must have Media
+                return Constants.VIDEO
+            if (item.url!!.contains("https://i.") || item.isGallery == true)  //IF it's nothing from the above THEN: IF it is image THEN contains https://i. (not sure)
+                return Constants.IMAGE
+            return if (item.domain!!.contains("self."))  //IF it's nothing from the above THEN: IF it is self THEN contains domain with self. (not sure)
+                Constants.SELF
+            else Constants.LINK
+        }
+        if (item.post_hint.contains("self"))
+            return Constants.SELF
+        if (item.post_hint.contains("image"))
+            return Constants.IMAGE
+        if (item.post_hint.contains("link"))
+            return Constants.LINK
+        if (item.post_hint.contains("video"))
+            return Constants.VIDEO
+        return if (item.post_hint.contains("poll"))
+            Constants.POLL
+        else
+            Constants.SELF    //If all the above do not feet, return SELF which is the "safest" type for binding
+    }
+
     fun getTypeOfImage(data: Data): Int {
         return if (data.isGallery != null && data.isGallery)
             Constants.IS_GALLERY

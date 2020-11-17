@@ -11,7 +11,6 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -87,9 +86,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     NavHostFragment navHostFragment;
     NavController navController;
 
-    ViewStub stub;
-    View inflated;
-
     SimpleExoPlayer player = null;
     ImageView imgPlay;
     SeekBar videoSeekBar;
@@ -103,7 +99,30 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_single_post, container, false);
+        Data singlePostData = getArguments().getParcelable("data");
+        int postType = getArguments().getInt("postType");
+
+        if (singlePostData == null) {
+            postType = SinglePostFragmentArgs.fromBundle(requireArguments()).getPostType();
+            singlePostData = SinglePostFragmentArgs.fromBundle(requireArguments()).getPost();
+        }
+
+        switch (postType) {
+            case Constants.LINK:
+                return inflater.inflate(R.layout.fragment_single_post_link, container, false);
+            case Constants.IMAGE:
+                if (FoxToolkit.INSTANCE.getTypeOfImage(singlePostData) == Constants.IS_GALLERY)
+                    return inflater.inflate(R.layout.fragment_single_post_gallery, container, false);
+                return inflater.inflate(R.layout.fragment_single_post_image, container, false);
+            case Constants.VIDEO:
+                if (FoxToolkit.INSTANCE.getTypeOfVideo(singlePostData) == Constants.UNPLAYABLE_VIDEO)
+                    return inflater.inflate(R.layout.fragment_single_post_image, container, false);
+                return inflater.inflate(R.layout.fragment_single_post_video, container, false);
+            case Constants.POLL:
+                return inflater.inflate(R.layout.fragment_single_post_poll, container, false);
+            default: //Self by default  //ToDo Comment
+                return inflater.inflate(R.layout.fragment_single_post_self, container, false);
+        }
     }
 
     @Override
@@ -114,9 +133,14 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 .usePlugin(LinkifyPlugin.create())
                 .build();
 
-        SinglePostFragmentArgs singlePostFragmentArgs = SinglePostFragmentArgs.fromBundle(requireArguments());
-        Data singlePostData = singlePostFragmentArgs.getPost();
-        int postType = singlePostFragmentArgs.getPostType();
+        Data singlePostData = getArguments().getParcelable("data");
+        int postType = getArguments().getInt("postType");
+
+        if (singlePostData == null) {
+            postType = SinglePostFragmentArgs.fromBundle(requireArguments()).getPostType();
+            singlePostData = SinglePostFragmentArgs.fromBundle(requireArguments()).getPost();
+        }
+
         mCommentsRecyclerView = view.findViewById(R.id.recyclerview_single_post);
 
         if (savedInstanceState != null)
@@ -134,7 +158,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         String permalink = singlePostData.getPermalink();
-        viewModel.getSinglePost(Objects.requireNonNull(permalink).substring(1, permalink.length() - 1), requireActivity().getApplication())
+
+        Data finalSinglePostData = singlePostData;
+        viewModel.getSinglePostComments(Objects.requireNonNull(permalink).substring(1, permalink.length() - 1), requireActivity().getApplication())
                 .observe(getViewLifecycleOwner(), commentListing -> {
                     groupAdapter = new GroupAdapter<>();
                     initRecyclerView(groupAdapter);
@@ -148,7 +174,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                             Gson gson = new Gson();
                             item = gson.fromJson(gson.toJsonTree(child).getAsJsonObject(), childType);
                         }
-                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), singlePostData.getName(), SinglePostFragment.this));
+                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), finalSinglePostData.getName(), SinglePostFragment.this));
                     }
                 });
     }
@@ -192,7 +218,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         TextView mTxtPostSubreddit = view.findViewById(R.id.txt_post_subreddit);
         TextView mTxtPostUser = view.findViewById(R.id.txt_post_user);
         TextView mTxtTimePosted = view.findViewById(R.id.txt_time_posted);
-        TextView txtPostTitle = view.findViewById(R.id.stub_txt_post_title);
+        TextView txtPostTitle = view.findViewById(R.id.txt_single_post_title);
         TextView mTxtPostScore = view.findViewById(R.id.txt_post_score);
         ImageButton mImgBtnPostVoteUp = view.findViewById(R.id.imgbtn_post_vote_up);
         ImageButton mImgBtnPostVoteDown = view.findViewById(R.id.imgbtn_post_vote_down);
@@ -275,23 +301,16 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void bindAsSelf(Data singlePostData, View view) {
-        stub = view.findViewById(R.id.view_stub);
-        stub.setLayoutResource(R.layout.stub_self);
-        inflated = stub.inflate();
-
         if (singlePostData.getSelftext() != null) {
-            TextView txtPostBody = inflated.findViewById(R.id.stub_txt_post_body);
+            TextView txtPostBody = view.findViewById(R.id.stub_txt_post_body);
             markwon.setMarkdown(txtPostBody, singlePostData.getSelftext());
             txtPostBody.setVisibility(View.VISIBLE);
         }
     }
 
     private void bindAsLink(Data singlePostData, View view) {
-        stub = view.findViewById(R.id.view_stub);
-        stub.setLayoutResource(R.layout.stub_link);
-        inflated = stub.inflate();
-        ImageView imgPostThumbnail = inflated.findViewById(R.id.stub_img_post_thumbnail);
-        TextView txtPostDomain = inflated.findViewById(R.id.stub_txt_post_domain);
+        ImageView imgPostThumbnail = view.findViewById(R.id.stub_img_post_thumbnail);
+        TextView txtPostDomain = view.findViewById(R.id.stub_txt_post_domain);
         txtPostDomain.setText(singlePostData.getDomain());
 
         if (singlePostData.getPreview() != null && singlePostData.getPreview().getImages() != null) {
@@ -311,7 +330,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             }
             String url = singlePostData.getPreview().getImages().get(0).getResolutions().get(res).getUrl();
             url = url.replace("amp;", "");
-            Glide.with(inflated).load(url).into(imgPostThumbnail);
+            Glide.with(view).load(url).into(imgPostThumbnail);
         } else {
             imgPostThumbnail.setVisibility(View.GONE);
         }
@@ -332,13 +351,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 String imageUrl = "https://i.redd.it/" + galleryItem.getMediaId() + ".jpg";
                 imagesUrl.add(imageUrl);
             }
-            ViewStub stub = view.findViewById(R.id.view_stub);
-            stub.setLayoutResource(R.layout.stub_view_pager_image_gallery);
-            View inflated = stub.inflate();
             ImageGalleryAdapter adapter = new ImageGalleryAdapter(imagesUrl, requireContext());
-            ViewPager2 viewPager = inflated.findViewById(R.id.viewpager_image_gallery);
+            ViewPager2 viewPager = view.findViewById(R.id.viewpager_image_gallery);
             viewPager.setAdapter(adapter);
-            TabLayout tabLayout = inflated.findViewById(R.id.tab_dots);
+            TabLayout tabLayout = view.findViewById(R.id.tab_dots);
             new TabLayoutMediator(tabLayout, viewPager,
                     (tab, position) -> {
                     }
@@ -347,51 +363,35 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void bindAsGif(Data singlePostData, View view) {
-        stub = view.findViewById(R.id.view_stub);
-        stub.setLayoutResource(R.layout.stub_image);
-        inflated = stub.inflate();
-
-        ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
-        Glide.with(inflated).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
+        ImageView imgPostImage = view.findViewById(R.id.stub_img_post_image);
+        Glide.with(view).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
 
         imgPostImage.setOnClickListener(view1 -> FoxToolkit.INSTANCE.fullscreenImage(singlePostData, requireContext()));
     }
 
     private void bindAsImage(Data singlePostData, View view) {
-        stub = view.findViewById(R.id.view_stub);
-        stub.setLayoutResource(R.layout.stub_image);
-        inflated = stub.inflate();
-
-        ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
-        Glide.with(inflated).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
+        ImageView imgPostImage = view.findViewById(R.id.stub_img_post_image);
+        Glide.with(view).load(singlePostData.getUrlOverriddenByDest()).into(imgPostImage);
 
         imgPostImage.setOnClickListener(view1 -> FoxToolkit.INSTANCE.fullscreenImage(singlePostData, requireContext()));
     }
 
     private void bindAsPoll(Data singlePostData, View view) {
-        stub = view.findViewById(R.id.view_stub);
-        stub.setLayoutResource(R.layout.stub_self);
-        inflated = stub.inflate();
-
         if (singlePostData.getSelftext() != null) {
-            TextView txtPostBody = inflated.findViewById(R.id.stub_txt_post_body);
+            TextView txtPostBody = view.findViewById(R.id.stub_txt_post_body);
             markwon.setMarkdown(txtPostBody, singlePostData.getSelftext());
             txtPostBody.setVisibility(View.VISIBLE);
         }
     }
 
     private void bindAsUnplayableVideo(Data singlePostData, View view) {
-        stub = view.findViewById(R.id.view_stub);
-        stub.setLayoutResource(R.layout.stub_image);
-        inflated = stub.inflate();
-
-        ImageView imgPostImage = inflated.findViewById(R.id.stub_img_post_image);
-        ImageView imgPostPlayButton = inflated.findViewById(R.id.stub_img_post_play_button);
+        ImageView imgPostImage = view.findViewById(R.id.stub_img_post_image);
+        ImageView imgPostPlayButton = view.findViewById(R.id.stub_img_post_play_button);
         imgPostPlayButton.setVisibility(View.VISIBLE);
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         imgPostImage.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
 
-        Glide.with(inflated).load(singlePostData.getMedia().getOembed().getThumbnailUrl()).placeholder(R.drawable.ic_launcher_background).into(imgPostImage);
+        Glide.with(view).load(singlePostData.getMedia().getOembed().getThumbnailUrl()).placeholder(R.drawable.ic_launcher_background).into(imgPostImage);
 
         imgPostImage.setOnClickListener(view1 -> {
             CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
@@ -412,23 +412,15 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     private void createVideoPlayer(Data singlePostData, View view, int videoType) {
         Handler handler = new Handler();
 
-        if (orientation == Configuration.ORIENTATION_PORTRAIT)
-            stub = view.findViewById(R.id.view_stub2);
-        else
-            stub = view.findViewById(R.id.view_stub);
-
-        stub.setLayoutResource(R.layout.stub_video);
-        inflated = stub.inflate();
-
-        PlayerView playerView = inflated.findViewById(R.id.video_player);
+        PlayerView playerView = view.findViewById(R.id.video_player);
         TextView txtVideoOpenInNew = playerView.findViewById(R.id.txt_video_open_in_new);
-        TextView txtVideoCurrentTime = inflated.findViewById(R.id.txt_video_current_time);
-        TextView txtVideoDuration = inflated.findViewById(R.id.txt_video_duration);
-        ImageView imgFullscreen = inflated.findViewById(R.id.img_fullscreen);
+        TextView txtVideoCurrentTime = view.findViewById(R.id.txt_video_current_time);
+        TextView txtVideoDuration = view.findViewById(R.id.txt_video_duration);
+        ImageView imgFullscreen = view.findViewById(R.id.img_fullscreen);
 
         imgPlay = playerView.findViewById(R.id.exo_img_play);
-        ProgressBar progressBar = inflated.findViewById(R.id.progress_bar);
-        videoSeekBar = inflated.findViewById(R.id.video_seek_bar);
+        ProgressBar progressBar = view.findViewById(R.id.progress_bar);
+        videoSeekBar = view.findViewById(R.id.video_seek_bar);
 
         imgFullscreen.setVisibility(View.VISIBLE);
 
@@ -546,8 +538,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     private void showViews(View view) {
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         PlayerView playerView = view.findViewById(R.id.video_player);
-        TextView singlePostTitle = view.findViewById(R.id.stub_txt_post_title);
-        LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_single_post_header);
+        TextView singlePostTitle = view.findViewById(R.id.txt_single_post_title);
+        LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_header_single_post);
         ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
         CollapsingToolbarLayout collapsingToolbar = view.findViewById(R.id.single_post_collapsing_toolbar);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
@@ -587,8 +579,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             collapsingToolbar.setVisibility(View.GONE);
             singlePostFooter.setVisibility(View.GONE);
         } else {
-            TextView singlePostTitle = view.findViewById(R.id.stub_txt_post_title);
-            LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_single_post_header);
+            TextView singlePostTitle = view.findViewById(R.id.txt_single_post_title);
+            LinearLayoutCompat singlePostHeader = view.findViewById(R.id.include_header_single_post);
             ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
             Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
 
@@ -687,10 +679,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.single_post_collapsing_toolbar);
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
-        LinearLayoutCompat includeHeader = view.findViewById(R.id.include_single_post_header);
+        LinearLayoutCompat includeHeader = view.findViewById(R.id.include_header_single_post);
 
-        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
-            float normalize = 1 - ((float) -verticalOffset / includeHeader.getMeasuredHeight()) * 255;
+        appBarLayout.addOnOffsetChangedListener((AppBarLayout.OnOffsetChangedListener) (appBarLayout1, verticalOffset) -> {
+            float normalize = (float) (1 - ((float) -verticalOffset / includeHeader.getMeasuredHeight())) * 255;
             if (Math.abs(verticalOffset) >= includeHeader.getMeasuredHeight()) {
                 toolbar.setTitleTextColor(Color.argb(255, 0, 0, 0));
             } else {
@@ -706,5 +698,16 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.GONE);
         NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController);
+    }
+
+    public static SinglePostFragment newInstance(Data data, int postType) {
+        SinglePostFragment fragment = new SinglePostFragment();
+
+        Bundle args = new Bundle();
+        args.putParcelable("data", data);
+        args.putInt("postType", postType);
+        fragment.setArguments(args);
+
+        return fragment;
     }
 }

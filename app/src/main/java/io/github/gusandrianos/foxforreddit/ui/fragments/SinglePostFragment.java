@@ -152,7 +152,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         orientation = getResources().getConfiguration().orientation;
 
-        setUpNavigation(view, singlePostData.getSubredditNamePrefixed());
+        setUpNavigation(view, singlePostData, postType);
         initializeUI(singlePostData, view, postType);
 
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
@@ -686,7 +686,17 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         }
     }
 
-    private void setUpNavigation(View view, String subreddit) {
+    private void setUpMenu(Toolbar toolbar, Data postData, int postType) {
+        toolbar.inflateMenu(R.menu.self_single_post_menu);
+
+        toolbar.getMenu().findItem(R.id.self_single_post_edit)
+                .setVisible(postType != Constants.IMAGE
+                        && postType != Constants.VIDEO
+                        && postType != Constants.LINK
+                        && postType != Constants.POLL);
+    }
+
+    private void setUpNavigation(View view, Data postData, int postType) {
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.single_post_collapsing_toolbar);
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
@@ -701,11 +711,13 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             }
         });
 
-        toolbar.setTitle(subreddit);
+        toolbar.setTitle(postData.getSubredditNamePrefixed());
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
 
-        mainActivity.setSupportActionBar(toolbar);
+        if (mainActivity.getFoxSharedViewModel().getCurrentUserUsername().equals(postData.getAuthor()))
+            setUpMenu(toolbar, postData, postType);
+
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.GONE);
         NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController);

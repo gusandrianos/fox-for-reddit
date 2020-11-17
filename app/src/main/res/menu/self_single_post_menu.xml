@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/self_single_post_edit"
+        android:title="Edit"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/self_single_post_edit_flair"
+        android:title="Edit flair" />
+
+    <item
+        android:id="@+id/self_single_post_mark_nsfw"
+        android:title="Mark NSFW" />
+
+    <item
+        android:id="@+id/self_single_post_mark_spoiler"
+        android:title="Mark Spoiler" />
+
+    <item
+        android:id="@+id/self_single_post_delete"
+        android:title="Delete" />
+</menu>

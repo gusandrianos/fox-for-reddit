@@ -77,17 +77,17 @@ public class UserFragment extends Fragment {
         if (!username.isEmpty()) {
             UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
-            viewModel.getUser(requireActivity().getApplication(), username).
-                    observe(getViewLifecycleOwner(),
+            viewModel.getUser(requireActivity().getApplication(), username)
+                    .observe(getViewLifecycleOwner(),
                             data -> buildUserProfile(
                                     data, view, Objects.equals(data.getName(),
                                             sharedViewModel.getCurrentUserUsername())));
+
+            setUpContent(username, view, username.equals(sharedViewModel.getCurrentUserUsername()));
         }
     }
 
-    private void buildUserProfile(Data user, View view, boolean isSelf) {
-        setUserNames(view, user, user.getName());
-
+    private void setUpContent(String username, View view, boolean isSelf) {
         ViewPager2 viewPager = view.findViewById(R.id.profile_view_pager);
         TabLayout tabLayout = view.findViewById(R.id.profile_tab_layout);
 
@@ -95,16 +95,6 @@ public class UserFragment extends Fragment {
             tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         else
             tabLayout.setTabMode(TabLayout.MODE_FIXED);
-
-        ArrayList<Fragment> userFragments = new ArrayList<>();
-        ArrayList<String> tabTitles = new ArrayList<>();
-
-        userFragments.add(PostFragment.newInstance(buildURL(user.getName(), "/submitted"), "", ""));
-        tabTitles.add(Constants.USER_UI_TAB_POSTS);
-        userFragments.add(PostFragment.newInstance(buildURL(user.getName(), "/comments"), "", ""));
-        tabTitles.add(Constants.USER_UI_TAB_COMMENTS);
-        userFragments.add(AboutUserFragment.newInstance(user.getName(), user.getLinkKarma(), user.getCommentKarma()));
-        tabTitles.add(Constants.USER_UI_TAB_ABOUT);
 
         // TODO: Use appropriate API Endpoint to make this meaningful
 //        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -128,14 +118,24 @@ public class UserFragment extends Fragment {
 //            }
 //        });
 
+        ArrayList<Fragment> userFragments = new ArrayList<>();
+        ArrayList<String> tabTitles = new ArrayList<>();
+
+        userFragments.add(PostFragment.newInstance(buildURL(username, "/submitted"), "", ""));
+        tabTitles.add(Constants.USER_UI_TAB_POSTS);
+        userFragments.add(PostFragment.newInstance(buildURL(username, "/comments"), "", ""));
+        tabTitles.add(Constants.USER_UI_TAB_COMMENTS);
+        userFragments.add(AboutUserFragment.newInstance(username));
+        tabTitles.add(Constants.USER_UI_TAB_ABOUT);
+
         if (isSelf) {
-            userFragments.add(PostFragment.newInstance(buildURL(user.getName(), "/upvoted"), "", ""));
+            userFragments.add(PostFragment.newInstance(buildURL(username, "/upvoted"), "", ""));
             tabTitles.add(Constants.USER_UI_TAB_UPVOTED);
-            userFragments.add(PostFragment.newInstance(buildURL(user.getName(), "/downvoted"), "", ""));
+            userFragments.add(PostFragment.newInstance(buildURL(username, "/downvoted"), "", ""));
             tabTitles.add(Constants.USER_UI_TAB_DOWNVOTED);
-            userFragments.add(PostFragment.newInstance(buildURL(user.getName(), "/hidden"), "", ""));
+            userFragments.add(PostFragment.newInstance(buildURL(username, "/hidden"), "", ""));
             tabTitles.add(Constants.USER_UI_TAB_HIDDEN);
-            userFragments.add(PostFragment.newInstance(buildURL(user.getName(), "/saved"), "", ""));
+            userFragments.add(PostFragment.newInstance(buildURL(username, "/saved"), "", ""));
             tabTitles.add(Constants.USER_UI_TAB_SAVED);
         }
 
@@ -145,6 +145,10 @@ public class UserFragment extends Fragment {
         new TabLayoutMediator(tabLayout, viewPager,
                 (tab, position) -> tab.setText(viewPagerAdapter.getFragmentTitle(position))
         ).attach();
+    }
+
+    private void buildUserProfile(Data user, View view, boolean isSelf) {
+        setUpUserNames(view, user, user.getName());
 
         ImageView profilePic = view.findViewById(R.id.profile_picture);
         ImageView coverPic = view.findViewById(R.id.profile_cover);
@@ -231,7 +235,7 @@ public class UserFragment extends Fragment {
             return Constants.ACTION_SUBSCRIBE;
     }
 
-    void setUserNames(@NotNull View view, Data user, String username) {
+    void setUpUserNames(@NotNull View view, Data user, String username) {
         CollapsingToolbarLayout collapsingToolbar = view.findViewById(R.id.profile_collapsing_toolbar);
         TextView displayNameTextView = view.findViewById(R.id.text_user_display_name);
         TextView usernameTextView = view.findViewById(R.id.text_user_username);

@@ -94,8 +94,6 @@ object Constants {
 
     // About User Fragment
     const val ARG_USERNAME_NAME = "username"
-    const val ARG_POST_KARMA_NAME = "post_karma"
-    const val ARG_COMMENT_KARMA_NAME = "comment_karma"
 
     // Subreddit Fragment
     const val SUBREDDIT_POST_FRAGMENT_TAG = "SubredditPostFragment"

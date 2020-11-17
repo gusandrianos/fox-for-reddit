@@ -34,16 +34,18 @@ public class AboutUserFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         String username = getArguments().getString(Constants.ARG_USERNAME_NAME, "");
-        int postKarmaValue = getArguments().getInt(Constants.ARG_POST_KARMA_NAME, 0);
-        int commentKarmaValue = getArguments().getInt(Constants.ARG_COMMENT_KARMA_NAME, 0);
-
-        TextView postKarma = view.findViewById(R.id.txt_post_karma);
-        TextView commentKarma = view.findViewById(R.id.txt_comment_karma);
-        postKarma.setText(String.valueOf(postKarmaValue));
-        commentKarma.setText(String.valueOf(commentKarmaValue));
 
         UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+
+        viewModel.getUser(requireActivity().getApplication(), username)
+                .observe(getViewLifecycleOwner(), data -> {
+                    TextView postKarma = view.findViewById(R.id.txt_post_karma);
+                    TextView commentKarma = view.findViewById(R.id.txt_comment_karma);
+                    postKarma.setText(String.valueOf(data.getLinkKarma()));
+                    commentKarma.setText(String.valueOf(data.getCommentKarma()));
+                });
+
         viewModel.getTrophies(requireActivity().getApplication(), username).observe(getViewLifecycleOwner(), trophies -> {
             if (trophies != null) {
                 RecyclerView trophiesRV = view.findViewById(R.id.recycler_trophies);
@@ -56,12 +58,10 @@ public class AboutUserFragment extends Fragment {
         });
     }
 
-    public static AboutUserFragment newInstance(String username, int postKarma, int commentKarma) {
+    public static AboutUserFragment newInstance(String username) {
         AboutUserFragment fragment = new AboutUserFragment();
         Bundle args = new Bundle();
         args.putString(Constants.ARG_USERNAME_NAME, username);
-        args.putInt(Constants.ARG_POST_KARMA_NAME, postKarma);
-        args.putInt(Constants.ARG_COMMENT_KARMA_NAME, commentKarma);
         fragment.setArguments(args);
         return fragment;
     }

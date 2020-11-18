@@ -218,7 +218,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         TextView mTxtPostSubreddit = view.findViewById(R.id.txt_post_subreddit);
         TextView mTxtPostUser = view.findViewById(R.id.txt_post_user);
         TextView mTxtTimePosted = view.findViewById(R.id.txt_time_posted);
-        TextView txtIsSpoiler= view.findViewById(R.id.txt_post_is_spoiler);
+        TextView txtIsSpoiler = view.findViewById(R.id.txt_post_is_spoiler);
         TextView txtIsOver18 = view.findViewById(R.id.txt_post_is_over_18);
         TextView txtPostTitle = view.findViewById(R.id.txt_single_post_title);
 //        CustomTextView customTxtPostFlair = view.findViewById(R.id.item_custom_text_link_flair);
@@ -246,9 +246,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             }
         }
 
-        if(singlePostData.isOver18())
+        if (singlePostData.isOver18() != null && singlePostData.isOver18())
             txtIsOver18.setVisibility(View.VISIBLE);
-        if(singlePostData.getSpoiler())
+        if (singlePostData.getSpoiler() != null && singlePostData.getSpoiler())
             txtIsSpoiler.setVisibility(View.VISIBLE);
 
         mBtnPostNumComments.setText(FoxToolkit.INSTANCE.formatValue(singlePostData.getNumComments()));

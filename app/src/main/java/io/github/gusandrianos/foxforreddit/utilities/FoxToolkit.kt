@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -178,7 +179,8 @@ object FoxToolkit {
     }
 
     fun makeFlair(type: String?, richtext: List<RichtextItem>?, text: String?, textColor: String?,
-                  backgroundColor: String, view: CustomTextView) {
+                  backgroundColor: String?, view: CustomTextView) {
+
         // TODO: Handle emoji in flair text
         if (type.equals("richtext")
                 && !richtext.isNullOrEmpty()) {
@@ -193,7 +195,7 @@ object FoxToolkit {
 
         if (textColor.equals("light"))
             view.setTextColor(Color.parseColor("#FFFFFF"))
-        if (backgroundColor.isNotEmpty()) {
+        if (!backgroundColor.isNullOrEmpty()) {
             view.setBackgroundColor(Color.parseColor(backgroundColor))
             view.setBorderColor(Color.parseColor(backgroundColor))
         }

@@ -34,7 +34,7 @@ class Data : Parcelable {
     val pollData: PollData? = null
 
     @SerializedName("saved")
-    var isSaved:Boolean? = null
+    var isSaved: Boolean? = null
 
     @SerializedName("hide_score")
     val hideScore = false
@@ -49,7 +49,7 @@ class Data : Parcelable {
     val numComments = 0
 
     @SerializedName("spoiler")
-    val spoiler = false
+    val spoiler: Boolean? = null
 
     @SerializedName("id")
     val id: String? = null
@@ -133,7 +133,7 @@ class Data : Parcelable {
     val viewCount: Any? = null
 
     @SerializedName("link_flair_richtext")
-    val linkFlairRichtext: List<Any>? = null
+    val linkFlairRichtext: List<RichtextItem>? = null
 
     @SerializedName("link_flair_background_color")
     val linkFlairBackgroundColor: String? = null
@@ -148,7 +148,7 @@ class Data : Parcelable {
     val galleryData: GalleryData? = null
 
     @SerializedName("over_18")
-    val isOver18 = false
+    val isOver18: Boolean? = false
 
     @SerializedName("subreddit")
     val subreddit: Any? = null
@@ -208,7 +208,7 @@ class Data : Parcelable {
     val thumbnailWidth = 0
 
     @SerializedName("link_flair_text")
-    val linkFlairText: Any? = null
+    val linkFlairText: String? = null
 
     @SerializedName("subreddit_subscribers")
     val subredditSubscribers = 0

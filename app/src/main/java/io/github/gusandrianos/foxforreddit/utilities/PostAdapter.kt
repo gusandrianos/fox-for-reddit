@@ -2,6 +2,7 @@ package io.github.gusandrianos.foxforreddit.utilities
 
 import android.graphics.Color
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -140,7 +141,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
         private val txtIsOver18: TextView = itemView.findViewById(R.id.txt_post_is_over_18)
         private val mTxtPostTitle: TextView = itemView.findViewById(R.id.txt_post_title)
 
-        //        private val customTxtPostFlair: CustomTextView = itemView.findViewById(R.id.item_custom_text_link_flair)
+        private val customTxtPostFlair: CustomTextView = itemView.findViewById(R.id.post_link_flair)
         private val mTxtPostScore: TextView = itemView.findViewById(R.id.txt_post_score)
         private val mImgBtnPostVoteUp: ImageButton = itemView.findViewById(R.id.imgbtn_post_vote_up)
         private val mImgBtnPostVoteDown: ImageButton = itemView.findViewById(R.id.imgbtn_post_vote_down)
@@ -220,10 +221,15 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
                     mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"))
                 }
             }
-            if (post.isOver18)
+            if (post.isOver18 != null && post.isOver18)
                 txtIsOver18.visibility = View.VISIBLE
-            if (post.spoiler)
+            if (post.spoiler != null && post.spoiler)
                 txtIsSpoiler.visibility = View.VISIBLE
+
+            if (!post.linkFlairText.isNullOrEmpty()) {
+                customTxtPostFlair.visibility = View.VISIBLE
+                FoxToolkit.makeFlair(post.linkFlairType, post.linkFlairRichtext, post.linkFlairText, post.linkFlairTextColor, post.linkFlairBackgroundColor, customTxtPostFlair)
+            }
         }
     }
 

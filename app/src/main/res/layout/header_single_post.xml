@@ -18,8 +18,10 @@
         android:text="This is the title" />
 
     <include
-        android:id="@+id/post_link_flair"
+        android:id="@+id/single_post_link_flair"
         layout="@layout/link_flair_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:visibility="gone" />
 
 </LinearLayout>

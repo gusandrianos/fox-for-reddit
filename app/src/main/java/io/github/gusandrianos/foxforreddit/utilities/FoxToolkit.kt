@@ -14,7 +14,6 @@ import com.stfalcon.imageviewer.StfalconImageViewer
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
-import io.github.gusandrianos.foxforreddit.data.models.Flair
 import io.github.gusandrianos.foxforreddit.data.models.RichtextItem
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel
@@ -180,6 +179,8 @@ object FoxToolkit {
 
     fun makeFlair(type: String?, richtext: List<RichtextItem>?, text: String?, textColor: String?,
                   backgroundColor: String?, view: CustomTextView) {
+
+        view.visibility = View.VISIBLE
 
         // TODO: Handle emoji in flair text
         if (type.equals("richtext")

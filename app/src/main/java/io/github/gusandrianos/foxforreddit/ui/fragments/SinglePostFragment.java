@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -221,7 +220,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         TextView txtIsSpoiler = view.findViewById(R.id.txt_post_is_spoiler);
         TextView txtIsOver18 = view.findViewById(R.id.txt_post_is_over_18);
         TextView txtPostTitle = view.findViewById(R.id.txt_single_post_title);
-//        CustomTextView customTxtPostFlair = view.findViewById(R.id.item_custom_text_link_flair);
+        CustomTextView customTxtPostFlair = view.findViewById(R.id.single_post_link_flair);
         TextView mTxtPostScore = view.findViewById(R.id.txt_post_score);
         ImageButton mImgBtnPostVoteUp = view.findViewById(R.id.imgbtn_post_vote_up);
         ImageButton mImgBtnPostVoteDown = view.findViewById(R.id.imgbtn_post_vote_down);
@@ -234,6 +233,13 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         mTxtPostUser.setText(user);
         mTxtTimePosted.setText(DateUtils.getRelativeTimeSpanString((long) singlePostData.getCreatedUtc() * 1000).toString());
         txtPostTitle.setText(singlePostData.getTitle());
+
+        if (singlePostData.getLinkFlairText() != null && !singlePostData.getLinkFlairText().isEmpty())
+            FoxToolkit.INSTANCE.makeFlair(singlePostData.getLinkFlairType(),
+                    singlePostData.getLinkFlairRichtext(), singlePostData.getLinkFlairText(),
+                    singlePostData.getLinkFlairTextColor(), singlePostData.getLinkFlairBackgroundColor(),
+                    customTxtPostFlair);
+
         mTxtPostScore.setText(FoxToolkit.INSTANCE.formatValue(singlePostData.getScore()));
 
         if (singlePostData.getLikes() != null) {

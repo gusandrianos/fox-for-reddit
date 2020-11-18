@@ -2,7 +2,6 @@ package io.github.gusandrianos.foxforreddit.utilities
 
 import android.graphics.Color
 import android.text.format.DateUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -226,10 +225,8 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             if (post.spoiler != null && post.spoiler)
                 txtIsSpoiler.visibility = View.VISIBLE
 
-            if (!post.linkFlairText.isNullOrEmpty()) {
-                customTxtPostFlair.visibility = View.VISIBLE
+            if (!post.linkFlairText.isNullOrEmpty())
                 FoxToolkit.makeFlair(post.linkFlairType, post.linkFlairRichtext, post.linkFlairText, post.linkFlairTextColor, post.linkFlairBackgroundColor, customTxtPostFlair)
-            }
         }
     }
 

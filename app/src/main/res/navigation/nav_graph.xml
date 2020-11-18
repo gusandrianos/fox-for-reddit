@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
+    android:label="{author}"
     app:startDestination="@id/mainFragment">
 
     <fragment
@@ -305,4 +306,19 @@
             android:name="thingText"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/messagesWithUserFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.MessagesWithUserFragment"
+        android:label="{author}"
+        tools:layout="@layout/fragment_messages_with_user">
+        <argument
+            android:name="data"
+            app:argType="io.github.gusandrianos.foxforreddit.data.models.Data" />
+        <argument
+            android:name="author"
+            app:argType="string" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_messagesWithUserFragment"
+        app:destination="@id/messagesWithUserFragment" />
 </navigation>

@@ -4,12 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.LoadState;
 import androidx.paging.PagingData;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -19,10 +20,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 import io.github.gusandrianos.foxforreddit.Constants;
+import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
-import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 
 import io.github.gusandrianos.foxforreddit.utilities.MessagesAdapter;
@@ -53,7 +56,7 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
         super.onViewCreated(view, savedInstanceState);
 
         mView = view;
-        where = "inbox";
+        where = getArguments().getString(Constants.PREFS_WHERE);
 
         pullToRefresh = view.findViewById(R.id.swipe_refresh_layout_posts);
         initRecycleView();
@@ -68,7 +71,7 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
         if (requestChanged)
             viewModel.deleteCached();
 
-        viewModel.getMessagesWhere(getActivity().getApplication(), "messages").observe(getViewLifecycleOwner(), this::submitToAdapter);
+        viewModel.getMessagesWhere(getActivity().getApplication(), where).observe(getViewLifecycleOwner(), this::submitToAdapter);
     }
 
     private void submitToAdapter(PagingData pagingData) {
@@ -116,6 +119,8 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
 
     @Override
     public void onMessageItemClicked(@NotNull Data item) {
-        Toast.makeText(getContext(), "Open message", Toast.LENGTH_SHORT).show();
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+        navController.navigate(NavGraphDirections.actionGlobalMessagesWithUserFragment(item, item.getAuthor()));
     }
 }

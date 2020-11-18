@@ -41,7 +41,7 @@ public class InboxFragment extends Fragment {
         ArrayList<Fragment> messagesFragment = new ArrayList<>();
         ArrayList<String> tabTitles = new ArrayList<>();
 
-        messagesFragment.add(MessagesFragment.newInstance("messaging"));
+        messagesFragment.add(MessagesFragment.newInstance("messages"));
         tabTitles.add("Messages");
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(messagesFragment, tabTitles, this);

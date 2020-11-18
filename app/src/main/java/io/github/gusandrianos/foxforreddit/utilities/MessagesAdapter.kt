@@ -36,14 +36,12 @@ class MessagesAdapter(private val listener: MessagesItemClickListener) : PagingD
         holder.txtUser.text = user
         holder.txtTimeAgo.text = DateUtils.getRelativeTimeSpanString(data?.createdUtc as Long * 1000).toString()
         holder.txtSubject.text = data?.subject
-        holder.txtBody.text = data?.body
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtUser: TextView = view.findViewById(R.id.txt_message_item_sent_by_user)
         val txtTimeAgo: TextView = view.findViewById(R.id.txt_message_item_time_ago)
         val txtSubject: TextView = view.findViewById(R.id.txt_message_item_subject)
-        val txtBody: TextView = view.findViewById(R.id.txt_message_item_body)
 
         init {
             itemView.setOnClickListener {

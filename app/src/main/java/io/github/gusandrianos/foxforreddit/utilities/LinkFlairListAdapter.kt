@@ -8,7 +8,11 @@ import com.libRG.CustomTextView
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Flair
 
-class LinkFlairListAdapter(private val flairList: List<Flair>, private val listener: LinkFlairListAdapter.OnItemClickListener) : RecyclerView.Adapter<LinkFlairListAdapter.ViewHolder>() {
+class LinkFlairListAdapter(
+        private val flairList: List<Flair>,
+        private val listener: LinkFlairListAdapter.OnItemClickListener)
+    : RecyclerView.Adapter<LinkFlairListAdapter.ViewHolder>() {
+
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var flair = view.findViewById(R.id.item_custom_text_link_flair) as CustomTextView
 
@@ -31,7 +35,8 @@ class LinkFlairListAdapter(private val flairList: List<Flair>, private val liste
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        FoxToolkit.makeFlair(flairList[position], holder.flair)
+        val flair = flairList[position]
+        FoxToolkit.makeFlair(flair.type, flair.richtext, flair.text, flair.textColor, flair.backgroundColor, holder.flair)
     }
 
     override fun getItemCount(): Int {

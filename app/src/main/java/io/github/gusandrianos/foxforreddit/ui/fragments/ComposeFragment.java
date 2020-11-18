@@ -61,7 +61,8 @@ public class ComposeFragment extends Fragment {
         foxViewModel.getSubredditChoice().observe(getViewLifecycleOwner(), subredditTextField::setText);
         foxViewModel.getFlairChoice().observe(getViewLifecycleOwner(), flair -> {
             if (flair != null)
-                FoxToolkit.INSTANCE.makeFlair(flair, flairChooser);
+                FoxToolkit.INSTANCE.makeFlair(flair.getType(), flair.getRichtext(), flair.getText(),
+                        flair.getTextColor(), flair.getBackgroundColor(), flairChooser);
         });
 
         subredditTextField.setOnClickListener(subredditText -> {

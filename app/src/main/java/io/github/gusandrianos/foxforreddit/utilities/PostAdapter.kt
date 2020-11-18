@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -211,22 +212,41 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             mTxtPostTitle.text = post.title
             mTxtPostScore.text = formatValue(post.score.toDouble())
             mTxtPostNumComments.text = formatValue(post.numComments.toDouble())
+
             if (post.likes != null) {
                 if (post.likes == true) {
                     mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
-                    mTxtPostScore.setTextColor(Color.parseColor("#FFE07812"))
+                    mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24)
+                    mTxtPostScore.setTextColor(ContextCompat.getColor(
+                            mainActivity.applicationContext, android.R.color.holo_orange_dark))
                 } else {
                     mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
-                    mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"))
+                    mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24)
+                    mTxtPostScore.setTextColor(ContextCompat.getColor(
+                            mainActivity.applicationContext, android.R.color.holo_blue_dark))
                 }
+            } else {
+                mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24)
+                mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24)
+                mTxtPostScore.setTextColor(ContextCompat.getColor(mainActivity.applicationContext,
+                        android.R.color.tab_indicator_text))
             }
+
             if (post.isOver18 != null && post.isOver18)
                 txtIsOver18.visibility = View.VISIBLE
+            else
+                txtIsOver18.visibility = View.GONE
+
             if (post.spoiler != null && post.spoiler)
                 txtIsSpoiler.visibility = View.VISIBLE
+            else
+                txtIsSpoiler.visibility = View.GONE
 
             if (!post.linkFlairText.isNullOrEmpty())
-                FoxToolkit.makeFlair(post.linkFlairType, post.linkFlairRichtext, post.linkFlairText, post.linkFlairTextColor, post.linkFlairBackgroundColor, customTxtPostFlair)
+                FoxToolkit.makeFlair(post.linkFlairType, post.linkFlairRichtext, post.linkFlairText,
+                        post.linkFlairTextColor, post.linkFlairBackgroundColor, customTxtPostFlair)
+            else
+                customTxtPostFlair.visibility = View.GONE
         }
     }
 

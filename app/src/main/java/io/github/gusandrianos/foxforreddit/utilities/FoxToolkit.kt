@@ -180,8 +180,6 @@ object FoxToolkit {
     fun makeFlair(type: String?, richtext: List<RichtextItem>?, text: String?, textColor: String?,
                   backgroundColor: String?, view: CustomTextView) {
 
-        view.visibility = View.VISIBLE
-
         // TODO: Handle emoji in flair text
         if (type.equals("richtext")
                 && !richtext.isNullOrEmpty()) {
@@ -200,5 +198,7 @@ object FoxToolkit {
             view.setBackgroundColor(Color.parseColor(backgroundColor))
             view.setBorderColor(Color.parseColor(backgroundColor))
         }
+
+        view.visibility = View.VISIBLE
     }
 }

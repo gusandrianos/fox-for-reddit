@@ -4,10 +4,14 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.widget.ImageButton
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.libRG.CustomTextView
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.github.gusandrianos.foxforreddit.Constants
+import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Flair
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
@@ -82,17 +86,39 @@ object FoxToolkit {
             Constants.PLAYABLE_VIDEO
     }
 
-    fun upVote(viewModel: PostViewModel, application: Application, data: Data) {
+    fun upVoteColor(data: Data, upVoteBtn: ImageButton, downVoteBtn: ImageButton, score: TextView, activity: MainActivity) {
+        if (data.likes == null || !(data.likes as Boolean)) {
+            upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
+            downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24)
+            score.setTextColor(ContextCompat.getColor(activity.applicationContext, android.R.color.holo_orange_dark))
+        } else {
+            upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)
+            score.setTextColor(ContextCompat.getColor(activity.applicationContext, android.R.color.tab_indicator_text))
+        }
+    }
+
+    fun downVoteColor(data: Data, upVoteBtn: ImageButton, downVoteBtn: ImageButton, score: TextView, activity: MainActivity) {
+        if (data.likes == null || (data.likes as Boolean)) {
+            upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)
+            downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
+            score.setTextColor(ContextCompat.getColor(activity.applicationContext, android.R.color.holo_blue_dark))
+        } else {
+            downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24)
+            score.setTextColor(ContextCompat.getColor(activity.applicationContext, android.R.color.tab_indicator_text))
+        }
+    }
+
+    fun upVoteModel(viewModel: PostViewModel, application: Application, data: Data) {
         if (data.likes == null || !(data.likes as Boolean)) {          //If down or no voted
             viewModel.votePost("1", data.name!!, application)     //then send up vote
             data.likes = true
         } else {                                                      //else (up voted)
             viewModel.votePost("0", data.name!!, application)    //send no vote
-            data.likes = null;
+            data.likes = null
         }
     }
 
-    fun downVote(viewModel: PostViewModel, application: Application, data: Data) {
+    fun downVoteModel(viewModel: PostViewModel, application: Application, data: Data) {
         if (data.likes == null || (data.likes as Boolean)) {     //If up or no voted
             viewModel.votePost("-1", data.name!!, application) //then send down vote
             data.likes = false

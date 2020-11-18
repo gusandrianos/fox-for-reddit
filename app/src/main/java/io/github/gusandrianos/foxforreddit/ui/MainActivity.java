@@ -169,18 +169,24 @@ public class MainActivity extends AppCompatActivity implements
             navController.navigate(R.id.subredditListFragment);
             return true;
         } else if (id == R.id.composeChooserFragment) {
-            String postTo = "Reddit";
-            if (navController.getCurrentDestination().getId() == R.id.subredditFragment) {
-                postTo = getFoxSharedViewModel().getCurrentSubreddit();
-            } else {
-                getFoxSharedViewModel().clearComposeData();
-            }
-            NavGraphDirections.ActionGlobalComposeChooserFragment action = NavGraphDirections.actionGlobalComposeChooserFragment(postTo);
-            getFoxSharedViewModel().setPreviousDestination(bottomNavView.getSelectedItemId());
-            navController.navigate(action);
+            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(getApplication())) {
+                String postTo = "Reddit";
+                if (navController.getCurrentDestination().getId() == R.id.subredditFragment) {
+                    postTo = getFoxSharedViewModel().getCurrentSubreddit();
+                } else {
+                    getFoxSharedViewModel().clearComposeData();
+                }
+                NavGraphDirections.ActionGlobalComposeChooserFragment action = NavGraphDirections.actionGlobalComposeChooserFragment(postTo);
+                getFoxSharedViewModel().setPreviousDestination(bottomNavView.getSelectedItemId());
+                navController.navigate(action);
+            } else
+                FoxToolkit.INSTANCE.promptLogIn(this);
             return true;
         } else if (id == R.id.messagesFragment) {
-            navController.navigate(R.id.messagesFragment);
+            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(getApplication()))
+                navController.navigate(R.id.messagesFragment);
+            else
+                FoxToolkit.INSTANCE.promptLogIn(this);
             return true;
         }
         return false;

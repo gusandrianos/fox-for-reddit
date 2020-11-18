@@ -10,14 +10,20 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.libRG.CustomTextView
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.ui.MainActivity
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.downVoteColor
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.formatValue
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.isAuthorized
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.promptLogIn
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.upVoteColor
 
 import java.time.Instant
 
-class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter<Data, RecyclerView.ViewHolder>(POST_COMPARATOR) {
+class PostAdapter(private val mainActivity: MainActivity, private val listener: OnItemClickListener) : PagingDataAdapter<Data, RecyclerView.ViewHolder>(POST_COMPARATOR) {
 
     companion object {
         private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Data>() {
@@ -127,11 +133,14 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
     }
 
     abstract inner class AbstractPostViewHolder(itemView: View, private val mPostType: Int) : RecyclerView.ViewHolder(itemView) {
-        private val mImgPostSubreddit: ImageView = itemView.findViewById(R.id.img_post_subreddit)
         private val mTxtPostSubreddit: TextView = itemView.findViewById(R.id.txt_post_subreddit)
         private val mTxtPostUser: TextView = itemView.findViewById(R.id.txt_post_user)
         private val mTxtTimePosted: TextView = itemView.findViewById(R.id.txt_time_posted)
+        private val txtIsSpoiler: TextView = itemView.findViewById(R.id.txt_post_is_spoiler)
+        private val txtIsOver18: TextView = itemView.findViewById(R.id.txt_post_is_over_18)
         private val mTxtPostTitle: TextView = itemView.findViewById(R.id.txt_post_title)
+
+        //        private val customTxtPostFlair: CustomTextView = itemView.findViewById(R.id.item_custom_text_link_flair)
         private val mTxtPostScore: TextView = itemView.findViewById(R.id.txt_post_score)
         private val mImgBtnPostVoteUp: ImageButton = itemView.findViewById(R.id.imgbtn_post_vote_up)
         private val mImgBtnPostVoteDown: ImageButton = itemView.findViewById(R.id.imgbtn_post_vote_down)
@@ -144,52 +153,58 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
             itemView.setOnClickListener {
                 onClick(bindingAdapterPosition, Constants.POST_ITEM, mPostType)
             }
-            mImgPostSubreddit.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT, mPostType)
-            }
+
             mTxtPostSubreddit.setOnClickListener {
                 onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT, mPostType)
             }
+
             mTxtPostUser.setOnClickListener {
                 onClick(bindingAdapterPosition, Constants.POST_USER, mPostType)
             }
+
             mImgBtnPostVoteUp.setOnClickListener {
-                if (getItem((bindingAdapterPosition))?.likes == null || getItem((bindingAdapterPosition))?.likes == false) {
-                    mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
-                    mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24)
-                    mTxtPostScore.setTextColor(Color.parseColor("#FFE07812"))
-                } else {
-                    mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24)
-                    mTxtPostScore.setTextColor(Color.parseColor("#AAAAAA"))
-                }
-                onClick(bindingAdapterPosition, Constants.POST_VOTE_UP, mPostType)
+                if (!isAuthorized(mainActivity.application))
+                    promptLogIn(mainActivity)
+                else
+                    if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                        val item = getItem(bindingAdapterPosition)
+                        if (item != null) {
+                            upVoteColor(item, mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, mainActivity)
+                            onClick(bindingAdapterPosition, Constants.POST_VOTE_UP, mPostType)
+                        }
+                    }
             }
+
             mImgBtnPostVoteDown.setOnClickListener {
-                if (getItem((bindingAdapterPosition))?.likes == null || getItem((bindingAdapterPosition))?.likes == true) {
-                    mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
-                    mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24)
-                    mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"))
-                } else {
-                    mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24)
-                    mTxtPostScore.setTextColor(Color.parseColor("#AAAAAA"))
-                }
-                onClick(bindingAdapterPosition, Constants.POST_VOTE_DOWN, mPostType)
+                if (!isAuthorized(mainActivity.application))
+                    promptLogIn(mainActivity)
+                else
+                    if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                        val item = getItem(bindingAdapterPosition)
+                        if (item != null) {
+                            downVoteColor(item, mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, mainActivity)
+                            onClick(bindingAdapterPosition, Constants.POST_VOTE_DOWN, mPostType)
+                        }
+                    }
             }
+
             mTxtPostNumComments.setOnClickListener {
                 onClick(bindingAdapterPosition, Constants.POST_COMMENTS_NUM, mPostType)
             }
+
             mTxtPostShare.setOnClickListener {
                 onClick(bindingAdapterPosition, Constants.POST_SHARE, mPostType)
             }
+
             mTxtPostMoreActions.setOnClickListener {
                 onClick(bindingAdapterPosition, Constants.POST_MORE_ACTIONS, mPostType)
             }
         }
 
         open fun onBind(post: Data) {
-            val user = "Posted by u/" + post.author
+            val user = "by u/" + post.author
             val subreddit = "r/" + post.subreddit
-            //Glide.with(parent.getContext()).load().placeholder(R.drawable.ic_launcher_background).into(mImgPostSubreddit);  //MUST GET SUBREDDIT ICON
+
             mTxtPostSubreddit.text = subreddit
             mTxtPostUser.text = user
             mTxtTimePosted.text = DateUtils.getRelativeTimeSpanString(post.createdUtc * 1000).toString()
@@ -205,15 +220,14 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
                     mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"))
                 }
             }
+            if (post.isOver18)
+                txtIsOver18.visibility = View.VISIBLE
+            if (post.spoiler)
+                txtIsSpoiler.visibility = View.VISIBLE
         }
     }
 
-    inner class PostSelfViewHolder(itemView: View, private val mPostType: Int) : AbstractPostViewHolder(itemView, mPostType) {
-
-        override fun onBind(post: Data) {
-            super.onBind(post)
-        }
-    }
+    inner class PostSelfViewHolder(itemView: View, mPostType: Int) : AbstractPostViewHolder(itemView, mPostType)
 
     inner class PostImageViewHolder(itemView: View, private val mPostType: Int) : AbstractPostViewHolder(itemView, mPostType) {
         private val mImgPostThumbnail: ImageView = itemView.findViewById(R.id.img_post_thumbnail)
@@ -226,8 +240,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
 
         override fun onBind(post: Data) {
             super.onBind(post)
-            //Todo if it is nsfw
-            Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.ic_launcher_background).into(mImgPostThumbnail)
+            Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_photo_size_select_actual_80).into(mImgPostThumbnail)
         }
     }
 
@@ -244,7 +257,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
 
         override fun onBind(post: Data) {
             super.onBind(post)
-            Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.ic_launcher_background).into(mImgPostThumbnail)
+            Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_link_80).into(mImgPostThumbnail)
             mTxtPostDomain.text = post.domain
             mTxtPostDomain.tag = post.urlOverriddenByDest
         }
@@ -262,12 +275,12 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
 
         override fun onBind(post: Data) {
             super.onBind(post)
-            Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.ic_launcher_background).into(mImgPostThumbnail)
+            Glide.with(itemView).load(post.thumbnail).into(mImgPostThumbnail)
         }
     }
 
     inner class PostPollViewHolder(itemView: View, private val mPostType: Int) : AbstractPostViewHolder(itemView, mPostType) {
-        private val mBtnPostVoteNow: Button = itemView.findViewById(R.id.btn_post_vote_now)
+        private val mBtnPostVoteNow: ImageButton = itemView.findViewById(R.id.btn_post_vote_now)
         private val mTxtPostVoteNum: TextView = itemView.findViewById(R.id.txt_post_vote_num)
         private val mTxtPostVoteTimeLeft: TextView = itemView.findViewById(R.id.txt_post_vote_time_left)
 
@@ -282,6 +295,7 @@ class PostAdapter(private val listener: OnItemClickListener) : PagingDataAdapter
             val votes = post.pollData!!.totalVoteCount.toString() + " Votes"
             mTxtPostVoteNum.text = votes
             mTxtPostVoteTimeLeft.text = getPollEndingDate(post.pollData!!.votingEndTimestamp)
+            mBtnPostVoteNow.setImageResource(R.drawable.placeholder_ic_baseline_poll_80)
         }
     }
 

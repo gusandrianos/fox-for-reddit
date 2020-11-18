@@ -114,6 +114,7 @@
             app:lib_setRoundedView="true"
             app:lib_setShape="rectangle"
             app:lib_setStrokeWidth="2dp" />
+
     </LinearLayout>
 
     <ViewStub

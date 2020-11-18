@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -13,7 +14,7 @@ import com.stfalcon.imageviewer.StfalconImageViewer
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
-import io.github.gusandrianos.foxforreddit.data.models.Flair
+import io.github.gusandrianos.foxforreddit.data.models.RichtextItem
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel
 import java.text.DecimalFormat
@@ -176,24 +177,28 @@ object FoxToolkit {
         return if (formattedNumber.length > 4) formattedNumber.replace("\\.[0-9]+".toRegex(), "").trim() else formattedNumber.trim()
     }
 
-    fun makeFlair(item: Flair, view: CustomTextView) {
+    fun makeFlair(type: String?, richtext: List<RichtextItem>?, text: String?, textColor: String?,
+                  backgroundColor: String?, view: CustomTextView) {
+
+        view.visibility = View.VISIBLE
+
         // TODO: Handle emoji in flair text
-        if (item.type.equals("richtext")
-                && !item.richtext.isNullOrEmpty()) {
-            for (richTextItem in item.richtext) {
+        if (type.equals("richtext")
+                && !richtext.isNullOrEmpty()) {
+            for (richTextItem in richtext) {
                 if (richTextItem.type.equals("text")) {
                     view.text = richTextItem.text.trim()
                 }
             }
         } else {
-            view.text = item.text
+            view.text = text
         }
 
-        if (item.textColor.equals("light"))
+        if (textColor.equals("light"))
             view.setTextColor(Color.parseColor("#FFFFFF"))
-        if (item.backgroundColor.isNotEmpty()) {
-            view.setBackgroundColor(Color.parseColor(item.backgroundColor))
-            view.setBorderColor(Color.parseColor(item.backgroundColor))
+        if (!backgroundColor.isNullOrEmpty()) {
+            view.setBackgroundColor(Color.parseColor(backgroundColor))
+            view.setBorderColor(Color.parseColor(backgroundColor))
         }
     }
 }

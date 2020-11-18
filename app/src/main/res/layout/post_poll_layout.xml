@@ -1,60 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <include layout="@layout/post_header" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/txt_post_title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:text="This is the Title"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_post_vote_now"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0" />
 
-            <TextView
-                android:id="@+id/txt_post_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="This is the Title"
-                android:textColor="#000000"
-                android:textSize="16sp" />
-
-            <ImageButton
-                android:id="@+id/btn_post_vote_now"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:text="VOTE NOW" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <include
+            android:id="@+id/post_link_flair"
+            layout="@layout/link_flair_view"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/txt_post_vote_num"
+            app:layout_constraintEnd_toStartOf="@id/btn_post_vote_now"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_post_title"
+            app:layout_constraintVertical_bias="0" />
 
-            <TextView
-                android:id="@+id/txt_post_vote_num"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAlignment="textStart" />
+        <ImageButton
+            android:id="@+id/btn_post_vote_now"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:text="VOTE NOW"
+            app:layout_constraintBottom_toTopOf="@id/txt_post_vote_time_left"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/txt_post_vote_time_left"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAlignment="textEnd" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/txt_post_vote_num"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/txt_post_vote_time_left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_post_vote_now" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/txt_post_vote_time_left"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="textEnd"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/txt_post_vote_num"
+            app:layout_constraintTop_toBottomOf="@id/btn_post_vote_now" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include layout="@layout/post_footer" />
+
 </LinearLayout>

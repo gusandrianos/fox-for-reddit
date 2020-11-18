@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -218,10 +217,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         TextView mTxtPostSubreddit = view.findViewById(R.id.txt_post_subreddit);
         TextView mTxtPostUser = view.findViewById(R.id.txt_post_user);
         TextView mTxtTimePosted = view.findViewById(R.id.txt_time_posted);
-        TextView txtIsSpoiler= view.findViewById(R.id.txt_post_is_spoiler);
+        TextView txtIsSpoiler = view.findViewById(R.id.txt_post_is_spoiler);
         TextView txtIsOver18 = view.findViewById(R.id.txt_post_is_over_18);
         TextView txtPostTitle = view.findViewById(R.id.txt_single_post_title);
-//        CustomTextView customTxtPostFlair = view.findViewById(R.id.item_custom_text_link_flair);
+        CustomTextView customTxtPostFlair = view.findViewById(R.id.single_post_link_flair);
         TextView mTxtPostScore = view.findViewById(R.id.txt_post_score);
         ImageButton mImgBtnPostVoteUp = view.findViewById(R.id.imgbtn_post_vote_up);
         ImageButton mImgBtnPostVoteDown = view.findViewById(R.id.imgbtn_post_vote_down);
@@ -234,6 +233,13 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         mTxtPostUser.setText(user);
         mTxtTimePosted.setText(DateUtils.getRelativeTimeSpanString((long) singlePostData.getCreatedUtc() * 1000).toString());
         txtPostTitle.setText(singlePostData.getTitle());
+
+        if (singlePostData.getLinkFlairText() != null && !singlePostData.getLinkFlairText().isEmpty())
+            FoxToolkit.INSTANCE.makeFlair(singlePostData.getLinkFlairType(),
+                    singlePostData.getLinkFlairRichtext(), singlePostData.getLinkFlairText(),
+                    singlePostData.getLinkFlairTextColor(), singlePostData.getLinkFlairBackgroundColor(),
+                    customTxtPostFlair);
+
         mTxtPostScore.setText(FoxToolkit.INSTANCE.formatValue(singlePostData.getScore()));
 
         if (singlePostData.getLikes() != null) {
@@ -246,9 +252,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             }
         }
 
-        if(singlePostData.isOver18())
+        if (singlePostData.isOver18() != null && singlePostData.isOver18())
             txtIsOver18.setVisibility(View.VISIBLE);
-        if(singlePostData.getSpoiler())
+        if (singlePostData.getSpoiler() != null && singlePostData.getSpoiler())
             txtIsSpoiler.setVisibility(View.VISIBLE);
 
         mBtnPostNumComments.setText(FoxToolkit.INSTANCE.formatValue(singlePostData.getNumComments()));
@@ -538,7 +544,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         PlayerView playerView = view.findViewById(R.id.video_player);
         TextView singlePostTitle = view.findViewById(R.id.txt_single_post_title);
-        LinearLayout singlePostHeader = view.findViewById(R.id.include_header_single_post);
+        ConstraintLayout singlePostHeader = view.findViewById(R.id.include_header_single_post);
         ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
         CollapsingToolbarLayout collapsingToolbar = view.findViewById(R.id.single_post_collapsing_toolbar);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
@@ -585,7 +591,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             singlePostFooter.setVisibility(View.GONE);
         } else {
             TextView singlePostTitle = view.findViewById(R.id.txt_single_post_title);
-            LinearLayout singlePostHeader = view.findViewById(R.id.include_header_single_post);
+            ConstraintLayout singlePostHeader = view.findViewById(R.id.include_header_single_post);
             ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
             Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
 
@@ -684,7 +690,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.single_post_collapsing_toolbar);
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
-        LinearLayout includeHeader = view.findViewById(R.id.include_header_single_post);
+        ConstraintLayout includeHeader = view.findViewById(R.id.include_header_single_post);
 
         appBarLayout.addOnOffsetChangedListener((AppBarLayout.OnOffsetChangedListener) (appBarLayout1, verticalOffset) -> {
             float normalize = (float) (1 - ((float) -verticalOffset / includeHeader.getMeasuredHeight())) * 255;

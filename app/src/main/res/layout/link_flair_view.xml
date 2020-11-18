@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.libRG.CustomTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp"
+    android:paddingTop="1dp"
+    android:paddingBottom="1dp"
+    android:text="Flair"
+    app:lib_setRadius="2dp"
+    app:lib_setRoundedBorderColor="@android:color/tab_indicator_text"
+    app:lib_setRoundedView="true"
+    app:lib_setShape="rectangle"
+    app:lib_setStrokeWidth="2dp" />

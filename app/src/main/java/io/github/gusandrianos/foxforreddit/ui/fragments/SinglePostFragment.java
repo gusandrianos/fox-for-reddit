@@ -538,7 +538,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         PlayerView playerView = view.findViewById(R.id.video_player);
         TextView singlePostTitle = view.findViewById(R.id.txt_single_post_title);
-        LinearLayout singlePostHeader = view.findViewById(R.id.include_header_single_post);
+        ConstraintLayout singlePostHeader = view.findViewById(R.id.include_header_single_post);
         ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
         CollapsingToolbarLayout collapsingToolbar = view.findViewById(R.id.single_post_collapsing_toolbar);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
@@ -585,7 +585,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             singlePostFooter.setVisibility(View.GONE);
         } else {
             TextView singlePostTitle = view.findViewById(R.id.txt_single_post_title);
-            LinearLayout singlePostHeader = view.findViewById(R.id.include_header_single_post);
+            ConstraintLayout singlePostHeader = view.findViewById(R.id.include_header_single_post);
             ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
             Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
 
@@ -684,7 +684,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.single_post_collapsing_toolbar);
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
-        LinearLayout includeHeader = view.findViewById(R.id.include_header_single_post);
+        ConstraintLayout includeHeader = view.findViewById(R.id.include_header_single_post);
 
         appBarLayout.addOnOffsetChangedListener((AppBarLayout.OnOffsetChangedListener) (appBarLayout1, verticalOffset) -> {
             float normalize = (float) (1 - ((float) -verticalOffset / includeHeader.getMeasuredHeight())) * 255;

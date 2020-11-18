@@ -49,14 +49,14 @@ class SearchResultsAdapter(private val mKind: String, private val listener: OnSe
                 holder.icon.setImageResource(R.drawable.default_subreddit_image)
         } else {
             val prefixefName = "u/${data?.name}"
-            val totalKarma = data?.awardeeKarma!! + data.awarderKarma+ data.commentKarma + data.linkKarma
+            val totalKarma = data?.awardeeKarma!! + data.awarderKarma + data.commentKarma + data.linkKarma
             val karma = "${formatValue(totalKarma.toDouble())} karma"
             holder.txtName.text = prefixefName
             holder.txtInfo.text = karma
             holder.name = data.name!!
 
             if (!data.iconImg.isNullOrEmpty())
-                Glide.with(holder.itemView).load(data.iconImg).into(holder.icon)
+                Glide.with(holder.itemView).load(data.iconImg.split("\\?".toRegex())[0]).into(holder.icon)
             else
                 holder.icon.setImageResource(R.drawable.default_profile_image)
         }

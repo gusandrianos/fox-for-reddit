@@ -45,7 +45,7 @@ class SearchAdapter(private val listener: OnSearchItemClickListener, private val
             holder.name = child.data.name!!
 
             if (!data.iconImg.isNullOrEmpty())
-                Glide.with(holder.itemView).load(data.iconImg).into(holder.icon)
+                Glide.with(holder.itemView).load(data.iconImg.split("\\?".toRegex())[0]).into(holder.icon)
             else
                 holder.icon.setImageResource(R.drawable.default_profile_image)
         }

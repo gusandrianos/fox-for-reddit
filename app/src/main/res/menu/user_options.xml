@@ -5,16 +5,19 @@
         android:id="@+id/message_user"
         android:icon="@drawable/ic_baseline_message_24"
         android:title="Message"
+        android:visible="false"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/block_user"
         android:title="Block"
+        android:visible="false"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/log_out"
         android:icon="@drawable/ic_baseline_exit_to_app_24"
         android:title="Log out"
+        android:visible="false"
         app:showAsAction="always" />
 </menu>

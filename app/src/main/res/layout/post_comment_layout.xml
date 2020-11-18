@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/txt_post_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Title" />
 
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/txt_post_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
             android:text="u/user" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/txt_time_posted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
             android:text="time ago" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/txt_post_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
             android:drawableEnd="@drawable/ic_round_arrow_upward_16"
             android:text="1" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <androidx.appcompat.widget.AppCompatTextView
+    </LinearLayout>
+
+    <TextView
         android:id="@+id/txt_post_subreddit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="r/Subreddit" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/txt_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Comment Body :Comment Body Comment Body Comment Body Comment Body Comment Body Comment Body Comment Body Comment Body Comment Body Comment Body Comment Body Comment Body Comment Body Comment Body " />
 
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+</LinearLayout>

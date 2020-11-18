@@ -32,6 +32,7 @@ import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
+import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.PostAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
@@ -98,7 +99,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
     private void initRecycleView(View view) {
         mPostRecyclerView = view.findViewById(R.id.recyclerview);
-        mPostRecyclerViewAdapter = new PostAdapter(this);
+        mPostRecyclerViewAdapter = new PostAdapter((MainActivity) requireActivity(), this);
         mPostRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY); //keep recyclerview on position
         mPostRecyclerView.setHasFixedSize(true);
         mPostRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -199,10 +200,16 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 }
                 break;
             case Constants.POST_VOTE_UP:
-                FoxToolkit.INSTANCE.upVote(viewModel, requireActivity().getApplication(), data);
+                if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
+                else
+                    FoxToolkit.INSTANCE.upVoteModel(viewModel, requireActivity().getApplication(), data);
                 break;
             case Constants.POST_VOTE_DOWN:
-                FoxToolkit.INSTANCE.downVote(viewModel, requireActivity().getApplication(), data);
+                if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
+                else
+                    FoxToolkit.INSTANCE.downVoteModel(viewModel, requireActivity().getApplication(), data);
                 break;
             case Constants.POST_SHARE:
                 startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(data), Constants.SHARE_TEXT));
@@ -212,7 +219,10 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 customTabsIntent.launchUrl(requireContext(), Uri.parse(data.getUrl()));
                 break;
             case Constants.POST_MORE_ACTIONS:
-                navController.navigate(NavGraphDirections.actionGlobalPopUpMoreActionsDialogFragment(data));
+                if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
+                else
+                    navController.navigate(NavGraphDirections.actionGlobalPopUpMoreActionsDialogFragment(data));
                 break;
             default:
                 NavGraphDirections.ActionGlobalSinglePostFragment action = NavGraphDirections.actionGlobalSinglePostFragment(data, postType);

@@ -17,4 +17,8 @@
         android:layout_height="wrap_content"
         android:text="This is the title" />
 
+    <include layout="@layout/item_link_flair"
+        android:id="@+id/include_flair"
+        android:visibility="gone"/>
+
 </LinearLayout>

@@ -1,51 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/post_header"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:id="@+id/post_header">
+    android:orientation="vertical">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/img_post_subreddit"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:clickable="true"
-        android:contentDescription="Subreddit IMG"
-        android:src="@mipmap/ic_launcher_round" />
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/txt_post_subreddit"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:clickable="true"
+        android:text="Subreddit Title" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/txt_post_subreddit"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/txt_post_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
             android:clickable="true"
-            android:text="Subreddit Title" />
+            android:text="by User" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <TextView
+            android:id="@+id/txt_time_posted"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="time posted" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txt_post_user"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:clickable="true"
-                android:text="Posted by User" />
+    </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txt_time_posted"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="time ago" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        <TextView
+            android:id="@+id/txt_post_is_over_18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_round_error_outline_16_red"
+            android:text="NSFW"
+            android:textColor="#8B0000"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/txt_post_is_spoiler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:clickable="true"
+            android:drawableStart="@drawable/ic_round_error_outline_16_light_blue"
+            android:text="Spoiler"
+            android:textColor="#5AA4FF"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+    </LinearLayout>
+</LinearLayout>

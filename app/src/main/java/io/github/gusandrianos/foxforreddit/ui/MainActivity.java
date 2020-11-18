@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        topLevelDestinationIds = Arrays.asList(R.id.mainFragment, R.id.userFragment, R.id.subredditListFragment);
+        topLevelDestinationIds = Arrays.asList(R.id.mainFragment, R.id.userFragment, R.id.subredditListFragment, R.id.inboxFragment);
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         navController = Objects.requireNonNull(navHostFragment).getNavController();
@@ -182,9 +182,9 @@ public class MainActivity extends AppCompatActivity implements
             } else
                 FoxToolkit.INSTANCE.promptLogIn(this);
             return true;
-        } else if (id == R.id.messagesFragment) {
+        } else if (id == R.id.inboxFragment) {
             if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(getApplication()))
-                navController.navigate(R.id.messagesFragment);
+                navController.navigate(R.id.inboxFragment);
             else
                 FoxToolkit.INSTANCE.promptLogIn(this);
             return true;

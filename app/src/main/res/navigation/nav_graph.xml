@@ -43,7 +43,7 @@
             app:destination="@id/commentsFragment" />
         <action
             android:id="@+id/action_singlePostFragment_to_linkFlairListFragment"
-            app:destination="@id/linkFlairListFragment" >
+            app:destination="@id/linkFlairListFragment">
             <argument
                 android:name="mode"
                 android:defaultValue="1" />
@@ -140,10 +140,10 @@
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
-        android:id="@+id/messagesFragment"
-        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.MessagesFragment"
-        android:label="fragment_messages"
-        tools:layout="@layout/fragment_messages" />
+        android:id="@+id/inboxFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.InboxFragment"
+        android:label="Inbox"
+        tools:layout="@layout/fragment_inbox" />
     <dialog
         android:id="@+id/composeChooserFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeChooserFragment"
@@ -258,8 +258,8 @@
             app:argType="string" />
         <argument
             android:name="mode"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"
@@ -282,17 +282,19 @@
         android:id="@+id/singlePostBuffer"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.SinglePostBuffer"
         android:label="fragment_single_post_buffer"
-        tools:layout="@layout/fragment_single_post_buffer" >
+        tools:layout="@layout/fragment_single_post_buffer">
         <argument
             android:name="permalink"
             app:argType="string" />
     </fragment>
-    <action android:id="@+id/action_global_singlePostBuffer" app:destination="@id/singlePostBuffer" />
+    <action
+        android:id="@+id/action_global_singlePostBuffer"
+        app:destination="@id/singlePostBuffer" />
     <fragment
         android:id="@+id/editThingFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.EditThingFragment"
         android:label="fragment_edit_thing"
-        tools:layout="@layout/fragment_edit_thing" >
+        tools:layout="@layout/fragment_edit_thing">
         <argument
             android:name="type"
             app:argType="integer" />

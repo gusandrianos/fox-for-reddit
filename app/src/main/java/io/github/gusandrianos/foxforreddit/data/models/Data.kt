@@ -21,6 +21,12 @@ class Data : Parcelable {
     @SerializedName("after")
     val after: String? = null
 
+    @SerializedName("subject")
+    val subject: String? = null
+
+    @SerializedName("dest")
+    val dest: String? = null
+
     @SerializedName("body")
     val body: String? = null
 

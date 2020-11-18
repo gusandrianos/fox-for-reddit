@@ -2,6 +2,7 @@ package io.github.gusandrianos.foxforreddit.data.repositories
 
 import androidx.paging.PagingSource
 import io.github.gusandrianos.foxforreddit.Constants.MODE_POST
+import io.github.gusandrianos.foxforreddit.Constants.MODE_MESSAGES
 import io.github.gusandrianos.foxforreddit.Constants.MODE_SEARCH_RESULTS
 import io.github.gusandrianos.foxforreddit.Constants.MODE_SUBREDDIT
 import io.github.gusandrianos.foxforreddit.Constants.STARTER_PAGE
@@ -35,10 +36,10 @@ class RedditPagingSource() : PagingSource<String, Data>() {
         MODE = MODE_POST
     }
 
-    constructor (where: String, bearer: String) : this() {
+    constructor (where: String, bearer: String, mode: Int) : this() {
         mBearer = bearer
         mLocation = where
-        MODE = MODE_SUBREDDIT
+        MODE = mode
     }
 
     constructor(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String, bearer: String) : this() {
@@ -63,6 +64,8 @@ class RedditPagingSource() : PagingSource<String, Data>() {
                 response = redditAPI.getSubreddits(mBearer, mLocation, position, params.loadSize)
             else if (MODE == MODE_SEARCH_RESULTS)
                 response = redditAPI.searchResults(mBearer, mSubreddit, mQuery, mFilter, mTime, mRestrict_sr, mType, params.loadSize, position)
+            else if (MODE == MODE_MESSAGES)
+                response = redditAPI.getMessagesWhere(mBearer, mLocation, position, params.loadSize)
             val items = response.data!!.children?.map { it.data!! } ?: emptyList()
 
             LoadResult.Page(

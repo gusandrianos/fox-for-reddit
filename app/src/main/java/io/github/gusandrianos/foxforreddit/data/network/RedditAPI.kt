@@ -51,6 +51,14 @@ interface RedditAPI {
             @Header("Authorization") bearer: String
     ): Call<UserPrefs>
 
+    @GET("/message/{where}")
+    suspend fun getMessagesWhere(
+            @Header("Authorization") bearer: String,
+            @Path("where") where: String,
+            @Query("after") after: String,
+            @Query("count") count: Int,
+    ): Listing
+
     @GET("{permalink}")
     fun getSinglePost(
             @Header("Authorization") bearer: String,

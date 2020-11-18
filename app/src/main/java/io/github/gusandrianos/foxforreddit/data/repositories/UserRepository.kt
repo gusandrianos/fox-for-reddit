@@ -8,6 +8,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.liveData
 import com.google.gson.JsonObject
+import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
@@ -77,7 +78,7 @@ object UserRepository {
     fun getSubreddits(application: Application, location: String) =
             Pager(
                     config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-                    pagingSourceFactory = { RedditPagingSource(location, getBearer(application)) }
+                    pagingSourceFactory = { RedditPagingSource(location, getBearer(application), Constants.MODE_SUBREDDIT) }
             ).liveData
 
     fun getPrefs(application: Application): LiveData<UserPrefs> {
@@ -94,6 +95,12 @@ object UserRepository {
         }))
         return userPrefs
     }
+
+    fun getMessagesWhere(application: Application, where: String) =
+            Pager(
+                    config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+                    pagingSourceFactory = { RedditPagingSource(where, getBearer(application), Constants.MODE_MESSAGES) }
+            ).liveData
 
     fun blockUser(application: Application, accountId: String, name: String): LiveData<Boolean> {
         val status = MutableLiveData<Boolean>()

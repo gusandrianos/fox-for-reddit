@@ -101,19 +101,13 @@
             app:lib_setShape="rectangle"
             app:lib_setStrokeWidth="2dp" />
 
-        <com.libRG.CustomTextView
+        <include
             android:id="@+id/custom_text_link_flair"
+            layout="@layout/link_flair_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:clickable="true"
-            android:padding="4dp"
-            android:text="Flair"
-            app:lib_setRadius="2dp"
-            app:lib_setRoundedBorderColor="@android:color/tab_indicator_text"
-            app:lib_setRoundedView="true"
-            app:lib_setShape="rectangle"
-            app:lib_setStrokeWidth="2dp" />
+            android:clickable="true" />
     </LinearLayout>
 
     <ViewStub

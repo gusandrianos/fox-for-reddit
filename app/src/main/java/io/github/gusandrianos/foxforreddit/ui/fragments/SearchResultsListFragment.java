@@ -54,8 +54,8 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     boolean sr_restrict;
     String searchType;
 
-    SearchResultsAdapter mPostRecyclerViewAdapter;
-    RecyclerView mPostRecyclerView;
+    SearchResultsAdapter mSearchRecyclerViewAdapter;
+    RecyclerView mSearchRecyclerView;
     SwipeRefreshLayout pullToRefresh;
 
     @Nullable
@@ -70,7 +70,6 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
         mView = getView();
         mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
 
-
         query = getArguments().getString(ARG_QUERY_STRING, "");
         sr_restrict = getArguments().getBoolean(ARG_SR_RESTRICT_BOOLEAN);
         searchType = getArguments().getString(ARG_SEARCH_TYPE);
@@ -84,17 +83,17 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     }
 
     private void initRecycleView() {
-        mPostRecyclerView = mView.findViewById(R.id.recyclerview);
-        mPostRecyclerViewAdapter = new SearchResultsAdapter(searchType, this);
-        mPostRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY); //keep recyclerview on position
-        mPostRecyclerView.setHasFixedSize(true);
-        mPostRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mPostRecyclerView.addItemDecoration(new DividerItemDecoration(mPostRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
+        mSearchRecyclerView = mView.findViewById(R.id.recyclerview);
+        mSearchRecyclerViewAdapter = new SearchResultsAdapter(searchType, this);
+        mSearchRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY); //keep recyclerview on position
+        mSearchRecyclerView.setHasFixedSize(true);
+        mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mSearchRecyclerView.addItemDecoration(new DividerItemDecoration(mSearchRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
         PostLoadStateAdapter postLoadStateAdapter = new PostLoadStateAdapter(() -> {
-            mPostRecyclerViewAdapter.retry();
+            mSearchRecyclerViewAdapter.retry();
             return Unit.INSTANCE;
         });
-        mPostRecyclerView.setAdapter(mPostRecyclerViewAdapter.withLoadStateFooter(postLoadStateAdapter));
+        mSearchRecyclerView.setAdapter(mSearchRecyclerViewAdapter.withLoadStateFooter(postLoadStateAdapter));
     }
 
     void loadSearchList(boolean requestChanged) {
@@ -105,8 +104,8 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
             viewModel.deleteCached();
 
         viewModel.searchResults(query, filter, time, sr_restrict, searchType, "", getActivity().getApplication()).observe(getViewLifecycleOwner(), searchPostPagingData -> {
-            mPostRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), searchPostPagingData);
-            mPostRecyclerViewAdapter.addLoadStateListener(loadStates -> {
+            mSearchRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), searchPostPagingData);
+            mSearchRecyclerViewAdapter.addLoadStateListener(loadStates -> {
                 if (loadStates.getRefresh() instanceof LoadState.Loading)
                     pullToRefresh.setRefreshing(true);
                 else if (loadStates.getRefresh() instanceof LoadState.NotLoading)
@@ -119,8 +118,8 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
 
     private void initSwipeToRefresh() {
         pullToRefresh.setOnRefreshListener(() -> {
-            mPostRecyclerViewAdapter.refresh();
-            mPostRecyclerView.smoothScrollToPosition(0);
+            mSearchRecyclerViewAdapter.refresh();
+            mSearchRecyclerView.smoothScrollToPosition(0);
         });
     }
 

@@ -31,6 +31,7 @@ object Constants {
     const val MODE_POST = 1
     const val MODE_SUBREDDIT = 2
     const val MODE_SEARCH_RESULTS = 3
+    const val MODE_MESSAGES = 4
 
     // Post types
     const val SELF = 1
@@ -122,4 +123,7 @@ object Constants {
     const val SUBREDDIT_RULES = 2
     const val NAVIGATE_TO_SUBREDDIT = "Subreddit rules"
     const val REPORT_POST = "Report post"
+
+    // MessagesFragment
+    const val PREFS_WHERE = "where"
 }

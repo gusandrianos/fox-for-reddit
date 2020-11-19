@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -60,7 +59,7 @@ public class InboxFragment extends Fragment {
 
         MenuItem messageButton = toolbar.getMenu().getItem(0);
         messageButton.setOnMenuItemClickListener(item -> {
-            Toast.makeText(getContext(), "Write Message", Toast.LENGTH_SHORT).show();
+            navController.navigate(ComposeMessageFragmentDirections.actionGlobalComposeMessageFragment(null));
             return true;
         });
 

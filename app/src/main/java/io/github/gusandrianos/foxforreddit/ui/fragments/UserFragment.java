@@ -269,7 +269,7 @@ public class UserFragment extends Fragment {
             });
         } else {
             toolbar.getMenu().findItem(R.id.message_user).setOnMenuItemClickListener(menuItem -> {
-                //TODO
+                navController.navigate(ComposeMessageFragmentDirections.actionGlobalComposeMessageFragment(user.getName()));
                 return true;
             });
 

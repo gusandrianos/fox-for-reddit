@@ -20,6 +20,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -87,8 +88,8 @@ public class ComposeReplyToUserMessageFragment extends Fragment {
             else
                 Toast.makeText(getContext(), "That didn't work...", Toast.LENGTH_SHORT).show();
 
-            result.putBoolean("success", success);
-            getParentFragmentManager().setFragmentResult("reply", result);
+            result.putBoolean(Constants.MESSAGE_SENT_SUCCESS, success);
+            getParentFragmentManager().setFragmentResult(Constants.MESSAGE_REQUEST_KEY, result);
             requireActivity().onBackPressed();
         });
 

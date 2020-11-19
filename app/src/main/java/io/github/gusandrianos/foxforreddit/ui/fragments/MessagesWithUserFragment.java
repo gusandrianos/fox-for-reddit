@@ -26,6 +26,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.ReplyThing;
@@ -41,8 +42,8 @@ public class MessagesWithUserFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        getParentFragmentManager().setFragmentResultListener("reply", getViewLifecycleOwner(), (key, bundle) -> {
-            boolean success = bundle.getBoolean("success");
+        getParentFragmentManager().setFragmentResultListener(Constants.MESSAGE_REQUEST_KEY, getViewLifecycleOwner(), (key, bundle) -> {
+            boolean success = bundle.getBoolean(Constants.MESSAGE_SENT_SUCCESS);
             if (success)
                 requireActivity().onBackPressed();
         });

@@ -126,4 +126,6 @@ object Constants {
 
     // MessagesFragment
     const val PREFS_WHERE = "where"
+    const val MESSAGE_REQUEST_KEY = "message request key"
+    const val MESSAGE_SENT_SUCCESS = "message sent success"
 }

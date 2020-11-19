@@ -317,6 +317,9 @@
         <argument
             android:name="author"
             app:argType="string" />
+        <action
+            android:id="@+id/action_messagesWithUserFragment_to_composeReplyToUserMessageFragment"
+            app:destination="@id/composeReplyToUserMessageFragment" />
     </fragment>
     <action
         android:id="@+id/action_global_messagesWithUserFragment"
@@ -333,4 +336,8 @@
         android:id="@+id/action_global_composeMessageFragment"
         app:destination="@id/composeMessageFragment"
         app:launchSingleTop="true" />
+    <fragment
+        android:id="@+id/composeReplyToUserMessageFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeReplyToUserMessageFragment"
+        android:label="ComposeReplyToUserMessageFragment" />
 </navigation>

@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,7 +26,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 
-import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.ReplyThing;
@@ -36,9 +34,17 @@ import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.MessagesWithUserAdapter;
 
 public class MessagesWithUserFragment extends Fragment {
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        getParentFragmentManager().setFragmentResultListener("reply", getViewLifecycleOwner(), (key, bundle) -> {
+            boolean success = bundle.getBoolean("success");
+            if (success)
+                requireActivity().onBackPressed();
+        });
+
         return inflater.inflate(R.layout.fragment_messages_with_user, container, false);
     }
 
@@ -104,11 +110,12 @@ public class MessagesWithUserFragment extends Fragment {
         NavController navController = NavHostFragment.findNavController(this);
 
         Toolbar toolbar = requireActivity().findViewById(R.id.messages_with_user_toolbar);
-        toolbar.inflateMenu(R.menu.message);
+        toolbar.inflateMenu(R.menu.reply_message);
 
-        MenuItem messageButton = toolbar.getMenu().getItem(0);
+        MenuItem messageButton = toolbar.getMenu().findItem(R.id.reply_message);
         messageButton.setOnMenuItemClickListener(item -> {
-            Toast.makeText(getContext(), "Write Message", Toast.LENGTH_SHORT).show();
+
+            navController.navigate(MessagesWithUserFragmentDirections.actionMessagesWithUserFragmentToComposeReplyToUserMessageFragment());
             return true;
         });
 

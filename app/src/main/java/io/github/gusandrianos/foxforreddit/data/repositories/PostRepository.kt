@@ -287,4 +287,22 @@ object PostRepository {
         })
         return success
     }
+
+    fun editSubmission(text: String, thing_id: String, application: Application)
+            : LiveData<Boolean> {
+        val success = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val editSubmission = redditAPI.editSubmission(bearer, "json", text, thing_id)
+
+        editSubmission.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                success.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+            }
+
+        })
+        return success
+    }
 }

@@ -76,7 +76,7 @@ class Data : Parcelable {
     val ups = 0
 
     @SerializedName("selftext")
-    val selftext: String? = null
+    var selftext: String? = null
 
     @SerializedName("author_flair_type")
     val authorFlairType: String? = null

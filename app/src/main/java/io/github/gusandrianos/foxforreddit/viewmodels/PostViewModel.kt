@@ -90,4 +90,9 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
     fun deleteSubmission(id: String, application: Application): LiveData<Boolean> {
         return mPostRepository.deleteSubmission(id, application)
     }
+
+    fun editSubmission(text: String, thing_id: String, application: Application)
+            : LiveData<Boolean> {
+        return mPostRepository.editSubmission(text, thing_id, application)
+    }
 }

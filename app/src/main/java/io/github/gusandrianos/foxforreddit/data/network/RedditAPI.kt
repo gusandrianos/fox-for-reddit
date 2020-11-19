@@ -246,4 +246,13 @@ interface RedditAPI {
             @Header("Authorization") bearer: String,
             @Field("id") id: String
     ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/editusertext")
+    fun editSubmission(
+            @Header("Authorization") bearer: String,
+            @Field("api_type") apiType: String,
+            @Field("text") text: String,
+            @Field("thing_id") thing_id: String
+    ): Call<Void>
 }

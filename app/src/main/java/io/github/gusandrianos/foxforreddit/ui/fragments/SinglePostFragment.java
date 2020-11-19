@@ -97,7 +97,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     DisplayMetrics displayMetrics = new DisplayMetrics();
     Markwon markwon;
-    String permalink;
 
     @Nullable
     @Override
@@ -160,7 +159,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        permalink = singlePostData.getPermalink().substring(1, singlePostData.getPermalink().length() - 1);
+        String permalink = singlePostData.getPermalink().substring(1, singlePostData.getPermalink().length() - 1);
 
         Data finalSinglePostData = singlePostData;
         viewModel.getSinglePostComments(permalink, requireActivity().getApplication())
@@ -698,12 +697,59 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                         && postType != Constants.LINK
                         && postType != Constants.POLL);
 
+        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+
+        setUpEditFlairMenu(view, postData, toolbar);
+
         if (menu.findItem(R.id.self_single_post_edit).isVisible())
             menu.findItem(R.id.self_single_post_edit).setOnMenuItemClickListener(edit -> {
                 return true;
             });
 
-        menu.findItem(R.id.self_single_post_edit_flair).setOnMenuItemClickListener(editFlair -> {
+        menu.findItem(R.id.self_single_post_mark_nsfw).setOnMenuItemClickListener(markNSFW -> {
+            Boolean isNSFW = postData.isOver18();
+
+            viewModel.markNSFW(postData.getName(), isNSFW, requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), success -> {
+                        if (success) {
+                            TextView txtIsOver18 = view.findViewById(R.id.txt_post_is_over_18);
+                            postData.setOver18(!postData.isOver18());
+                            if (postData.isOver18()) {
+                                markNSFW.setTitle("Unmark NSFW");
+                                txtIsOver18.setVisibility(View.VISIBLE);
+                            } else {
+                                markNSFW.setTitle("Mark NSFW");
+                                txtIsOver18.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+            return true;
+        });
+
+        menu.findItem(R.id.self_single_post_mark_spoiler).setOnMenuItemClickListener(markSpoiler -> {
+            Boolean isSpoiler = postData.getSpoiler();
+
+            viewModel.markSpoiler(postData.getName(), isSpoiler, requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), success -> {
+                        if (success) {
+                            TextView txtIsSpoiler = view.findViewById(R.id.txt_post_is_spoiler);
+                            postData.setSpoiler(!postData.getSpoiler());
+                            if (postData.getSpoiler()) {
+                                markSpoiler.setTitle("Unmark Spoiler");
+                                txtIsSpoiler.setVisibility(View.VISIBLE);
+                            } else {
+                                markSpoiler.setTitle("Unmark Spoiler");
+                                txtIsSpoiler.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+            return true;
+        });
+    }
+
+    private void setUpEditFlairMenu(View view, Data postData, Toolbar toolbar) {
+        toolbar.getMenu().findItem(R.id.self_single_post_edit_flair).setOnMenuItemClickListener(editFlair -> {
             NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
                     .getSupportFragmentManager()
                     .findFragmentById(R.id.nav_host_fragment);
@@ -714,14 +760,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                                 .actionSinglePostFragmentToLinkFlairListFragment(
                                         postData.getSubredditNamePrefixed()
                                 ));
-            return true;
-        });
-
-        menu.findItem(R.id.self_single_post_mark_nsfw).setOnMenuItemClickListener(markNSFW -> {
-            return true;
-        });
-
-        menu.findItem(R.id.self_single_post_mark_spoiler).setOnMenuItemClickListener(markSpoiler -> {
             return true;
         });
 

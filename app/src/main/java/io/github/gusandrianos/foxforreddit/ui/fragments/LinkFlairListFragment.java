@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,14 +21,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Flair;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.utilities.LinkFlairListAdapter;
-import io.github.gusandrianos.foxforreddit.utilities.ModeratorsListAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
@@ -54,7 +50,6 @@ public class LinkFlairListFragment extends Fragment implements LinkFlairListAdap
         SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
         SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
 
-
         viewModel.getSubredditLinkFlair(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), linkFlair -> {
             if (linkFlair != null) {
                 RecyclerView linkFlairRV = view.findViewById(R.id.recycler_link_flairs);
@@ -68,8 +63,15 @@ public class LinkFlairListFragment extends Fragment implements LinkFlairListAdap
     }
 
     private void setCurrentFlair(Flair flair) {
+        int mode = LinkFlairListFragmentArgs.fromBundle(requireArguments()).getMode();
         MainActivity mainActivity = (MainActivity) requireActivity();
-        mainActivity.getFoxSharedViewModel().setCurrentFlair(flair);
+        if (mode == 0)
+            mainActivity.getFoxSharedViewModel().setCurrentFlair(flair);
+        else {
+            Bundle result = new Bundle();
+            result.putParcelable("flair", flair);
+            getParentFragmentManager().setFragmentResult("flairChoice", result);
+        }
         requireActivity().onBackPressed();
     }
 
@@ -87,7 +89,14 @@ public class LinkFlairListFragment extends Fragment implements LinkFlairListAdap
 
         toolbar.inflateMenu(R.menu.button_clear_link_flair);
         toolbar.getMenu().findItem(R.id.button_clear_link_flair).setOnMenuItemClickListener(clear -> {
-            setCurrentFlair(null);
+            int mode = LinkFlairListFragmentArgs.fromBundle(requireArguments()).getMode();
+
+            if (mode == 0)
+                setCurrentFlair(null);
+            else {
+                setCurrentFlair(new Flair());
+            }
+
             return true;
         });
 

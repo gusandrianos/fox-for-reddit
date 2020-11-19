@@ -211,4 +211,32 @@ interface RedditAPI {
             @Field("link") link: String,
             @Field("flair_template_id") templateId: String
     ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/marknsfw")
+    fun markNSFW(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String
+    ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/unmarknsfw")
+    fun unmarkNSFW(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String
+    ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/spoiler")
+    fun markSpoiler(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String
+    ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/unspoiler")
+    fun unmarkSpoiler(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String
+    ): Call<Void>
 }

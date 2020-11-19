@@ -49,7 +49,7 @@ class Data : Parcelable {
     val numComments = 0
 
     @SerializedName("spoiler")
-    val spoiler: Boolean? = null
+    var spoiler: Boolean? = null
 
     @SerializedName("id")
     val id: String? = null
@@ -148,7 +148,7 @@ class Data : Parcelable {
     val galleryData: GalleryData? = null
 
     @SerializedName("over_18")
-    val isOver18: Boolean? = false
+    var isOver18: Boolean? = false
 
     @SerializedName("subreddit")
     val subreddit: Any? = null

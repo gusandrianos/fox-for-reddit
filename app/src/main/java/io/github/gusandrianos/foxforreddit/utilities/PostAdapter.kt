@@ -232,12 +232,12 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
                         android.R.color.tab_indicator_text))
             }
 
-            if (post.isOver18 != null && post.isOver18)
+            if (post.isOver18 != null && post.isOver18 == true)
                 txtIsOver18.visibility = View.VISIBLE
             else
                 txtIsOver18.visibility = View.GONE
 
-            if (post.spoiler != null && post.spoiler)
+            if (post.spoiler != null && post.spoiler == true)
                 txtIsSpoiler.visibility = View.VISIBLE
             else
                 txtIsSpoiler.visibility = View.GONE

@@ -177,28 +177,27 @@ object FoxToolkit {
         return if (formattedNumber.length > 4) formattedNumber.replace("\\.[0-9]+".toRegex(), "").trim() else formattedNumber.trim()
     }
 
+    // TODO: Handle emoji in flair text
     fun makeFlair(type: String?, richtext: List<RichtextItem>?, text: String?, textColor: String?,
                   backgroundColor: String?, view: CustomTextView) {
 
-        // TODO: Handle emoji in flair text
-        if (type.equals("richtext")
-                && !richtext.isNullOrEmpty()) {
-            for (richTextItem in richtext) {
-                if (richTextItem.type.equals("text")) {
-                    view.text = richTextItem.text.trim()
-                }
+        if (!view.text.isNullOrEmpty()) {
+            if (type.equals("richtext") && !richtext.isNullOrEmpty()) {
+                for (richTextItem in richtext)
+                    if (richTextItem.type.equals("text"))
+                        view.text = richTextItem.text.trim()
+            } else
+                view.text = text
+
+            if (textColor.equals("light"))
+                view.setTextColor(Color.parseColor("#FFFFFF"))
+            if (!backgroundColor.isNullOrEmpty()) {
+                view.setBackgroundColor(Color.parseColor(backgroundColor))
+                view.setBorderColor(Color.parseColor(backgroundColor))
             }
-        } else {
-            view.text = text
-        }
 
-        if (textColor.equals("light"))
-            view.setTextColor(Color.parseColor("#FFFFFF"))
-        if (!backgroundColor.isNullOrEmpty()) {
-            view.setBackgroundColor(Color.parseColor(backgroundColor))
-            view.setBorderColor(Color.parseColor(backgroundColor))
-        }
-
-        view.visibility = View.VISIBLE
+            view.visibility = View.VISIBLE
+        } else
+            view.visibility = View.GONE
     }
 }

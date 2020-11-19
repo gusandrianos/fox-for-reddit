@@ -323,8 +323,7 @@
         app:destination="@id/messagesWithUserFragment" />
     <fragment
         android:id="@+id/composeMessageFragment"
-        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeMessageFragment"
-        android:label="ComposeMessageFragment">
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeMessageFragment">
         <argument
             android:name="sendToUser"
             app:argType="string"
@@ -332,5 +331,6 @@
     </fragment>
     <action
         android:id="@+id/action_global_composeMessageFragment"
-        app:destination="@id/composeMessageFragment" />
+        app:destination="@id/composeMessageFragment"
+        app:launchSingleTop="true" />
 </navigation>

@@ -56,13 +56,7 @@ public class ComposeMessageFragment extends Fragment {
         toolbar.inflateMenu(R.menu.button_send_message);
 
         MenuItem sendItem = toolbar.getMenu().findItem(R.id.send_message);
-        sendItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-
-                return checkFields(view);
-            }
-        });
+        sendItem.setOnMenuItemClickListener(item -> checkFields(view));
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.GONE);
         NavigationUI.setupWithNavController(toolbar, navController);
@@ -106,7 +100,6 @@ public class ComposeMessageFragment extends Fragment {
         String subject = subjectTextField.getText().toString();
         String text = messageTextField.getText().toString();
 
-        Toast.makeText(getContext(), toUser, Toast.LENGTH_SHORT).show();
         UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
         viewModel.messageCompose(requireActivity().getApplication(), toUser, subject, text).observe(getViewLifecycleOwner(), success -> {
@@ -116,6 +109,8 @@ public class ComposeMessageFragment extends Fragment {
                 Toast.makeText(getContext(), "Message has been sent.", Toast.LENGTH_SHORT).show();
             else
                 Toast.makeText(getContext(), "That didn't work...", Toast.LENGTH_SHORT).show();
+
+            requireActivity().onBackPressed();
         });
 
         return true;

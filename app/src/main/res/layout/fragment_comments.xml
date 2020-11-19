@@ -6,10 +6,18 @@
     android:orientation="vertical"
     tools:context=".ui.fragments.CommentsFragment">
 
+    <com.google.android.material.appbar.AppBarLayout
+    android:id="@+id/appBarLayout_fragment_single_post"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_more_children"
+        android:background="@android:color/white"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"

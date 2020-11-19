@@ -48,7 +48,7 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_posts,container,false);
+        return inflater.inflate(R.layout.fragment_posts, container, false);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
 
     private void submitToAdapter(PagingData pagingData) {
         mMessagesRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), pagingData);
-        mMessagesRecyclerViewAdapter    .addLoadStateListener(loadStates -> {
+        mMessagesRecyclerViewAdapter.addLoadStateListener(loadStates -> {
             if (loadStates.getRefresh() instanceof LoadState.Loading)
                 pullToRefresh.setRefreshing(true);
             else if (loadStates.getRefresh() instanceof LoadState.NotLoading)
@@ -115,6 +115,12 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMessagesRecyclerViewAdapter.refresh();
     }
 
     @Override

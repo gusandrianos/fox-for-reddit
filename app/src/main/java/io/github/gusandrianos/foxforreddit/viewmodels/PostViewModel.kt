@@ -86,4 +86,8 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
     fun markSpoiler(id: String, isSpoiler: Boolean, application: Application): LiveData<Boolean> {
         return mPostRepository.markSpoiler(id, isSpoiler, application)
     }
+
+    fun deleteSubmission(id: String, application: Application): LiveData<Boolean> {
+        return mPostRepository.deleteSubmission(id, application)
+    }
 }

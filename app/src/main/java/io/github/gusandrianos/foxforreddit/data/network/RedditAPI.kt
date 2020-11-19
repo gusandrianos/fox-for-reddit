@@ -239,4 +239,11 @@ interface RedditAPI {
             @Header("Authorization") bearer: String,
             @Field("id") id: String
     ): Call<Void>
+
+    @FormUrlEncoded
+    @POST("/api/del")
+    fun deleteSubmission(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String
+    ): Call<Void>
 }

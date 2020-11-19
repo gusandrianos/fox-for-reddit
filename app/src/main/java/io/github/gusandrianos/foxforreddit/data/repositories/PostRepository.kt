@@ -270,4 +270,21 @@ object PostRepository {
         })
         return success
     }
+
+    fun deleteSubmission(id: String, application: Application): LiveData<Boolean> {
+        val success = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val deleteSubmission = redditAPI.deleteSubmission(bearer, id)
+
+        deleteSubmission.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                success.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+            }
+
+        })
+        return success
+    }
 }

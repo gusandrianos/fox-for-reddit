@@ -1,5 +1,6 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -744,6 +746,25 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                             }
                         }
                     });
+            return true;
+        });
+
+        menu.findItem(R.id.self_single_post_delete).setOnMenuItemClickListener(delete -> {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.FoxAlertDialogStyle);
+            builder.setMessage("Are you sure?")
+                    .setCancelable(false)
+                    .setNegativeButton("Nope", (dialog, id) -> dialog.cancel())
+                    .setPositiveButton("Do it!", (dialog, id) ->
+                            viewModel.deleteSubmission(postData.getName(), requireActivity().getApplication())
+                                    .observe(getViewLifecycleOwner(), success -> {
+                                        if (success) {
+                                            requireActivity().onBackPressed();
+                                        }
+                                    }));
+
+            AlertDialog alert = builder.create();
+            alert.show();
             return true;
         });
     }

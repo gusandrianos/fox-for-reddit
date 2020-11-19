@@ -54,16 +54,16 @@
         android:textColor="#8B0000"
         android:textSize="12sp"
         android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_round_error_outline_16_red"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/txt_post_is_spoiler"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrier"
-        app:drawableStartCompat="@drawable/ic_round_error_outline_16_red" />
+        app:layout_constraintTop_toBottomOf="@id/barrier" />
 
     <TextView
         android:id="@+id/txt_post_is_spoiler"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="6dp"
         android:clickable="true"
@@ -71,11 +71,11 @@
         android:textColor="#5AA4FF"
         android:textSize="12sp"
         android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_round_error_outline_16_light_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrier"
-        app:drawableStartCompat="@drawable/ic_round_error_outline_16_light_blue" />
+        app:layout_constraintStart_toEndOf="@id/txt_post_is_over_18"
+        app:layout_constraintTop_toBottomOf="@id/barrier" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

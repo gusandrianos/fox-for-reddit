@@ -8,6 +8,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.liveData
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import io.github.gusandrianos.foxforreddit.data.models.*
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
@@ -220,13 +221,87 @@ object PostRepository {
 
         selectFlair.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                Log.i("Response", response.errorBody().toString())
                 success.value = response.isSuccessful
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 success.value = false
             }
+        })
+        return success
+    }
+
+    fun markNSFW(id: String, isNSFW: Boolean, application: Application): LiveData<Boolean> {
+        val success = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val markNSFW = if (isNSFW)
+            redditAPI.unmarkNSFW(bearer, id)
+        else
+            redditAPI.markNSFW(bearer, id)
+
+        markNSFW.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                success.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+            }
+
+        })
+        return success
+    }
+
+    fun markSpoiler(id: String, isSpoiler: Boolean, application: Application): LiveData<Boolean> {
+        val success = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val markSpoiler = if (isSpoiler)
+            redditAPI.unmarkSpoiler(bearer, id)
+        else
+            redditAPI.markSpoiler(bearer, id)
+
+        markSpoiler.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                success.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+            }
+
+        })
+        return success
+    }
+
+    fun deleteSubmission(id: String, application: Application): LiveData<Boolean> {
+        val success = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val deleteSubmission = redditAPI.deleteSubmission(bearer, id)
+
+        deleteSubmission.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                success.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+            }
+
+        })
+        return success
+    }
+
+    fun editSubmission(text: String, thing_id: String, application: Application)
+            : LiveData<Boolean> {
+        val success = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val editSubmission = redditAPI.editSubmission(bearer, "json", text, thing_id)
+
+        editSubmission.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                success.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+            }
+
         })
         return success
     }

@@ -47,7 +47,7 @@ public class ComposeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subredddit_field);
+        TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subreddit_field);
         TextInputLayout subredditTextInput = view.findViewById(R.id.input_compose_subredddit_field);
         subredditTextInput.setErrorIconDrawable(null);
         CustomTextView flairChooser = view.findViewById(R.id.custom_text_link_flair);
@@ -157,7 +157,7 @@ public class ComposeFragment extends Fragment {
         TextInputEditText titleTextField = view.findViewById(R.id.edit_compose_title_field);
         TextInputLayout titleTextInput = view.findViewById(R.id.input_compose_title_field);
 
-        TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subredddit_field);
+        TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subreddit_field);
         TextInputLayout subredditTextInput = view.findViewById(R.id.input_compose_subredddit_field);
 
         titleTextInput.setErrorIconDrawable(null);
@@ -180,7 +180,7 @@ public class ComposeFragment extends Fragment {
     private boolean postAction(View view, View inflated, int composeType) {
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subredddit_field);
+        TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subreddit_field);
         TextInputEditText titleTextField = view.findViewById(R.id.edit_compose_title_field);
         MainActivity mainActivity = (MainActivity) requireActivity();
 

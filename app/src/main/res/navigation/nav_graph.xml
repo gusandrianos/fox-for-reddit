@@ -48,6 +48,9 @@
                 android:name="mode"
                 android:defaultValue="1" />
         </action>
+        <action
+            android:id="@+id/action_singlePostFragment_to_editThingFragment"
+            app:destination="@id/editThingFragment" />
     </fragment>
     <fragment
         android:id="@+id/subredditFragment"
@@ -285,4 +288,19 @@
             app:argType="string" />
     </fragment>
     <action android:id="@+id/action_global_singlePostBuffer" app:destination="@id/singlePostBuffer" />
+    <fragment
+        android:id="@+id/editThingFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.EditThingFragment"
+        android:label="fragment_edit_thing"
+        tools:layout="@layout/fragment_edit_thing" >
+        <argument
+            android:name="type"
+            app:argType="integer" />
+        <argument
+            android:name="thingFullname"
+            app:argType="string" />
+        <argument
+            android:name="thingText"
+            app:argType="string" />
+    </fragment>
 </navigation>

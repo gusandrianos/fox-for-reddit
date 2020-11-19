@@ -78,4 +78,21 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
                     application: Application): LiveData<Boolean> {
         return mPostRepository.selectFlair(subreddit, link, templateId, application)
     }
+
+    fun markNSFW(id: String, isNSFW: Boolean, application: Application): LiveData<Boolean> {
+        return mPostRepository.markNSFW(id, isNSFW, application)
+    }
+
+    fun markSpoiler(id: String, isSpoiler: Boolean, application: Application): LiveData<Boolean> {
+        return mPostRepository.markSpoiler(id, isSpoiler, application)
+    }
+
+    fun deleteSubmission(id: String, application: Application): LiveData<Boolean> {
+        return mPostRepository.deleteSubmission(id, application)
+    }
+
+    fun editSubmission(text: String, thing_id: String, application: Application)
+            : LiveData<Boolean> {
+        return mPostRepository.editSubmission(text, thing_id, application)
+    }
 }

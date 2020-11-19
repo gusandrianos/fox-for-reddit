@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -21,8 +22,13 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
+import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 public class ComposeReplyToUserMessageFragment extends Fragment {
+
+    String thing_id;
 
     @Nullable
     @Override
@@ -34,6 +40,8 @@ public class ComposeReplyToUserMessageFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ComposeReplyToUserMessageFragmentArgs composeReplyToUserMessageFragmentArgs = ComposeReplyToUserMessageFragmentArgs.fromBundle(requireArguments());
+        thing_id = composeReplyToUserMessageFragmentArgs.getThingId();
         setUpNavigation(view);
     }
 
@@ -66,13 +74,24 @@ public class ComposeReplyToUserMessageFragment extends Fragment {
 
         if (flag)
             return false;
-        else {
-            Bundle result = new Bundle();
-            result.putBoolean("success", true);
+
+        String text = messageTextField.getText().toString();
+        Bundle result = new Bundle();
+
+        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
+        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        viewModel.commentCompose(requireActivity().getApplication(), thing_id, text).observe(getViewLifecycleOwner(), success -> {
+
+            if (success)
+                Toast.makeText(getContext(), "Reply has been sent.", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(getContext(), "That didn't work...", Toast.LENGTH_SHORT).show();
+
+            result.putBoolean("success", success);
             getParentFragmentManager().setFragmentResult("reply", result);
             requireActivity().onBackPressed();
-            Toast.makeText(getContext(), "Send reply", Toast.LENGTH_SHORT).show();
-            return true;
-        }
+        });
+
+        return true;
     }
 }

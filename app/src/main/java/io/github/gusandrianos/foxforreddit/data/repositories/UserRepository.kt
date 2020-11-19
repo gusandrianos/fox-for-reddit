@@ -139,4 +139,22 @@ object UserRepository {
         })
         return success
     }
+
+    fun commentCompose(application: Application, thing_id: String, text: String): LiveData<Boolean> {
+        val success = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val sendComment = redditAPI.commentCompose(bearer, thing_id, text, "json")
+        sendComment.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                Log.i("ComposeComment", "onResponse: " + response.raw() + " $$$ " + response.body().toString())
+                success.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                success.value = false
+            }
+
+        })
+        return success
+    }
 }

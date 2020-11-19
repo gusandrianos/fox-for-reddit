@@ -58,4 +58,8 @@ class UserViewModel(private val mUserRepository: UserRepository) : ViewModel() {
     fun messageCompose(application: Application, toUser: String, subject: String, text: String): LiveData<Boolean?> {
         return mUserRepository.messageCompose(application, toUser, subject, text)
     }
+
+    fun commentCompose(application: Application, thing_id: String, text: String): LiveData<Boolean> {
+        return mUserRepository.commentCompose(application, thing_id, text)
+    }
 }

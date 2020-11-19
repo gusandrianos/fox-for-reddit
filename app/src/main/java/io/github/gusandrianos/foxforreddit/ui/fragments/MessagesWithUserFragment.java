@@ -35,6 +35,8 @@ import io.github.gusandrianos.foxforreddit.utilities.MessagesWithUserAdapter;
 
 public class MessagesWithUserFragment extends Fragment {
 
+    Data data;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,7 +56,7 @@ public class MessagesWithUserFragment extends Fragment {
         setUpNavigation();
 
         MessagesWithUserFragmentArgs messagesWithUserFragmentArgs = MessagesWithUserFragmentArgs.fromBundle(requireArguments());
-        Data data = messagesWithUserFragmentArgs.getData();
+        data = messagesWithUserFragmentArgs.getData();
 
         Thing replies;
 
@@ -115,7 +117,7 @@ public class MessagesWithUserFragment extends Fragment {
         MenuItem messageButton = toolbar.getMenu().findItem(R.id.reply_message);
         messageButton.setOnMenuItemClickListener(item -> {
 
-            navController.navigate(MessagesWithUserFragmentDirections.actionMessagesWithUserFragmentToComposeReplyToUserMessageFragment());
+            navController.navigate(MessagesWithUserFragmentDirections.actionMessagesWithUserFragmentToComposeReplyToUserMessageFragment(data.getName()));
             return true;
         });
 

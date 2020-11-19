@@ -338,6 +338,9 @@
         app:launchSingleTop="true" />
     <fragment
         android:id="@+id/composeReplyToUserMessageFragment"
-        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeReplyToUserMessageFragment"
-        android:label="ComposeReplyToUserMessageFragment" />
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeReplyToUserMessageFragment" >
+        <argument
+            android:name="thing_id"
+            app:argType="string" />
+    </fragment>
 </navigation>

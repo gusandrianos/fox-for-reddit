@@ -10,12 +10,11 @@ import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
 import io.github.gusandrianos.foxforreddit.data.repositories.UserRepository
-import org.json.JSONObject
-import org.json.JSONStringer
 
 class UserViewModel(private val mUserRepository: UserRepository) : ViewModel() {
     private var subreddits: LiveData<PagingData<Data>>? = null
     private var userPrefs: LiveData<UserPrefs>? = null
+    private var messages: LiveData<PagingData<Data>>? = null
 
     fun getUser(application: Application, username: String): LiveData<Data> {
         return mUserRepository.getUser(username, application)
@@ -41,7 +40,26 @@ class UserViewModel(private val mUserRepository: UserRepository) : ViewModel() {
         return userPrefs!!
     }
 
+    fun getMessagesWhere(application: Application, where: String): LiveData<PagingData<Data>> {
+        if (messages != null)
+            return messages!!
+        messages = mUserRepository.getMessagesWhere(application, where).cachedIn(viewModelScope)
+        return messages!!
+    }
+
     fun blockUser(application: Application, accountId: String, name: String): LiveData<Boolean> {
         return mUserRepository.blockUser(application, accountId, name)
+    }
+
+    fun deleteCached() {
+        messages = null
+    }
+
+    fun messageCompose(application: Application, toUser: String, subject: String, text: String): LiveData<Boolean?> {
+        return mUserRepository.messageCompose(application, toUser, subject, text)
+    }
+
+    fun commentCompose(application: Application, thing_id: String, text: String): LiveData<Boolean> {
+        return mUserRepository.commentCompose(application, thing_id, text)
     }
 }

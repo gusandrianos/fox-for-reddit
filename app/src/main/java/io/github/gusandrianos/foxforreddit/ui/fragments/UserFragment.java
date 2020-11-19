@@ -269,7 +269,10 @@ public class UserFragment extends Fragment {
             });
         } else {
             toolbar.getMenu().findItem(R.id.message_user).setOnMenuItemClickListener(menuItem -> {
-                //TODO
+                if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
+                else
+                    navController.navigate(ComposeMessageFragmentDirections.actionGlobalComposeMessageFragment(user.getName()));
                 return true;
             });
 

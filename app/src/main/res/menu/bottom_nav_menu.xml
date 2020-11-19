@@ -15,9 +15,9 @@
         android:title="Compose" />
 
     <item
-        android:id="@id/messagesFragment"
+        android:id="@id/inboxFragment"
         android:icon="@drawable/ic_baseline_email_24"
-        android:title="Messages" />
+        android:title="Inbox" />
 
     <item
         android:id="@id/userFragment"

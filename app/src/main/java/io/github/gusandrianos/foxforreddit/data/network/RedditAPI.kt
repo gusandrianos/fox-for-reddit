@@ -51,6 +51,14 @@ interface RedditAPI {
             @Header("Authorization") bearer: String
     ): Call<UserPrefs>
 
+    @GET("/message/{where}")
+    suspend fun getMessagesWhere(
+            @Header("Authorization") bearer: String,
+            @Path("where") where: String,
+            @Query("after") after: String,
+            @Query("count") count: Int,
+    ): Listing
+
     @GET("{permalink}")
     fun getSinglePost(
             @Header("Authorization") bearer: String,
@@ -255,4 +263,22 @@ interface RedditAPI {
             @Field("text") text: String,
             @Field("thing_id") thing_id: String
     ): Call<Void>
+
+    @POST("/api/compose")
+    fun messageCompose(
+            @Header("Authorization") bearer: String,
+            @Field("to") toUser: String,
+            @Field("subject") subject: String,
+            @Field("text") text: String,
+            @Field("api_type") api_type: String
+    ): Call<JsonObject>
+
+    @FormUrlEncoded
+    @POST("api/comment")
+    fun commentCompose(
+            @Header("Authorization") bearer: String,
+            @Field("thing_id") thing_id: String,
+            @Field("text") text: String,
+            @Field("api_type") api_type: String
+    ): Call<JsonObject>
 }

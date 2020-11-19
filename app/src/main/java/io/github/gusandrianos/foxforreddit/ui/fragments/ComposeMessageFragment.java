@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -21,6 +22,9 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
+import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 public class ComposeMessageFragment extends Fragment {
     @Nullable
@@ -72,8 +76,6 @@ public class ComposeMessageFragment extends Fragment {
         TextInputEditText messageTextField = view.findViewById(R.id.edit_message_compose_message_field);
         TextInputLayout messageTextInput = view.findViewById(R.id.input_message_compose_message_field);
 
-        userTextInput.setErrorEnabled(false);
-
         boolean flag = false;
 
         if (userTextField.getText() != null && userTextField.getText().toString().isEmpty()) {
@@ -100,7 +102,22 @@ public class ComposeMessageFragment extends Fragment {
         if (flag)
             return false;
 
-        Toast.makeText(getContext(), "Send message", Toast.LENGTH_SHORT).show();
+        String toUser = "u/" + userTextField.getText().toString();
+        String subject = subjectTextField.getText().toString();
+        String text = messageTextField.getText().toString();
+
+        Toast.makeText(getContext(), toUser, Toast.LENGTH_SHORT).show();
+        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
+        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        viewModel.messageCompose(requireActivity().getApplication(), toUser, subject, text).observe(getViewLifecycleOwner(), success -> {
+            if (success == null)
+                Toast.makeText(getContext(), "User does not exist.", Toast.LENGTH_SHORT).show();
+            else if (success)
+                Toast.makeText(getContext(), "Message has been sent.", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(getContext(), "That didn't work...", Toast.LENGTH_SHORT).show();
+        });
+
         return true;
     }
 }

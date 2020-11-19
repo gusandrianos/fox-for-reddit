@@ -263,4 +263,13 @@ interface RedditAPI {
             @Field("text") text: String,
             @Field("thing_id") thing_id: String
     ): Call<Void>
+
+    @POST("/api/compose")
+    fun messageCompose(
+            @Header("Authorization") bearer: String,
+            @Field("to") toUser: String,
+            @Field("subject") subject: String,
+            @Field("text") text: String,
+            @Field("api_type") api_type: String
+    ): Call<JsonObject>
 }

@@ -54,4 +54,8 @@ class UserViewModel(private val mUserRepository: UserRepository) : ViewModel() {
     fun deleteCached() {
         messages = null
     }
+
+    fun messageCompose(application: Application, toUser: String, subject: String, text: String): LiveData<Boolean?> {
+        return mUserRepository.messageCompose(application, toUser, subject, text)
+    }
 }

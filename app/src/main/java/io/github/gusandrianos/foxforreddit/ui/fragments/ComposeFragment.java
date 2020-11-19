@@ -221,7 +221,6 @@ public class ComposeFragment extends Fragment {
                         Toast.makeText(requireContext(), "That didn't work", Toast.LENGTH_SHORT).show();
                 });
 
-        // TODO: Sanitize inputs
         // TODO: https://www.reddit.com/dev/api/#GET_api_v1_{subreddit}_post_requirements
         /* TODO: In a land of myth and a time of magic, one could upload pictures and videos from storage
             but reddit decided not to make the API public and make you jump through hoops to do it yourself.

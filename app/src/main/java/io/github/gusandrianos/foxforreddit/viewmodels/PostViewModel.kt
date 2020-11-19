@@ -37,7 +37,8 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
         return mPostRepository.getSinglePost(permalink, application)
     }
 
-    fun getSinglePostComments(permalink: String, application: Application): LiveData<CommentListing> {
+    fun getSinglePostComments(permalink: String, application: Application):
+            LiveData<CommentListing> {
         return mPostRepository.getSinglePostComments(permalink, application)
     }
 
@@ -71,5 +72,10 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
 
     fun reportPost(thing_id: String, reason: String, application: Application): LiveData<Boolean> {
         return mPostRepository.reportPost(thing_id, reason, application)
+    }
+
+    fun selectFlair(subreddit: String, link: String, templateId: String,
+                    application: Application): LiveData<Boolean> {
+        return mPostRepository.selectFlair(subreddit, link, templateId, application)
     }
 }

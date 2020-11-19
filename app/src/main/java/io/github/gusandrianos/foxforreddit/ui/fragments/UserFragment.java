@@ -78,10 +78,7 @@ public class UserFragment extends Fragment {
             UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
             viewModel.getUser(requireActivity().getApplication(), username)
-                    .observe(getViewLifecycleOwner(),
-                            data -> buildUserProfile(
-                                    data, view, Objects.equals(data.getName(),
-                                            sharedViewModel.getCurrentUserUsername())));
+                    .observe(getViewLifecycleOwner(), data -> buildUserProfile(data, view));
 
             setUpContent(username, view, username.equals(sharedViewModel.getCurrentUserUsername()));
         }
@@ -147,7 +144,7 @@ public class UserFragment extends Fragment {
         ).attach();
     }
 
-    private void buildUserProfile(Data user, View view, boolean isSelf) {
+    private void buildUserProfile(Data user, View view) {
         setUpUserNames(view, user, user.getName());
 
         ImageView profilePic = view.findViewById(R.id.profile_picture);

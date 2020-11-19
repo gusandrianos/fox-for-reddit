@@ -133,10 +133,10 @@ class Data : Parcelable {
     val viewCount: Any? = null
 
     @SerializedName("link_flair_richtext")
-    val linkFlairRichtext: List<RichtextItem>? = null
+    var linkFlairRichtext: List<RichtextItem>? = null
 
     @SerializedName("link_flair_background_color")
-    val linkFlairBackgroundColor: String? = null
+    var linkFlairBackgroundColor: String? = null
 
     @SerializedName("author_flair_richtext")
     val authorFlairRichtext: List<Any>? = null
@@ -172,7 +172,7 @@ class Data : Parcelable {
     val author: String? = null
 
     @SerializedName("link_flair_text_color")
-    val linkFlairTextColor: String? = null
+    var linkFlairTextColor: String? = null
 
     @SerializedName("is_video")
     val isVideo = false
@@ -208,7 +208,7 @@ class Data : Parcelable {
     val thumbnailWidth = 0
 
     @SerializedName("link_flair_text")
-    val linkFlairText: String? = null
+    var linkFlairText: String? = null
 
     @SerializedName("subreddit_subscribers")
     val subredditSubscribers = 0
@@ -217,7 +217,7 @@ class Data : Parcelable {
     val thumbnailHeight = 0
 
     @SerializedName("link_flair_type")
-    val linkFlairType: String? = null
+    var linkFlairType: String? = null
 
     @SerializedName("visited")
     val visited = false

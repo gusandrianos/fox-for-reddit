@@ -1,7 +1,10 @@
 package io.github.gusandrianos.foxforreddit.data.models
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Flair(
         @field:SerializedName("background_color")
         val backgroundColor: String = "",
@@ -22,7 +25,7 @@ data class Flair(
         val textColor: String? = null,
 
         @field:SerializedName("id")
-        val id: String? = null,
+        val id: String = "",
 
         @field:SerializedName("type")
         val type: String? = null,
@@ -32,8 +35,9 @@ data class Flair(
 
         @field:SerializedName("mod_only")
         val modOnly: Boolean? = null
-)
+) : Parcelable
 
+@Parcelize
 data class RichtextItem(
         @field:SerializedName("t")
         val text: String = "",
@@ -46,4 +50,4 @@ data class RichtextItem(
 
         @field:SerializedName("u")
         val source: String = ""
-)
+) : Parcelable

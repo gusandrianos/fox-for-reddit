@@ -41,6 +41,13 @@
         <action
             android:id="@+id/action_singlePostFragment_to_commentsFragment"
             app:destination="@id/commentsFragment" />
+        <action
+            android:id="@+id/action_singlePostFragment_to_linkFlairListFragment"
+            app:destination="@id/linkFlairListFragment" >
+            <argument
+                android:name="mode"
+                android:defaultValue="1" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/subredditFragment"
@@ -246,6 +253,10 @@
         <argument
             android:name="subredditName"
             app:argType="string" />
+        <argument
+            android:name="mode"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"

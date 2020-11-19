@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -62,6 +63,7 @@ import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.data.models.Flair;
 import io.github.gusandrianos.foxforreddit.data.models.GalleryItem;
 import io.github.gusandrianos.foxforreddit.data.models.MoreChildrenList;
 import io.github.gusandrianos.foxforreddit.data.models.ResolutionsItem;
@@ -95,6 +97,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     DisplayMetrics displayMetrics = new DisplayMetrics();
     Markwon markwon;
+    String permalink;
 
     @Nullable
     @Override
@@ -152,15 +155,15 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         orientation = getResources().getConfiguration().orientation;
 
-        setUpNavigation(view, singlePostData.getSubredditNamePrefixed());
+        setUpNavigation(view, singlePostData, postType);
         initializeUI(singlePostData, view, postType);
 
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        String permalink = singlePostData.getPermalink();
+        permalink = singlePostData.getPermalink().substring(1, singlePostData.getPermalink().length() - 1);
 
         Data finalSinglePostData = singlePostData;
-        viewModel.getSinglePostComments(Objects.requireNonNull(permalink).substring(1, permalink.length() - 1), requireActivity().getApplication())
+        viewModel.getSinglePostComments(permalink, requireActivity().getApplication())
                 .observe(getViewLifecycleOwner(), commentListing -> {
                     groupAdapter = new GroupAdapter<>();
                     initRecyclerView(groupAdapter);
@@ -686,7 +689,80 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         }
     }
 
-    private void setUpNavigation(View view, String subreddit) {
+    private void setUpMenu(Toolbar toolbar, Data postData, int postType, View view) {
+        toolbar.inflateMenu(R.menu.self_single_post_menu);
+        Menu menu = toolbar.getMenu();
+        menu.findItem(R.id.self_single_post_edit)
+                .setVisible(postType != Constants.IMAGE
+                        && postType != Constants.VIDEO
+                        && postType != Constants.LINK
+                        && postType != Constants.POLL);
+
+        if (menu.findItem(R.id.self_single_post_edit).isVisible())
+            menu.findItem(R.id.self_single_post_edit).setOnMenuItemClickListener(edit -> {
+                return true;
+            });
+
+        menu.findItem(R.id.self_single_post_edit_flair).setOnMenuItemClickListener(editFlair -> {
+            NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                    .getSupportFragmentManager()
+                    .findFragmentById(R.id.nav_host_fragment);
+            NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+            if (postData.getSubredditNamePrefixed() != null)
+                navController.navigate(
+                        SinglePostFragmentDirections
+                                .actionSinglePostFragmentToLinkFlairListFragment(
+                                        postData.getSubredditNamePrefixed()
+                                ));
+            return true;
+        });
+
+        menu.findItem(R.id.self_single_post_mark_nsfw).setOnMenuItemClickListener(markNSFW -> {
+            return true;
+        });
+
+        menu.findItem(R.id.self_single_post_mark_spoiler).setOnMenuItemClickListener(markSpoiler -> {
+            return true;
+        });
+
+        getParentFragmentManager().setFragmentResultListener("flairChoice", this, (key, bundle) -> {
+            Flair result = bundle.getParcelable("flair");
+            if (result != null) {
+                PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+                PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+
+                viewModel.selectFlair(postData.getSubredditNamePrefixed(), postData.getName(),
+                        result.getId(), requireActivity().getApplication())
+                        .observe(getViewLifecycleOwner(), success -> {
+
+                            CustomTextView customTxtPostFlair = view.findViewById(R.id.single_post_link_flair);
+
+                            if (success && !result.getId().isEmpty()) {
+                                setFlairData(result, postData);
+
+                                if (postData.getLinkFlairText() != null && !postData.getLinkFlairText().isEmpty())
+                                    FoxToolkit.INSTANCE.makeFlair(postData.getLinkFlairType(),
+                                            postData.getLinkFlairRichtext(), postData.getLinkFlairText(),
+                                            postData.getLinkFlairTextColor(), postData.getLinkFlairBackgroundColor(),
+                                            customTxtPostFlair);
+                            } else if (result.getId().isEmpty()) {
+                                setFlairData(result, postData);
+                                customTxtPostFlair.setVisibility(View.GONE);
+                            }
+                        });
+            }
+        });
+    }
+
+    private void setFlairData(Flair flair, Data postData) {
+        postData.setLinkFlairBackgroundColor(flair.getBackgroundColor());
+        postData.setLinkFlairRichtext(flair.getRichtext());
+        postData.setLinkFlairText(flair.getText());
+        postData.setLinkFlairTextColor(flair.getTextColor());
+        postData.setLinkFlairType(flair.getType());
+    }
+
+    private void setUpNavigation(View view, Data postData, int postType) {
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.single_post_collapsing_toolbar);
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
@@ -701,11 +777,13 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             }
         });
 
-        toolbar.setTitle(subreddit);
+        toolbar.setTitle(postData.getSubredditNamePrefixed());
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
 
-        mainActivity.setSupportActionBar(toolbar);
+        if (mainActivity.getFoxSharedViewModel().getCurrentUserUsername().equals(postData.getAuthor()))
+            setUpMenu(toolbar, postData, postType, view);
+
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.GONE);
         NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController);

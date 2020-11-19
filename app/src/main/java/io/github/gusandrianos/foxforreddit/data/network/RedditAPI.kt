@@ -264,6 +264,7 @@ interface RedditAPI {
             @Field("thing_id") thing_id: String
     ): Call<Void>
 
+    @FormUrlEncoded
     @POST("/api/compose")
     fun messageCompose(
             @Header("Authorization") bearer: String,

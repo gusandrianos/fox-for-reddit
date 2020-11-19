@@ -110,7 +110,11 @@ object Constants {
 
     // Compose types
     const val COMPOSE_TEXT = 0
-    const val COMPOSE_LINK = 2
+    const val COMPOSE_LINK = 1
+
+    // Compose types
+    const val EDIT_POST_TEXT = 0
+    const val EDIT_COMMENT_TEXT = 1
 
     // Report
     const val ALL_RULES = 0

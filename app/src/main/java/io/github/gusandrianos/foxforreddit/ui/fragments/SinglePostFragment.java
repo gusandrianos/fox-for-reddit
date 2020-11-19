@@ -704,10 +704,26 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         setUpEditFlairMenu(view, postData, toolbar);
 
-        if (menu.findItem(R.id.self_single_post_edit).isVisible())
+        if (menu.findItem(R.id.self_single_post_edit).isVisible()) {
             menu.findItem(R.id.self_single_post_edit).setOnMenuItemClickListener(edit -> {
+                NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                        .getSupportFragmentManager()
+                        .findFragmentById(R.id.nav_host_fragment);
+                NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+                navController.navigate(SinglePostFragmentDirections
+                        .actionSinglePostFragmentToEditThingFragment(Constants.EDIT_POST_TEXT,
+                                postData.getName(), postData.getSelftext()));
                 return true;
             });
+
+            getParentFragmentManager().setFragmentResultListener("editThing", getViewLifecycleOwner(), (key, bundle) -> {
+                String result = bundle.getString("updatedText");
+                if (result != null) {
+                    postData.setSelftext(result);
+                    bindAsSelf(postData, view);
+                }
+            });
+        }
 
         menu.findItem(R.id.self_single_post_mark_nsfw).setOnMenuItemClickListener(markNSFW -> {
             Boolean isNSFW = postData.isOver18();
@@ -784,7 +800,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             return true;
         });
 
-        getParentFragmentManager().setFragmentResultListener("flairChoice", this, (key, bundle) -> {
+        getParentFragmentManager().setFragmentResultListener("flairChoice", getViewLifecycleOwner(), (key, bundle) -> {
             Flair result = bundle.getParcelable("flair");
             if (result != null) {
                 PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();

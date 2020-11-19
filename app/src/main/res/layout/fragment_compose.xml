@@ -7,19 +7,12 @@
     android:orientation="vertical"
     tools:context=".ui.fragments.ComposeFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar_compose"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_compose"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_compose"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/white"
-            app:layout_scrollFlags="scroll|enterAlways|snap" />
-
-    </com.google.android.material.appbar.AppBarLayout>
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/white"
+        app:layout_scrollFlags="scroll|enterAlways|snap" />
 
     <FrameLayout
         android:layout_width="match_parent"

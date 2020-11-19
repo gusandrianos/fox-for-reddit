@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -19,15 +20,21 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/input_compose_reply_to_user_message_field"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_compose_reply_to_user_message_field"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
+            android:gravity="top"
             android:hint="Message"
-            android:maxLength="250" />
+            android:inputType="textMultiLine"
+            android:isScrollContainer="true"
+            android:minLines="5"
+            android:scrollbars="vertical" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

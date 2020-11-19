@@ -64,6 +64,8 @@ public class ComposeReplyToUserMessageFragment extends Fragment {
         TextInputEditText messageTextField = view.findViewById(R.id.edit_compose_reply_to_user_message_field);
         TextInputLayout messageTextInput = view.findViewById(R.id.input_compose_reply_to_user_message_field);
 
+        messageTextInput.setErrorIconDrawable(null);
+
         boolean flag = false;
 
         if (messageTextField.getText() != null && messageTextField.getText().toString().isEmpty()) {

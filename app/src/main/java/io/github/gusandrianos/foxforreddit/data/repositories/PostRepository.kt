@@ -26,8 +26,12 @@ object PostRepository {
 
     fun getPosts(subreddit: String, filter: String, time: String, application: Application) =
             Pager(
-                    config = PagingConfig(pageSize = 25, prefetchDistance = 25, enablePlaceholders = false),
-                    pagingSourceFactory = { RedditPagingSource(subreddit, filter, time, getBearer(application)) }
+                    config = PagingConfig(pageSize = 25, prefetchDistance = 25,
+                            enablePlaceholders = false),
+                    pagingSourceFactory = {
+                        RedditPagingSource(subreddit, filter, time, getBearer
+                        (application))
+                    }
             ).liveData
 
     fun votePost(dir: String, id: String, application: Application) {
@@ -52,8 +56,10 @@ object PostRepository {
 
                     val postType = object : TypeToken<Thing?>() {}.type
                     val commentsType = object : TypeToken<CommentListing?>() {}.type
-                    val post = gson.fromJson<Thing>(gson.toJsonTree(response.body()!![0]).asJsonObject, postType)
-                    val comments = gson.fromJson<CommentListing>(gson.toJsonTree(response.body()!![1]).asJsonObject, commentsType)
+                    val post = gson.fromJson<Thing>(gson.toJsonTree(response.body()!![0])
+                            .asJsonObject, postType)
+                    val comments = gson.fromJson<CommentListing>(gson.toJsonTree(response.body()
+                    !![1]).asJsonObject, commentsType)
 
                     singlePostData.value = SinglePost(post, comments)
                 }
@@ -66,7 +72,8 @@ object PostRepository {
         return singlePostData
     }
 
-    fun getSinglePostComments(permalink: String, application: Application): LiveData<CommentListing> {
+    fun getSinglePostComments(permalink: String, application: Application):
+            LiveData<CommentListing> {
         val bearer = getBearer(application)
         val singlePost = redditAPI.getSinglePost(bearer, permalink)
         singlePost.enqueue(object : Callback<List<Any>> {
@@ -74,7 +81,8 @@ object PostRepository {
                 if (response.isSuccessful) {
                     val commentsType = object : TypeToken<CommentListing?>() {}.type
                     val gson = Gson()
-                    val comments = gson.fromJson<CommentListing>(gson.toJsonTree(response.body()!![1]).asJsonObject, commentsType)
+                    val comments = gson.fromJson<CommentListing>(gson.toJsonTree(response.body()
+                    !![1]).asJsonObject, commentsType)
                     commentsData.value = comments
                 }
                 Log.i("SinglePost", "onResponse: ${response.message()}")
@@ -86,7 +94,8 @@ object PostRepository {
         return commentsData
     }
 
-    fun getMoreChildren(linkId: String, children: String, application: Application): LiveData<MoreChildren> {
+    fun getMoreChildren(linkId: String, children: String, application: Application):
+            LiveData<MoreChildren> {
         val dataMoreChildren = MutableLiveData<MoreChildren>()
         val bearer = getBearer(application)
         val moreChildren = redditAPI.getMoreChildren(bearer, linkId, children, "json")
@@ -102,11 +111,15 @@ object PostRepository {
         return dataMoreChildren
     }
 
-    fun submitText(type: String, subreddit: String, title: String, url: String, text: String, nsfw: Boolean, spoiler: Boolean, flair_id: String, flair_text: String, application: Application): LiveData<SubmitResponse> {
+    fun submitText(type: String, subreddit: String, title: String, url: String, text: String,
+                   nsfw: Boolean, spoiler: Boolean, flair_id: String, flair_text: String,
+                   application: Application): LiveData<SubmitResponse> {
         val bearer = getBearer(application)
-        val submit = redditAPI.submitText(bearer, type, subreddit, title, url, text, nsfw, spoiler, flair_id, flair_text, "json", true)
+        val submit = redditAPI.submitText(bearer, type, subreddit, title, url, text, nsfw,
+                spoiler, flair_id, flair_text, "json", true)
         submit.enqueue(object : Callback<SubmitResponse> {
-            override fun onResponse(call: Call<SubmitResponse>, response: Response<SubmitResponse>) {
+            override fun onResponse(call: Call<SubmitResponse>, response:
+            Response<SubmitResponse>) {
                 Log.i("postResponse", "onResponse: ${response.body()}")
                 if (response.isSuccessful)
                     submissionData.value = response.body()
@@ -119,82 +132,102 @@ object PostRepository {
     }
 
     fun savePost(id: String, application: Application): LiveData<Boolean> {
-        val succeed = MutableLiveData<Boolean>()
+        val success = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
         val save = redditAPI.savePost(bearer, id)
         save.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                succeed.value = response.isSuccessful
+                success.value = response.isSuccessful
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                succeed.value = false
+                success.value = false
             }
         })
-        return succeed
+        return success
     }
 
     fun unSavePost(id: String, application: Application): LiveData<Boolean> {
-        val succeed = MutableLiveData<Boolean>()
+        val success = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
         val unSave = redditAPI.unSavePost(bearer, id)
         unSave.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                succeed.value = response.isSuccessful
+                success.value = response.isSuccessful
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                succeed.value = false
+                success.value = false
             }
         })
-        return succeed
+        return success
     }
 
     fun hidePost(id: String, application: Application): LiveData<Boolean> {
-        val succeed = MutableLiveData<Boolean>()
+        val success = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
         val hide = redditAPI.hidePost(bearer, id)
         hide.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                succeed.value = response.isSuccessful
+                success.value = response.isSuccessful
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                succeed.value = false
+                success.value = false
             }
         })
-        return succeed
+        return success
     }
 
     fun unHidePost(id: String, application: Application): LiveData<Boolean> {
-        val succeed = MutableLiveData<Boolean>()
+        val success = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
         val unHide = redditAPI.unHidePost(bearer, id)
         unHide.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                succeed.value = response.isSuccessful
+                success.value = response.isSuccessful
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                succeed.value = false
+                success.value = false
             }
         })
-        return succeed
+        return success
     }
 
     fun reportPost(thing_id: String, reason: String, application: Application): LiveData<Boolean> {
-        val succeed = MutableLiveData<Boolean>()
+        val success = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
         val report = redditAPI.reportPost(bearer, thing_id, reason)
         report.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                succeed.value = response.isSuccessful
+                success.value = response.isSuccessful
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                succeed.value = false
+                success.value = false
             }
         })
-        return succeed
+        return success
+    }
+
+    fun selectFlair(subreddit: String, link: String, templateId: String,
+                    application: Application): LiveData<Boolean> {
+        val success = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val selectFlair = redditAPI.selectFlair(bearer, subreddit, "json", link,
+                templateId)
+
+        selectFlair.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                Log.i("Response", response.errorBody().toString())
+                success.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                success.value = false
+            }
+        })
+        return success
     }
 }

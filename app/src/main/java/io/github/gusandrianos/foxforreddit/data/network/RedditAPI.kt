@@ -201,4 +201,14 @@ interface RedditAPI {
             @Header("Authorization") bearer: String,
             @Path("subreddit") subreddit: String
     ): Call<List<Flair>>
+
+    @FormUrlEncoded
+    @POST("{subreddit}/api/selectflair")
+    fun selectFlair(
+            @Header("Authorization") bearer: String,
+            @Path("subreddit") subreddit: String,
+            @Field("api_type") apiType: String,
+            @Field("link") link: String,
+            @Field("flair_template_id") templateId: String
+    ): Call<Void>
 }

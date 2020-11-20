@@ -1,6 +1,5 @@
 package io.github.gusandrianos.foxforreddit.utilities
 
-import android.graphics.Color
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -170,8 +169,8 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                         val item = getItem(bindingAdapterPosition)
                         if (item != null) {
-                            upVoteColor(item, mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, mainActivity)
-                            onClick(bindingAdapterPosition, Constants.POST_VOTE_UP, mPostType)
+                            upVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, mainActivity)
+                            onClick(bindingAdapterPosition, Constants.THING_VOTE_UP, mPostType)
                         }
                     }
             }
@@ -183,8 +182,8 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                         val item = getItem(bindingAdapterPosition)
                         if (item != null) {
-                            downVoteColor(item, mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, mainActivity)
-                            onClick(bindingAdapterPosition, Constants.POST_VOTE_DOWN, mPostType)
+                            downVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, mainActivity)
+                            onClick(bindingAdapterPosition, Constants.THING_VOTE_DOWN, mPostType)
                         }
                     }
             }
@@ -198,7 +197,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             }
 
             mTxtPostMoreActions.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_MORE_ACTIONS, mPostType)
+                onClick(bindingAdapterPosition, Constants.THING_MORE_ACTIONS, mPostType)
             }
         }
 
@@ -213,24 +212,8 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             mTxtPostScore.text = formatValue(post.score.toDouble())
             mTxtPostNumComments.text = formatValue(post.numComments.toDouble())
 
-            if (post.likes != null) {
-                if (post.likes == true) {
-                    mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
-                    mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24)
-                    mTxtPostScore.setTextColor(ContextCompat.getColor(
-                            mainActivity.applicationContext, android.R.color.holo_orange_dark))
-                } else {
-                    mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
-                    mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24)
-                    mTxtPostScore.setTextColor(ContextCompat.getColor(
-                            mainActivity.applicationContext, android.R.color.holo_blue_dark))
-                }
-            } else {
-                mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24)
-                mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24)
-                mTxtPostScore.setTextColor(ContextCompat.getColor(mainActivity.applicationContext,
-                        android.R.color.tab_indicator_text))
-            }
+            FoxToolkit.setLikedStatusOnButtons(post.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
+                    mTxtPostScore, mainActivity)
 
             if (post.isOver18 != null && post.isOver18 == true)
                 txtIsOver18.visibility = View.VISIBLE

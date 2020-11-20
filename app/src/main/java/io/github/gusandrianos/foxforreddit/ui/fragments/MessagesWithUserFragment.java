@@ -37,6 +37,9 @@ import io.github.gusandrianos.foxforreddit.utilities.MessagesWithUserAdapter;
 public class MessagesWithUserFragment extends Fragment {
 
     Data data;
+    String currentUser;
+    String replyToFullname = null;
+    String replyTo = null;
 
     @Nullable
     @Override
@@ -54,10 +57,12 @@ public class MessagesWithUserFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setUpNavigation();
+
+        setUpNavigation(view);
 
         MessagesWithUserFragmentArgs messagesWithUserFragmentArgs = MessagesWithUserFragmentArgs.fromBundle(requireArguments());
         data = messagesWithUserFragmentArgs.getData();
+        currentUser = ((MainActivity) requireActivity()).getFoxSharedViewModel().getCurrentUserUsername();
 
         Thing replies;
 
@@ -94,6 +99,15 @@ public class MessagesWithUserFragment extends Fragment {
             adapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
 
             messagesRecyclerView.setAdapter(adapter);
+
+            for (int i = replies.getData().getChildren().size() - 1; i >= 0; i--) {
+                if (!replies.getData().getChildren().get(i).getData().getAuthor().equals(currentUser)) {
+                    replyToFullname = replies.getData().getChildren().get(i).getData().getName();
+                    replyTo = replies.getData().getChildren().get(i).getData().getAuthor();
+                    break;
+                }
+            }
+
         } else {
             TextView txtUser = view.findViewById(R.id.txt_messages_with_user_item_username);
             TextView txtTimeSent = view.findViewById(R.id.txt_messages_with_user_item_time_sent);
@@ -105,25 +119,38 @@ public class MessagesWithUserFragment extends Fragment {
 
             ScrollView scrollView = view.findViewById(R.id.container_messages_with_user_item);
             scrollView.setVisibility(View.VISIBLE);
+
+            if (!data.getAuthor().equals(currentUser)) {
+                replyToFullname = data.getName();
+                replyTo = data.getAuthor();
+            }
         }
+
+        if (replyToFullname != null)
+            setUpMessageAction(view);
     }
 
-    private void setUpNavigation() {
-        MainActivity mainActivity = (MainActivity) requireActivity();
+    private void setUpMessageAction(View view) {
         NavController navController = NavHostFragment.findNavController(this);
-
-        Toolbar toolbar = requireActivity().findViewById(R.id.messages_with_user_toolbar);
+        Toolbar toolbar = view.findViewById(R.id.messages_with_user_toolbar);
         toolbar.inflateMenu(R.menu.reply_message);
 
         MenuItem messageButton = toolbar.getMenu().findItem(R.id.reply_message);
+        messageButton.setVisible(true);
         messageButton.setOnMenuItemClickListener(item -> {
-
-            navController.navigate(MessagesWithUserFragmentDirections.actionMessagesWithUserFragmentToComposeReplyToUserMessageFragment(data.getName()));
+            navController.navigate(MessagesWithUserFragmentDirections.actionMessagesWithUserFragmentToComposeReplyToUserMessageFragment(replyToFullname, replyTo));
             return true;
         });
+    }
+
+    private void setUpNavigation(View view) {
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        NavController navController = NavHostFragment.findNavController(this);
 
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.GONE);
+
+        Toolbar toolbar = view.findViewById(R.id.messages_with_user_toolbar);
 
         NavigationUI.setupWithNavController(toolbar, navController);
     }

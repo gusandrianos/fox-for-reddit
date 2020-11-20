@@ -361,5 +361,8 @@
         <argument
             android:name="thing_id"
             app:argType="string" />
+        <argument
+            android:name="username"
+            app:argType="string" />
     </fragment>
 </navigation>

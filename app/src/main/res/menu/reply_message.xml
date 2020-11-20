@@ -6,5 +6,6 @@
         android:id="@+id/reply_message"
         android:title="Reply"
         android:icon="@drawable/ic_round_reply_24"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        android:visible="false"/>
 </menu>

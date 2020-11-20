@@ -167,7 +167,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                     navController.navigate(action);
                 }
                 break;
-            case Constants.POST_USER:
+            case Constants.THING_AUTHOR:
                 String authorUsername = data.getAuthor();
                 if (currentDestinationID != R.id.userFragment) {
                     NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(authorUsername);

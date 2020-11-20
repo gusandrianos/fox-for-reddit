@@ -127,7 +127,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
 
     @Override
     public void onClick(@NotNull String linkId, ArrayList<String> moreChildren,
-                        ChildrenItem comment, String actionType, int position) {
+                        ChildrenItem comment, String actionType, View view) {
         if (moreChildren != null) {
             StringBuilder loadChildren = new StringBuilder(moreChildren.get(0));
             List<String> moreChildrenArray = new ArrayList<>();

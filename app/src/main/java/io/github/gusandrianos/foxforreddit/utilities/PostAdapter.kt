@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -159,7 +158,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             }
 
             mTxtPostUser.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_USER, mPostType)
+                onClick(bindingAdapterPosition, Constants.THING_AUTHOR, mPostType)
             }
 
             mImgBtnPostVoteUp.setOnClickListener {
@@ -319,7 +318,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
                 onClick(bindingAdapterPosition, Constants.POST_ITEM, mPostType)
             }
             mTxtPostUser.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_USER, mPostType)
+                onClick(bindingAdapterPosition, Constants.THING_AUTHOR, mPostType)
             }
             mTxtPostSubreddit.setOnClickListener {
                 onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT, mPostType)

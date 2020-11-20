@@ -4,8 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.xwray.groupie.*
@@ -86,12 +84,12 @@ open class ExpandableCommentItem constructor(
             viewHolder.itemView.txt_more_children.apply {
                 setOnClickListener {
                     if (mComment.data.count > 0)
-                        listener.onClick(linkId, moreChildren, null, "", position)
+                        listener.onClick(linkId, moreChildren, null, "", viewHolder.itemView)
                 }
             }
             viewHolder.itemView.txt_more_children.text = "Show more"
         } else {
-            setCommentActions(viewHolder.itemView, position)
+            setCommentActions(viewHolder.itemView)
             addDepthViews(viewHolder)
             viewHolder.itemView.cl_comment.visibility = View.VISIBLE
             viewHolder.itemView.cl_load_more.visibility = View.GONE
@@ -106,12 +104,13 @@ open class ExpandableCommentItem constructor(
         }
     }
 
-    private fun setCommentActions(view: View, position: Int) {
+    private fun setCommentActions(view: View) {
         val upvote = view.findViewById(R.id.btn_comment_up_vote) as ImageButton
         val downvote = view.findViewById(R.id.btn_comment_down_vote) as ImageButton
         val score = view.findViewById(R.id.txt_comment_score) as TextView
         val reply = view.findViewById(R.id.btn_comment_reply) as ImageButton
         val moreActions = view.findViewById(R.id.btn_comment_more_actions) as ImageButton
+        val author: TextView = view.findViewById(R.id.txt_comment_user) as TextView
 
         FoxToolkit.setLikedStatusOnButtons(mComment.data?.likes, upvote, downvote,
                 score, mainActivity)
@@ -121,7 +120,7 @@ open class ExpandableCommentItem constructor(
                 FoxToolkit.promptLogIn(mainActivity)
             else {
                 upVoteColor(mComment.data?.likes, upvote, downvote, score, mainActivity)
-                listener.onClick(linkId, null, mComment, Constants.THING_VOTE_UP, position)
+                listener.onClick(linkId, null, mComment, Constants.THING_VOTE_UP, it)
             }
         }
 
@@ -130,17 +129,20 @@ open class ExpandableCommentItem constructor(
                 FoxToolkit.promptLogIn(mainActivity)
             else {
                 downVoteColor(mComment.data?.likes, upvote, downvote, score, mainActivity)
-                listener.onClick(linkId, null, mComment, Constants.THING_VOTE_DOWN, position)
+                listener.onClick(linkId, null, mComment, Constants.THING_VOTE_DOWN, it)
             }
         }
 
-
         reply.setOnClickListener {
-            listener.onClick(linkId, null, mComment, Constants.THING_VOTE_REPLY, position)
+            listener.onClick(linkId, null, mComment, Constants.THING_REPLY, it)
         }
 
         moreActions.setOnClickListener {
-            listener.onClick(linkId, null, mComment, Constants.THING_MORE_ACTIONS, position)
+            listener.onClick(linkId, null, mComment, Constants.THING_MORE_ACTIONS, it)
+        }
+
+        author.setOnClickListener{
+            listener.onClick(linkId, null, mComment, Constants.THING_AUTHOR, it)
         }
     }
 
@@ -176,6 +178,6 @@ open class ExpandableCommentItem constructor(
 
     interface OnItemClickListener {
         fun onClick(linkId: String, moreChildren: ArrayList<String>?,
-                    comment: ChildrenItem?, actionType: String, position: Int)
+                    comment: ChildrenItem?, actionType: String, view: View)
     }
 }

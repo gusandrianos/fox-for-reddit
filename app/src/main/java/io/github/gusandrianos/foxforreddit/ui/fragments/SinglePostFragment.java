@@ -1,6 +1,5 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -19,10 +18,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -78,6 +79,8 @@ import io.github.gusandrianos.foxforreddit.utilities.ImageGalleryAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
+import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
@@ -629,7 +632,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     @Override
     public void onClick(@NotNull String linkId, ArrayList<String> moreChildren,
-                        ChildrenItem comment, String actionType, int position) {
+                        ChildrenItem comment, String actionType, View view) {
         if (moreChildren != null) {
             StringBuilder loadChildren = new StringBuilder(moreChildren.get(0));
             List<String> moreChildrenArray = new ArrayList<>();
@@ -665,13 +668,95 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                         FoxToolkit.INSTANCE.downVoteCommentModel(viewModel,
                                 requireActivity().getApplication(), comment.getData());
                     break;
-                case Constants.THING_VOTE_REPLY:
+                case Constants.THING_REPLY:
+                    navController.navigate(
+                            SinglePostFragmentDirections
+                                    .actionSinglePostFragmentToComposeReplyToUserMessageFragment(
+                                            comment.getData().getName(), comment.getData().getAuthor()));
+                    break;
+                case Constants.THING_AUTHOR:
+                    String authorUsername = comment.getData().getAuthor();
+                    NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(authorUsername);
+                    navController.navigate(action);
                     break;
                 case Constants.THING_MORE_ACTIONS:
+                    PopupMenu menu = new PopupMenu(requireContext(), view);
+                    menu.inflate(R.menu.comment_popup);
+
+                    if (comment.getData().isSaved())
+                        menu.getMenu().findItem(R.id.comment_save).setTitle("Unsave");
+                    else
+                        menu.getMenu().findItem(R.id.comment_save).setTitle("Save");
+
+                    if (comment.getData().getAuthor()
+                            .equals(((MainActivity) requireActivity()).getFoxSharedViewModel()
+                                    .getCurrentUserUsername())) {
+                        menu.getMenu().findItem(R.id.comment_edit).setVisible(true);
+                        menu.getMenu().findItem(R.id.comment_delete).setVisible(true);
+                    } else {
+                        menu.getMenu().findItem(R.id.comment_edit).setVisible(false);
+                        menu.getMenu().findItem(R.id.comment_delete).setVisible(false);
+                    }
+
+                    if (menu.getMenu().findItem(R.id.comment_edit).isVisible()) {
+                        menu.getMenu().findItem(R.id.comment_edit).setOnMenuItemClickListener(edit -> {
+                            goToEditThing(comment.getData().getName(), comment.getData().getBody());
+                            return true;
+                        });
+
+                        menu.getMenu().findItem(R.id.comment_delete).setOnMenuItemClickListener(edit -> {
+                            deleteThingAction(viewModel, comment.getData().getName());
+                            return true;
+                        });
+                    }
+
+                    menu.getMenu().findItem(R.id.comment_save).setOnMenuItemClickListener(save -> {
+                        popUpMenuSave(comment, viewModel);
+                        return true;
+                    });
+
+                    menu.getMenu().findItem(R.id.comment_report).setOnMenuItemClickListener(commentReport -> {
+                        popUpMenuReport(comment);
+                        return true;
+                    });
+
+                    menu.show();
                     break;
                 default:
             }
         }
+    }
+
+    private void popUpMenuSave(ChildrenItem comment, PostViewModel viewModel) {
+        if (comment.getData().isSaved())
+            viewModel.unSavePost(comment.getData().getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                if (succeed)
+                    comment.getData().setSaved(false);
+            });
+        else
+            viewModel.savePost(comment.getData().getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                if (succeed)
+                    comment.getData().setSaved(true);
+            });
+        comment.getData().setSaved(!comment.getData().isSaved());
+    }
+
+    private void popUpMenuReport(ChildrenItem comment) {
+        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+        SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
+        subredditViewModel.getSubredditRules(comment.getData().getSubredditNamePrefixed(),
+                requireActivity().getApplication()).observe(getViewLifecycleOwner(),
+                rulesBundle -> {
+                    if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
+                        navController.navigate(SinglePostFragmentDirections
+                                .actionSinglePostFragmentToReportDialogFragment(
+                                        rulesBundle, null, Constants.ALL_RULES,
+                                        comment.getData().getSubredditNamePrefixed(),
+                                        comment.getData().getName()));
+                    else {
+                        Toast.makeText(getContext(), "Failed to report", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     @Override
@@ -726,13 +811,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         if (menu.findItem(R.id.self_single_post_edit).isVisible()) {
             menu.findItem(R.id.self_single_post_edit).setOnMenuItemClickListener(edit -> {
-                NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
-                        .getSupportFragmentManager()
-                        .findFragmentById(R.id.nav_host_fragment);
-                NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-                navController.navigate(SinglePostFragmentDirections
-                        .actionSinglePostFragmentToEditThingFragment(Constants.EDIT_POST_TEXT,
-                                postData.getName(), postData.getSelftext()));
+                goToEditThing(postData.getName(), postData.getSelftext());
                 return true;
             });
 
@@ -786,23 +865,36 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         });
 
         menu.findItem(R.id.self_single_post_delete).setOnMenuItemClickListener(delete -> {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.FoxAlertDialogStyle);
-            builder.setMessage("Are you sure?")
-                    .setCancelable(false)
-                    .setNegativeButton("Nope", (dialog, id) -> dialog.cancel())
-                    .setPositiveButton("Do it!", (dialog, id) ->
-                            viewModel.deleteSubmission(postData.getName(), requireActivity().getApplication())
-                                    .observe(getViewLifecycleOwner(), success -> {
-                                        if (success) {
-                                            requireActivity().onBackPressed();
-                                        }
-                                    }));
-
-            AlertDialog alert = builder.create();
-            alert.show();
+            deleteThingAction(viewModel, postData.getName());
             return true;
         });
+    }
+
+    private void goToEditThing(String fullname, String selftext) {
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                .getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+        navController.navigate(SinglePostFragmentDirections
+                .actionSinglePostFragmentToEditThingFragment(Constants.EDIT_POST_TEXT,
+                        fullname, selftext));
+    }
+
+    private void deleteThingAction(PostViewModel viewModel, String fullname) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.FoxAlertDialogStyle);
+        builder.setMessage("Are you sure?")
+                .setCancelable(false)
+                .setNegativeButton("Nope", (dialog, id) -> dialog.cancel())
+                .setPositiveButton("Do it!", (dialog, id) ->
+                        viewModel.deleteSubmission(fullname, requireActivity().getApplication())
+                                .observe(getViewLifecycleOwner(), success -> {
+                                    if (success) {
+                                        requireActivity().onBackPressed();
+                                    }
+                                }));
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void setUpEditFlairMenu(View view, Data postData, Toolbar toolbar) {

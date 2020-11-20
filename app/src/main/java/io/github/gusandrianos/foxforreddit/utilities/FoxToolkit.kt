@@ -13,6 +13,7 @@ import com.libRG.CustomTextView
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
+import io.github.gusandrianos.foxforreddit.data.models.CommentData
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.RichtextItem
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
@@ -87,8 +88,8 @@ object FoxToolkit {
             Constants.PLAYABLE_VIDEO
     }
 
-    fun upVoteColor(data: Data, upVoteBtn: ImageButton, downVoteBtn: ImageButton, score: TextView, activity: MainActivity) {
-        if (data.likes == null || !(data.likes as Boolean)) {
+    fun upVoteColor(likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton, score: TextView, activity: MainActivity) {
+        if (likes == null || !(likes)) {
             upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
             downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24)
             score.setTextColor(ContextCompat.getColor(activity.applicationContext, android.R.color.holo_orange_dark))
@@ -98,8 +99,8 @@ object FoxToolkit {
         }
     }
 
-    fun downVoteColor(data: Data, upVoteBtn: ImageButton, downVoteBtn: ImageButton, score: TextView, activity: MainActivity) {
-        if (data.likes == null || (data.likes as Boolean)) {
+    fun downVoteColor(likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton, score: TextView, activity: MainActivity) {
+        if (likes == null || (likes)) {
             upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)
             downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
             score.setTextColor(ContextCompat.getColor(activity.applicationContext, android.R.color.holo_blue_dark))
@@ -126,6 +127,48 @@ object FoxToolkit {
         } else {                                                   //else (down voted)
             viewModel.votePost("0", data.name!!, application) //send no vote
             data.likes = null
+        }
+    }
+
+    fun upVoteCommentModel(viewModel: PostViewModel, application: Application, data: CommentData) {
+        if (data.likes == null || data.likes == false) {          //If down or no voted
+            viewModel.votePost("1", data.name!!, application)     //then send up vote
+            data.likes = true
+        } else {                                                      //else (up voted)
+            viewModel.votePost("0", data.name!!, application)    //send no vote
+            data.likes = null
+        }
+    }
+
+    fun downVoteCommentModel(viewModel: PostViewModel, application: Application, data: CommentData) {
+        if (data.likes == null || data.likes == true) {     //If up or no voted
+            viewModel.votePost("-1", data.name!!, application) //then send down vote
+            data.likes = false
+        } else {                                                   //else (down voted)
+            viewModel.votePost("0", data.name!!, application) //send no vote
+            data.likes = null
+        }
+    }
+
+    fun setLikedStatusOnButtons(likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton,
+                                score: TextView, mainActivity: MainActivity) {
+        if (likes != null) {
+            if (likes == true) {
+                upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
+                downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24)
+                score.setTextColor(ContextCompat.getColor(
+                        mainActivity.applicationContext, android.R.color.holo_orange_dark))
+            } else {
+                downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
+                upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)
+                score.setTextColor(ContextCompat.getColor(
+                        mainActivity.applicationContext, android.R.color.holo_blue_dark))
+            }
+        } else {
+            upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)
+            downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24)
+            score.setTextColor(ContextCompat.getColor(mainActivity.applicationContext,
+                    android.R.color.tab_indicator_text))
         }
     }
 

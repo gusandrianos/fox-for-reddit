@@ -26,7 +26,7 @@
             android:id="@+id/txt_post_score"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="start"
+            android:gravity="center_vertical"
             android:text="255.5k"
             android:textColor="#FF5A5A5A" />
 
@@ -43,17 +43,15 @@
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:gravity="center_vertical"
         android:text="255.5k"
-        android:textAlignment="textStart"
         android:textColor="#FF5A5A5A"
         app:drawableStartCompat="@drawable/ic_round_mode_comment_24"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/guideline2"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/guideline"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <TextView
         android:id="@+id/btn_post_share"
@@ -62,6 +60,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:drawableStart="@drawable/ic_round_share_24"
         android:text="Share"
+        android:gravity="center_vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/guideline3"
         app:layout_constraintHorizontal_bias="0"

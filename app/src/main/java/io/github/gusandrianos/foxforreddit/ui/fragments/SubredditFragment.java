@@ -57,6 +57,10 @@ public class SubredditFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         SubredditFragmentArgs args = SubredditFragmentArgs.fromBundle(requireArguments());
         String subredditName = args.getSubredditName();
+
+        if (!subredditName.startsWith("r/"))
+            subredditName = "r/" + subredditName;
+
         ((MainActivity) requireActivity()).getFoxSharedViewModel().setCurrentSubreddit(subredditName);
 
         TextView titleTextView = view.findViewById(R.id.text_subreddit_title);
@@ -67,6 +71,7 @@ public class SubredditFragment extends Fragment {
         SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
         SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
 
+        String finalSubredditName = subredditName;
         viewModel.getSubreddit(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
         {
             setupHeader(subredditInfo, view);
@@ -74,7 +79,7 @@ public class SubredditFragment extends Fragment {
             PostFragment subredditPostFragment = (PostFragment) getChildFragmentManager().findFragmentByTag(Constants.SUBREDDIT_POST_FRAGMENT_TAG);
 
             if (subredditPostFragment == null) {
-                subredditPostFragment = PostFragment.newInstance(subredditName, "", "");
+                subredditPostFragment = PostFragment.newInstance(finalSubredditName, "", "");
                 getChildFragmentManager().beginTransaction()
                         .replace(R.id.subreddit_posts_fragment,
                                 subredditPostFragment,

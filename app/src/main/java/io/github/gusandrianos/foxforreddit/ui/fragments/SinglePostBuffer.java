@@ -32,13 +32,17 @@ public class SinglePostBuffer extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String permalink = SinglePostBufferArgs.fromBundle(requireArguments()).getPermalink();
+        SinglePostBufferArgs args = SinglePostBufferArgs.fromBundle(requireArguments());
+        String subreddit = args.getSubreddit();
+        String subdir = args.getSubdir();
+
+        String permalink = "r/" + subreddit + "/comments/" + subdir;
         ProgressBar progressBar = view.findViewById(R.id.post_buffer_progress);
 
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
 
-        viewModel.getSinglePost(Objects.requireNonNull(permalink).substring(1, permalink.length() - 1), requireActivity().getApplication())
+        viewModel.getSinglePost(permalink, requireActivity().getApplication())
                 .observe(getViewLifecycleOwner(), post -> {
                     Data postData = post.getData().getData().getChildren().get(0).getData();
                     SinglePostFragment singlePostFragment = SinglePostFragment.newInstance(postData, FoxToolkit.INSTANCE.getPostType(postData));

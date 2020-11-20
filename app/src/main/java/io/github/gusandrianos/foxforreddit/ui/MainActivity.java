@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements
             getCurrentUser();
     }
 
-    private void getCurrentUser() {
+    public void getCurrentUser() {
         UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
 

@@ -298,6 +298,15 @@
         <argument
             android:name="moreChildren"
             app:argType="io.github.gusandrianos.foxforreddit.data.models.MoreChildrenList" />
+        <action
+            android:id="@+id/action_commentsFragment_to_composeReplyToUserMessageFragment"
+            app:destination="@id/composeReplyToUserMessageFragment" />
+        <action
+            android:id="@+id/action_commentsFragment_to_editThingFragment"
+            app:destination="@id/editThingFragment" />
+        <action
+            android:id="@+id/action_commentsFragment_to_reportDialogFragment"
+            app:destination="@id/reportDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/singlePostBuffer"

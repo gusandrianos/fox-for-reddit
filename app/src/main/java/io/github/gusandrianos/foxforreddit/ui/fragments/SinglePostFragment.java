@@ -127,7 +127,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 return inflater.inflate(R.layout.fragment_single_post_video, container, false);
             case Constants.POLL:
                 return inflater.inflate(R.layout.fragment_single_post_poll, container, false);
-            default: //Self by default  //ToDo Comment
+            default:
                 return inflater.inflate(R.layout.fragment_single_post_self, container, false);
         }
     }
@@ -672,7 +672,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                     navController.navigate(
                             SinglePostFragmentDirections
                                     .actionSinglePostFragmentToComposeReplyToUserMessageFragment(
-                                            comment.getData().getName(), comment.getData().getAuthor()));
+                                            comment.getData().getName(), "New comment"));
                     break;
                 case Constants.THING_AUTHOR:
                     String authorUsername = comment.getData().getAuthor();
@@ -795,77 +795,95 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         }
     }
 
-    private void setUpMenu(Toolbar toolbar, Data postData, int postType, View view) {
+    private void setUpMenu(Toolbar toolbar, Data postData, int postType, View view, MainActivity mainActivity) {
         toolbar.inflateMenu(R.menu.self_single_post_menu);
         Menu menu = toolbar.getMenu();
-        menu.findItem(R.id.self_single_post_edit)
-                .setVisible(postType != Constants.IMAGE
-                        && postType != Constants.VIDEO
-                        && postType != Constants.LINK
-                        && postType != Constants.POLL);
 
-        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
-        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        if (mainActivity.getFoxSharedViewModel().getCurrentUserUsername().equals(postData.getAuthor())) {
 
-        setUpEditFlairMenu(view, postData, toolbar);
+            menu.findItem(R.id.self_single_post_edit)
+                    .setVisible(postType != Constants.IMAGE
+                            && postType != Constants.VIDEO
+                            && postType != Constants.LINK
+                            && postType != Constants.POLL);
 
-        if (menu.findItem(R.id.self_single_post_edit).isVisible()) {
-            menu.findItem(R.id.self_single_post_edit).setOnMenuItemClickListener(edit -> {
-                goToEditThing(postData.getName(), postData.getSelftext());
+            PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+            PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+
+            setUpEditFlairMenu(view, postData, toolbar);
+
+            if (menu.findItem(R.id.self_single_post_edit).isVisible()) {
+                menu.findItem(R.id.self_single_post_edit).setOnMenuItemClickListener(edit -> {
+                    goToEditThing(postData.getName(), postData.getSelftext());
+                    return true;
+                });
+
+                getParentFragmentManager().setFragmentResultListener("editThing", getViewLifecycleOwner(), (key, bundle) -> {
+                    String result = bundle.getString("updatedText");
+                    if (result != null) {
+                        postData.setSelftext(result);
+                        bindAsSelf(postData, view);
+                    }
+                });
+            }
+
+            menu.findItem(R.id.self_single_post_mark_nsfw).setOnMenuItemClickListener(markNSFW -> {
+                Boolean isNSFW = postData.isOver18();
+
+                viewModel.markNSFW(postData.getName(), isNSFW, requireActivity().getApplication())
+                        .observe(getViewLifecycleOwner(), success -> {
+                            if (success) {
+                                TextView txtIsOver18 = view.findViewById(R.id.txt_post_is_over_18);
+                                postData.setOver18(!postData.isOver18());
+                                if (postData.isOver18()) {
+                                    markNSFW.setTitle("Unmark NSFW");
+                                    txtIsOver18.setVisibility(View.VISIBLE);
+                                } else {
+                                    markNSFW.setTitle("Mark NSFW");
+                                    txtIsOver18.setVisibility(View.GONE);
+                                }
+                            }
+                        });
                 return true;
             });
 
-            getParentFragmentManager().setFragmentResultListener("editThing", getViewLifecycleOwner(), (key, bundle) -> {
-                String result = bundle.getString("updatedText");
-                if (result != null) {
-                    postData.setSelftext(result);
-                    bindAsSelf(postData, view);
-                }
+            menu.findItem(R.id.self_single_post_mark_spoiler).setOnMenuItemClickListener(markSpoiler -> {
+                Boolean isSpoiler = postData.getSpoiler();
+
+                viewModel.markSpoiler(postData.getName(), isSpoiler, requireActivity().getApplication())
+                        .observe(getViewLifecycleOwner(), success -> {
+                            if (success) {
+                                TextView txtIsSpoiler = view.findViewById(R.id.txt_post_is_spoiler);
+                                postData.setSpoiler(!postData.getSpoiler());
+                                if (postData.getSpoiler()) {
+                                    markSpoiler.setTitle("Unmark Spoiler");
+                                    txtIsSpoiler.setVisibility(View.VISIBLE);
+                                } else {
+                                    markSpoiler.setTitle("Unmark Spoiler");
+                                    txtIsSpoiler.setVisibility(View.GONE);
+                                }
+                            }
+                        });
+                return true;
             });
+
+            menu.findItem(R.id.self_single_post_delete).setOnMenuItemClickListener(delete -> {
+                deleteThingAction(viewModel, postData.getName());
+                return true;
+            });
+        } else {
+            menu.findItem(R.id.self_single_post_edit).setVisible(false);
+            menu.findItem(R.id.self_single_post_mark_nsfw).setVisible(false);
+            menu.findItem(R.id.self_single_post_mark_spoiler).setVisible(false);
+            menu.findItem(R.id.self_single_post_delete).setVisible(false);
+            menu.findItem(R.id.self_single_post_edit_flair).setVisible(false);
         }
 
-        menu.findItem(R.id.self_single_post_mark_nsfw).setOnMenuItemClickListener(markNSFW -> {
-            Boolean isNSFW = postData.isOver18();
-
-            viewModel.markNSFW(postData.getName(), isNSFW, requireActivity().getApplication())
-                    .observe(getViewLifecycleOwner(), success -> {
-                        if (success) {
-                            TextView txtIsOver18 = view.findViewById(R.id.txt_post_is_over_18);
-                            postData.setOver18(!postData.isOver18());
-                            if (postData.isOver18()) {
-                                markNSFW.setTitle("Unmark NSFW");
-                                txtIsOver18.setVisibility(View.VISIBLE);
-                            } else {
-                                markNSFW.setTitle("Mark NSFW");
-                                txtIsOver18.setVisibility(View.GONE);
-                            }
-                        }
-                    });
-            return true;
-        });
-
-        menu.findItem(R.id.self_single_post_mark_spoiler).setOnMenuItemClickListener(markSpoiler -> {
-            Boolean isSpoiler = postData.getSpoiler();
-
-            viewModel.markSpoiler(postData.getName(), isSpoiler, requireActivity().getApplication())
-                    .observe(getViewLifecycleOwner(), success -> {
-                        if (success) {
-                            TextView txtIsSpoiler = view.findViewById(R.id.txt_post_is_spoiler);
-                            postData.setSpoiler(!postData.getSpoiler());
-                            if (postData.getSpoiler()) {
-                                markSpoiler.setTitle("Unmark Spoiler");
-                                txtIsSpoiler.setVisibility(View.VISIBLE);
-                            } else {
-                                markSpoiler.setTitle("Unmark Spoiler");
-                                txtIsSpoiler.setVisibility(View.GONE);
-                            }
-                        }
-                    });
-            return true;
-        });
-
-        menu.findItem(R.id.self_single_post_delete).setOnMenuItemClickListener(delete -> {
-            deleteThingAction(viewModel, postData.getName());
+        menu.findItem(R.id.single_post_reply).setVisible(true).setOnMenuItemClickListener(reply -> {
+            navController.navigate(
+                    SinglePostFragmentDirections
+                            .actionSinglePostFragmentToComposeReplyToUserMessageFragment(
+                                    postData.getName(), "New comment"));
             return true;
         });
     }
@@ -968,8 +986,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
 
-        if (mainActivity.getFoxSharedViewModel().getCurrentUserUsername().equals(postData.getAuthor()))
-            setUpMenu(toolbar, postData, postType, view);
+        setUpMenu(toolbar, postData, postType, view, mainActivity);
 
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.GONE);

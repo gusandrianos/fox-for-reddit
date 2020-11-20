@@ -40,7 +40,7 @@ class CommentData {
     val authorFlairRichtext: List<Any>? = null
 
     @SerializedName("saved")
-    val isSaved = false
+    var isSaved = false
 
     @SerializedName("controversiality")
     val controversiality = 0

@@ -16,7 +16,6 @@ object Constants {
 
     // Post adapter
     const val POST_SUBREDDIT = "PostSubreddit"
-    const val POST_USER = "PostUser"
     const val POST_COMMENTS_NUM = "PostCommentsNum"
     const val POST_SHARE = "PostShare"
     const val POST_THUMBNAIL = "PostThumbnail"
@@ -25,9 +24,10 @@ object Constants {
 
     // Thing actions
     const val THING_MORE_ACTIONS = "MoreActions"
+    const val THING_AUTHOR = "ThingAuthor"
     const val THING_VOTE_UP = "VoteUp"
     const val THING_VOTE_DOWN = "VoteDown"
-    const val THING_VOTE_REPLY = "Reply"
+    const val THING_REPLY = "Reply"
 
     // Reddit paging source
     const val STARTER_PAGE = ""

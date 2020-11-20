@@ -178,7 +178,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                             Gson gson = new Gson();
                             item = gson.fromJson(gson.toJsonTree(child).getAsJsonObject(), childType);
                         }
-                        groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), finalSinglePostData.getName(), SinglePostFragment.this));
+                        groupAdapter.add(new ExpandableCommentGroup(item,
+                                Objects.requireNonNull(item.getData()).getDepth(),
+                                finalSinglePostData.getName(),
+                                SinglePostFragment.this, (MainActivity) requireActivity()));
                     }
                 });
     }
@@ -285,7 +288,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
                 FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
             else {
-                FoxToolkit.INSTANCE.upVoteColor(singlePostData, mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity());
+                FoxToolkit.INSTANCE.upVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity());
                 FoxToolkit.INSTANCE.upVoteModel(viewModel, requireActivity().getApplication(), singlePostData);
             }
         });
@@ -294,7 +297,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
                 FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
             else {
-                FoxToolkit.INSTANCE.downVoteColor(singlePostData, mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity());
+                FoxToolkit.INSTANCE.downVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity());
                 FoxToolkit.INSTANCE.downVoteModel(viewModel, requireActivity().getApplication(), singlePostData);
             }
         });
@@ -625,22 +628,50 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     @Override
-    public void onLoadMoreClicked(@NotNull String linkId, @NotNull ArrayList<String> moreChildren, int position) {
-        StringBuilder loadChildren = new StringBuilder(moreChildren.get(0));
-        List<String> moreChildrenArray = new ArrayList<>();
+    public void onClick(@NotNull String linkId, ArrayList<String> moreChildren,
+                        ChildrenItem comment, String actionType, int position) {
+        if (moreChildren != null) {
+            StringBuilder loadChildren = new StringBuilder(moreChildren.get(0));
+            List<String> moreChildrenArray = new ArrayList<>();
 
-        for (int i = 1; i < moreChildren.size(); i++)
-            if (i < 100)
-                loadChildren.append(",").append(moreChildren.get(i));
-            else
-                moreChildrenArray.add(moreChildren.get(i));
+            for (int i = 1; i < moreChildren.size(); i++)
+                if (i < 100)
+                    loadChildren.append(",").append(moreChildren.get(i));
+                else
+                    moreChildrenArray.add(moreChildren.get(i));
 
-        MoreChildrenList moreChildrenList = new MoreChildrenList();
-        moreChildrenList.setMoreChildrenList(moreChildrenArray);
+            MoreChildrenList moreChildrenList = new MoreChildrenList();
+            moreChildrenList.setMoreChildrenList(moreChildrenArray);
 
-        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-        navController.navigate(SinglePostFragmentDirections.actionSinglePostFragmentToCommentsFragment(linkId, loadChildren.toString(), moreChildrenList));
+            NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+            navController.navigate(SinglePostFragmentDirections.actionSinglePostFragmentToCommentsFragment(linkId, loadChildren.toString(), moreChildrenList));
+        } else {
+            PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+            PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+
+            switch (actionType) {
+                case Constants.THING_VOTE_UP:
+                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                        FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
+                    else
+                        FoxToolkit.INSTANCE.upVoteCommentModel(viewModel,
+                                requireActivity().getApplication(), comment.getData());
+                    break;
+                case Constants.THING_VOTE_DOWN:
+                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                        FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
+                    else
+                        FoxToolkit.INSTANCE.downVoteCommentModel(viewModel,
+                                requireActivity().getApplication(), comment.getData());
+                    break;
+                case Constants.THING_VOTE_REPLY:
+                    break;
+                case Constants.THING_MORE_ACTIONS:
+                    break;
+                default:
+            }
+        }
     }
 
     @Override

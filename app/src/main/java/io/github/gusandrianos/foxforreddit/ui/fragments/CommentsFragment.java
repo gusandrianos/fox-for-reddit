@@ -32,6 +32,7 @@ import java.util.Objects;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.MoreChildrenList;
+import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentGroup;
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentItem;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -106,7 +107,9 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                     Gson gson = new Gson();
                     item = gson.fromJson(gson.toJsonTree(child).getAsJsonObject(), childType);
                 }
-                groupAdapter.add(new ExpandableCommentGroup(item, Objects.requireNonNull(item.getData()).getDepth(), linkId, this));
+                groupAdapter.add(new ExpandableCommentGroup(item,
+                        Objects.requireNonNull(item.getData()).getDepth(),
+                        linkId, this, (MainActivity) requireActivity()));
             }
             if (txtMoreComments.getTag().equals("1"))
                 txtMoreComments.setVisibility(View.VISIBLE);
@@ -123,22 +126,27 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
     }
 
     @Override
-    public void onLoadMoreClicked(@NotNull String linkId, @NotNull ArrayList<String> moreChildren, int position) {
-        StringBuilder loadChildren = new StringBuilder(moreChildren.get(0));
-        List<String> moreChildrenArray = new ArrayList<>();
+    public void onClick(@NotNull String linkId, ArrayList<String> moreChildren,
+                        ChildrenItem comment, String actionType, int position) {
+        if (moreChildren != null) {
+            StringBuilder loadChildren = new StringBuilder(moreChildren.get(0));
+            List<String> moreChildrenArray = new ArrayList<>();
 
-        for (int i = 1; i < moreChildren.size(); i++)
-            if (i < 100)
-                loadChildren.append(",").append(moreChildren.get(i));
-            else
-                moreChildrenArray.add(moreChildren.get(i));
+            for (int i = 1; i < moreChildren.size(); i++)
+                if (i < 100)
+                    loadChildren.append(",").append(moreChildren.get(i));
+                else
+                    moreChildrenArray.add(moreChildren.get(i));
 
-        MoreChildrenList moreChildrenList = new MoreChildrenList();
-        moreChildrenList.setMoreChildrenList(moreChildrenArray);
+            MoreChildrenList moreChildrenList = new MoreChildrenList();
+            moreChildrenList.setMoreChildrenList(moreChildrenArray);
 
-        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-        navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren.toString(), moreChildrenList));
+            NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+            navController.navigate(SinglePostFragmentDirections.actionSinglePostFragmentToCommentsFragment(linkId, loadChildren.toString(), moreChildrenList));
+        } else {
+            //TODO
+        }
     }
 
     private void setUpNavigation(View view) {

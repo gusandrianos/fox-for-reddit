@@ -82,7 +82,7 @@ class CommentData {
     val createdUtc = 0
 
     @SerializedName("likes")
-    val likes: Any? = null
+    var likes: Boolean? = null
 
     @SerializedName("banned_at_utc")
     val bannedAtUtc: Any? = null

@@ -199,13 +199,13 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                     default:
                 }
                 break;
-            case Constants.POST_VOTE_UP:
+            case Constants.THING_VOTE_UP:
                 if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
                     FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                 else
                     FoxToolkit.INSTANCE.upVoteModel(viewModel, requireActivity().getApplication(), data);
                 break;
-            case Constants.POST_VOTE_DOWN:
+            case Constants.THING_VOTE_DOWN:
                 if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
                     FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                 else
@@ -218,7 +218,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
                 customTabsIntent.launchUrl(requireContext(), Uri.parse(data.getUrl()));
                 break;
-            case Constants.POST_MORE_ACTIONS:
+            case Constants.THING_MORE_ACTIONS:
                 if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
                     FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                 else

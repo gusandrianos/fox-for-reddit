@@ -685,21 +685,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
-    @Override
     public void onDetach() {
         if (player != null)
             player.release();
         super.onDetach();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     @Override

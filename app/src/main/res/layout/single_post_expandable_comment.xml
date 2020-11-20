@@ -51,6 +51,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="* 5h" />
 
+
         <TextView
             android:id="@+id/comment_body"
             android:layout_width="0dp"
@@ -58,36 +59,11 @@
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginBottom="@dimen/activity_horizontal_margin"
-            app:layout_constraintBottom_toTopOf="@id/btn_comment_up_vote_container"
+            app:layout_constraintBottom_toTopOf="@id/btn_comment_up_vote"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/separatorContainer"
             app:layout_constraintTop_toBottomOf="@id/txt_comment_user"
             tools:text="Body of comment" />
-
-        <ImageButton
-            android:id="@+id/txt_comment_reply"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginRight="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Reply"
-            android:src="@drawable/ic_round_reply_24"
-            app:layout_constraintBottom_toBottomOf="@+id/separator1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/separator1"
-            app:layout_constraintTop_toTopOf="@+id/separator1" />
-
-        <View
-            android:id="@+id/separator1"
-            android:layout_width="1dp"
-            android:layout_height="16dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="#2B2B2B"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_comment_down_vote"
-            app:layout_constraintEnd_toStartOf="@id/txt_comment_reply"
-            app:layout_constraintStart_toEndOf="@id/btn_comment_down_vote"
-            app:layout_constraintTop_toTopOf="@+id/btn_comment_down_vote" />
 
         <ImageButton
             android:id="@+id/btn_comment_down_vote"
@@ -96,42 +72,68 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Vote Down"
             android:src="@drawable/ic_round_arrow_downward_24"
-            app:layout_constraintBottom_toBottomOf="@+id/txt_comment_score"
-            app:layout_constraintEnd_toStartOf="@id/separator1"
+            app:layout_constraintBottom_toBottomOf="@id/btn_comment_more_actions"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/txt_comment_score"
-            app:layout_constraintTop_toTopOf="@+id/txt_comment_score" />
+            app:layout_constraintTop_toTopOf="@id/btn_comment_more_actions" />
 
         <TextView
             android:id="@+id/txt_comment_score"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:text="1.4k"
-            android:textAlignment="center"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_comment_up_vote_container"
+            android:gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="@id/btn_comment_more_actions"
             app:layout_constraintEnd_toStartOf="@id/btn_comment_down_vote"
-            app:layout_constraintStart_toEndOf="@id/btn_comment_up_vote_container"
-            app:layout_constraintTop_toTopOf="@+id/btn_comment_up_vote_container" />
+            app:layout_constraintStart_toEndOf="@id/btn_comment_up_vote"
+            app:layout_constraintTop_toTopOf="@id/btn_comment_more_actions" />
 
-        <LinearLayout
-            android:id="@+id/btn_comment_up_vote_container"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:gravity="end"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <ImageButton
+            android:id="@+id/btn_comment_up_vote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Vote Up"
+            android:src="@drawable/ic_round_arrow_upward_24"
+            app:layout_constraintBottom_toBottomOf="@id/btn_comment_more_actions"
             app:layout_constraintEnd_toStartOf="@id/txt_comment_score"
+            app:layout_constraintStart_toEndOf="@id/btn_comment_reply"
+            app:layout_constraintTop_toTopOf="@id/btn_comment_more_actions" />
+
+        <ImageButton
+            android:id="@+id/btn_comment_reply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Reply"
+            android:src="@drawable/ic_round_reply_24"
+            app:layout_constraintBottom_toBottomOf="@id/btn_comment_more_actions"
+            app:layout_constraintEnd_toStartOf="@id/btn_comment_up_vote"
+            app:layout_constraintStart_toEndOf="@id/btn_comment_more_actions"
+            app:layout_constraintTop_toTopOf="@id/btn_comment_more_actions" />
+
+        <ImageButton
+            android:id="@+id/btn_comment_more_actions"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="More actions"
+            android:src="@drawable/ic_baseline_more_vert_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_comment_reply"
+            app:layout_constraintStart_toEndOf="@id/control_gap"
+            app:layout_constraintTop_toBottomOf="@id/comment_body" />
+
+        <View
+            android:id="@+id/control_gap"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_comment_reply"
             app:layout_constraintStart_toEndOf="@id/separatorContainer"
-            app:layout_constraintTop_toBottomOf="@id/comment_body">
-
-            <ImageButton
-                android:id="@+id/btn_comment_up_vote"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Vote Up"
-                android:src="@drawable/ic_round_arrow_upward_24" />
-        </LinearLayout>
-
+            app:layout_constraintTop_toBottomOf="@id/comment_body" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -164,10 +166,10 @@
             android:clickable="true"
             android:text="Load More"
             android:textAlignment="textStart"
-            app:layout_constraintHorizontal_bias="0"
             android:textColor="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/separatorContainer2"
             app:layout_constraintTop_toTopOf="parent" />
 

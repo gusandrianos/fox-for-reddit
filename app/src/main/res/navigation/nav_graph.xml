@@ -14,6 +14,14 @@
         <argument
             android:name="username"
             app:argType="string" />
+        <deepLink
+            android:id="@+id/deepLink"
+            android:autoVerify="true"
+            app:uri="www.reddit.com/user/{username}" />
+        <deepLink
+            android:id="@+id/deepLink2"
+            android:autoVerify="true"
+            app:uri="www.reddit.com/u/{username}" />
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
@@ -73,6 +81,10 @@
         <action
             android:id="@+id/action_subredditFragment_to_moderatorsListFragment"
             app:destination="@id/moderatorsListFragment" />
+        <deepLink
+            android:id="@+id/deepLink3"
+            android:autoVerify="true"
+            app:uri="www.reddit.com/r/{subredditName}" />
     </fragment>
     <action
         android:id="@+id/action_global_userFragment"
@@ -285,8 +297,15 @@
         android:label="fragment_single_post_buffer"
         tools:layout="@layout/fragment_single_post_buffer">
         <argument
-            android:name="permalink"
+            android:name="subreddit"
             app:argType="string" />
+        <argument
+            android:name="subdir"
+            app:argType="string" />
+        <deepLink
+            android:id="@+id/deepLink5"
+            android:autoVerify="true"
+            app:uri="www.reddit.com/r/{subreddit}/comments/{subdir}" />
     </fragment>
     <action
         android:id="@+id/action_global_singlePostBuffer"

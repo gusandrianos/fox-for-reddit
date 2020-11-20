@@ -4,11 +4,13 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -70,13 +72,33 @@ public class UserFragment extends Fragment {
 
         MainActivity mainActivity = (MainActivity) requireActivity();
         FoxSharedViewModel sharedViewModel = mainActivity.getFoxSharedViewModel();
+
+        if (sharedViewModel.getCurrentUserUsername().isEmpty()) {
+            UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
+            UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+
+            viewModel.getMe(requireActivity().getApplication()).observe(getViewLifecycleOwner(), user -> {
+                if (user != null) {
+                    String currentUserUsername = user.getName();
+                    if (currentUserUsername != null) {
+                        sharedViewModel.setCurrentUserUsername(currentUserUsername);
+                        initializeUI(sharedViewModel, username, view);
+                    }
+                }
+                //TODO: Handle this by showing appropriate error
+            });
+        } else
+            initializeUI(sharedViewModel, username, view);
+    }
+
+    private void initializeUI(FoxSharedViewModel sharedViewModel, String username, View view) {
+        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
+        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
         sharedViewModel.setViewingSelf(username.equals(sharedViewModel.getCurrentUserUsername()));
 
         setUpNavigation(view);
 
         if (!username.isEmpty()) {
-            UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
-            UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
             viewModel.getUser(requireActivity().getApplication(), username)
                     .observe(getViewLifecycleOwner(), data -> buildUserProfile(data, view));
 

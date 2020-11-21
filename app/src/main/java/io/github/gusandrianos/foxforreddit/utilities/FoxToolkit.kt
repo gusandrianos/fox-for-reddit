@@ -3,7 +3,9 @@ package io.github.gusandrianos.foxforreddit.utilities
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources.Theme
 import android.graphics.Color
+import android.util.TypedValue
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
@@ -242,5 +244,12 @@ object FoxToolkit {
             view.visibility = View.VISIBLE
         } else
             view.visibility = View.GONE
+    }
+
+    fun getColorFromResource(context: Context, color: Int): Int {
+        val typedValue = TypedValue()
+        val theme: Theme = context.theme
+        theme.resolveAttribute(color, typedValue, true)
+        return typedValue.data
     }
 }

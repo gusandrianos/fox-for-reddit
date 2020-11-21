@@ -114,7 +114,14 @@ public class SubredditFragment extends Fragment {
 
         AppBarLayout appBarLayout = view.findViewById(R.id.fragment_subreddit_appbar);
         Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);
-        toolbar.setBackgroundColor(Color.argb(0, 255, 255, 255));
+
+        int surfaceColor = FoxToolkit.INSTANCE.getColorFromResource(requireContext(), R.attr.colorSurface);
+
+        int colorRed = Color.red(surfaceColor);
+        int colorGreen = Color.green(surfaceColor);
+        int colorBlue = Color.blue(surfaceColor);
+
+        toolbar.setBackgroundColor(Color.argb(0, colorRed, colorGreen, colorBlue));
 
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
             int alpha;
@@ -124,7 +131,7 @@ public class SubredditFragment extends Fragment {
             else
                 alpha = 0;
 
-            toolbar.setBackgroundColor(Color.argb(alpha, 255, 255, 255));
+            toolbar.setBackgroundColor(Color.argb(alpha, colorRed, colorGreen, colorBlue));
         });
     }
 

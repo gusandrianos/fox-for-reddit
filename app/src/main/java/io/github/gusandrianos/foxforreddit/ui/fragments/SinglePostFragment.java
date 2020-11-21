@@ -2,12 +2,14 @@ package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -973,12 +975,19 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
         ConstraintLayout includeHeader = view.findViewById(R.id.include_header_single_post);
 
+
+        int onSurfaceColor = FoxToolkit.INSTANCE.getColorFromResource(requireContext(), R.attr.colorOnSurface);
+
+        int colorRed = Color.red(onSurfaceColor);
+        int colorGreen = Color.green(onSurfaceColor);
+        int colorBlue = Color.blue(onSurfaceColor);
+
         appBarLayout.addOnOffsetChangedListener((AppBarLayout.OnOffsetChangedListener) (appBarLayout1, verticalOffset) -> {
             float normalize = (float) (1 - ((float) -verticalOffset / includeHeader.getMeasuredHeight())) * 255;
             if (Math.abs(verticalOffset) >= includeHeader.getMeasuredHeight()) {
-                toolbar.setTitleTextColor(Color.argb(255, 0, 0, 0));
+                toolbar.setTitleTextColor(Color.argb(255, colorRed, colorGreen, colorBlue));
             } else {
-                toolbar.setTitleTextColor(Color.argb((int) -normalize, 0, 0, 0));
+                toolbar.setTitleTextColor(Color.argb((int) -normalize, colorRed, colorGreen, colorBlue));
             }
         });
 

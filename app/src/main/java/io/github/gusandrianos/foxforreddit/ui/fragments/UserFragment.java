@@ -1,8 +1,10 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -210,7 +213,14 @@ public class UserFragment extends Fragment {
 
         AppBarLayout appBarLayout = view.findViewById(R.id.fragment_profile_appbar);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
-        toolbar.setBackgroundColor(Color.argb(0, 255, 255, 255));
+
+        int surfaceColor = FoxToolkit.INSTANCE.getColorFromResource(requireContext(), R.attr.colorSurface);
+
+        int colorRed = Color.red(surfaceColor);
+        int colorGreen = Color.green(surfaceColor);
+        int colorBlue = Color.blue(surfaceColor);
+
+        toolbar.setBackgroundColor(Color.argb(0, colorRed, colorGreen, colorBlue));
 
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
             int alpha;
@@ -220,7 +230,7 @@ public class UserFragment extends Fragment {
             else
                 alpha = 0;
 
-            toolbar.setBackgroundColor(Color.argb(alpha, 255, 255, 255));
+            toolbar.setBackgroundColor(Color.argb(alpha, colorRed, colorGreen, colorBlue));
         });
 
         NavController navController = NavHostFragment.findNavController(this);

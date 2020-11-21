@@ -2,12 +2,14 @@ package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -28,6 +30,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -50,6 +53,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.jaredrummler.cyanea.Cyanea;
+import com.jaredrummler.cyanea.tinting.CyaneaTinter;
 import com.libRG.CustomTextView;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
@@ -239,7 +244,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         TextView mTxtPostMoreActions = view.findViewById(R.id.txt_post_more_actions);
 
         mTxtPostSubreddit.setText(singlePostData.getSubredditNamePrefixed());
-        String user = "by u/" + singlePostData.getAuthor();
+        String user = "u/" + singlePostData.getAuthor();
         mTxtPostUser.setText(user);
         mTxtTimePosted.setText(DateUtils.getRelativeTimeSpanString((long) singlePostData.getCreatedUtc() * 1000).toString());
         txtPostTitle.setText(singlePostData.getTitle());
@@ -971,14 +976,25 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.single_post_collapsing_toolbar);
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
+        collapsingToolbar.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
+
+
         ConstraintLayout includeHeader = view.findViewById(R.id.include_header_single_post);
+        int color = Color.BLACK;
+        if(Cyanea.getInstance().isDark())
+            color = Color.WHITE;
+
+        int colorRed = Color.red(color);
+        int colorGreen = Color.green(color);
+        int colorBlue = Color.blue(color);
 
         appBarLayout.addOnOffsetChangedListener((AppBarLayout.OnOffsetChangedListener) (appBarLayout1, verticalOffset) -> {
             float normalize = (float) (1 - ((float) -verticalOffset / includeHeader.getMeasuredHeight())) * 255;
             if (Math.abs(verticalOffset) >= includeHeader.getMeasuredHeight()) {
-                toolbar.setTitleTextColor(Color.argb(255, 0, 0, 0));
+                toolbar.setTitleTextColor(Color.argb(255, colorRed, colorGreen, colorBlue));
             } else {
-                toolbar.setTitleTextColor(Color.argb((int) -normalize, 0, 0, 0));
+                toolbar.setTitleTextColor(Color.argb((int) -normalize, colorRed, colorGreen, colorBlue));
             }
         });
 

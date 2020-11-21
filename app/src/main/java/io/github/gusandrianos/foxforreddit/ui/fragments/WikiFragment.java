@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.jaredrummler.cyanea.Cyanea;
+
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -66,6 +68,7 @@ public class WikiFragment extends Fragment {
     private void setUpNavigation(View view) {
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar_wiki);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
         NavigationUI.setupWithNavController(toolbar, navController);
     }
 }

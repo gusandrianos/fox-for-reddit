@@ -17,6 +17,8 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.jaredrummler.cyanea.Cyanea;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -105,6 +107,7 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
         NavController navController = NavHostFragment.findNavController(this);
         AppBarConfiguration appBarConfiguration = mainActivity.appBarConfiguration;
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_subreddits);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
     }
 }

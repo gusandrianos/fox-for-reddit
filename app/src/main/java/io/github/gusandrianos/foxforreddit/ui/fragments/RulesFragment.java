@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.jaredrummler.cyanea.Cyanea;
+
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.utilities.RulesListAdapter;
@@ -59,6 +61,7 @@ public class RulesFragment extends Fragment {
     private void setUpNavigation(View view) {
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar_rules);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
         NavigationUI.setupWithNavController(toolbar, navController);
     }
 }

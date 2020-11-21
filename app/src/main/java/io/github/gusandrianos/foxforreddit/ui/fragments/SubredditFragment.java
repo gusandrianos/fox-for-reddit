@@ -27,6 +27,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+import com.jaredrummler.cyanea.Cyanea;
 
 import java.text.NumberFormat;
 import java.util.Objects;
@@ -114,7 +115,14 @@ public class SubredditFragment extends Fragment {
 
         AppBarLayout appBarLayout = view.findViewById(R.id.fragment_subreddit_appbar);
         Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);
-        toolbar.setBackgroundColor(Color.argb(0, 255, 255, 255));
+
+        int color = Cyanea.getInstance().getPrimary();
+
+        int colorRed = Color.red(color);
+        int colorGreen = Color.green(color);
+        int colorBlue = Color.blue(color);
+
+        toolbar.setBackgroundColor(Color.argb(0, colorRed, colorGreen, colorBlue));
 
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
             int alpha;
@@ -124,7 +132,7 @@ public class SubredditFragment extends Fragment {
             else
                 alpha = 0;
 
-            toolbar.setBackgroundColor(Color.argb(alpha, 255, 255, 255));
+            toolbar.setBackgroundColor(Color.argb(alpha, colorRed, colorGreen, colorBlue));
         });
     }
 
@@ -242,7 +250,10 @@ public class SubredditFragment extends Fragment {
         NavController navController = NavHostFragment.findNavController(this);
 
         Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
         toolbar.inflateMenu(R.menu.sorting_and_search_bar);
+        collapsingToolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
+        collapsingToolbar.setContentScrimColor(Cyanea.getInstance().getPrimary());
 
         MenuItem searchItem = toolbar.getMenu().findItem(R.id.search_bar);
         SearchView searchView = (SearchView) searchItem.getActionView();

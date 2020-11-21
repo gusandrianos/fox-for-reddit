@@ -1,8 +1,10 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -33,6 +37,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.jaredrummler.cyanea.Cyanea;
+import com.jaredrummler.cyanea.prefs.CyaneaSettingsActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +79,7 @@ public class UserFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         FoxSharedViewModel sharedViewModel = mainActivity.getFoxSharedViewModel();
 
-        if (sharedViewModel.getCurrentUserUsername().isEmpty()) {
+        if (sharedViewModel.getCurrentUserUsername().isEmpty() && FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication())) {
             UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
 
@@ -109,6 +115,9 @@ public class UserFragment extends Fragment {
     private void setUpContent(String username, View view, boolean isSelf) {
         ViewPager2 viewPager = view.findViewById(R.id.profile_view_pager);
         TabLayout tabLayout = view.findViewById(R.id.profile_tab_layout);
+        tabLayout.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
+        tabLayout.setSelectedTabIndicatorColor(Cyanea.getInstance().getAccent());
+        tabLayout.setTabTextColors(tabLayout.getTabTextColors().getDefaultColor(), Cyanea.getInstance().getAccent());
 
         if (isSelf)
             tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
@@ -171,6 +180,8 @@ public class UserFragment extends Fragment {
 
         ImageView profilePic = view.findViewById(R.id.profile_picture);
         ImageView coverPic = view.findViewById(R.id.profile_cover);
+        ImageView gradient = view.findViewById(R.id.profile_cover_gradient);
+
         Glide.with(view).load(Objects.requireNonNull(user.getIconImg()).split("\\?")[0]).into(profilePic);
 
         Type subredditType = new TypeToken<Subreddit>() {
@@ -179,6 +190,7 @@ public class UserFragment extends Fragment {
         Subreddit subreddit = gson.fromJson(gson.toJsonTree(user.getSubreddit()).getAsJsonObject(), subredditType);
 
         Glide.with(view).load(Objects.requireNonNull(subreddit.getBannerImg()).split("\\?")[0]).into(coverPic);
+        Glide.with(view).load(R.drawable.cover_gradient).into(gradient);
 
         Data userSubreddit = getUserSubreddit(user);
 
@@ -210,7 +222,14 @@ public class UserFragment extends Fragment {
 
         AppBarLayout appBarLayout = view.findViewById(R.id.fragment_profile_appbar);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
-        toolbar.setBackgroundColor(Color.argb(0, 255, 255, 255));
+
+        int color = Cyanea.getInstance().getPrimary();
+
+        int colorRed = Color.red(color);
+        int colorGreen = Color.green(color);
+        int colorBlue = Color.blue(color);
+
+        toolbar.setBackgroundColor(Color.argb(0, colorRed, colorGreen, colorBlue));
 
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
             int alpha;
@@ -220,7 +239,7 @@ public class UserFragment extends Fragment {
             else
                 alpha = 0;
 
-            toolbar.setBackgroundColor(Color.argb(alpha, 255, 255, 255));
+            toolbar.setBackgroundColor(Color.argb(alpha, colorRed, colorGreen, colorBlue));
         });
 
         NavController navController = NavHostFragment.findNavController(this);
@@ -235,6 +254,7 @@ public class UserFragment extends Fragment {
     void setupButton(Data userSubreddit, View view) {
         MaterialButton profileButton = view.findViewById(R.id.button_profile_button);
         MainActivity mainActivity = (MainActivity) requireActivity();
+        profileButton.setBackgroundColor(Cyanea.getInstance().getAccent());
 
         if (mainActivity.getFoxSharedViewModel().getViewingSelf()) {
             profileButton.setText(Constants.USER_UI_BUTTON_EDIT);
@@ -319,7 +339,11 @@ public class UserFragment extends Fragment {
     private void setUpNavigation(View view) {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
+        CollapsingToolbarLayout profileCollapsingToolbar = view.findViewById(R.id.profile_collapsing_toolbar);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
+        profileCollapsingToolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
+        profileCollapsingToolbar.setContentScrimColor(Cyanea.getInstance().getPrimary());
         toolbar.inflateMenu(R.menu.user_options);
 
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;

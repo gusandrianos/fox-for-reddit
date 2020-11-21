@@ -19,6 +19,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.jaredrummler.cyanea.Cyanea;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
@@ -52,6 +53,7 @@ public class ComposeReplyToUserMessageFragment extends Fragment {
 
         Toolbar toolbar = view.findViewById(R.id.compose_reply_to_user_message_toolbar);
         toolbar.inflateMenu(R.menu.button_send_message);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
 
         MenuItem sendItem = toolbar.getMenu().findItem(R.id.send_message);
         sendItem.setOnMenuItemClickListener(item -> checkField(view));

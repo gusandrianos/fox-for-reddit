@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.jaredrummler.cyanea.Cyanea;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
 
@@ -299,6 +300,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
     private void setUpNavigation(View view) {
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar_more_children);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
 
         MainActivity mainActivity = (MainActivity) requireActivity();
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;

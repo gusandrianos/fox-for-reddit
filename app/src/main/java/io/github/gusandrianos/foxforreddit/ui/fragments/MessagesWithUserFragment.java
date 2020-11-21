@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.jaredrummler.cyanea.Cyanea;
 
 import java.lang.reflect.Type;
 
@@ -160,6 +161,7 @@ public class MessagesWithUserFragment extends Fragment implements MessagesWithUs
         bottomNavigationView.setVisibility(View.GONE);
 
         Toolbar toolbar = view.findViewById(R.id.messages_with_user_toolbar);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
 
         NavigationUI.setupWithNavController(toolbar, navController);
     }

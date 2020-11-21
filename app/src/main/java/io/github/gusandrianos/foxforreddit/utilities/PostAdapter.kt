@@ -201,7 +201,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
         }
 
         open fun onBind(post: Data) {
-            val user = "by u/" + post.author
+            val user = "u/" + post.author
             val subreddit = "r/" + post.subreddit
 
             mTxtPostSubreddit.text = subreddit

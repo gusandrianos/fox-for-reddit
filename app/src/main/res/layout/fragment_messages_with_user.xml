@@ -13,8 +13,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/messages_with_user_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/white" />
+            android:layout_height="?attr/actionBarSize" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

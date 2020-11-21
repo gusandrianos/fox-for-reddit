@@ -17,6 +17,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.jaredrummler.cyanea.Cyanea;
 
 import java.util.ArrayList;
 
@@ -69,6 +70,7 @@ public class SubredditSearchResultsFragment extends Fragment {
         NavController navController = NavHostFragment.findNavController(this);
 
         Toolbar toolbar = view.findViewById(R.id.toolbar_fragment_results_search_subreddit);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
         toolbar.inflateMenu(R.menu.sorting_and_search_bar);
         toolbar.getMenu().getItem(1).getSubMenu().getItem(0).setVisible(true);
 

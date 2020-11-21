@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.jaredrummler.cyanea.Cyanea;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -78,6 +79,8 @@ public class ModeratorsListFragment extends Fragment implements ModeratorsListAd
         bottomNavigationView.setVisibility(View.VISIBLE);
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar_moderators);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
+
         NavigationUI.setupWithNavController(toolbar, navController);
     }
 }

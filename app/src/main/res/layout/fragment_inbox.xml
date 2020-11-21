@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:theme="@style/AppTheme"
     tools:context=".ui.fragments.InboxFragment"
     tools:openDrawer="start">
 
@@ -17,8 +16,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_fragment_messages"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/white" />
+            android:layout_height="?attr/actionBarSize"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 

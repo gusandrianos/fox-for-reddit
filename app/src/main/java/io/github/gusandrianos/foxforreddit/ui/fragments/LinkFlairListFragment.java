@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.jaredrummler.cyanea.Cyanea;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -86,6 +87,7 @@ public class LinkFlairListFragment extends Fragment implements LinkFlairListAdap
         bottomNavigationView.setVisibility(View.GONE);
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar_link_flairs);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
 
         toolbar.inflateMenu(R.menu.button_clear_link_flair);
         toolbar.getMenu().findItem(R.id.button_clear_link_flair).setOnMenuItemClickListener(clear -> {

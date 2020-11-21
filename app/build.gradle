@@ -90,4 +90,5 @@ dependencies {
     //FullScreen Image Viewer
     implementation 'com.github.stfalcon:stfalcon-imageviewer:1.0.1'
     implementation 'com.libRG:customtextview:2.2'
+    implementation 'com.jaredrummler:cyanea:1.0.2'
 }

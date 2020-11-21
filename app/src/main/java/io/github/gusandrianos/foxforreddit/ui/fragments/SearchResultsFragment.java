@@ -18,6 +18,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.jaredrummler.cyanea.Cyanea;
 
 import java.util.ArrayList;
 
@@ -49,6 +50,7 @@ public class SearchResultsFragment extends Fragment {
 
         ViewPager2 viewPager2 = view.findViewById(R.id.view_pager_fragment_results_search);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout_fragment_results_search);
+        tabLayout.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
 
         ArrayList<Fragment> searchResultsFragments = new ArrayList<>();
         ArrayList<String> tabTitles = new ArrayList<>();
@@ -92,10 +94,10 @@ public class SearchResultsFragment extends Fragment {
 
         Toolbar toolbar = view.findViewById(R.id.toolbar_fragment_results_search);
         toolbar.inflateMenu(R.menu.sorting_and_search_button);
-        toolbar.getMenu().getItem(1).getSubMenu().getItem(0).setVisible(true);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
+        toolbar.getMenu().findItem(R.id.search_sorting).getSubMenu().getItem(0).setVisible(true);
 
-        MenuItem searchButton = toolbar.getMenu().getItem(0);
-        searchButton.setOnMenuItemClickListener(item -> {
+        toolbar.getMenu().findItem(R.id.search).setOnMenuItemClickListener(item -> {
             navController.navigate(NavGraphDirections.actionGlobalSearchFragment());
             return true;
         });

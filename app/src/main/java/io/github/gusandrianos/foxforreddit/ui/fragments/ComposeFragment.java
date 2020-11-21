@@ -22,6 +22,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.jaredrummler.cyanea.Cyanea;
 import com.libRG.CustomTextView;
 
 import java.util.Objects;
@@ -234,6 +235,8 @@ public class ComposeFragment extends Fragment {
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar_compose);
         toolbar.inflateMenu(R.menu.button_submit_post);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
+
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.GONE);
         NavigationUI.setupWithNavController(toolbar, navController);

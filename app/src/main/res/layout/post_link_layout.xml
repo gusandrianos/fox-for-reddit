@@ -62,8 +62,7 @@
                 android:layout_gravity="bottom"
                 android:background="#80121212"
                 android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="#FFFFFF" />
+                android:maxLines="1" />
         </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

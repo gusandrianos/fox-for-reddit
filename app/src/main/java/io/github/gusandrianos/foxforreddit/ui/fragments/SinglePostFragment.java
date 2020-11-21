@@ -30,6 +30,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -52,6 +53,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.jaredrummler.cyanea.Cyanea;
+import com.jaredrummler.cyanea.tinting.CyaneaTinter;
 import com.libRG.CustomTextView;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
@@ -973,14 +976,18 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.single_post_collapsing_toolbar);
         AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout_fragment_single_post);
         Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
+        collapsingToolbar.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
+
+
         ConstraintLayout includeHeader = view.findViewById(R.id.include_header_single_post);
+        int color = Color.BLACK;
+        if(Cyanea.getInstance().isDark())
+            color = Color.WHITE;
 
-
-        int onSurfaceColor = FoxToolkit.INSTANCE.getColorFromResource(requireContext(), R.attr.colorOnSurface);
-
-        int colorRed = Color.red(onSurfaceColor);
-        int colorGreen = Color.green(onSurfaceColor);
-        int colorBlue = Color.blue(onSurfaceColor);
+        int colorRed = Color.red(color);
+        int colorGreen = Color.green(color);
+        int colorBlue = Color.blue(color);
 
         appBarLayout.addOnOffsetChangedListener((AppBarLayout.OnOffsetChangedListener) (appBarLayout1, verticalOffset) -> {
             float normalize = (float) (1 - ((float) -verticalOffset / includeHeader.getMeasuredHeight())) * 255;

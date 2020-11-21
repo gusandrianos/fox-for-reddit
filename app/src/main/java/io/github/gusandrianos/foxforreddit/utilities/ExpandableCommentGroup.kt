@@ -6,6 +6,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.jaredrummler.cyanea.Cyanea
 import com.xwray.groupie.*
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
@@ -141,7 +142,7 @@ open class ExpandableCommentItem constructor(
             listener.onClick(linkId, null, mComment, Constants.THING_MORE_ACTIONS, it)
         }
 
-        author.setOnClickListener{
+        author.setOnClickListener {
             listener.onClick(linkId, null, mComment, Constants.THING_AUTHOR, it)
         }
     }
@@ -157,6 +158,7 @@ open class ExpandableCommentItem constructor(
         for (i in 1..depth) {
             val v: View = LayoutInflater.from(viewHolder.itemView.context)
                     .inflate(R.layout.separator_view, viewHolder.itemView.separatorContainer, false)
+            v.setBackgroundColor(Cyanea.instance.accent)
             viewHolder.itemView.separatorContainer.addView((v))
         }
     }

@@ -36,6 +36,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.jaredrummler.cyanea.Cyanea;
+import com.jaredrummler.cyanea.prefs.CyaneaSettingsActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -112,6 +114,7 @@ public class UserFragment extends Fragment {
     private void setUpContent(String username, View view, boolean isSelf) {
         ViewPager2 viewPager = view.findViewById(R.id.profile_view_pager);
         TabLayout tabLayout = view.findViewById(R.id.profile_tab_layout);
+        tabLayout.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
 
         if (isSelf)
             tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
@@ -214,11 +217,11 @@ public class UserFragment extends Fragment {
         AppBarLayout appBarLayout = view.findViewById(R.id.fragment_profile_appbar);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
 
-        int surfaceColor = FoxToolkit.INSTANCE.getColorFromResource(requireContext(), R.attr.colorSurface);
+        int color = Cyanea.getInstance().getPrimary();
 
-        int colorRed = Color.red(surfaceColor);
-        int colorGreen = Color.green(surfaceColor);
-        int colorBlue = Color.blue(surfaceColor);
+        int colorRed = Color.red(color);
+        int colorGreen = Color.green(color);
+        int colorBlue = Color.blue(color);
 
         toolbar.setBackgroundColor(Color.argb(0, colorRed, colorGreen, colorBlue));
 
@@ -329,7 +332,11 @@ public class UserFragment extends Fragment {
     private void setUpNavigation(View view) {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
+        CollapsingToolbarLayout profileCollapsingToolbar = view.findViewById(R.id.profile_collapsing_toolbar);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
+        profileCollapsingToolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
+        profileCollapsingToolbar.setContentScrimColor(Cyanea.getInstance().getPrimary());
         toolbar.inflateMenu(R.menu.user_options);
 
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;

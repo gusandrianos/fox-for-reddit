@@ -9,8 +9,7 @@
         android:id="@+id/subreddit_collapsing_toolbar"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@android:color/white"
-        app:contentScrim="@android:color/white"
+        app:contentScrim="?colorPrimary"
         app:expandedTitleGravity="center|bottom"
         app:expandedTitleTextAppearance="@style/CollapsingToolbarLayoutExpandedTextStyle"
         app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
@@ -52,7 +51,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Display name"
-                android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:textStyle="normal" />
 
@@ -76,7 +74,7 @@
                 app:icon="@drawable/subscribe_subreddit"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
-                app:iconTint="#000000" />
+                app:iconTint="?colorOnPrimary" />
 
         </LinearLayout>
 

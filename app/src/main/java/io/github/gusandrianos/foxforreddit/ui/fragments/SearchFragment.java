@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.jaredrummler.cyanea.Cyanea;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -77,7 +78,8 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
 
         Toolbar toolbar = view.findViewById(R.id.toolbar_fragment_search);
         toolbar.inflateMenu(R.menu.search);
-        searchBarItem = toolbar.getMenu().getItem(0);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
+        searchBarItem = toolbar.getMenu().findItem(R.id.search);
         NavigationUI.setupWithNavController(toolbar, navController);
 
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;

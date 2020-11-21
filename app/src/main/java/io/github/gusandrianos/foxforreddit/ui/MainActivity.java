@@ -19,6 +19,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.jaredrummler.cyanea.Cyanea;
+import com.jaredrummler.cyanea.app.CyaneaAppCompatActivity;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -37,7 +39,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 import io.github.gusandrianos.foxforreddit.Constants;
 
 
-public class MainActivity extends AppCompatActivity implements
+public class MainActivity extends CyaneaAppCompatActivity implements
         BottomNavigationView.OnNavigationItemReselectedListener,
         BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements
         appBarConfiguration = new AppBarConfiguration.Builder(new HashSet<>(topLevelDestinationIds)).build();
 
         bottomNavView = findViewById(R.id.bottom_nav_view);
+        bottomNavView.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
         bottomNavView.setOnNavigationItemSelectedListener(this);
         bottomNavView.setOnNavigationItemReselectedListener(this);
 

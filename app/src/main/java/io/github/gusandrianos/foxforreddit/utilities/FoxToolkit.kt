@@ -236,7 +236,7 @@ object FoxToolkit {
 
             if (textColor.equals("light"))
                 view.setTextColor(Color.parseColor("#FFFFFF"))
-            if (!backgroundColor.isNullOrEmpty()) {
+            if (!backgroundColor.isNullOrEmpty() && backgroundColor.matches("^#[0-9A-F]{6}\$".toRegex())) {
                 view.setBackgroundColor(Color.parseColor(backgroundColor))
                 view.setBorderColor(Color.parseColor(backgroundColor))
             }

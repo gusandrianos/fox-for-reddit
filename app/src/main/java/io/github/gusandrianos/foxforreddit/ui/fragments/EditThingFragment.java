@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.jaredrummler.cyanea.Cyanea;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
@@ -75,6 +76,8 @@ public class EditThingFragment extends Fragment {
         NavController navController = NavHostFragment.findNavController(this);
         Toolbar toolbar = view.findViewById(R.id.toolbar_edit_thing);
         toolbar.inflateMenu(R.menu.button_submit_post);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
+
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.GONE);
         NavigationUI.setupWithNavController(toolbar, navController);

@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.jaredrummler.cyanea.Cyanea;
 
 import java.util.ArrayList;
 
@@ -56,6 +57,7 @@ public class InboxFragment extends Fragment {
 
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_fragment_messages);
         toolbar.inflateMenu(R.menu.message);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
 
         MenuItem messageButton = toolbar.getMenu().getItem(0);
         messageButton.setOnMenuItemClickListener(item -> {

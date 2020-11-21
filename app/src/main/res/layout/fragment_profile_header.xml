@@ -9,8 +9,7 @@
         android:id="@+id/profile_collapsing_toolbar"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@android:color/white"
-        app:contentScrim="@android:color/white"
+        app:contentScrim="?colorPrimary"
         app:expandedTitleGravity="center|start"
         app:expandedTitleTextAppearance="@style/CollapsingToolbarLayoutExpandedTextStyle"
         app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
@@ -39,7 +38,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Display name"
-                android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:textStyle="normal"
                 app:layout_constraintBottom_toTopOf="@id/text_user_display_name"
@@ -53,7 +51,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="u/username"
-                android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="normal"
                 android:visibility="gone"
@@ -76,7 +73,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearance="@style/PillShapeAppearance" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         <ImageView
             android:id="@+id/profile_picture"

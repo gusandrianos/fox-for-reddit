@@ -1,5 +1,6 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,12 +19,14 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.jaredrummler.cyanea.Cyanea;
 
 import java.util.ArrayList;
 
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
+import io.github.gusandrianos.foxforreddit.ui.ThemeSettings;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 
 public class MainFragment extends Fragment {
@@ -31,7 +34,6 @@ public class MainFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
@@ -41,6 +43,7 @@ public class MainFragment extends Fragment {
 
         ViewPager2 viewPager = view.findViewById(R.id.view_pager);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        tabLayout.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
         setUpNavigation();
 
         ArrayList<Fragment> homeFragments = new ArrayList<>();
@@ -65,12 +68,18 @@ public class MainFragment extends Fragment {
         NavController navController = NavHostFragment.findNavController(this);
 
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_main);
+        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
         toolbar.inflateMenu(R.menu.sorting_and_search_button);
-        toolbar.getMenu().getItem(1).getSubMenu().getItem(0).setVisible(true);
+        toolbar.getMenu().findItem(R.id.search_sorting).getSubMenu().getItem(0).setVisible(true);
 
-        MenuItem searchButton = toolbar.getMenu().getItem(0);
-        searchButton.setOnMenuItemClickListener(item -> {
+        toolbar.getMenu().findItem(R.id.search).setOnMenuItemClickListener(item -> {
             navController.navigate(NavGraphDirections.actionGlobalSearchFragment());
+            return true;
+        });
+
+        toolbar.getMenu().findItem(R.id.cyanea_settings).setOnMenuItemClickListener(item -> {
+            Intent intent = new Intent(requireContext(), ThemeSettings.class);
+            startActivity(intent);
             return true;
         });
 

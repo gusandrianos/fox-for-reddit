@@ -10,7 +10,6 @@ import androidx.paging.liveData
 import com.google.gson.JsonObject
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.data.models.Data
-import io.github.gusandrianos.foxforreddit.data.models.Json
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
@@ -146,7 +145,6 @@ object UserRepository {
         val sendComment = redditAPI.commentCompose(bearer, thing_id, text, "json")
         sendComment.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                Log.i("ComposeComment", "onResponse: " + response.raw() + " $$$ " + response.body().toString())
                 success.value = response.isSuccessful
             }
 
@@ -154,6 +152,22 @@ object UserRepository {
                 success.value = false
             }
 
+        })
+        return success
+    }
+
+    fun deleteMsg(application: Application, id: String): LiveData<Boolean> {
+        val success = MutableLiveData<Boolean>()
+        val bearer = getBearer(application)
+        val deleteMessage = redditAPI.deleteMsg(bearer, id)
+        deleteMessage.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                success.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                success.value = false
+            }
         })
         return success
     }

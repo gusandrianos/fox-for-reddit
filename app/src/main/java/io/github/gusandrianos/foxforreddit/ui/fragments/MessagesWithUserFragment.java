@@ -27,6 +27,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 
 import io.github.gusandrianos.foxforreddit.Constants;
+import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.ReplyThing;
@@ -34,7 +35,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Thing;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.MessagesWithUserAdapter;
 
-public class MessagesWithUserFragment extends Fragment {
+public class MessagesWithUserFragment extends Fragment implements MessagesWithUserAdapter.UserClickedListener {
 
     Data data;
     String currentUser;
@@ -95,7 +96,7 @@ public class MessagesWithUserFragment extends Fragment {
 
             replies.getData().getChildren().add(0, extraReply);
 
-            MessagesWithUserAdapter adapter = new MessagesWithUserAdapter(replies);
+            MessagesWithUserAdapter adapter = new MessagesWithUserAdapter(replies, this);
             adapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
 
             messagesRecyclerView.setAdapter(adapter);
@@ -117,6 +118,8 @@ public class MessagesWithUserFragment extends Fragment {
             txtTimeSent.setText(DateUtils.getRelativeTimeSpanString(data.getCreatedUtc() * 1000).toString());
             txtBody.setText(data.getBody());
 
+            txtUser.setOnClickListener(v -> navigateToUser(txtUser.getText().toString()));
+
             ScrollView scrollView = view.findViewById(R.id.container_messages_with_user_item);
             scrollView.setVisibility(View.VISIBLE);
 
@@ -128,6 +131,12 @@ public class MessagesWithUserFragment extends Fragment {
 
         if (replyToFullname != null)
             setUpMessageAction(view);
+    }
+
+    private void navigateToUser(String user) {
+        NavController navController = NavHostFragment.findNavController(this);
+        NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(user);
+        navController.navigate(action);
     }
 
     private void setUpMessageAction(View view) {
@@ -153,5 +162,10 @@ public class MessagesWithUserFragment extends Fragment {
         Toolbar toolbar = view.findViewById(R.id.messages_with_user_toolbar);
 
         NavigationUI.setupWithNavController(toolbar, navController);
+    }
+
+    @Override
+    public void onUserClicked(String user) {
+        navigateToUser(user);
     }
 }

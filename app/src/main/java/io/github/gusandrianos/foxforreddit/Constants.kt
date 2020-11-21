@@ -131,4 +131,5 @@ object Constants {
     const val PREFS_WHERE = "where"
     const val MESSAGE_REQUEST_KEY = "message request key"
     const val MESSAGE_SENT_SUCCESS = "message sent success"
+    const val OPEN_MESSAGES_WITH_USER = "open messages with user"
 }

@@ -62,4 +62,8 @@ class UserViewModel(private val mUserRepository: UserRepository) : ViewModel() {
     fun commentCompose(application: Application, thing_id: String, text: String): LiveData<Boolean> {
         return mUserRepository.commentCompose(application, thing_id, text)
     }
+
+    fun deleteMsg(application: Application, id: String): LiveData<Boolean> {
+        return mUserRepository.deleteMsg(application, id)
+    }
 }

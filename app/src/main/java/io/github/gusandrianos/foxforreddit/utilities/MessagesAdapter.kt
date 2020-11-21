@@ -4,10 +4,12 @@ import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
 
@@ -42,24 +44,28 @@ class MessagesAdapter(private val listener: MessagesItemClickListener) : PagingD
         val txtUser: TextView = view.findViewById(R.id.txt_message_item_sent_by_user)
         val txtTimeAgo: TextView = view.findViewById(R.id.txt_message_item_time_ago)
         val txtSubject: TextView = view.findViewById(R.id.txt_message_item_subject)
+        private val btnMoreAction: ImageButton = view.findViewById(R.id.btn_message_item_more_actions)
 
         init {
             itemView.setOnClickListener {
-                onClick(bindingAdapterPosition)
+                onClick(bindingAdapterPosition, Constants.OPEN_MESSAGES_WITH_USER, it)
+            }
+            btnMoreAction.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.THING_MORE_ACTIONS, it)
             }
         }
     }
 
-    fun onClick(position: Int) {
+    fun onClick(position: Int, action: String, view: View) {
         if (position != RecyclerView.NO_POSITION) {    //For index -1. (Ex. animation and item deleted and its position is -1)
             val item = getItem(position)
             if (item != null) {
-                listener.onMessageItemClicked(item)
+                listener.onMessageItemClicked(item, action, view)
             }
         }
     }
 
     interface MessagesItemClickListener {
-        fun onMessageItemClicked(item: Data)
+        fun onMessageItemClicked(item: Data, action: String, view: View)
     }
 }

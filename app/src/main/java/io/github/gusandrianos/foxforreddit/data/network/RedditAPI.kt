@@ -282,4 +282,11 @@ interface RedditAPI {
             @Field("text") text: String,
             @Field("api_type") api_type: String
     ): Call<JsonObject>
+
+    @FormUrlEncoded
+    @POST("/api/del_msg")
+    fun deleteMsg(
+            @Header("Authorization") bearer: String,
+            @Field("id") id: String
+    ): Call<Void>
 }

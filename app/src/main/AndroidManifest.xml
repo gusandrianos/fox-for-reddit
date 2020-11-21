@@ -15,8 +15,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.MainActivity"
-            android:theme="@style/Theme.Cyanea.Dark.NoActionBar"
-            android:hardwareAccelerated="true">
+            android:hardwareAccelerated="true"
+            android:theme="@style/Theme.Cyanea.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +25,8 @@
             <nav-graph android:value="@navigation/nav_graph" />
         </activity>
         <activity android:name=".ui.LoginActivity" />
-        <activity android:name=".ui.ThemeSettings" />
+        <activity
+            android:name=".ui.ThemeSettings"
+            android:theme="@style/Theme.Cyanea.Light" />
     </application>
-
 </manifest>

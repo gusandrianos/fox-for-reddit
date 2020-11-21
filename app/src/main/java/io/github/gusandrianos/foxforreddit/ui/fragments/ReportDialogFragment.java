@@ -17,6 +17,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.jaredrummler.cyanea.Cyanea;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,11 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Button submit = view.findViewById(R.id.btn_submit_report);
+        submit.setBackgroundColor(Cyanea.getInstance().getAccent());
+        Button backButton = view.findViewById(R.id.btn_back_report);
+        backButton.setBackgroundColor(Cyanea.getInstance().getAccent());
+        
         ReportDialogFragmentArgs reportDialogFragmentArgs = ReportDialogFragmentArgs.fromBundle(requireArguments());
         rulesBundle = reportDialogFragmentArgs.getRulesBundle();
         reason = reportDialogFragmentArgs.getReason();

@@ -174,6 +174,7 @@ open class ExpandableCommentItem constructor(
         for (i in 1..depth) {
             val v: View = LayoutInflater.from(viewHolder.itemView.context)
                     .inflate(R.layout.separator_view, viewHolder.itemView.separatorContainer2, false)
+            v.setBackgroundColor(Cyanea.instance.accent)
             viewHolder.itemView.separatorContainer2.addView((v))
         }
     }

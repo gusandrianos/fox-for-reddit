@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -51,6 +52,8 @@ public class SearchResultsFragment extends Fragment {
         ViewPager2 viewPager2 = view.findViewById(R.id.view_pager_fragment_results_search);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout_fragment_results_search);
         tabLayout.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
+        tabLayout.setSelectedTabIndicatorColor(Cyanea.getInstance().getAccent());
+        tabLayout.setTabTextColors(tabLayout.getTabTextColors().getDefaultColor(), Cyanea.getInstance().getAccent());
 
         ArrayList<Fragment> searchResultsFragments = new ArrayList<>();
         ArrayList<String> tabTitles = new ArrayList<>();

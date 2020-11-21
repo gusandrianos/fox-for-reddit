@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -78,7 +79,7 @@ public class UserFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         FoxSharedViewModel sharedViewModel = mainActivity.getFoxSharedViewModel();
 
-        if (sharedViewModel.getCurrentUserUsername().isEmpty()) {
+        if (sharedViewModel.getCurrentUserUsername().isEmpty() && FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication())) {
             UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
 
@@ -115,6 +116,8 @@ public class UserFragment extends Fragment {
         ViewPager2 viewPager = view.findViewById(R.id.profile_view_pager);
         TabLayout tabLayout = view.findViewById(R.id.profile_tab_layout);
         tabLayout.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
+        tabLayout.setSelectedTabIndicatorColor(Cyanea.getInstance().getAccent());
+        tabLayout.setTabTextColors(tabLayout.getTabTextColors().getDefaultColor(), Cyanea.getInstance().getAccent());
 
         if (isSelf)
             tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
@@ -177,6 +180,8 @@ public class UserFragment extends Fragment {
 
         ImageView profilePic = view.findViewById(R.id.profile_picture);
         ImageView coverPic = view.findViewById(R.id.profile_cover);
+        ImageView gradient = view.findViewById(R.id.profile_cover_gradient);
+
         Glide.with(view).load(Objects.requireNonNull(user.getIconImg()).split("\\?")[0]).into(profilePic);
 
         Type subredditType = new TypeToken<Subreddit>() {
@@ -185,6 +190,7 @@ public class UserFragment extends Fragment {
         Subreddit subreddit = gson.fromJson(gson.toJsonTree(user.getSubreddit()).getAsJsonObject(), subredditType);
 
         Glide.with(view).load(Objects.requireNonNull(subreddit.getBannerImg()).split("\\?")[0]).into(coverPic);
+        Glide.with(view).load(R.drawable.cover_gradient).into(gradient);
 
         Data userSubreddit = getUserSubreddit(user);
 
@@ -248,6 +254,7 @@ public class UserFragment extends Fragment {
     void setupButton(Data userSubreddit, View view) {
         MaterialButton profileButton = view.findViewById(R.id.button_profile_button);
         MainActivity mainActivity = (MainActivity) requireActivity();
+        profileButton.setBackgroundColor(Cyanea.getInstance().getAccent());
 
         if (mainActivity.getFoxSharedViewModel().getViewingSelf()) {
             profileButton.setText(Constants.USER_UI_BUTTON_EDIT);

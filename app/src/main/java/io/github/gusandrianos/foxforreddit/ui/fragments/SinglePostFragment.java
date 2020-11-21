@@ -244,7 +244,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         TextView mTxtPostMoreActions = view.findViewById(R.id.txt_post_more_actions);
 
         mTxtPostSubreddit.setText(singlePostData.getSubredditNamePrefixed());
-        String user = "by u/" + singlePostData.getAuthor();
+        String user = "u/" + singlePostData.getAuthor();
         mTxtPostUser.setText(user);
         mTxtTimePosted.setText(DateUtils.getRelativeTimeSpanString((long) singlePostData.getCreatedUtc() * 1000).toString());
         txtPostTitle.setText(singlePostData.getTitle());

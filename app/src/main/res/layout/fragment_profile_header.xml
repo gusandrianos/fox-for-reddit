@@ -21,9 +21,16 @@
             android:layout_width="match_parent"
             android:layout_height="110dp"
             android:layout_gravity="top"
-            android:background="#FF4500"
+            android:background="@color/cyanea_primary_dark"
             android:contentDescription="TODO"
             android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/profile_cover_gradient"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:layout_gravity="top"
+            android:background="@android:color/transparent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -62,16 +69,16 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_profile_button"
-                style="@style/PillShapeAppearance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Follow"
+                android:textAllCaps="false"
+                app:cornerRadius="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintStart_toEndOf="@id/text_user_username"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearance="@style/PillShapeAppearance" />
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView

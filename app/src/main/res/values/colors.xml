@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">@color/cyanea_primary</color>
+    <color name="colorPrimaryDark">@color/cyanea_primary_dark</color>
+    <color name="colorAccent">@color/cyanea_accent</color>
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
-    <color name="cyanea_primary_reference">#0288D1</color>
-    <color name="cyanea_accent_reference">#FFA000</color>
+    <color name="cyanea_primary_reference">#FFFF8800</color>
+    <color name="cyanea_accent_reference">#FF0099CC</color>
 </resources>

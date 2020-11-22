@@ -16,7 +16,8 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_fragment_messages"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"/>
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ToolbarCustomCyaneaTheme" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -19,6 +19,7 @@
             android:id="@+id/single_post_collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:theme="@style/ToolbarCustomCyaneaTheme"
             app:expandedTitleMarginStart="16dp"
             app:expandedTitleTextAppearance="@style/CollapsingToolbarLayoutExpandedTextStyle"
             app:layout_scrollFlags="exitUntilCollapsed|scroll"

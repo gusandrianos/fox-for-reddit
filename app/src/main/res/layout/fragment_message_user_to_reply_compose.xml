@@ -12,7 +12,8 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/compose_reply_to_user_message_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ToolbarCustomCyaneaTheme" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

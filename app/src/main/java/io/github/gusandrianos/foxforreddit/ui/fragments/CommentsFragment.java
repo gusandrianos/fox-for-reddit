@@ -249,7 +249,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
     }
 
     private void deleteThingAction(PostViewModel viewModel, String fullname) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.FoxAlertDialogStyle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setMessage("Are you sure?")
                 .setCancelable(false)
                 .setNegativeButton("Nope", (dialog, id) -> dialog.cancel())

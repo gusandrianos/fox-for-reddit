@@ -52,6 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Display name"
+                android:textColor="?menuIconColor"
                 android:textSize="20sp"
                 android:textStyle="normal" />
 
@@ -59,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="|"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="?menuIconColor"
                 android:textSize="20sp"
                 android:textStyle="normal" />
 
@@ -75,7 +76,7 @@
                 app:icon="@drawable/subscribe_subreddit"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
-                app:iconTint="@color/cyanea_accent" />
+                app:iconTint="?menuIconColor" />
 
         </LinearLayout>
 
@@ -91,30 +92,35 @@
                 android:id="@+id/text_member_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="12345" />
+                android:text="12345"
+                android:textColor="?menuIconColor" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" Members" />
+                android:text=" Members"
+                android:textColor="?menuIconColor" />
 
             <TextView
                 android:id="@+id/text_count_divider"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" | " />
+                android:text=" | "
+                android:textColor="?menuIconColor" />
 
             <TextView
                 android:id="@+id/text_users_online_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="123" />
+                android:text="123"
+                android:textColor="?menuIconColor" />
 
             <TextView
                 android:id="@+id/text_users_online_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" Online" />
+                android:text=" Online"
+                android:textColor="?menuIconColor" />
 
         </LinearLayout>
 

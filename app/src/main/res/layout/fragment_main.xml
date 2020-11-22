@@ -17,7 +17,7 @@
             android:id="@+id/toolbar_main"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:theme="@style/ToolbarCustomCyaneaTheme"
+            android:theme="@style/CustomCyaneaToolbarTheme"
             app:layout_scrollFlags="scroll|enterAlways|snap" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -32,6 +32,7 @@
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/CustomCyaneaTabLayoutTheme"
             app:layout_scrollFlags="scroll|enterAlways|snap" />
 
         <androidx.viewpager2.widget.ViewPager2

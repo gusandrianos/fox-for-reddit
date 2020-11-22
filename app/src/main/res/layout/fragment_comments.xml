@@ -15,7 +15,7 @@
             android:id="@+id/toolbar_more_children"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:theme="@style/ToolbarCustomCyaneaTheme" />
+            android:theme="@style/CustomCyaneaToolbarTheme" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

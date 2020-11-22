@@ -13,7 +13,7 @@
             android:id="@+id/compose_messages_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:theme="@style/ToolbarCustomCyaneaTheme" />
+            android:theme="@style/CustomCyaneaToolbarTheme" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -14,8 +14,14 @@
         <item name="android:textColor">@android:color/transparent</item>
     </style>
 
-    <style name="ToolbarCustomCyaneaTheme">
+    <style name="CustomCyaneaToolbarTheme">
         <item name="android:textColorPrimary">?menuIconColor</item>
         <item name="colorControlNormal">?menuIconColor</item>
     </style>
+
+    <style name="CustomCyaneaTabLayoutTheme">
+        <item name="tabIndicatorColor">?colorAccent</item>
+        <item name="tabSelectedTextColor">?colorAccent</item>
+    </style>
+
 </resources>

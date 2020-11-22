@@ -10,7 +10,7 @@
         android:id="@+id/toolbar_wiki"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:theme="@style/ToolbarCustomCyaneaTheme" />
+        android:theme="@style/CustomCyaneaToolbarTheme" />
 
     <ScrollView
         android:layout_width="match_parent"

@@ -11,7 +11,7 @@
         android:id="@+id/toolbar_edit_thing"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:theme="@style/ToolbarCustomCyaneaTheme"
+        android:theme="@style/CustomCyaneaToolbarTheme"
         app:layout_scrollFlags="scroll|enterAlways|snap" />
 
     <com.google.android.material.textfield.TextInputLayout

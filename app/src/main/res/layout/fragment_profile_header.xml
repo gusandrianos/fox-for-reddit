@@ -9,7 +9,7 @@
         android:id="@+id/profile_collapsing_toolbar"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:theme="@style/ToolbarCustomCyaneaTheme"
+        android:theme="@style/CustomCyaneaToolbarTheme"
         app:contentScrim="?colorPrimary"
         app:expandedTitleGravity="center|start"
         app:expandedTitleTextAppearance="@style/CollapsingToolbarLayoutExpandedTextStyle"
@@ -102,6 +102,7 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/profile_tab_layout"
+        style="@style/CustomCyaneaTabLayoutTheme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </com.google.android.material.appbar.AppBarLayout>

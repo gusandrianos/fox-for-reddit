@@ -116,8 +116,6 @@ public class UserFragment extends Fragment {
         ViewPager2 viewPager = view.findViewById(R.id.profile_view_pager);
         TabLayout tabLayout = view.findViewById(R.id.profile_tab_layout);
         tabLayout.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
-        tabLayout.setSelectedTabIndicatorColor(Cyanea.getInstance().getAccent());
-        tabLayout.setTabTextColors(tabLayout.getTabTextColors().getDefaultColor(), Cyanea.getInstance().getAccent());
 
         if (isSelf)
             tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources.Theme
 import android.graphics.Color
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageButton
@@ -236,7 +237,9 @@ object FoxToolkit {
 
             if (textColor.equals("light"))
                 view.setTextColor(Color.parseColor("#FFFFFF"))
-            if (!backgroundColor.isNullOrEmpty() && backgroundColor.matches("^#[0-9A-F]{6}\$".toRegex())) {
+
+            if (!backgroundColor.isNullOrEmpty() && backgroundColor.startsWith("#")) {
+                Log.i("bgColor", "makeFlair: ${backgroundColor}")
                 view.setBackgroundColor(Color.parseColor(backgroundColor))
                 view.setBorderColor(Color.parseColor(backgroundColor))
             }
@@ -244,12 +247,5 @@ object FoxToolkit {
             view.visibility = View.VISIBLE
         } else
             view.visibility = View.GONE
-    }
-
-    fun getColorFromResource(context: Context, color: Int): Int {
-        val typedValue = TypedValue()
-        val theme: Theme = context.theme
-        theme.resolveAttribute(color, typedValue, true)
-        return typedValue.data
     }
 }

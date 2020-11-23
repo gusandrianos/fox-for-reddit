@@ -18,7 +18,7 @@ class TrophyAdapter(private val trophies: List<Thing>) : RecyclerView.Adapter<Vi
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.trophies_item, parent, false))
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_trophies, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

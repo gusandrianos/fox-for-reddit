@@ -18,7 +18,7 @@ class MessagesWithUserAdapter(private val thing: Thing, private val listener: Us
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.messages_with_user_item, parent, false))
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_messages_with_user, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

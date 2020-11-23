@@ -15,7 +15,7 @@ import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.formatValue
 class SearchAdapter(private val listener: OnSearchItemClickListener, private val results: Listing) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
-        return SearchViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.search_item, parent, false))
+        return SearchViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_search, parent, false))
     }
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {

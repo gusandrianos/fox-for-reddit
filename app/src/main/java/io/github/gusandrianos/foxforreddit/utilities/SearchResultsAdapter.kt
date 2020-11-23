@@ -29,7 +29,7 @@ class SearchResultsAdapter(private val mKind: String, private val listener: OnSe
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.search_item, parent, false))
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_search, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

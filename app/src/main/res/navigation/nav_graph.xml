@@ -197,19 +197,6 @@
         android:id="@+id/action_global_composeChooserFragment"
         app:destination="@id/composeChooserFragment" />
     <dialog
-        android:id="@+id/popUpMoreActionsDialogFragment"
-        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.PopUpMoreActionsDialogFragment"
-        android:label="fragment_dialog_actions_more_popup"
-        tools:layout="@layout/fragment_dialog_actions_more_popup">
-        <argument
-            android:name="data"
-            app:argType="io.github.gusandrianos.foxforreddit.data.models.Data" />
-    </dialog>
-    <action
-        android:id="@+id/action_global_popUpMoreActionsDialogFragment"
-        app:destination="@id/popUpMoreActionsDialogFragment"
-        app:launchSingleTop="true" />
-    <dialog
         android:id="@+id/reportDialogFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ReportDialogFragment"
         android:label="fragment_dialog_report"
@@ -370,5 +357,8 @@
         <argument
             android:name="username"
             app:argType="string" />
-    </fragment><action android:id="@+id/action_global_reportDialogFragment" app:destination="@id/reportDialogFragment"/>
+    </fragment>
+    <action
+        android:id="@+id/action_global_reportDialogFragment"
+        app:destination="@id/reportDialogFragment" />
 </navigation>

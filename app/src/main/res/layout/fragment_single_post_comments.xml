@@ -10,7 +10,7 @@
 
     <include
         android:id="@+id/include_single_post_footer"
-        layout="@layout/post_footer" />
+        layout="@layout/single_post_footer" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_single_post"

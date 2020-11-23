@@ -241,7 +241,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         ImageButton mImgBtnPostVoteDown = view.findViewById(R.id.imgbtn_post_vote_down);
         TextView mBtnPostNumComments = view.findViewById(R.id.btn_post_num_comments);
         TextView mBtnPostShare = view.findViewById(R.id.btn_post_share);
-        TextView mTxtPostMoreActions = view.findViewById(R.id.txt_post_more_actions);
 
         mTxtPostSubreddit.setText(singlePostData.getSubredditNamePrefixed());
         String user = "u/" + singlePostData.getAuthor();
@@ -313,13 +312,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         });
 
         mBtnPostShare.setOnClickListener(view1 -> startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(singlePostData), "Share via")));
-
-        mTxtPostMoreActions.setOnClickListener(view1 -> {
-            if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
-                FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
-            else
-                navController.navigate(NavGraphDirections.actionGlobalPopUpMoreActionsDialogFragment(singlePostData));
-        });
     }
 
     private void bindAsSelf(Data singlePostData, View view) {

@@ -32,6 +32,8 @@
             layout="@layout/link_flair_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/vertical_margin_small"
+            android:layout_marginBottom="@dimen/vertical_margin_small"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/txt_post_vote_num"
             app:layout_constraintEnd_toStartOf="@id/btn_post_vote_now"

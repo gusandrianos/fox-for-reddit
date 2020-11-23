@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/horizontal_margin_normal"
@@ -7,9 +8,20 @@
     android:layout_marginEnd="@dimen/horizontal_margin_normal"
     android:layout_marginBottom="@dimen/vertical_margin_small">
 
-    <include
+    <com.libRG.CustomTextView
         android:id="@+id/item_custom_text_link_flair"
-        layout="@layout/link_flair_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:paddingStart="4dp"
+        android:paddingTop="1dp"
+        android:paddingEnd="4dp"
+        android:paddingBottom="1dp"
+        android:text="Flair"
+        android:textSize="16sp"
+        app:lib_setRadius="2dp"
+        app:lib_setRoundedBorderColor="?colorControlNormal"
+        app:lib_setRoundedView="true"
+        app:lib_setShape="rectangle"
+        app:lib_setStrokeWidth="2dp" />
+
 </FrameLayout>

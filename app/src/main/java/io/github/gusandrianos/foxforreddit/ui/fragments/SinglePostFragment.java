@@ -296,7 +296,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
                 FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
             else {
-                FoxToolkit.INSTANCE.upVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity());
+                FoxToolkit.INSTANCE.upVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp,
+                        mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity(), txtPostTitle.getCurrentTextColor());
                 FoxToolkit.INSTANCE.upVoteModel(viewModel, requireActivity().getApplication(), singlePostData);
             }
         });
@@ -305,7 +306,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
                 FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
             else {
-                FoxToolkit.INSTANCE.downVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity());
+                FoxToolkit.INSTANCE.downVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp,
+                        mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity(), txtPostTitle.getCurrentTextColor());
                 FoxToolkit.INSTANCE.downVoteModel(viewModel, requireActivity().getApplication(), singlePostData);
             }
         });

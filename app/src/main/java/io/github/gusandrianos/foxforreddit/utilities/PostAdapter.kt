@@ -168,7 +168,8 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                         val item = getItem(bindingAdapterPosition)
                         if (item != null) {
-                            upVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, mainActivity)
+                            upVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
+                                    mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
                             onClick(bindingAdapterPosition, Constants.THING_VOTE_UP, mPostType)
                         }
                     }
@@ -181,7 +182,8 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                         val item = getItem(bindingAdapterPosition)
                         if (item != null) {
-                            downVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, mainActivity)
+                            downVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
+                                    mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
                             onClick(bindingAdapterPosition, Constants.THING_VOTE_DOWN, mPostType)
                         }
                     }
@@ -212,7 +214,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             mTxtPostNumComments.text = formatValue(post.numComments.toDouble())
 
             FoxToolkit.setLikedStatusOnButtons(post.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
-                    mTxtPostScore, mainActivity)
+                    mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
 
             if (post.isOver18 != null && post.isOver18 == true)
                 txtIsOver18.visibility = View.VISIBLE

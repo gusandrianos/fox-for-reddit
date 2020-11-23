@@ -106,17 +106,5 @@ public class PopUpMoreActionsDialogFragment extends BottomSheetDialogFragment {
                     dismiss();
                 });
         });
-
-        subredditViewModel.getSubredditRules(data.getSubredditNamePrefixed(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), rulesBundle -> {
-            txtPopupReport.setOnClickListener(view1 -> {
-                if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
-                    navController.navigate(PopUpMoreActionsDialogFragmentDirections
-                            .actionPopUpMoreActionsDialogFragmentToReportDialogFragment(rulesBundle, null, Constants.ALL_RULES, data.getSubredditNamePrefixed(), data.getName()));
-                else {
-                    Toast.makeText(getContext(), "Failed to report", Toast.LENGTH_SHORT).show();
-                    dismiss();
-                }
-            });
-        });
     }
 }

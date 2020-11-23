@@ -61,10 +61,6 @@
             android:id="@+id/action_singlePostFragment_to_editThingFragment"
             app:destination="@id/editThingFragment" />
         <action
-            android:id="@+id/action_singlePostFragment_to_reportDialogFragment"
-            app:destination="@id/reportDialogFragment"
-            app:launchSingleTop="true" />
-        <action
             android:id="@+id/action_singlePostFragment_to_composeReplyToUserMessageFragment"
             app:destination="@id/composeReplyToUserMessageFragment" />
     </fragment>
@@ -208,11 +204,6 @@
         <argument
             android:name="data"
             app:argType="io.github.gusandrianos.foxforreddit.data.models.Data" />
-        <action
-            android:id="@+id/action_popUpMoreActionsDialogFragment_to_reportDialogFragment"
-            app:destination="@id/reportDialogFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/popUpMoreActionsDialogFragment" />
     </dialog>
     <action
         android:id="@+id/action_global_popUpMoreActionsDialogFragment"
@@ -304,9 +295,6 @@
         <action
             android:id="@+id/action_commentsFragment_to_editThingFragment"
             app:destination="@id/editThingFragment" />
-        <action
-            android:id="@+id/action_commentsFragment_to_reportDialogFragment"
-            app:destination="@id/reportDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/singlePostBuffer"
@@ -382,5 +370,5 @@
         <argument
             android:name="username"
             app:argType="string" />
-    </fragment>
+    </fragment><action android:id="@+id/action_global_reportDialogFragment" app:destination="@id/reportDialogFragment"/>
 </navigation>

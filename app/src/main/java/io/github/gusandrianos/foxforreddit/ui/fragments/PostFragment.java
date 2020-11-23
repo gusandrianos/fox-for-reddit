@@ -296,21 +296,24 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     }
 
     private void popUpMenuReport(Data data) {
-//        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-//        SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
-//        subredditViewModel.getSubredditRules(comment.getData().getSubredditNamePrefixed(),
-//                requireActivity().getApplication()).observe(getViewLifecycleOwner(),
-//                rulesBundle -> {
-//                    if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
-//                        navController.navigate(SinglePostFragmentDirections
-//                                .actionSinglePostFragmentToReportDialogFragment(
-//                                        rulesBundle, null, Constants.ALL_RULES,
-//                                        comment.getData().getSubredditNamePrefixed(),
-//                                        comment.getData().getName()));
-//                    else {
-//                        Toast.makeText(getContext(), "Failed to report", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+
+        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+        SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
+        subredditViewModel.getSubredditRules(data.getSubredditNamePrefixed(),
+                requireActivity().getApplication()).observe(getViewLifecycleOwner(),
+                rulesBundle -> {
+                    if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
+                        navController.navigate(NavGraphDirections.actionGlobalReportDialogFragment(
+                                rulesBundle,
+                                null, Constants.ALL_RULES,
+                                data.getSubredditNamePrefixed(),
+                                data.getName()));
+                    else {
+                        Toast.makeText(getContext(), "Failed to report", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private Toolbar getCurrentToolbar() {

@@ -754,11 +754,11 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 requireActivity().getApplication()).observe(getViewLifecycleOwner(),
                 rulesBundle -> {
                     if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
-                        navController.navigate(SinglePostFragmentDirections
-                                .actionSinglePostFragmentToReportDialogFragment(
-                                        rulesBundle, null, Constants.ALL_RULES,
-                                        comment.getData().getSubredditNamePrefixed(),
-                                        comment.getData().getName()));
+                        navController.navigate(NavGraphDirections.actionGlobalReportDialogFragment(
+                                rulesBundle,
+                                null, Constants.ALL_RULES,
+                                comment.getData().getSubredditNamePrefixed(),
+                                comment.getData().getName()));
                     else {
                         Toast.makeText(getContext(), "Failed to report", Toast.LENGTH_SHORT).show();
                     }

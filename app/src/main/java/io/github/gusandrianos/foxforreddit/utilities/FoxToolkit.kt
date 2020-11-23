@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
@@ -21,6 +22,7 @@ import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel
 import java.text.DecimalFormat
 import java.text.NumberFormat
+import java.time.Instant
 import kotlin.math.pow
 
 object FoxToolkit {
@@ -246,5 +248,12 @@ object FoxToolkit {
             view.visibility = View.VISIBLE
         } else
             view.visibility = View.GONE
+    }
+
+    fun getPollEndingDate(timestamp: Long): String {
+        val now = Instant.now().toEpochMilli()
+        if (now > timestamp)
+            return "Poll has ended"
+        return "Ends " + DateUtils.getRelativeTimeSpanString(timestamp, now, 0L, DateUtils.FORMAT_ABBREV_RELATIVE).toString()
     }
 }

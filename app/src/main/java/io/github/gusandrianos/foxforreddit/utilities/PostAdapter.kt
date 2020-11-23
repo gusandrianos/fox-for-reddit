@@ -14,13 +14,8 @@ import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
-import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.downVoteColor
-import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.formatValue
-import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.isAuthorized
-import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.promptLogIn
-import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.upVoteColor
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit
 
-import java.time.Instant
 
 class PostAdapter(private val mainActivity: MainActivity, private val listener: OnItemClickListener) : PagingDataAdapter<Data, RecyclerView.ViewHolder>(POST_COMPARATOR) {
 
@@ -162,13 +157,13 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             }
 
             mImgBtnPostVoteUp.setOnClickListener {
-                if (!isAuthorized(mainActivity.application))
-                    promptLogIn(mainActivity)
+                if (!FoxToolkit.isAuthorized(mainActivity.application))
+                    FoxToolkit.promptLogIn(mainActivity)
                 else
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                         val item = getItem(bindingAdapterPosition)
                         if (item != null) {
-                            upVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
+                            FoxToolkit.upVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
                                     mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
                             onClick(bindingAdapterPosition, Constants.THING_VOTE_UP, mPostType,it)
                         }
@@ -176,13 +171,13 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             }
 
             mImgBtnPostVoteDown.setOnClickListener {
-                if (!isAuthorized(mainActivity.application))
-                    promptLogIn(mainActivity)
+                if (!FoxToolkit.isAuthorized(mainActivity.application))
+                    FoxToolkit.promptLogIn(mainActivity)
                 else
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                         val item = getItem(bindingAdapterPosition)
                         if (item != null) {
-                            downVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
+                            FoxToolkit.downVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
                                     mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
                             onClick(bindingAdapterPosition, Constants.THING_VOTE_DOWN, mPostType,it)
                         }
@@ -210,8 +205,8 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             mTxtPostUser.text = user
             mTxtTimePosted.text = DateUtils.getRelativeTimeSpanString(post.createdUtc * 1000).toString()
             mTxtPostTitle.text = post.title
-            mTxtPostScore.text = formatValue(post.score.toDouble())
-            mTxtPostNumComments.text = formatValue(post.numComments.toDouble())
+            mTxtPostScore.text = FoxToolkit.formatValue(post.score.toDouble())
+            mTxtPostNumComments.text = FoxToolkit.formatValue(post.numComments.toDouble())
 
             FoxToolkit.setLikedStatusOnButtons(post.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
                     mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
@@ -299,9 +294,10 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         override fun onBind(post: Data) {
             super.onBind(post)
-            val votes = post.pollData!!.totalVoteCount.toString() + " Votes"
+            val votes = FoxToolkit.formatValue(post.pollData!!.totalVoteCount.toDouble()) + " Votes"
+            val endsAt = FoxToolkit.getPollEndingDate(post.pollData.votingEndTimestamp)
             mTxtPostVoteNum.text = votes
-            mTxtPostVoteTimeLeft.text = getPollEndingDate(post.pollData!!.votingEndTimestamp)
+            mTxtPostVoteTimeLeft.text = endsAt
             mBtnPostVoteNow.setImageResource(R.drawable.placeholder_ic_baseline_poll_80)
         }
     }
@@ -350,11 +346,4 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
     interface OnItemClickListener {
         fun onItemClick(post: Data, clicked: String, postType: Int, view: View)
     }
-}
-
-fun getPollEndingDate(timestamp: Long): String {
-    val now = Instant.now().toEpochMilli()
-    if (now > timestamp)
-        return "Poll has ended"
-    return "Ends " + DateUtils.getRelativeTimeSpanString(timestamp, now, 0L, DateUtils.FORMAT_ABBREV_RELATIVE).toString()
 }

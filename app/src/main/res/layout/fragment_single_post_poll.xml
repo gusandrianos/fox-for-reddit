@@ -36,7 +36,11 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/stub_cl_poll"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/vertical_margin_small"
+                    android:layout_marginBottom="@dimen/vertical_margin_small"
+                    android:layout_marginStart="@dimen/horizontal_margin_normal"
+                    android:layout_marginEnd="@dimen/horizontal_margin_normal">
 
                     <TextView
                         android:id="@+id/stub_txt_post_body"

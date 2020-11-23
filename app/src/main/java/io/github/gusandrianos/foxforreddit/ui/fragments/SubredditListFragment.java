@@ -17,6 +17,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jaredrummler.cyanea.Cyanea;
 
 import org.jetbrains.annotations.NotNull;
@@ -105,6 +106,8 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
     private void setUpNavigation() {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
+        BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
+        bottomNavigationView.setVisibility(View.VISIBLE);
         AppBarConfiguration appBarConfiguration = mainActivity.appBarConfiguration;
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar_subreddits);
         toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());

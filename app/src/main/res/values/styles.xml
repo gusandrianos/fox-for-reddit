@@ -24,4 +24,31 @@
         <item name="tabSelectedTextColor">?colorAccent</item>
     </style>
 
+    <style name="CustomPostTitle">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="CustomListingPostTitle">
+        <item name="android:layout_marginEnd">@dimen/horizontal_margin_normal</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="UserLinkStyle">
+        <item name="android:layout_marginEnd">@dimen/horizontal_margin_small</item>
+        <item name="android:textColor">@color/cyanea_accent</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="PostTimeStyle">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
 </resources>

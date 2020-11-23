@@ -394,8 +394,16 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     private void bindAsPoll(Data singlePostData, View view) {
         if (singlePostData.getSelftext() != null) {
             TextView txtPostBody = view.findViewById(R.id.stub_txt_post_body);
+            TextView txtTimeLeft = view.findViewById(R.id.stub_txt_post_vote_time_left);
+            TextView txtVoteNum = view.findViewById(R.id.stub_txt_vote_num);
+
+            String votes = FoxToolkit.INSTANCE.formatValue(singlePostData.getPollData().getTotalVoteCount()) + " Votes";
+            String endsAt = FoxToolkit.INSTANCE.getPollEndingDate(singlePostData.getPollData().getVotingEndTimestamp());
+
             markwon.setMarkdown(txtPostBody, singlePostData.getSelftext());
             txtPostBody.setVisibility(View.VISIBLE);
+            txtTimeLeft.setText(endsAt);
+            txtVoteNum.setText(votes);
         }
     }
 

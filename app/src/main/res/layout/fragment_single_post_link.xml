@@ -60,6 +60,7 @@
                         android:clickable="true"
                         android:drawableEnd="@drawable/ic_round_open_in_new_16"
                         android:ellipsize="end"
+                        android:textColor="@android:color/white"
                         android:maxLines="1"
                         android:text="domain.com"
                         app:layout_constraintBottom_toBottomOf="@id/stub_img_post_thumbnail"

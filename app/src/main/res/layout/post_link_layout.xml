@@ -9,7 +9,7 @@
     android:layout_marginBottom="@dimen/vertical_margin_small"
     android:orientation="vertical">
 
-    <include layout="@layout/post_header" />
+    <include layout="@layout/header_post" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,10 +17,10 @@
 
         <TextView
             android:id="@+id/txt_post_title"
+            style="@style/CustomListingPostTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="asdasdasd"
-            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/fl_thumbnail"
             app:layout_constraintStart_toStartOf="parent"
@@ -66,6 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
+                android:textColor="@android:color/white"
                 android:background="#80121212"
                 android:ellipsize="end"
                 android:maxLines="1" />
@@ -73,6 +74,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include layout="@layout/post_footer" />
+    <include layout="@layout/footer_post" />
 
 </LinearLayout>

@@ -104,43 +104,43 @@ public class ComposeFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
 
         // This is needed to survive rotation changes
-        setUpNSFW(mainActivity, nsfw);
-        setUpSpoiler(mainActivity, spoiler);
+        setUpNSFW(mainActivity, nsfw, subredditTextInput.getPlaceholderTextColor().getDefaultColor());
+        setUpSpoiler(mainActivity, spoiler, subredditTextInput.getPlaceholderTextColor().getDefaultColor());
 
         nsfw.setOnClickListener(nsfwToggle -> {
             boolean isNSFW = mainActivity.getFoxSharedViewModel().isNSFW();
             isNSFW = !isNSFW;
             mainActivity.getFoxSharedViewModel().setNSFW(isNSFW);
-            setUpNSFW(mainActivity, nsfw);
+            setUpNSFW(mainActivity, nsfw, subredditTextInput.getPlaceholderTextColor().getDefaultColor());
         });
 
         spoiler.setOnClickListener(spoilerToggle -> {
             boolean isSpoiler = mainActivity.getFoxSharedViewModel().isSpoiler();
             isSpoiler = !isSpoiler;
             mainActivity.getFoxSharedViewModel().setSpoiler(isSpoiler);
-            setUpSpoiler(mainActivity, spoiler);
+            setUpSpoiler(mainActivity, spoiler, subredditTextInput.getPlaceholderTextColor().getDefaultColor());
         });
     }
 
-    private void setUpNSFW(MainActivity mainActivity, CustomTextView nsfw) {
+    private void setUpNSFW(MainActivity mainActivity, CustomTextView nsfw, int defaultColor) {
         boolean isNSFW = mainActivity.getFoxSharedViewModel().isNSFW();
         if (isNSFW) {
             nsfw.setBorderColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark));
             nsfw.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark));
         } else {
-            nsfw.setBorderColor(ContextCompat.getColor(requireContext(), android.R.color.tab_indicator_text));
-            nsfw.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.tab_indicator_text));
+            nsfw.setBorderColor(defaultColor);
+            nsfw.setTextColor(defaultColor);
         }
     }
 
-    private void setUpSpoiler(MainActivity mainActivity, CustomTextView spoiler) {
+    private void setUpSpoiler(MainActivity mainActivity, CustomTextView spoiler, int defaultColor) {
         boolean isSpoiler = mainActivity.getFoxSharedViewModel().isSpoiler();
         if (isSpoiler) {
             spoiler.setBorderColor(ContextCompat.getColor(requireContext(), android.R.color.holo_blue_dark));
             spoiler.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_blue_dark));
         } else {
-            spoiler.setBorderColor(ContextCompat.getColor(requireContext(), android.R.color.tab_indicator_text));
-            spoiler.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.tab_indicator_text));
+            spoiler.setBorderColor(defaultColor);
+            spoiler.setTextColor(defaultColor);
         }
     }
 

@@ -15,6 +15,7 @@
             android:id="@+id/toolbar_fragment_results_search"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:theme="@style/CustomCyaneaToolbarTheme"
             app:layout_scrollFlags="scroll|enterAlways|snap" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -28,13 +29,13 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout_fragment_results_search"
             android:layout_width="match_parent"
+            style="@style/CustomCyaneaTabLayoutTheme"
             android:layout_height="wrap_content" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/view_pager_fragment_results_search"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

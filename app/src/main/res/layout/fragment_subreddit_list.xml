@@ -13,6 +13,7 @@
             android:id="@+id/toolbar_subreddits"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:theme="@style/CustomCyaneaToolbarTheme"
             app:layout_scrollFlags="scroll|enterAlways|snap" />
 
     </com.google.android.material.appbar.AppBarLayout>

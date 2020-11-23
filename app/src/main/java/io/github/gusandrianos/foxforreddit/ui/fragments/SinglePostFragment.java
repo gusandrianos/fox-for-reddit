@@ -296,7 +296,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
                 FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
             else {
-                FoxToolkit.INSTANCE.upVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity());
+                FoxToolkit.INSTANCE.upVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp,
+                        mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity(), txtPostTitle.getCurrentTextColor());
                 FoxToolkit.INSTANCE.upVoteModel(viewModel, requireActivity().getApplication(), singlePostData);
             }
         });
@@ -305,7 +306,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
                 FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
             else {
-                FoxToolkit.INSTANCE.downVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp, mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity());
+                FoxToolkit.INSTANCE.downVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp,
+                        mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity(), txtPostTitle.getCurrentTextColor());
                 FoxToolkit.INSTANCE.downVoteModel(viewModel, requireActivity().getApplication(), singlePostData);
             }
         });
@@ -904,7 +906,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void deleteThingAction(PostViewModel viewModel, String fullname) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.FoxAlertDialogStyle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setMessage("Are you sure?")
                 .setCancelable(false)
                 .setNegativeButton("Nope", (dialog, id) -> dialog.cancel())
@@ -979,12 +981,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
         collapsingToolbar.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
 
-
         ConstraintLayout includeHeader = view.findViewById(R.id.include_header_single_post);
-        int color = Color.BLACK;
-        if(Cyanea.getInstance().isDark())
-            color = Color.WHITE;
 
+        int color = Cyanea.getInstance().getMenuIconColor();
         int colorRed = Color.red(color);
         int colorGreen = Color.green(color);
         int colorBlue = Color.blue(color);

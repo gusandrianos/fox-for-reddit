@@ -23,6 +23,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jaredrummler.cyanea.Cyanea;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -145,6 +147,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     }
 
     private void initSwipeToRefresh() {
+        int color = Cyanea.getInstance().getAccent();
+        pullToRefresh.setColorSchemeColors(color, color, color);
+
         pullToRefresh.setOnRefreshListener(() -> {
             mPostRecyclerViewAdapter.refresh();
             mPostRecyclerView.smoothScrollToPosition(0);

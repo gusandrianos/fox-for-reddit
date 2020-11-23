@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.jaredrummler.cyanea.Cyanea;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -105,6 +107,9 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
     }
 
     private void initSwipeToRefresh() {
+        int color = Cyanea.getInstance().getAccent();
+        pullToRefresh.setColorSchemeColors(color, color, color);
+
         pullToRefresh.setOnRefreshListener(() -> {
             mMessagesRecyclerViewAdapter.refresh();
             mMessagesRecyclerView.smoothScrollToPosition(0);
@@ -159,7 +164,7 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
 
     private void popUpMenuDelete(UserViewModel userViewModel, PostViewModel postViewModel, String fullname, String author) {
         String currentUser = ((MainActivity) requireActivity()).getFoxSharedViewModel().getCurrentUserUsername();
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.FoxAlertDialogStyle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
 
         builder.setMessage("Are you sure?")
                 .setCancelable(false)

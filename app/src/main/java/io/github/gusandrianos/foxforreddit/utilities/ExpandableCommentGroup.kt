@@ -112,15 +112,16 @@ open class ExpandableCommentItem constructor(
         val reply = view.findViewById(R.id.btn_comment_reply) as ImageButton
         val moreActions = view.findViewById(R.id.btn_comment_more_actions) as ImageButton
         val author: TextView = view.findViewById(R.id.txt_comment_user) as TextView
+        val comment: TextView = view.findViewById(R.id.comment_body) as TextView
 
         FoxToolkit.setLikedStatusOnButtons(mComment.data?.likes, upvote, downvote,
-                score, mainActivity)
+                score, mainActivity, comment.currentTextColor)
 
         upvote.setOnClickListener {
             if (!FoxToolkit.isAuthorized(mainActivity.application))
                 FoxToolkit.promptLogIn(mainActivity)
             else {
-                upVoteColor(mComment.data?.likes, upvote, downvote, score, mainActivity)
+                upVoteColor(mComment.data?.likes, upvote, downvote, score, mainActivity, comment.currentTextColor)
                 listener.onClick(linkId, null, mComment, Constants.THING_VOTE_UP, it)
             }
         }
@@ -129,7 +130,7 @@ open class ExpandableCommentItem constructor(
             if (!FoxToolkit.isAuthorized(mainActivity.application))
                 FoxToolkit.promptLogIn(mainActivity)
             else {
-                downVoteColor(mComment.data?.likes, upvote, downvote, score, mainActivity)
+                downVoteColor(mComment.data?.likes, upvote, downvote, score, mainActivity, comment.currentTextColor)
                 listener.onClick(linkId, null, mComment, Constants.THING_VOTE_DOWN, it)
             }
         }

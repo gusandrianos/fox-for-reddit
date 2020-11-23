@@ -3,9 +3,8 @@ package io.github.gusandrianos.foxforreddit.utilities
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources.Theme
 import android.graphics.Color
-import android.util.TypedValue
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
@@ -90,25 +89,27 @@ object FoxToolkit {
             Constants.PLAYABLE_VIDEO
     }
 
-    fun upVoteColor(likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton, score: TextView, activity: MainActivity) {
+    fun upVoteColor(likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton,
+                    score: TextView, activity: MainActivity, defaultColor: Int) {
         if (likes == null || !(likes)) {
             upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
             downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24)
             score.setTextColor(ContextCompat.getColor(activity.applicationContext, android.R.color.holo_orange_dark))
         } else {
             upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)
-            score.setTextColor(ContextCompat.getColor(activity.applicationContext, android.R.color.tab_indicator_text))
+            score.setTextColor(defaultColor)
         }
     }
 
-    fun downVoteColor(likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton, score: TextView, activity: MainActivity) {
+    fun downVoteColor(likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton,
+                      score: TextView, activity: MainActivity, defaultColor: Int) {
         if (likes == null || (likes)) {
             upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)
             downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
             score.setTextColor(ContextCompat.getColor(activity.applicationContext, android.R.color.holo_blue_dark))
         } else {
             downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24)
-            score.setTextColor(ContextCompat.getColor(activity.applicationContext, android.R.color.tab_indicator_text))
+            score.setTextColor(defaultColor)
         }
     }
 
@@ -153,7 +154,7 @@ object FoxToolkit {
     }
 
     fun setLikedStatusOnButtons(likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton,
-                                score: TextView, mainActivity: MainActivity) {
+                                score: TextView, mainActivity: MainActivity, defaultColor: Int) {
         if (likes != null) {
             if (likes == true) {
                 upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
@@ -169,8 +170,7 @@ object FoxToolkit {
         } else {
             upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)
             downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24)
-            score.setTextColor(ContextCompat.getColor(mainActivity.applicationContext,
-                    android.R.color.tab_indicator_text))
+            score.setTextColor(defaultColor)
         }
     }
 
@@ -236,7 +236,9 @@ object FoxToolkit {
 
             if (textColor.equals("light"))
                 view.setTextColor(Color.parseColor("#FFFFFF"))
-            if (!backgroundColor.isNullOrEmpty() && backgroundColor.matches("^#[0-9A-F]{6}\$".toRegex())) {
+
+            if (!backgroundColor.isNullOrEmpty() && backgroundColor.startsWith("#")) {
+                Log.i("bgColor", "makeFlair: ${backgroundColor}")
                 view.setBackgroundColor(Color.parseColor(backgroundColor))
                 view.setBorderColor(Color.parseColor(backgroundColor))
             }
@@ -244,12 +246,5 @@ object FoxToolkit {
             view.visibility = View.VISIBLE
         } else
             view.visibility = View.GONE
-    }
-
-    fun getColorFromResource(context: Context, color: Int): Int {
-        val typedValue = TypedValue()
-        val theme: Theme = context.theme
-        theme.resolveAttribute(color, typedValue, true)
-        return typedValue.data
     }
 }

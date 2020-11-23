@@ -46,8 +46,6 @@ public class MainFragment extends Fragment {
         ViewPager2 viewPager = view.findViewById(R.id.view_pager);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
-        tabLayout.setSelectedTabIndicatorColor(Cyanea.getInstance().getAccent());
-        tabLayout.setTabTextColors(tabLayout.getTabTextColors().getDefaultColor(), Cyanea.getInstance().getAccent());
         setUpNavigation();
 
         ArrayList<Fragment> homeFragments = new ArrayList<>();

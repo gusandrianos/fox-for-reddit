@@ -2,6 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/horizontal_margin_normal"
+    android:layout_marginTop="@dimen/vertical_margin_small"
+    android:layout_marginEnd="@dimen/horizontal_margin_normal"
+    android:layout_marginBottom="@dimen/vertical_margin_small"
     android:orientation="vertical">
 
     <include layout="@layout/post_header" />
@@ -19,6 +23,8 @@
         layout="@layout/link_flair_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vertical_margin_small"
+        android:layout_marginBottom="@dimen/vertical_margin_small"
         android:visibility="gone" />
 
     <include layout="@layout/post_footer" />

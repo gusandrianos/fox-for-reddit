@@ -276,7 +276,6 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                 if (succeed)
                     comment.getData().setSaved(true);
             });
-        comment.getData().setSaved(!comment.getData().isSaved());
     }
 
     private void popUpMenuReport(ChildrenItem comment) {
@@ -286,11 +285,11 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                 requireActivity().getApplication()).observe(getViewLifecycleOwner(),
                 rulesBundle -> {
                     if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
-                        navController.navigate(CommentsFragmentDirections
-                                .actionCommentsFragmentToReportDialogFragment(
-                                        rulesBundle, null, Constants.ALL_RULES,
-                                        comment.getData().getSubredditNamePrefixed(),
-                                        comment.getData().getName()));
+                    navController.navigate(NavGraphDirections.actionGlobalReportDialogFragment(
+                            rulesBundle,
+                            null, Constants.ALL_RULES,
+                            comment.getData().getSubredditNamePrefixed(),
+                            comment.getData().getName()));
                     else {
                         Toast.makeText(getContext(), "Failed to report", Toast.LENGTH_SHORT).show();
                     }

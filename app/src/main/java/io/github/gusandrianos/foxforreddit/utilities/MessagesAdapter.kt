@@ -28,7 +28,7 @@ class MessagesAdapter(private val listener: MessagesItemClickListener) : PagingD
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_item, parent, false))
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_messages, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

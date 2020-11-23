@@ -51,7 +51,7 @@ class SubredditListAdapter(private val listener: OnItemClickListener) : PagingDa
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.subreddit_list_item, parent, false))
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_subreddit_list, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

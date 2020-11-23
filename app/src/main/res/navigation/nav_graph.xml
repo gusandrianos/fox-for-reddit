@@ -61,10 +61,6 @@
             android:id="@+id/action_singlePostFragment_to_editThingFragment"
             app:destination="@id/editThingFragment" />
         <action
-            android:id="@+id/action_singlePostFragment_to_reportDialogFragment"
-            app:destination="@id/reportDialogFragment"
-            app:launchSingleTop="true" />
-        <action
             android:id="@+id/action_singlePostFragment_to_composeReplyToUserMessageFragment"
             app:destination="@id/composeReplyToUserMessageFragment" />
     </fragment>
@@ -201,24 +197,6 @@
         android:id="@+id/action_global_composeChooserFragment"
         app:destination="@id/composeChooserFragment" />
     <dialog
-        android:id="@+id/popUpMoreActionsDialogFragment"
-        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.PopUpMoreActionsDialogFragment"
-        android:label="fragment_dialog_actions_more_popup"
-        tools:layout="@layout/fragment_dialog_actions_more_popup">
-        <argument
-            android:name="data"
-            app:argType="io.github.gusandrianos.foxforreddit.data.models.Data" />
-        <action
-            android:id="@+id/action_popUpMoreActionsDialogFragment_to_reportDialogFragment"
-            app:destination="@id/reportDialogFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/popUpMoreActionsDialogFragment" />
-    </dialog>
-    <action
-        android:id="@+id/action_global_popUpMoreActionsDialogFragment"
-        app:destination="@id/popUpMoreActionsDialogFragment"
-        app:launchSingleTop="true" />
-    <dialog
         android:id="@+id/reportDialogFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ReportDialogFragment"
         android:label="fragment_dialog_report"
@@ -304,9 +282,6 @@
         <action
             android:id="@+id/action_commentsFragment_to_editThingFragment"
             app:destination="@id/editThingFragment" />
-        <action
-            android:id="@+id/action_commentsFragment_to_reportDialogFragment"
-            app:destination="@id/reportDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/singlePostBuffer"
@@ -383,4 +358,7 @@
             android:name="username"
             app:argType="string" />
     </fragment>
+    <action
+        android:id="@+id/action_global_reportDialogFragment"
+        app:destination="@id/reportDialogFragment" />
 </navigation>

@@ -9,7 +9,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/horizontal_margin_normal"
+        android:layout_marginTop="@dimen/vertical_margin_small"
+        android:layout_marginEnd="@dimen/horizontal_margin_normal"
+        android:layout_marginBottom="@dimen/vertical_margin_small">
 
         <TextView
             android:id="@+id/txt_post_karma"
@@ -61,10 +65,11 @@
             android:id="@+id/txt_trophies"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="@dimen/vertical_margin_small"
             android:text="Trophies"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.00"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/txt_comment_karma_text"
             app:layout_constraintVertical_bias="0" />

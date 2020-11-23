@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -241,7 +242,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         ImageButton mImgBtnPostVoteDown = view.findViewById(R.id.imgbtn_post_vote_down);
         TextView mBtnPostNumComments = view.findViewById(R.id.btn_post_num_comments);
         TextView mBtnPostShare = view.findViewById(R.id.btn_post_share);
-        TextView mTxtPostMoreActions = view.findViewById(R.id.txt_post_more_actions);
 
         mTxtPostSubreddit.setText(singlePostData.getSubredditNamePrefixed());
         String user = "u/" + singlePostData.getAuthor();
@@ -297,7 +297,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
             else {
                 FoxToolkit.INSTANCE.upVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp,
-                        mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity(), txtPostTitle.getCurrentTextColor());
+                        mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity(), mBtnPostShare.getCurrentTextColor());
                 FoxToolkit.INSTANCE.upVoteModel(viewModel, requireActivity().getApplication(), singlePostData);
             }
         });
@@ -307,19 +307,12 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
             else {
                 FoxToolkit.INSTANCE.downVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp,
-                        mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity(), txtPostTitle.getCurrentTextColor());
+                        mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity(), mBtnPostShare.getCurrentTextColor());
                 FoxToolkit.INSTANCE.downVoteModel(viewModel, requireActivity().getApplication(), singlePostData);
             }
         });
 
         mBtnPostShare.setOnClickListener(view1 -> startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(singlePostData), "Share via")));
-
-        mTxtPostMoreActions.setOnClickListener(view1 -> {
-            if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
-                FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
-            else
-                navController.navigate(NavGraphDirections.actionGlobalPopUpMoreActionsDialogFragment(singlePostData));
-        });
     }
 
     private void bindAsSelf(Data singlePostData, View view) {
@@ -745,7 +738,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 if (succeed)
                     comment.getData().setSaved(true);
             });
-        comment.getData().setSaved(!comment.getData().isSaved());
     }
 
     private void popUpMenuReport(ChildrenItem comment) {
@@ -755,11 +747,11 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 requireActivity().getApplication()).observe(getViewLifecycleOwner(),
                 rulesBundle -> {
                     if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
-                        navController.navigate(SinglePostFragmentDirections
-                                .actionSinglePostFragmentToReportDialogFragment(
-                                        rulesBundle, null, Constants.ALL_RULES,
-                                        comment.getData().getSubredditNamePrefixed(),
-                                        comment.getData().getName()));
+                        navController.navigate(NavGraphDirections.actionGlobalReportDialogFragment(
+                                rulesBundle,
+                                null, Constants.ALL_RULES,
+                                comment.getData().getSubredditNamePrefixed(),
+                                comment.getData().getName()));
                     else {
                         Toast.makeText(getContext(), "Failed to report", Toast.LENGTH_SHORT).show();
                     }
@@ -803,6 +795,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void setUpMenu(Toolbar toolbar, Data postData, int postType, View view, MainActivity mainActivity) {
+        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+
         toolbar.inflateMenu(R.menu.self_single_post_menu);
         Menu menu = toolbar.getMenu();
 
@@ -813,9 +808,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                             && postType != Constants.VIDEO
                             && postType != Constants.LINK
                             && postType != Constants.POLL);
-
-            PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
-            PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
 
             setUpEditFlairMenu(view, postData, toolbar);
 
@@ -886,6 +878,17 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             menu.findItem(R.id.self_single_post_edit_flair).setVisible(false);
         }
 
+        if (postData.isSaved())
+            menu.findItem(R.id.single_post_save).setTitle("Unsave");
+        else
+            menu.findItem(R.id.single_post_save).setTitle("Save");
+
+        if (postData.getHidden())
+            menu.findItem(R.id.single_post_hide).setTitle("Unhide");
+        else
+            menu.findItem(R.id.single_post_hide).setTitle("Hide");
+
+
         menu.findItem(R.id.single_post_reply).setVisible(true).setOnMenuItemClickListener(reply -> {
             navController.navigate(
                     SinglePostFragmentDirections
@@ -893,6 +896,76 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                                     postData.getName(), "New comment"));
             return true;
         });
+
+        menu.findItem(R.id.single_post_save).setVisible(true).setOnMenuItemClickListener(save -> {
+            postSave(postData, viewModel, save);
+            return true;
+        });
+
+        menu.findItem(R.id.single_post_hide).setVisible(true).setOnMenuItemClickListener(hide -> {
+            postHide(postData, viewModel, hide);
+            return true;
+        });
+
+        menu.findItem(R.id.single_post_report).setVisible(true).setOnMenuItemClickListener(report -> {
+            postReport(postData);
+            return true;
+        });
+    }
+
+    private void postSave(Data data, PostViewModel viewModel, MenuItem menuItem) {
+        if (data.isSaved())
+            viewModel.unSavePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                if (succeed) {
+                    data.setSaved(false);
+                    menuItem.setTitle("Save");
+                }
+            });
+        else
+            viewModel.savePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                if (succeed) {
+                    data.setSaved(true);
+                    menuItem.setTitle("Unsave");
+                }
+            });
+    }
+
+    private void postHide(Data data, PostViewModel viewModel, MenuItem menuItem) {
+        if (data.getHidden())
+            viewModel.unHidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                if (succeed) {
+                    data.setHidden(false);
+                    menuItem.setTitle("Hide");
+                }
+            });
+        else
+            viewModel.hidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                if (succeed) {
+                    data.setHidden(true);
+                    menuItem.setTitle("Unhide");
+                }
+            });
+    }
+
+    private void postReport(Data data) {
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+
+        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+        SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
+        subredditViewModel.getSubredditRules(data.getSubredditNamePrefixed(),
+                requireActivity().getApplication()).observe(getViewLifecycleOwner(),
+                rulesBundle -> {
+                    if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
+                        navController.navigate(NavGraphDirections.actionGlobalReportDialogFragment(
+                                rulesBundle,
+                                null, Constants.ALL_RULES,
+                                data.getSubredditNamePrefixed(),
+                                data.getName()));
+                    else {
+                        Toast.makeText(getContext(), "Failed to report", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void goToEditThing(String fullname, String selftext) {

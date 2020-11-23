@@ -74,7 +74,7 @@
             android:padding="4dp"
             android:text="NSFW"
             app:lib_setRadius="2dp"
-            app:lib_setRoundedBorderColor="@android:color/tab_indicator_text"
+            app:lib_setRoundedBorderColor="?colorControlNormal"
             app:lib_setRoundedView="true"
             app:lib_setShape="rectangle"
             app:lib_setStrokeWidth="2dp" />
@@ -89,7 +89,7 @@
             android:padding="4dp"
             android:text="Spoiler"
             app:lib_setRadius="2dp"
-            app:lib_setRoundedBorderColor="@android:color/tab_indicator_text"
+            app:lib_setRoundedBorderColor="?colorControlNormal"
             app:lib_setRoundedView="true"
             app:lib_setShape="rectangle"
             app:lib_setStrokeWidth="2dp" />
@@ -103,7 +103,7 @@
             android:padding="4dp"
             android:text="Flair"
             app:lib_setRadius="2dp"
-            app:lib_setRoundedBorderColor="@android:color/tab_indicator_text"
+            app:lib_setRoundedBorderColor="?colorControlNormal"
             app:lib_setRoundedView="true"
             app:lib_setShape="rectangle"
             app:lib_setStrokeWidth="2dp" />

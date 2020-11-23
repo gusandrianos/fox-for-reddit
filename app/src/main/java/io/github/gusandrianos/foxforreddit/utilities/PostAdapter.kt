@@ -150,15 +150,15 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         init {
             itemView.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_ITEM, mPostType)
+                onClick(bindingAdapterPosition, Constants.POST_ITEM, mPostType,it)
             }
 
             mTxtPostSubreddit.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT, mPostType)
+                onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT, mPostType,it)
             }
 
             mTxtPostUser.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.THING_AUTHOR, mPostType)
+                onClick(bindingAdapterPosition, Constants.THING_AUTHOR, mPostType,it)
             }
 
             mImgBtnPostVoteUp.setOnClickListener {
@@ -170,7 +170,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
                         if (item != null) {
                             upVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
                                     mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
-                            onClick(bindingAdapterPosition, Constants.THING_VOTE_UP, mPostType)
+                            onClick(bindingAdapterPosition, Constants.THING_VOTE_UP, mPostType,it)
                         }
                     }
             }
@@ -184,21 +184,21 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
                         if (item != null) {
                             downVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
                                     mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
-                            onClick(bindingAdapterPosition, Constants.THING_VOTE_DOWN, mPostType)
+                            onClick(bindingAdapterPosition, Constants.THING_VOTE_DOWN, mPostType,it)
                         }
                     }
             }
 
             mTxtPostNumComments.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_COMMENTS_NUM, mPostType)
+                onClick(bindingAdapterPosition, Constants.POST_COMMENTS_NUM, mPostType,it)
             }
 
             mTxtPostShare.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_SHARE, mPostType)
+                onClick(bindingAdapterPosition, Constants.POST_SHARE, mPostType,it)
             }
 
             mTxtPostMoreActions.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.THING_MORE_ACTIONS, mPostType)
+                onClick(bindingAdapterPosition, Constants.THING_MORE_ACTIONS, mPostType,it)
             }
         }
 
@@ -241,7 +241,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         init {
             mImgPostThumbnail.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL, mPostType)
+                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL, mPostType,it)
             }
         }
 
@@ -258,7 +258,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         init {
             mFlThumbnail.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL, mPostType)
+                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL, mPostType,it)
             }
         }
 
@@ -276,7 +276,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         init {
             mFlThumbnail.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL, mPostType)
+                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL, mPostType,it)
             }
         }
 
@@ -293,7 +293,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         init {
             mBtnPostVoteNow.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_VOTE_NOW, mPostType)
+                onClick(bindingAdapterPosition, Constants.POST_VOTE_NOW, mPostType,it)
             }
         }
 
@@ -317,13 +317,13 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         init {
             itemView.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_ITEM, mPostType)
+                onClick(bindingAdapterPosition, Constants.POST_ITEM, mPostType,it)
             }
             mTxtPostUser.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.THING_AUTHOR, mPostType)
+                onClick(bindingAdapterPosition, Constants.THING_AUTHOR, mPostType,it)
             }
             mTxtPostSubreddit.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT, mPostType)
+                onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT, mPostType,it)
             }
         }
 
@@ -338,17 +338,17 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
         }
     }
 
-    fun onClick(position: Int, clicked: String, postType: Int) {
+    fun onClick(position: Int, clicked: String, postType: Int, view: View) {
         if (position != RecyclerView.NO_POSITION) {    //For index -1. (Ex. animation and item deleted and its position is -1)
             val item = getItem(position)
             if (item != null) {                          //Maybe getItem return null
-                listener.onItemClick(item, clicked, postType)
+                listener.onItemClick(item, clicked, postType, view)
             }
         }
     }
 
     interface OnItemClickListener {
-        fun onItemClick(post: Data, clicked: String, postType: Int)
+        fun onItemClick(post: Data, clicked: String, postType: Int, view: View)
     }
 }
 

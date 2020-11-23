@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone">
 
-        <include layout="@layout/messages_with_user_item" />
+        <include layout="@layout/item_messages_with_user" />
 
     </ScrollView>
 

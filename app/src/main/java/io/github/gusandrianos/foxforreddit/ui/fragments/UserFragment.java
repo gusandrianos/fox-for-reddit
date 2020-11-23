@@ -339,7 +339,6 @@ public class UserFragment extends Fragment {
         NavController navController = NavHostFragment.findNavController(this);
         CollapsingToolbarLayout profileCollapsingToolbar = view.findViewById(R.id.profile_collapsing_toolbar);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
-        toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
         profileCollapsingToolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
         profileCollapsingToolbar.setContentScrimColor(Cyanea.getInstance().getPrimary());
         toolbar.inflateMenu(R.menu.user_options);

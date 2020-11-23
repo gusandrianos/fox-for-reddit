@@ -8,6 +8,7 @@
     android:paddingEnd="4dp"
     android:paddingBottom="1dp"
     android:text="Flair"
+    android:textSize="12sp"
     app:lib_setRadius="2dp"
     app:lib_setRoundedBorderColor="?colorControlNormal"
     app:lib_setRoundedView="true"

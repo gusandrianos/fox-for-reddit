@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
@@ -22,6 +23,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.jaredrummler.cyanea.Cyanea;
 
@@ -32,6 +34,7 @@ import java.util.Objects;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
@@ -43,6 +46,8 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModelFactory;
+import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
+import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 import kotlin.Unit;
 
 import static io.github.gusandrianos.foxforreddit.Constants.ACTION_POST;
@@ -157,7 +162,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     }
 
     @Override
-    public void onItemClick(@NotNull Data data, @NotNull String clicked, int postType) {      //ToDo improve voting system (Binding Adapter and viewModel)
+    public void onItemClick(@NotNull Data data, @NotNull String clicked, int postType, View view) {      //ToDo improve voting system (Binding Adapter and viewModel)
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
         int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
@@ -226,13 +231,86 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             case Constants.THING_MORE_ACTIONS:
                 if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
                     FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
-                else
-                    navController.navigate(NavGraphDirections.actionGlobalPopUpMoreActionsDialogFragment(data));
+                else {
+                    PopupMenu menu = new PopupMenu(requireContext(), view);
+                    menu.inflate(R.menu.post_popup);
+
+                    if (data.isSaved())
+                        menu.getMenu().findItem(R.id.post_save).setTitle("Unsave");
+                    else
+                        menu.getMenu().findItem(R.id.post_save).setTitle("Save");
+
+                    if (data.getHidden())
+                        menu.getMenu().findItem(R.id.post_hide).setTitle("Unhide");
+                    else
+                        menu.getMenu().findItem(R.id.post_hide).setTitle("Hide");
+
+                    menu.getMenu().findItem(R.id.post_save).setOnMenuItemClickListener(save -> {
+                        popUpMenuSave(data, viewModel);
+                        return true;
+                    });
+
+                    menu.getMenu().findItem(R.id.post_hide).setOnMenuItemClickListener(hide -> {
+                        popUpMenuHide(data, viewModel);
+                        return true;
+                    });
+
+                    menu.getMenu().findItem(R.id.post_report).setOnMenuItemClickListener(hide -> {
+                        popUpMenuReport(data);
+                        return true;
+                    });
+
+                    menu.show();
+                }
                 break;
             default:
                 NavGraphDirections.ActionGlobalSinglePostFragment action = NavGraphDirections.actionGlobalSinglePostFragment(data, postType);
                 navController.navigate(action);
         }
+    }
+
+    private void popUpMenuSave(Data data, PostViewModel viewModel) {
+        if (data.isSaved())
+            viewModel.unSavePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                if (succeed)
+                    data.setSaved(false);
+            });
+        else
+            viewModel.savePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                if (succeed)
+                    data.setSaved(true);
+            });
+    }
+
+    private void popUpMenuHide(Data data, PostViewModel viewModel) {
+        if (data.getHidden())
+            viewModel.unHidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                if (succeed)
+                    data.setHidden(false);
+            });
+        else
+            viewModel.hidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+                if (succeed)
+                    data.setHidden(true);
+            });
+    }
+
+    private void popUpMenuReport(Data data) {
+//        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+//        SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
+//        subredditViewModel.getSubredditRules(comment.getData().getSubredditNamePrefixed(),
+//                requireActivity().getApplication()).observe(getViewLifecycleOwner(),
+//                rulesBundle -> {
+//                    if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
+//                        navController.navigate(SinglePostFragmentDirections
+//                                .actionSinglePostFragmentToReportDialogFragment(
+//                                        rulesBundle, null, Constants.ALL_RULES,
+//                                        comment.getData().getSubredditNamePrefixed(),
+//                                        comment.getData().getName()));
+//                    else {
+//                        Toast.makeText(getContext(), "Failed to report", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
     }
 
     private Toolbar getCurrentToolbar() {

@@ -276,7 +276,6 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                 if (succeed)
                     comment.getData().setSaved(true);
             });
-        comment.getData().setSaved(!comment.getData().isSaved());
     }
 
     private void popUpMenuReport(ChildrenItem comment) {

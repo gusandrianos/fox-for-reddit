@@ -745,7 +745,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 if (succeed)
                     comment.getData().setSaved(true);
             });
-        comment.getData().setSaved(!comment.getData().isSaved());
     }
 
     private void popUpMenuReport(ChildrenItem comment) {

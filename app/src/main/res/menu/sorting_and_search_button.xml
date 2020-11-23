@@ -10,7 +10,7 @@
 
     <item
         android:id="@+id/cyanea_settings"
-        android:title="Settings" />
+        android:title="Themes" />
 
     <item
         android:id="@+id/search_sorting"

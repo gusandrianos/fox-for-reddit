@@ -66,6 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
+                android:textColor="@android:color/white"
                 android:background="#80121212"
                 android:ellipsize="end"
                 android:maxLines="1" />

@@ -3,7 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/post_footer"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/horizontal_margin_normal"
+    android:layout_marginEnd="@dimen/horizontal_margin_normal"
+    android:layout_marginTop="@dimen/vertical_margin_small"
+    android:layout_marginBottom="@dimen/vertical_margin_small">
 
     <LinearLayout
         android:id="@+id/ll_votes"
@@ -27,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="255.5k"/>
+            android:text="255.5k" />
 
         <ImageButton
             android:id="@+id/imgbtn_post_vote_down"
@@ -41,11 +45,10 @@
         android:id="@+id/view1"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/ll_votes"
         app:layout_constraintEnd_toStartOf="@id/btn_post_num_comments"
-        />
+        app:layout_constraintStart_toEndOf="@id/ll_votes"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/btn_post_num_comments"
@@ -64,11 +67,10 @@
         android:id="@+id/view2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toEndOf="@id/btn_post_num_comments"
-        app:layout_constraintEnd_toStartOf="@id/btn_post_share"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintEnd_toStartOf="@id/btn_post_share"
+        app:layout_constraintStart_toEndOf="@id/btn_post_num_comments"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/btn_post_share"

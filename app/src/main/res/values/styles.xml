@@ -24,4 +24,16 @@
         <item name="tabSelectedTextColor">?colorAccent</item>
     </style>
 
+    <style name="CustomPostTitle">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="CustomListingPostTitle">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
 </resources>

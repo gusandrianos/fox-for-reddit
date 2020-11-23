@@ -8,15 +8,15 @@
     android:layout_marginBottom="@dimen/vertical_margin_small"
     android:orientation="vertical">
 
-    <include layout="@layout/post_header" />
+    <include layout="@layout/header_post" />
 
     <TextView
         android:id="@+id/txt_post_title"
+        style="@style/CustomListingPostTitle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.7"
-        android:text="Text"
-        android:textSize="16sp" />
+        android:text="Text" />
 
     <include
         android:id="@+id/post_link_flair"
@@ -27,6 +27,6 @@
         android:layout_marginBottom="@dimen/vertical_margin_small"
         android:visibility="gone" />
 
-    <include layout="@layout/post_footer" />
+    <include layout="@layout/footer_post" />
 
 </LinearLayout>

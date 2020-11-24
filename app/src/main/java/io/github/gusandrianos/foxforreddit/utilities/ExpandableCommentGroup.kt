@@ -15,15 +15,18 @@ import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.downVoteColor
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.formatValue
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.upVoteColor
+import io.noties.markwon.Markwon
 import kotlinx.android.synthetic.main.single_post_expandable_comment.view.*
+import org.apache.commons.text.StringEscapeUtils
 
 class ExpandableCommentGroup constructor(
         mComment: ChildrenItem,
         depth: Int = 0,
         linkId: String,
         listener: ExpandableCommentItem.OnItemClickListener,
-        private val mainActivity: MainActivity
-) : ExpandableGroup(ExpandableCommentItem(mComment, depth, linkId, listener, mainActivity)) {
+        mainActivity: MainActivity,
+        markwon: Markwon
+) : ExpandableGroup(ExpandableCommentItem(mComment, depth, linkId, listener, mainActivity, markwon)) {
 
     init {
         var repliesItem: ChildrenItem? = null
@@ -47,7 +50,7 @@ class ExpandableCommentGroup constructor(
                     val gson = Gson()
                     gson.fromJson(gson.toJsonTree(comment).asJsonObject, childType)
                 }
-                add(ExpandableCommentGroup(item, item.data!!.depth, linkId, listener, mainActivity))
+                add(ExpandableCommentGroup(item, item.data!!.depth, linkId, listener, mainActivity, markwon))
                         .apply { isExpanded = true }
             }
     }
@@ -58,7 +61,8 @@ open class ExpandableCommentItem constructor(
         private val depth: Int,
         private val linkId: String,
         private val listener: OnItemClickListener,
-        private val mainActivity: MainActivity
+        private val mainActivity: MainActivity,
+        private val markwon: Markwon
 ) : Item<GroupieViewHolder>(), ExpandableItem {
     private lateinit var expandableGroup: ExpandableGroup
 
@@ -95,7 +99,8 @@ open class ExpandableCommentItem constructor(
             viewHolder.itemView.cl_comment.visibility = View.VISIBLE
             viewHolder.itemView.cl_load_more.visibility = View.GONE
             viewHolder.itemView.txt_comment_user.text = mComment.data!!.author
-            viewHolder.itemView.comment_body.text = mComment.data.body
+            markwon.setMarkdown(viewHolder.itemView.comment_body,
+                    StringEscapeUtils.unescapeXml(mComment.data.body))
             viewHolder.itemView.txt_comment_score.text = formatValue(mComment.data.score.toDouble())
             viewHolder.itemView.apply {
                 setOnClickListener {

@@ -191,7 +191,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                         groupAdapter.add(new ExpandableCommentGroup(item,
                                 Objects.requireNonNull(item.getData()).getDepth(),
                                 finalSinglePostData.getName(),
-                                SinglePostFragment.this, (MainActivity) requireActivity()));
+                                SinglePostFragment.this, (MainActivity) requireActivity(), markwon));
                     }
                 });
     }

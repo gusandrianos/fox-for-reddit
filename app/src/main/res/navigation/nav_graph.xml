@@ -302,6 +302,12 @@
             android:id="@+id/deepLink5"
             android:autoVerify="true"
             app:uri="www.reddit.com/r/{subreddit}/comments/{subdir}" />
+        <action
+            android:id="@+id/action_singlePostBuffer_to_singlePostFragment"
+            app:destination="@id/singlePostFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/singlePostBuffer"
+            app:popUpToInclusive="true" />
     </fragment>
     <action
         android:id="@+id/action_global_singlePostBuffer"

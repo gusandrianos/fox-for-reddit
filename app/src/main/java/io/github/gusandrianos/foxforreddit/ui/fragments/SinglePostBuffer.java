@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.ProgressBar;
 
 import java.util.Objects;
 
+import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
@@ -37,7 +40,6 @@ public class SinglePostBuffer extends Fragment {
         String subdir = args.getSubdir();
 
         String permalink = "r/" + subreddit + "/comments/" + subdir;
-        ProgressBar progressBar = view.findViewById(R.id.post_buffer_progress);
 
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
@@ -45,13 +47,13 @@ public class SinglePostBuffer extends Fragment {
         viewModel.getSinglePost(permalink, requireActivity().getApplication())
                 .observe(getViewLifecycleOwner(), post -> {
                     Data postData = post.getData().getData().getChildren().get(0).getData();
-                    SinglePostFragment singlePostFragment = SinglePostFragment.newInstance(postData, FoxToolkit.INSTANCE.getPostType(postData));
-                    progressBar.setVisibility(View.GONE);
-                    getChildFragmentManager().beginTransaction()
-                            .replace(R.id.single_post_buffer,
-                                    singlePostFragment,
-                                    "singlePostFragment")
-                            .commitNow();
+                    NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+                    NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+                    SinglePostBufferDirections.ActionSinglePostBufferToSinglePostFragment action =
+                            SinglePostBufferDirections.
+                                    actionSinglePostBufferToSinglePostFragment(
+                                            postData, FoxToolkit.INSTANCE.getPostType(postData));
+                    navController.navigate(action);
                 });
     }
 }

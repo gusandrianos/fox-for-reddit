@@ -36,9 +36,12 @@ import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.ReplyThing;
 import io.github.gusandrianos.foxforreddit.data.models.Thing;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
-import io.github.gusandrianos.foxforreddit.utilities.MessagesWithUserAdapter;
+import io.github.gusandrianos.foxforreddit.utilities.ConversationAdapter;
+import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.linkify.LinkifyPlugin;
 
-public class ConversationFragment extends Fragment implements MessagesWithUserAdapter.UserClickedListener {
+public class ConversationFragment extends Fragment implements ConversationAdapter.UserClickedListener {
 
     Data data;
     String currentUser;
@@ -61,6 +64,11 @@ public class ConversationFragment extends Fragment implements MessagesWithUserAd
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Markwon markwon = Markwon.builder(requireContext())
+                .usePlugin(TablePlugin.create(requireContext()))
+                .usePlugin(LinkifyPlugin.create())
+                .build();
 
         setUpNavigation(view);
 
@@ -99,7 +107,7 @@ public class ConversationFragment extends Fragment implements MessagesWithUserAd
 
             replies.getData().getChildren().add(0, extraReply);
 
-            MessagesWithUserAdapter adapter = new MessagesWithUserAdapter(replies, this);
+            ConversationAdapter adapter = new ConversationAdapter(replies, this, markwon);
             adapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
 
             messagesRecyclerView.setAdapter(adapter);
@@ -119,8 +127,7 @@ public class ConversationFragment extends Fragment implements MessagesWithUserAd
 
             txtUser.setText(data.getAuthor());
             txtTimeSent.setText(DateUtils.getRelativeTimeSpanString(data.getCreatedUtc() * 1000).toString());
-            String escapedText = StringEscapeUtils.unescapeXml(data.getBody());
-            txtBody.setText(escapedText);
+            markwon.setMarkdown(txtBody, StringEscapeUtils.unescapeXml(data.getBody()));
 
             txtUser.setOnClickListener(v -> navigateToUser(txtUser.getText().toString()));
 

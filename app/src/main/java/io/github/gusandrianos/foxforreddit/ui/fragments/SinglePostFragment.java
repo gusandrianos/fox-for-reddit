@@ -96,6 +96,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     private boolean wasPlaying;
     private boolean isFullscreen;
     private int orientation;
+    private String subreddit;
 
     NavHostFragment navHostFragment;
     NavController navController;
@@ -155,6 +156,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             singlePostData = SinglePostFragmentArgs.fromBundle(requireArguments()).getPost();
         }
 
+        subreddit = singlePostData.getSubredditNamePrefixed();
         mCommentsRecyclerView = view.findViewById(R.id.recyclerview_single_post);
 
         if (savedInstanceState != null)
@@ -660,7 +662,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
             NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
             NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-            navController.navigate(SinglePostFragmentDirections.actionSinglePostFragmentToCommentsFragment(linkId, loadChildren.toString(), moreChildrenList));
+            navController.navigate(SinglePostFragmentDirections.actionSinglePostFragmentToCommentsFragment(linkId, loadChildren.toString(), moreChildrenList,subreddit));
         } else {
             PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
             PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
@@ -681,10 +683,13 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                                 requireActivity().getApplication(), comment.getData());
                     break;
                 case Constants.THING_REPLY:
-                    navController.navigate(
-                            SinglePostFragmentDirections
-                                    .actionSinglePostFragmentToComposeReplyFragment(
-                                            comment.getData().getName(), "New comment"));
+                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                        FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
+                    else
+                        navController.navigate(
+                                SinglePostFragmentDirections
+                                        .actionSinglePostFragmentToComposeReplyFragment(
+                                                comment.getData().getName(), "New comment"));
                     break;
                 case Constants.THING_AUTHOR:
                     String authorUsername = comment.getData().getAuthor();
@@ -692,47 +697,51 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                     navController.navigate(action);
                     break;
                 case Constants.THING_MORE_ACTIONS:
-                    PopupMenu menu = new PopupMenu(requireContext(), view);
-                    menu.inflate(R.menu.comment_popup);
+                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                        FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
+                    else {
+                        PopupMenu menu = new PopupMenu(requireContext(), view);
+                        menu.inflate(R.menu.comment_popup);
 
-                    if (comment.getData().isSaved())
-                        menu.getMenu().findItem(R.id.comment_save).setTitle("Unsave");
-                    else
-                        menu.getMenu().findItem(R.id.comment_save).setTitle("Save");
+                        if (comment.getData().isSaved())
+                            menu.getMenu().findItem(R.id.comment_save).setTitle("Unsave");
+                        else
+                            menu.getMenu().findItem(R.id.comment_save).setTitle("Save");
 
-                    if (comment.getData().getAuthor()
-                            .equals(((MainActivity) requireActivity()).getFoxSharedViewModel()
-                                    .getCurrentUserUsername())) {
-                        menu.getMenu().findItem(R.id.comment_edit).setVisible(true);
-                        menu.getMenu().findItem(R.id.comment_delete).setVisible(true);
-                    } else {
-                        menu.getMenu().findItem(R.id.comment_edit).setVisible(false);
-                        menu.getMenu().findItem(R.id.comment_delete).setVisible(false);
-                    }
+                        if (comment.getData().getAuthor()
+                                .equals(((MainActivity) requireActivity()).getFoxSharedViewModel()
+                                        .getCurrentUserUsername())) {
+                            menu.getMenu().findItem(R.id.comment_edit).setVisible(true);
+                            menu.getMenu().findItem(R.id.comment_delete).setVisible(true);
+                        } else {
+                            menu.getMenu().findItem(R.id.comment_edit).setVisible(false);
+                            menu.getMenu().findItem(R.id.comment_delete).setVisible(false);
+                        }
 
-                    if (menu.getMenu().findItem(R.id.comment_edit).isVisible()) {
-                        menu.getMenu().findItem(R.id.comment_edit).setOnMenuItemClickListener(edit -> {
-                            goToEditThing(comment.getData().getName(), comment.getData().getBody());
+                        if (menu.getMenu().findItem(R.id.comment_edit).isVisible()) {
+                            menu.getMenu().findItem(R.id.comment_edit).setOnMenuItemClickListener(edit -> {
+                                goToEditThing(comment.getData().getName(), comment.getData().getBody());
+                                return true;
+                            });
+
+                            menu.getMenu().findItem(R.id.comment_delete).setOnMenuItemClickListener(edit -> {
+                                deleteThingAction(viewModel, comment.getData().getName());
+                                return true;
+                            });
+                        }
+
+                        menu.getMenu().findItem(R.id.comment_save).setOnMenuItemClickListener(save -> {
+                            popUpMenuSave(comment, viewModel);
                             return true;
                         });
 
-                        menu.getMenu().findItem(R.id.comment_delete).setOnMenuItemClickListener(edit -> {
-                            deleteThingAction(viewModel, comment.getData().getName());
+                        menu.getMenu().findItem(R.id.comment_report).setOnMenuItemClickListener(commentReport -> {
+                            popUpMenuReport(comment);
                             return true;
                         });
+
+                        menu.show();
                     }
-
-                    menu.getMenu().findItem(R.id.comment_save).setOnMenuItemClickListener(save -> {
-                        popUpMenuSave(comment, viewModel);
-                        return true;
-                    });
-
-                    menu.getMenu().findItem(R.id.comment_report).setOnMenuItemClickListener(commentReport -> {
-                        popUpMenuReport(comment);
-                        return true;
-                    });
-
-                    menu.show();
                     break;
                 default:
             }
@@ -807,6 +816,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void setUpMenu(Toolbar toolbar, Data postData, int postType, View view, MainActivity mainActivity) {
+
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
 
@@ -1086,21 +1096,11 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
 
+        if (FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
         setUpMenu(toolbar, postData, postType, view, mainActivity);
 
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.GONE);
         NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController);
-    }
-
-    public static SinglePostFragment newInstance(Data data, int postType) {
-        SinglePostFragment fragment = new SinglePostFragment();
-
-        Bundle args = new Bundle();
-        args.putParcelable("data", data);
-        args.putInt("postType", postType);
-        fragment.setArguments(args);
-
-        return fragment;
     }
 }

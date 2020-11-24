@@ -139,7 +139,7 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
             case Constants.OPEN_MESSAGES_WITH_USER:
                 NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
                 NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-                navController.navigate(NavGraphDirections.actionGlobalMessagesWithUserFragment(item, item.getAuthor()));
+                navController.navigate(InboxFragmentDirections.actionInboxFragmentToConversationFragment(item, item.getAuthor()));
                 break;
             case Constants.THING_MORE_ACTIONS:
                 UserViewModelFactory userViewModelFactory = InjectorUtils.getInstance().provideUserViewModelFactory();

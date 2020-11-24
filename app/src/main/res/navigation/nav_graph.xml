@@ -61,8 +61,8 @@
             android:id="@+id/action_singlePostFragment_to_editThingFragment"
             app:destination="@id/editThingFragment" />
         <action
-            android:id="@+id/action_singlePostFragment_to_composeReplyToUserMessageFragment"
-            app:destination="@id/composeReplyToUserMessageFragment" />
+            android:id="@+id/action_singlePostFragment_to_composeReplyFragment"
+            app:destination="@id/composeReplyFragment" />
     </fragment>
     <fragment
         android:id="@+id/subredditFragment"
@@ -159,7 +159,11 @@
         android:id="@+id/inboxFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.InboxFragment"
         android:label="Inbox"
-        tools:layout="@layout/fragment_inbox" />
+        tools:layout="@layout/fragment_inbox" >
+        <action
+            android:id="@+id/action_inboxFragment_to_conversationFragment"
+            app:destination="@id/conversationFragment" />
+    </fragment>
     <dialog
         android:id="@+id/composeChooserFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeChooserFragment"
@@ -277,8 +281,8 @@
             android:name="moreChildren"
             app:argType="io.github.gusandrianos.foxforreddit.data.models.MoreChildrenList" />
         <action
-            android:id="@+id/action_commentsFragment_to_composeReplyToUserMessageFragment"
-            app:destination="@id/composeReplyToUserMessageFragment" />
+            android:id="@+id/action_commentsFragment_to_composeReplyFragment"
+            app:destination="@id/composeReplyFragment" />
         <action
             android:id="@+id/action_commentsFragment_to_editThingFragment"
             app:destination="@id/editThingFragment" />
@@ -298,6 +302,12 @@
             android:id="@+id/deepLink5"
             android:autoVerify="true"
             app:uri="www.reddit.com/r/{subreddit}/comments/{subdir}" />
+        <action
+            android:id="@+id/action_singlePostBuffer_to_singlePostFragment"
+            app:destination="@id/singlePostFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/singlePostBuffer"
+            app:popUpToInclusive="true" />
     </fragment>
     <action
         android:id="@+id/action_global_singlePostBuffer"
@@ -318,10 +328,10 @@
             app:argType="string" />
     </fragment>
     <fragment
-        android:id="@+id/messagesWithUserFragment"
-        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.MessagesWithUserFragment"
+        android:id="@+id/conversationFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ConversationFragment"
         android:label="{author}"
-        tools:layout="@layout/fragment_messages_with_user">
+        tools:layout="@layout/fragment_conversation">
         <argument
             android:name="data"
             app:argType="io.github.gusandrianos.foxforreddit.data.models.Data" />
@@ -329,12 +339,9 @@
             android:name="author"
             app:argType="string" />
         <action
-            android:id="@+id/action_messagesWithUserFragment_to_composeReplyToUserMessageFragment"
-            app:destination="@id/composeReplyToUserMessageFragment" />
+            android:id="@+id/action_conversationFragment_to_composeReplyFragment"
+            app:destination="@id/composeReplyFragment" />
     </fragment>
-    <action
-        android:id="@+id/action_global_messagesWithUserFragment"
-        app:destination="@id/messagesWithUserFragment" />
     <fragment
         android:id="@+id/composeMessageFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeMessageFragment">
@@ -348,8 +355,8 @@
         app:destination="@id/composeMessageFragment"
         app:launchSingleTop="true" />
     <fragment
-        android:id="@+id/composeReplyToUserMessageFragment"
-        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeReplyToUserMessageFragment"
+        android:id="@+id/composeReplyFragment"
+        android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeReplyFragment"
         android:label="{username}">
         <argument
             android:name="thing_id"

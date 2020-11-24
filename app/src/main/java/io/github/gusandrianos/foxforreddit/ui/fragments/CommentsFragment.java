@@ -190,7 +190,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                 case Constants.THING_REPLY:
                     navController.navigate(
                             CommentsFragmentDirections
-                                    .actionCommentsFragmentToComposeReplyToUserMessageFragment(
+                                    .actionCommentsFragmentToComposeReplyFragment(
                                             comment.getData().getName(), "New comment"));
                     break;
                 case Constants.THING_AUTHOR:

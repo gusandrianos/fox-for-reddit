@@ -683,7 +683,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 case Constants.THING_REPLY:
                     navController.navigate(
                             SinglePostFragmentDirections
-                                    .actionSinglePostFragmentToComposeReplyToUserMessageFragment(
+                                    .actionSinglePostFragmentToComposeReplyFragment(
                                             comment.getData().getName(), "New comment"));
                     break;
                 case Constants.THING_AUTHOR:
@@ -904,7 +904,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         menu.findItem(R.id.single_post_reply).setVisible(true).setOnMenuItemClickListener(reply -> {
             navController.navigate(
                     SinglePostFragmentDirections
-                            .actionSinglePostFragmentToComposeReplyToUserMessageFragment(
+                            .actionSinglePostFragmentToComposeReplyFragment(
                                     postData.getName(), "New comment"));
             return true;
         });

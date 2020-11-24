@@ -28,21 +28,21 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
-public class ComposeReplyToUserMessageFragment extends Fragment {
+public class ComposeReplyFragment extends Fragment {
 
     String thing_id;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_message_user_to_reply_compose, container, false);
+        return inflater.inflate(R.layout.fragment_reply_compose, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ComposeReplyToUserMessageFragmentArgs composeReplyToUserMessageFragmentArgs = ComposeReplyToUserMessageFragmentArgs.fromBundle(requireArguments());
+        ComposeReplyFragmentArgs composeReplyToUserMessageFragmentArgs = ComposeReplyFragmentArgs.fromBundle(requireArguments());
         thing_id = composeReplyToUserMessageFragmentArgs.getThingId();
         setUpNavigation(view);
     }

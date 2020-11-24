@@ -10,9 +10,10 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/search_item_icon"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:scaleType="centerCrop"
+        android:layout_marginEnd="@dimen/horizontal_margin_normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/txt_search_item_name"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,21 +24,22 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:text="asdasdsadas"
+        android:text="u/user"
         app:layout_constraintBottom_toTopOf="@id/txt_search_item_info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/search_item_icon"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        style="@style/PostTimeStyle"
         android:id="@+id/txt_search_item_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:text="asdasdsadas"
+        android:text="information"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/search_item_icon"
+        app:layout_constraintStart_toStartOf="@id/txt_search_item_name"
         app:layout_constraintTop_toBottomOf="@id/txt_search_item_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

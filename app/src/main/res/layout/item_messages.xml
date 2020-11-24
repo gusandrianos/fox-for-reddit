@@ -15,7 +15,6 @@
         android:src="@drawable/ic_baseline_email_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/container_message_item_user_and_time"
-        app:layout_constraintHorizontal_weight="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0" />
@@ -24,10 +23,11 @@
         android:id="@+id/container_message_item_user_and_time"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/horizontal_margin_small"
+        android:layout_marginEnd="@dimen/horizontal_margin_small"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@id/txt_message_item_subject"
         app:layout_constraintEnd_toStartOf="@id/btn_message_item_more_actions"
-        app:layout_constraintHorizontal_weight="0.9"
         app:layout_constraintStart_toEndOf="@id/img_message_item_icon"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -35,10 +35,12 @@
             android:id="@+id/txt_message_item_sent_by_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="u/user" />
+            android:text="u/user"
+            android:textColor="?colorAccent" />
 
         <TextView
             android:id="@+id/txt_message_item_time_ago"
+            style="@style/PostTimeStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -50,6 +52,8 @@
         android:id="@+id/txt_message_item_subject"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/horizontal_margin_small"
+        android:layout_marginEnd="@dimen/horizontal_margin_small"
         android:text="Subject"
         app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_message_item_more_actions"
@@ -66,7 +70,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/container_message_item_user_and_time"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+
+        app:layout_constraintVertical_bias="0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

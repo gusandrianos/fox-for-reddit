@@ -9,12 +9,14 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.libRG.CustomTextView
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit
+import jp.wasabeef.glide.transformations.BlurTransformation
 
 
 class PostAdapter(private val mainActivity: MainActivity, private val listener: OnItemClickListener) : PagingDataAdapter<Data, RecyclerView.ViewHolder>(POST_COMPARATOR) {
@@ -145,15 +147,15 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         init {
             itemView.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_ITEM, mPostType,it)
+                onClick(bindingAdapterPosition, Constants.POST_ITEM, mPostType, it)
             }
 
             mTxtPostSubreddit.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT, mPostType,it)
+                onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT, mPostType, it)
             }
 
             mTxtPostUser.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.THING_AUTHOR, mPostType,it)
+                onClick(bindingAdapterPosition, Constants.THING_AUTHOR, mPostType, it)
             }
 
             mImgBtnPostVoteUp.setOnClickListener {
@@ -165,7 +167,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
                         if (item != null) {
                             FoxToolkit.upVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
                                     mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
-                            onClick(bindingAdapterPosition, Constants.THING_VOTE_UP, mPostType,it)
+                            onClick(bindingAdapterPosition, Constants.THING_VOTE_UP, mPostType, it)
                         }
                     }
             }
@@ -179,21 +181,21 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
                         if (item != null) {
                             FoxToolkit.downVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
                                     mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
-                            onClick(bindingAdapterPosition, Constants.THING_VOTE_DOWN, mPostType,it)
+                            onClick(bindingAdapterPosition, Constants.THING_VOTE_DOWN, mPostType, it)
                         }
                     }
             }
 
             mTxtPostNumComments.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_COMMENTS_NUM, mPostType,it)
+                onClick(bindingAdapterPosition, Constants.POST_COMMENTS_NUM, mPostType, it)
             }
 
             mTxtPostShare.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_SHARE, mPostType,it)
+                onClick(bindingAdapterPosition, Constants.POST_SHARE, mPostType, it)
             }
 
             mTxtPostMoreActions.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.THING_MORE_ACTIONS, mPostType,it)
+                onClick(bindingAdapterPosition, Constants.THING_MORE_ACTIONS, mPostType, it)
             }
         }
 
@@ -236,13 +238,16 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         init {
             mImgPostThumbnail.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL, mPostType,it)
+                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL, mPostType, it)
             }
         }
 
         override fun onBind(post: Data) {
             super.onBind(post)
-            Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_photo_size_select_actual_80).into(mImgPostThumbnail)
+            if ((post.spoiler != null && post.spoiler == true) || (post.isOver18 != null && post.isOver18 == true))
+                Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_photo_size_select_actual_80).apply(bitmapTransform(BlurTransformation(25, 3))).into(mImgPostThumbnail)
+            else
+                Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_photo_size_select_actual_80).into(mImgPostThumbnail)
         }
     }
 
@@ -253,13 +258,16 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         init {
             mFlThumbnail.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL, mPostType,it)
+                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL, mPostType, it)
             }
         }
 
         override fun onBind(post: Data) {
             super.onBind(post)
-            Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_link_80).into(mImgPostThumbnail)
+            if ((post.spoiler != null && post.spoiler == true) || (post.isOver18 != null && post.isOver18 == true))
+                Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_link_80).apply(bitmapTransform(BlurTransformation(25, 3))).into(mImgPostThumbnail)
+            else
+                Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_link_80).into(mImgPostThumbnail)
             mTxtPostDomain.text = post.domain
             mTxtPostDomain.tag = post.urlOverriddenByDest
         }
@@ -271,13 +279,16 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         init {
             mFlThumbnail.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL, mPostType,it)
+                onClick(bindingAdapterPosition, Constants.POST_THUMBNAIL, mPostType, it)
             }
         }
 
         override fun onBind(post: Data) {
             super.onBind(post)
-            Glide.with(itemView).load(post.thumbnail).into(mImgPostThumbnail)
+            if ((post.spoiler != null && post.spoiler == true) || (post.isOver18 != null && post.isOver18 == true))
+                Glide.with(itemView).load(post.thumbnail).apply(bitmapTransform(BlurTransformation(25, 3))).into(mImgPostThumbnail)
+            else
+                Glide.with(itemView).load(post.thumbnail).into(mImgPostThumbnail)
         }
     }
 
@@ -288,7 +299,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         init {
             mBtnPostVoteNow.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_VOTE_NOW, mPostType,it)
+                onClick(bindingAdapterPosition, Constants.POST_VOTE_NOW, mPostType, it)
             }
         }
 
@@ -313,13 +324,13 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         init {
             itemView.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_ITEM, mPostType,it)
+                onClick(bindingAdapterPosition, Constants.POST_ITEM, mPostType, it)
             }
             mTxtPostUser.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.THING_AUTHOR, mPostType,it)
+                onClick(bindingAdapterPosition, Constants.THING_AUTHOR, mPostType, it)
             }
             mTxtPostSubreddit.setOnClickListener {
-                onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT, mPostType,it)
+                onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT, mPostType, it)
             }
         }
 

@@ -414,7 +414,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         imgPostImage.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
 
-        Glide.with(view).load(singlePostData.getMedia().getOembed().getThumbnailUrl()).placeholder(R.drawable.ic_launcher_background).into(imgPostImage);
+        Glide.with(view).load(singlePostData.getMedia().getOembed().getThumbnailUrl()).into(imgPostImage);
 
         imgPostImage.setOnClickListener(view1 -> {
             CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();

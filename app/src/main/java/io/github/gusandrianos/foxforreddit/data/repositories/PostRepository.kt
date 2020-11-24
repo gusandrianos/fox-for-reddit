@@ -22,8 +22,6 @@ import retrofit2.Response
 object PostRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     private val commentsData = MutableLiveData<CommentListing>()
-    private val submissionData = MutableLiveData<SubmitResponse>()
-    private val singlePostData = MutableLiveData<SinglePost>()
 
     fun getPosts(subreddit: String, filter: String, time: String, application: Application) =
             Pager(
@@ -48,6 +46,7 @@ object PostRepository {
     }
 
     fun getSinglePost(permalink: String, application: Application): LiveData<SinglePost> {
+        val singlePostData = MutableLiveData<SinglePost>()
         val bearer = getBearer(application)
         val singlePost = redditAPI.getSinglePost(bearer, permalink)
         singlePost.enqueue(object : Callback<List<Any>> {
@@ -115,6 +114,7 @@ object PostRepository {
     fun submitText(type: String, subreddit: String, title: String, url: String, text: String,
                    nsfw: Boolean, spoiler: Boolean, flair_id: String, flair_text: String,
                    application: Application): LiveData<SubmitResponse> {
+        val submissionData = MutableLiveData<SubmitResponse>()
         val bearer = getBearer(application)
         val submit = redditAPI.submitText(bearer, type, subreddit, title, url, text, nsfw,
                 spoiler, flair_id, flair_text, "json", true)

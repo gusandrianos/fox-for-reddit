@@ -37,15 +37,16 @@
                     android:id="@+id/stub_cl_poll"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/horizontal_margin_medium"
                     android:layout_marginTop="@dimen/vertical_margin_small"
-                    android:layout_marginBottom="@dimen/vertical_margin_small"
-                    android:layout_marginStart="@dimen/horizontal_margin_normal"
-                    android:layout_marginEnd="@dimen/horizontal_margin_normal">
+                    android:layout_marginEnd="@dimen/horizontal_margin_medium"
+                    android:layout_marginBottom="@dimen/vertical_margin_small">
 
                     <TextView
                         android:id="@+id/stub_txt_post_body"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/vertical_margin_small"
                         android:text="body body bodyt"
                         android:visibility="visible"
                         app:layout_constraintBottom_toTopOf="@id/stub_txt_vote_num"

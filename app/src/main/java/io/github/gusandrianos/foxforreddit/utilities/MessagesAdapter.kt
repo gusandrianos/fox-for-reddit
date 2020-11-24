@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import org.apache.commons.text.StringEscapeUtils
 
 class MessagesAdapter(private val listener: MessagesItemClickListener) : PagingDataAdapter<Data, MessagesAdapter.ViewHolder>(ITEM_COMPARATOR) {
 
@@ -37,7 +38,7 @@ class MessagesAdapter(private val listener: MessagesItemClickListener) : PagingD
         val user = "u/${data?.author}"
         holder.txtUser.text = user
         holder.txtTimeAgo.text = DateUtils.getRelativeTimeSpanString(data?.createdUtc as Long * 1000).toString()
-        holder.txtSubject.text = data?.subject
+        holder.txtSubject.text = StringEscapeUtils.unescapeXml(data?.subject)
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

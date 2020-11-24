@@ -25,6 +25,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jaredrummler.cyanea.Cyanea;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import java.lang.reflect.Type;
 
 import io.github.gusandrianos.foxforreddit.Constants;
@@ -117,7 +119,8 @@ public class MessagesWithUserFragment extends Fragment implements MessagesWithUs
 
             txtUser.setText(data.getAuthor());
             txtTimeSent.setText(DateUtils.getRelativeTimeSpanString(data.getCreatedUtc() * 1000).toString());
-            txtBody.setText(data.getBody());
+            String escapedText = StringEscapeUtils.unescapeXml(data.getBody());
+            txtBody.setText(escapedText);
 
             txtUser.setOnClickListener(v -> navigateToUser(txtUser.getText().toString()));
 

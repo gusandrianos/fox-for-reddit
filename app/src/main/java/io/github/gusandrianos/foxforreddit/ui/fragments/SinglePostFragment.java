@@ -60,6 +60,7 @@ import com.libRG.CustomTextView;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -247,7 +248,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         String user = "u/" + singlePostData.getAuthor();
         mTxtPostUser.setText(user);
         mTxtTimePosted.setText(DateUtils.getRelativeTimeSpanString((long) singlePostData.getCreatedUtc() * 1000).toString());
-        txtPostTitle.setText(singlePostData.getTitle());
+        String escapedText = StringEscapeUtils.unescapeXml(singlePostData.getTitle());
+        txtPostTitle.setText(escapedText);
 
         if (singlePostData.getLinkFlairText() != null && !singlePostData.getLinkFlairText().isEmpty())
             FoxToolkit.INSTANCE.makeFlair(singlePostData.getLinkFlairType(),
@@ -318,7 +320,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     private void bindAsSelf(Data singlePostData, View view) {
         if (singlePostData.getSelftext() != null) {
             TextView txtPostBody = view.findViewById(R.id.stub_txt_post_body);
-            markwon.setMarkdown(txtPostBody, singlePostData.getSelftext());
+            String escapedText = StringEscapeUtils.unescapeXml(singlePostData.getSelftext());
+            markwon.setMarkdown(txtPostBody, escapedText);
             txtPostBody.setVisibility(View.VISIBLE);
         }
     }
@@ -400,7 +403,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             String votes = FoxToolkit.INSTANCE.formatValue(singlePostData.getPollData().getTotalVoteCount()) + " Votes";
             String endsAt = FoxToolkit.INSTANCE.getPollEndingDate(singlePostData.getPollData().getVotingEndTimestamp());
 
-            markwon.setMarkdown(txtPostBody, singlePostData.getSelftext());
+            String escapedText = StringEscapeUtils.unescapeXml(singlePostData.getSelftext());
+            markwon.setMarkdown(txtPostBody, escapedText);
             txtPostBody.setVisibility(View.VISIBLE);
             txtTimeLeft.setText(endsAt);
             txtVoteNum.setText(votes);

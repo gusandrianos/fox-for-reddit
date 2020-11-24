@@ -29,6 +29,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.jaredrummler.cyanea.Cyanea;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import java.text.NumberFormat;
 import java.util.Objects;
 
@@ -213,6 +215,7 @@ public class SubredditFragment extends Fragment {
 
         if (subredditInfo.getDescription() != null) {
             sidebarText = subredditInfo.getDescription();
+            sidebarText = StringEscapeUtils.unescapeXml(sidebarText);
         }
         markwon.setMarkdown(sidebarContents, sidebarText);
     }

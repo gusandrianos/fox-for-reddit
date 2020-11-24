@@ -242,7 +242,8 @@ public class UserFragment extends Fragment {
 
         NavController navController = NavHostFragment.findNavController(this);
 
-        setUpMenu(mainActivity.getFoxSharedViewModel().getViewingSelf(), toolbar, mainActivity, navController, user);
+        if (FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+            setUpMenu(mainActivity.getFoxSharedViewModel().getViewingSelf(), toolbar, mainActivity, navController, user);
     }
 
     private String buildURL(String username, String location) {
@@ -309,10 +310,7 @@ public class UserFragment extends Fragment {
             });
         } else {
             toolbar.getMenu().findItem(R.id.message_user).setOnMenuItemClickListener(menuItem -> {
-                if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
-                    FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
-                else
-                    navController.navigate(ComposeMessageFragmentDirections.actionGlobalComposeMessageFragment(user.getName()));
+                navController.navigate(ComposeMessageFragmentDirections.actionGlobalComposeMessageFragment(user.getName()));
                 return true;
             });
 

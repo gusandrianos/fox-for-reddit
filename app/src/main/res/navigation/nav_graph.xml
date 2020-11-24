@@ -267,6 +267,7 @@
     <fragment
         android:id="@+id/commentsFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.CommentsFragment"
+        android:label="{subreddit}"
         tools:layout="@layout/fragment_comments">
         <action
             android:id="@+id/action_commentsFragment_self"
@@ -286,6 +287,9 @@
         <action
             android:id="@+id/action_commentsFragment_to_editThingFragment"
             app:destination="@id/editThingFragment" />
+        <argument
+            android:name="subreddit"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/singlePostBuffer"

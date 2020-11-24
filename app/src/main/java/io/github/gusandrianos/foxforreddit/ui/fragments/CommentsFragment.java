@@ -60,6 +60,8 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
     NavController navController;
     Markwon markwon;
 
+    String subreddit;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -76,6 +78,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                 .build();
 
         CommentsFragmentArgs commentsDialogFragmentArgs = CommentsFragmentArgs.fromBundle(requireArguments());
+        subreddit = commentsDialogFragmentArgs.getSubreddit();
         String linkId = commentsDialogFragmentArgs.getLinkId();
         String loadChildren = commentsDialogFragmentArgs.getLoadChildren();
         MoreChildrenList moreChildrenList = commentsDialogFragmentArgs.getMoreChildren();
@@ -108,7 +111,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
 
                 NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
                 NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-                navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren1.toString(), moreChildrenList1));
+                navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren1.toString(), moreChildrenList1,subreddit));
 
             });
         }
@@ -167,7 +170,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
             moreChildrenList.setMoreChildrenList(moreChildrenArray);
 
 
-            navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren.toString(), moreChildrenList));
+            navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren.toString(), moreChildrenList,subreddit));
         } else {
             PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
             PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
@@ -188,10 +191,13 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                                 requireActivity().getApplication(), comment.getData());
                     break;
                 case Constants.THING_REPLY:
-                    navController.navigate(
-                            CommentsFragmentDirections
-                                    .actionCommentsFragmentToComposeReplyFragment(
-                                            comment.getData().getName(), "New comment"));
+                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                        FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
+                    else
+                        navController.navigate(
+                                CommentsFragmentDirections
+                                        .actionCommentsFragmentToComposeReplyFragment(
+                                                comment.getData().getName(), "New comment"));
                     break;
                 case Constants.THING_AUTHOR:
                     String authorUsername = comment.getData().getAuthor();
@@ -199,47 +205,51 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                     navController.navigate(action);
                     break;
                 case Constants.THING_MORE_ACTIONS:
-                    PopupMenu menu = new PopupMenu(requireContext(), view);
-                    menu.inflate(R.menu.comment_popup);
+                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                        FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
+                    else {
+                        PopupMenu menu = new PopupMenu(requireContext(), view);
+                        menu.inflate(R.menu.comment_popup);
 
-                    if (comment.getData().isSaved())
-                        menu.getMenu().findItem(R.id.comment_save).setTitle("Unsave");
-                    else
-                        menu.getMenu().findItem(R.id.comment_save).setTitle("Save");
+                        if (comment.getData().isSaved())
+                            menu.getMenu().findItem(R.id.comment_save).setTitle("Unsave");
+                        else
+                            menu.getMenu().findItem(R.id.comment_save).setTitle("Save");
 
-                    if (comment.getData().getAuthor()
-                            .equals(((MainActivity) requireActivity()).getFoxSharedViewModel()
-                                    .getCurrentUserUsername())) {
-                        menu.getMenu().findItem(R.id.comment_edit).setVisible(true);
-                        menu.getMenu().findItem(R.id.comment_delete).setVisible(true);
-                    } else {
-                        menu.getMenu().findItem(R.id.comment_edit).setVisible(false);
-                        menu.getMenu().findItem(R.id.comment_delete).setVisible(false);
-                    }
+                        if (comment.getData().getAuthor()
+                                .equals(((MainActivity) requireActivity()).getFoxSharedViewModel()
+                                        .getCurrentUserUsername())) {
+                            menu.getMenu().findItem(R.id.comment_edit).setVisible(true);
+                            menu.getMenu().findItem(R.id.comment_delete).setVisible(true);
+                        } else {
+                            menu.getMenu().findItem(R.id.comment_edit).setVisible(false);
+                            menu.getMenu().findItem(R.id.comment_delete).setVisible(false);
+                        }
 
-                    if (menu.getMenu().findItem(R.id.comment_edit).isVisible()) {
-                        menu.getMenu().findItem(R.id.comment_edit).setOnMenuItemClickListener(edit -> {
-                            goToEditThing(comment.getData().getName(), comment.getData().getBody());
+                        if (menu.getMenu().findItem(R.id.comment_edit).isVisible()) {
+                            menu.getMenu().findItem(R.id.comment_edit).setOnMenuItemClickListener(edit -> {
+                                goToEditThing(comment.getData().getName(), comment.getData().getBody());
+                                return true;
+                            });
+
+                            menu.getMenu().findItem(R.id.comment_delete).setOnMenuItemClickListener(edit -> {
+                                deleteThingAction(viewModel, comment.getData().getName());
+                                return true;
+                            });
+                        }
+
+                        menu.getMenu().findItem(R.id.comment_save).setOnMenuItemClickListener(save -> {
+                            popUpMenuSave(comment, viewModel);
                             return true;
                         });
 
-                        menu.getMenu().findItem(R.id.comment_delete).setOnMenuItemClickListener(edit -> {
-                            deleteThingAction(viewModel, comment.getData().getName());
+                        menu.getMenu().findItem(R.id.comment_report).setOnMenuItemClickListener(commentReport -> {
+                            popUpMenuReport(comment);
                             return true;
                         });
+
+                        menu.show();
                     }
-
-                    menu.getMenu().findItem(R.id.comment_save).setOnMenuItemClickListener(save -> {
-                        popUpMenuSave(comment, viewModel);
-                        return true;
-                    });
-
-                    menu.getMenu().findItem(R.id.comment_report).setOnMenuItemClickListener(commentReport -> {
-                        popUpMenuReport(comment);
-                        return true;
-                    });
-
-                    menu.show();
                     break;
                 default:
             }

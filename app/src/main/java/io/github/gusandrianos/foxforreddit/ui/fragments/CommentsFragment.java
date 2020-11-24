@@ -48,14 +48,17 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
+import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.linkify.LinkifyPlugin;
 
 public class CommentsFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
 
     RecyclerView mCommentsRecyclerView;
     GroupAdapter<GroupieViewHolder> groupAdapter;
 
-    NavHostFragment navHostFragment;
     NavController navController;
+    Markwon markwon;
 
     @Nullable
     @Override
@@ -66,6 +69,11 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        markwon = Markwon.builder(requireContext())
+                .usePlugin(TablePlugin.create(requireContext()))
+                .usePlugin(LinkifyPlugin.create())
+                .build();
 
         CommentsFragmentArgs commentsDialogFragmentArgs = CommentsFragmentArgs.fromBundle(requireArguments());
         String linkId = commentsDialogFragmentArgs.getLinkId();
@@ -122,7 +130,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                 }
                 groupAdapter.add(new ExpandableCommentGroup(item,
                         Objects.requireNonNull(item.getData()).getDepth(),
-                        linkId, this, (MainActivity) requireActivity()));
+                        linkId, this, (MainActivity) requireActivity(), markwon));
             }
             if (txtMoreComments.getTag().equals("1"))
                 txtMoreComments.setVisibility(View.VISIBLE);
@@ -285,11 +293,11 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                 requireActivity().getApplication()).observe(getViewLifecycleOwner(),
                 rulesBundle -> {
                     if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
-                    navController.navigate(NavGraphDirections.actionGlobalReportDialogFragment(
-                            rulesBundle,
-                            null, Constants.ALL_RULES,
-                            comment.getData().getSubredditNamePrefixed(),
-                            comment.getData().getName()));
+                        navController.navigate(NavGraphDirections.actionGlobalReportDialogFragment(
+                                rulesBundle,
+                                null, Constants.ALL_RULES,
+                                comment.getData().getSubredditNamePrefixed(),
+                                comment.getData().getName()));
                     else {
                         Toast.makeText(getContext(), "Failed to report", Toast.LENGTH_SHORT).show();
                     }

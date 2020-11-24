@@ -17,6 +17,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit
 import jp.wasabeef.glide.transformations.BlurTransformation
+import org.apache.commons.text.StringEscapeUtils
 
 
 class PostAdapter(private val mainActivity: MainActivity, private val listener: OnItemClickListener) : PagingDataAdapter<Data, RecyclerView.ViewHolder>(POST_COMPARATOR) {
@@ -206,7 +207,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             mTxtPostSubreddit.text = subreddit
             mTxtPostUser.text = user
             mTxtTimePosted.text = DateUtils.getRelativeTimeSpanString(post.createdUtc * 1000).toString()
-            mTxtPostTitle.text = post.title
+            mTxtPostTitle.text = StringEscapeUtils.unescapeXml(post.title)
             mTxtPostScore.text = FoxToolkit.formatValue(post.score.toDouble())
             mTxtPostNumComments.text = FoxToolkit.formatValue(post.numComments.toDouble())
 

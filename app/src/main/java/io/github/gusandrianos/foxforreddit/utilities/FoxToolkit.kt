@@ -20,6 +20,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.RichtextItem
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel
+import org.apache.commons.text.StringEscapeUtils
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.time.Instant
@@ -232,9 +233,9 @@ object FoxToolkit {
             if (type.equals("richtext") && !richtext.isNullOrEmpty()) {
                 for (richTextItem in richtext)
                     if (richTextItem.type.equals("text"))
-                        view.text = richTextItem.text.trim()
+                        view.text = StringEscapeUtils.unescapeXml(richTextItem.text.trim())
             } else
-                view.text = text
+                view.text = StringEscapeUtils.unescapeXml(text)
 
             if (textColor.equals("light"))
                 view.setTextColor(Color.parseColor("#FFFFFF"))

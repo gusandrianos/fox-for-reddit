@@ -19,6 +19,8 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.jaredrummler.cyanea.Cyanea;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -55,7 +57,7 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
         submit.setBackgroundColor(Cyanea.getInstance().getAccent());
         Button backButton = view.findViewById(R.id.btn_back_report);
         backButton.setBackgroundColor(Cyanea.getInstance().getAccent());
-        
+
         ReportDialogFragmentArgs reportDialogFragmentArgs = ReportDialogFragmentArgs.fromBundle(requireArguments());
         rulesBundle = reportDialogFragmentArgs.getRulesBundle();
         reason = reportDialogFragmentArgs.getReason();
@@ -79,9 +81,9 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
 
         if (rulesBundle.getRules() != null) {
             for (RulesItem rulesItem : rulesBundle.getRules()) {
-                reasonToShowList.add(rulesItem.getShortName());
+                reasonToShowList.add(StringEscapeUtils.unescapeXml(rulesItem.getShortName()));
                 hasNextList.add(false);
-                reasonList.add(rulesItem.getViolationReason());
+                reasonList.add(StringEscapeUtils.unescapeXml(rulesItem.getViolationReason()));
             }
             setUpReport("Which rule has been broken?", reasonToShowList, reasonList, hasNextList, view);
         }

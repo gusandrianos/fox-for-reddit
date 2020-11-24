@@ -10,6 +10,7 @@ import io.github.gusandrianos.foxforreddit.data.models.RulesItem
 import io.noties.markwon.Markwon
 import io.noties.markwon.ext.tables.TablePlugin
 import io.noties.markwon.linkify.LinkifyPlugin
+import org.apache.commons.text.StringEscapeUtils
 
 class RulesListAdapter(private val rules: List<RulesItem>) : RecyclerView.Adapter<RulesListAdapter.ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -26,12 +27,12 @@ class RulesListAdapter(private val rules: List<RulesItem>) : RecyclerView.Adapte
                 .usePlugin(TablePlugin.create(holder.itemView.context))
                 .usePlugin(LinkifyPlugin.create())
                 .build()
-        holder.ruleTitle.text = rules[position].shortName
+        holder.ruleTitle.text = StringEscapeUtils.unescapeXml(rules[position].shortName)
 
         if (rules[position].description.isNullOrEmpty())
             markwon.setMarkdown(holder.ruleBody, "")
         else
-            markwon.setMarkdown(holder.ruleBody, rules[position].description!!)
+            markwon.setMarkdown(holder.ruleBody, StringEscapeUtils.unescapeXml(rules[position].description!!))
     }
 
     override fun getItemCount(): Int {

@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import com.jaredrummler.cyanea.Cyanea;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -60,7 +62,7 @@ public class WikiFragment extends Fragment {
                     .build();
 
             if (subredditInfo.getWikiContent() != null && !subredditInfo.getWikiContent().isEmpty()) {
-                markwon.setMarkdown(content, subredditInfo.getWikiContent());
+                markwon.setMarkdown(content, StringEscapeUtils.unescapeXml(subredditInfo.getWikiContent()));
             }
         });
     }

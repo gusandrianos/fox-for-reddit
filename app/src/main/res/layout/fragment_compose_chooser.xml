@@ -9,8 +9,10 @@
 
     <TextView
         android:id="@+id/text_compose_chooser_prompt"
+        style="@style/CustomPostTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vertical_margin_medium"
         android:text="Post to Reddit"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@id/button_compose_text"
@@ -26,6 +28,7 @@
         android:drawableTop="@drawable/ic_round_text_snippet_32"
         android:text="Text"
         android:textAllCaps="false"
+        android:textColor="?colorAccent"
         app:iconPadding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/button_compose_link"
@@ -40,6 +43,7 @@
         android:drawableTop="@drawable/ic_round_link_32"
         android:text="Link"
         android:textAllCaps="false"
+        android:textColor="?colorAccent"
         app:iconPadding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -159,7 +159,11 @@
         android:id="@+id/inboxFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.InboxFragment"
         android:label="Inbox"
-        tools:layout="@layout/fragment_inbox" />
+        tools:layout="@layout/fragment_inbox" >
+        <action
+            android:id="@+id/action_inboxFragment_to_messagesWithUserFragment"
+            app:destination="@id/messagesWithUserFragment" />
+    </fragment>
     <dialog
         android:id="@+id/composeChooserFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeChooserFragment"
@@ -332,9 +336,6 @@
             android:id="@+id/action_messagesWithUserFragment_to_composeReplyToUserMessageFragment"
             app:destination="@id/composeReplyToUserMessageFragment" />
     </fragment>
-    <action
-        android:id="@+id/action_global_messagesWithUserFragment"
-        app:destination="@id/messagesWithUserFragment" />
     <fragment
         android:id="@+id/composeMessageFragment"
         android:name="io.github.gusandrianos.foxforreddit.ui.fragments.ComposeMessageFragment">

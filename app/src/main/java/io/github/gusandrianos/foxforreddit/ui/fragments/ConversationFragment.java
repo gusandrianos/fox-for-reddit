@@ -151,7 +151,8 @@ public class ConversationFragment extends Fragment implements MessagesWithUserAd
         MenuItem messageButton = toolbar.getMenu().findItem(R.id.reply_message);
         messageButton.setVisible(true);
         messageButton.setOnMenuItemClickListener(item -> {
-            navController.navigate(ConversationFragmentDirections.actionConversationFragmentToComposeReplyToUserMessageFragment(replyToFullname, replyTo));
+            navController.navigate(ConversationFragmentDirections.
+                    actionConversationFragmentToComposeReplyFragment(replyToFullname, replyTo));
             return true;
         });
     }

@@ -18,9 +18,9 @@ import retrofit2.Response
 
 object SearchRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
-    private val searchTopSubreddits = MutableLiveData<Listing>()
 
     fun searchTopSubreddits(query: String, includeOver18: Boolean, includeProfiles: Boolean, application: Application): LiveData<Listing> {
+        val searchTopSubreddits = MutableLiveData<Listing>()
         val bearer = getBearer(application)
         val search = redditAPI.searchTopSubreddits(bearer, query, includeOver18, includeProfiles, true)
         search.enqueue(object : Callback<Listing> {

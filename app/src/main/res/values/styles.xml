@@ -51,4 +51,15 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="ConfirmationAlertDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/ConfirmationAlertDialogButtonStyle
+        </item>
+        <item name="buttonBarPositiveButtonStyle">@style/ConfirmationAlertDialogButtonStyle
+        </item>
+    </style>
+
+    <style name="ConfirmationAlertDialogButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">?colorAccent</item>
+    </style>
+
 </resources>

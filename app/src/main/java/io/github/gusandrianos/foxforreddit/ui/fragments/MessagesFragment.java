@@ -164,7 +164,7 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
 
     private void popUpMenuDelete(UserViewModel userViewModel, PostViewModel postViewModel, String fullname, String author) {
         String currentUser = ((MainActivity) requireActivity()).getFoxSharedViewModel().getCurrentUserUsername();
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.ConfirmationAlertDialog);
 
         builder.setMessage("Are you sure?")
                 .setCancelable(false)

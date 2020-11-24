@@ -987,7 +987,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void deleteThingAction(PostViewModel viewModel, String fullname) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.ConfirmationAlertDialog);
         builder.setMessage("Are you sure?")
                 .setCancelable(false)
                 .setNegativeButton("Nope", (dialog, id) -> dialog.cancel())

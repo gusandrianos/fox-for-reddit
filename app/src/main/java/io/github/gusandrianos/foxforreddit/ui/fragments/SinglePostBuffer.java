@@ -14,11 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
@@ -35,6 +38,10 @@ public class SinglePostBuffer extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
+        bottomNavigationView.setVisibility(View.GONE);
+
         SinglePostBufferArgs args = SinglePostBufferArgs.fromBundle(requireArguments());
         String subreddit = args.getSubreddit();
         String subdir = args.getSubdir();

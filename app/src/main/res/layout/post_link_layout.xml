@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/horizontal_margin_normal"
+    android:layout_marginStart="@dimen/horizontal_margin_medium"
     android:layout_marginTop="@dimen/vertical_margin_small"
-    android:layout_marginEnd="@dimen/horizontal_margin_normal"
+    android:layout_marginEnd="@dimen/horizontal_margin_medium"
     android:layout_marginBottom="@dimen/vertical_margin_small"
     android:orientation="vertical">
 
@@ -58,17 +58,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:id="@+id/txt_post_domain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:textColor="@android:color/white"
-                android:background="#80121212"
+                android:background="#70000000"
                 android:ellipsize="end"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:paddingStart="@dimen/horizontal_margin_small"
+                android:paddingEnd="@dimen/horizontal_margin_small"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
         </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

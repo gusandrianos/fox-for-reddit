@@ -20,9 +20,9 @@
             android:id="@+id/text_wiki_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/horizontal_margin_normal"
+            android:paddingStart="@dimen/horizontal_margin_medium"
             android:paddingTop="@dimen/vertical_margin_medium"
-            android:paddingEnd="@dimen/horizontal_margin_normal"
+            android:paddingEnd="@dimen/horizontal_margin_medium"
             android:paddingBottom="@dimen/vertical_margin_medium" />
     </ScrollView>
 

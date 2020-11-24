@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/horizontal_margin_normal"
+    android:layout_marginStart="@dimen/horizontal_margin_medium"
     android:layout_marginTop="@dimen/vertical_margin_small"
-    android:layout_marginEnd="@dimen/horizontal_margin_normal"
+    android:layout_marginEnd="@dimen/horizontal_margin_medium"
     android:layout_marginBottom="@dimen/vertical_margin_small"
     android:orientation="vertical">
 
@@ -48,10 +48,10 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:text="VOTE NOW"
+            android:src="@drawable/placeholder_ic_baseline_poll_80"
             app:layout_constraintBottom_toTopOf="@id/txt_post_vote_time_left"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/txt_post_vote_time_left"
+            app:layout_constraintStart_toStartOf="@id/txt_post_vote_time_left"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -66,7 +66,7 @@
 
         <TextView
             android:id="@+id/txt_post_vote_time_left"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="textEnd"
             app:layout_constraintBottom_toBottomOf="parent"

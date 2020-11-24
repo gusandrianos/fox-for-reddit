@@ -309,7 +309,6 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             val endsAt = FoxToolkit.getPollEndingDate(post.pollData.votingEndTimestamp)
             mTxtPostVoteNum.text = votes
             mTxtPostVoteTimeLeft.text = endsAt
-            mBtnPostVoteNow.setImageResource(R.drawable.placeholder_ic_baseline_poll_80)
         }
     }
 

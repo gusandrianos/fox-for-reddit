@@ -38,7 +38,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Thing;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.MessagesWithUserAdapter;
 
-public class MessagesWithUserFragment extends Fragment implements MessagesWithUserAdapter.UserClickedListener {
+public class ConversationFragment extends Fragment implements MessagesWithUserAdapter.UserClickedListener {
 
     Data data;
     String currentUser;
@@ -55,7 +55,7 @@ public class MessagesWithUserFragment extends Fragment implements MessagesWithUs
                 requireActivity().onBackPressed();
         });
 
-        return inflater.inflate(R.layout.fragment_messages_with_user, container, false);
+        return inflater.inflate(R.layout.fragment_conversation, container, false);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class MessagesWithUserFragment extends Fragment implements MessagesWithUs
 
         setUpNavigation(view);
 
-        MessagesWithUserFragmentArgs messagesWithUserFragmentArgs = MessagesWithUserFragmentArgs.fromBundle(requireArguments());
+        ConversationFragmentArgs messagesWithUserFragmentArgs = ConversationFragmentArgs.fromBundle(requireArguments());
         data = messagesWithUserFragmentArgs.getData();
         currentUser = ((MainActivity) requireActivity()).getFoxSharedViewModel().getCurrentUserUsername();
 
@@ -151,7 +151,7 @@ public class MessagesWithUserFragment extends Fragment implements MessagesWithUs
         MenuItem messageButton = toolbar.getMenu().findItem(R.id.reply_message);
         messageButton.setVisible(true);
         messageButton.setOnMenuItemClickListener(item -> {
-            navController.navigate(MessagesWithUserFragmentDirections.actionMessagesWithUserFragmentToComposeReplyToUserMessageFragment(replyToFullname, replyTo));
+            navController.navigate(ConversationFragmentDirections.actionConversationFragmentToComposeReplyToUserMessageFragment(replyToFullname, replyTo));
             return true;
         });
     }

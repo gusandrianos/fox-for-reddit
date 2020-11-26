@@ -102,6 +102,11 @@ open class ExpandableCommentItem constructor(
             markwon.setMarkdown(viewHolder.itemView.comment_body,
                     StringEscapeUtils.unescapeXml(mComment.data.body))
             viewHolder.itemView.txt_comment_score.text = formatValue(mComment.data.score.toDouble())
+            viewHolder.itemView.comment_body.apply {
+                setOnClickListener {
+                    expandableGroup.onToggleExpanded()
+                }
+            }
             viewHolder.itemView.apply {
                 setOnClickListener {
                     expandableGroup.onToggleExpanded()

@@ -4,8 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
+import androidx.paging.*
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
@@ -31,7 +30,14 @@ class UserViewModel(private val mUserRepository: UserRepository) : ViewModel() {
     fun getSubreddits(application: Application, location: String): LiveData<PagingData<Data>> {
         if (subreddits != null)
             return subreddits!!
-        subreddits = mUserRepository.getSubreddits(application, location).cachedIn(viewModelScope)
+
+        subreddits = Pager(
+                config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+                pagingSourceFactory = {
+                    mUserRepository.getSubreddits(application, location)
+                }
+        ).liveData.cachedIn(viewModelScope)
+
         return subreddits!!
     }
 

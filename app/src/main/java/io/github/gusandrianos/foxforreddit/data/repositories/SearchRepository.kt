@@ -34,9 +34,7 @@ object SearchRepository {
         return searchTopSubreddits
     }
 
-    fun searchResults(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String, application: Application): LiveData<PagingData<Data>> =
-            Pager(
-                    config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-                    pagingSourceFactory = { RedditPagingSource(query, sort, time, restrict_sr, type, subreddit, getBearer(application)) }
-            ).liveData
+    fun searchResults(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String, application: Application): RedditPagingSource {
+        return RedditPagingSource(query, sort, time, restrict_sr, type, subreddit, getBearer(application))
+    }
 }

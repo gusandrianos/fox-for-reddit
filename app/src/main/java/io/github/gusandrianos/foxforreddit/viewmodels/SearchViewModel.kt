@@ -4,11 +4,12 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
+import androidx.paging.*
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Listing
+import io.github.gusandrianos.foxforreddit.data.repositories.RedditPagingSource
 import io.github.gusandrianos.foxforreddit.data.repositories.SearchRepository
+import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit
 
 class SearchViewModel(private val mSearchRepository: SearchRepository) : ViewModel() {
     private var searchPost: LiveData<PagingData<Data>>? = null
@@ -20,7 +21,14 @@ class SearchViewModel(private val mSearchRepository: SearchRepository) : ViewMod
     fun searchResults(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String, application: Application): LiveData<PagingData<Data>> {
         if (searchPost != null)
             return searchPost!!
-        searchPost = mSearchRepository.searchResults(query, sort, time, restrict_sr, type, subreddit, application).cachedIn(viewModelScope)
+
+        searchPost = Pager(
+                config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+                pagingSourceFactory = {
+                    mSearchRepository.searchResults(query, sort, time, restrict_sr, type, subreddit, application)
+                }
+        ).liveData.cachedIn(viewModelScope)
+
         return searchPost!!
     }
 

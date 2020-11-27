@@ -4,11 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.liveData
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import io.github.gusandrianos.foxforreddit.data.models.*
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
@@ -23,15 +19,9 @@ object PostRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     private val commentsData = MutableLiveData<CommentListing>()
 
-    fun getPosts(subreddit: String, filter: String, time: String, application: Application) =
-            Pager(
-                    config = PagingConfig(pageSize = 25, prefetchDistance = 25,
-                            enablePlaceholders = false),
-                    pagingSourceFactory = {
-                        RedditPagingSource(subreddit, filter, time, getBearer
-                        (application))
-                    }
-            ).liveData
+    fun getPosts(subreddit: String, filter: String, time: String, application: Application): RedditPagingSource {
+        return RedditPagingSource(subreddit, filter, time, getBearer(application))
+    }
 
     fun votePost(dir: String, id: String, application: Application) {
         val bearer = getBearer(application)

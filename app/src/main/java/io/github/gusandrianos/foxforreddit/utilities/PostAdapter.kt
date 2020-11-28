@@ -1,10 +1,15 @@
 package io.github.gusandrianos.foxforreddit.utilities
 
+import android.content.Context
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +20,9 @@ import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
-import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit
+import io.noties.markwon.Markwon
+import io.noties.markwon.ext.tables.TablePlugin
+import io.noties.markwon.linkify.LinkifyPlugin
 import jp.wasabeef.glide.transformations.BlurTransformation
 import org.apache.commons.text.StringEscapeUtils
 
@@ -92,7 +99,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             }
             Constants.COMMENT -> {
                 view = layoutInflater.inflate(R.layout.post_comment_layout, parent, false)
-                return PostCommentViewHolder(view, Constants.COMMENT)
+                return PostCommentViewHolder(view, Constants.COMMENT, parent.context)
             }
         }
         view = layoutInflater.inflate(R.layout.post_self_layout, parent, false) //Just in case...
@@ -314,7 +321,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
     }
 
     // We know naming it PostComment instead of Comment is stupid, don't judge hey :p
-    inner class PostCommentViewHolder(itemView: View, private val mPostType: Int) : RecyclerView.ViewHolder(itemView) {
+    inner class PostCommentViewHolder(itemView: View, private val mPostType: Int, private val context: Context) : RecyclerView.ViewHolder(itemView) {
         private val mTxtPostUser: TextView = itemView.findViewById(R.id.txt_post_user)
         private val mTxtTimePosted: TextView = itemView.findViewById(R.id.txt_time_posted)
         private val mTxtPostScore: TextView = itemView.findViewById(R.id.txt_post_score)
@@ -332,16 +339,22 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             mTxtPostSubreddit.setOnClickListener {
                 onClick(bindingAdapterPosition, Constants.POST_SUBREDDIT, mPostType, it)
             }
+            mTxtComment.setOnClickListener {
+                onClick(bindingAdapterPosition, Constants.POST_ITEM, mPostType, it)
+            }
         }
 
         fun onBind(comment: Data) {
-            val subreddit = "In r/" + comment.subreddit
+            val markwon = Markwon.builder(context)
+                    .usePlugin(TablePlugin.create(context))
+                    .usePlugin(LinkifyPlugin.create())
+                    .build()
             mTxtPostUser.text = comment.author
             mTxtTimePosted.text = DateUtils.getRelativeTimeSpanString(comment.createdUtc * 1000).toString()
             mTxtPostScore.text = comment.score.toString().trim()
-            mTxtPostTitle.text = comment.linkTitle
-            mTxtPostSubreddit.text = subreddit
-            mTxtComment.text = comment.body
+            mTxtPostTitle.text = StringEscapeUtils.unescapeXml(comment.title)
+            mTxtPostSubreddit.text = comment.subreddit.toString()
+            markwon.setMarkdown(mTxtComment, StringEscapeUtils.unescapeXml(comment.body))
         }
     }
 

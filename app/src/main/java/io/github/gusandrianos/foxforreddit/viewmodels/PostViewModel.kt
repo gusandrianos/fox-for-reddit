@@ -4,8 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
+import androidx.paging.*
 import io.github.gusandrianos.foxforreddit.data.models.CommentListing
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.SinglePost
@@ -20,8 +19,15 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
             : LiveData<PagingData<Data>> {
         if (posts != null)
             return posts!!
-        posts = mPostRepository.getPosts(subreddit, filter, time, application)
-                .cachedIn(viewModelScope)
+
+        posts = Pager(
+                config = PagingConfig(pageSize = 25, prefetchDistance = 25,
+                        enablePlaceholders = false),
+                pagingSourceFactory = {
+                    mPostRepository.getPosts(subreddit, filter, time, application)
+                }
+        ).liveData.cachedIn(viewModelScope)
+
         return posts!!
     }
 

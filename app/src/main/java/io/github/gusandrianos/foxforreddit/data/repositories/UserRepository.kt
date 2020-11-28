@@ -75,11 +75,9 @@ object UserRepository {
         return trophies
     }
 
-    fun getSubreddits(application: Application, location: String) =
-            Pager(
-                    config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-                    pagingSourceFactory = { RedditPagingSource(location, getBearer(application), Constants.MODE_SUBREDDIT) }
-            ).liveData
+    fun getSubreddits(application: Application, location: String): RedditPagingSource {
+        return RedditPagingSource(location, getBearer(application), Constants.MODE_SUBREDDIT)
+    }
 
     fun getPrefs(application: Application): LiveData<UserPrefs> {
         val bearer = getBearer(application)

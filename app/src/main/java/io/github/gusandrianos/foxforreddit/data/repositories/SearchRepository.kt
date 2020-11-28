@@ -16,9 +16,15 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/*
+    Singleton class used as an MVVM repository for Search
+ */
 object SearchRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
 
+    /*
+        Gets the top 5 subreddits/users while typing a search query
+     */
     fun searchTopSubreddits(query: String, includeOver18: Boolean, includeProfiles: Boolean, application: Application): LiveData<Listing> {
         val searchTopSubreddits = MutableLiveData<Listing>()
         val bearer = getBearer(application)
@@ -34,6 +40,9 @@ object SearchRepository {
         return searchTopSubreddits
     }
 
+    /*
+       Gets search result for a query
+    */
     fun searchResults(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String, application: Application): RedditPagingSource {
         return RedditPagingSource(query, sort, time, restrict_sr, type, subreddit, getBearer(application))
     }

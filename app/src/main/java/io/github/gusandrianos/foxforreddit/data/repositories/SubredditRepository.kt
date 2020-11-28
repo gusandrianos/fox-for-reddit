@@ -14,6 +14,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/*
+    Singleton class used as an MVVM repository for Subreddits
+ */
 object SubredditRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
 

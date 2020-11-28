@@ -21,6 +21,9 @@ import okhttp3.Credentials;
 import retrofit2.Call;
 import retrofit2.Response;
 
+/*
+    Singleton class used for managing the Token
+ */
 public class TokenRepository {
     private static TokenRepository instance;
     OAuthToken tokenRequest = RetrofitService.getTokenRequestInstance();

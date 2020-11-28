@@ -8,6 +8,9 @@ import androidx.room.RoomDatabase;
 
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 
+/*
+    Singleton class for providing an instance of the Database used for storing the token.
+ */
 @Database(entities = Token.class, version = 1)
 public abstract class FoxDatabase extends RoomDatabase {
 

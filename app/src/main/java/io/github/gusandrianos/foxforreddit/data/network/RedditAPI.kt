@@ -7,15 +7,13 @@ import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.M
 import retrofit2.Call
 import retrofit2.http.*
 
+/*
+    Models some methods from the Reddit API.
+    The functionality of each one is thoroughly described here
+    https://www.reddit.com/dev/api/
+ */
 interface RedditAPI {
-    /**
-     * @param subreddit
-     * Optional, references the subreddit to load posts from
-     * @param filter
-     * Possible values: Hot, New, Rising, Random.
-     * @return
-     * List of Posts
-     */
+
     @GET("{subreddit}/{filter}")
     suspend fun getPostList(
             @Path("subreddit") subreddit: String,

@@ -3,6 +3,9 @@ package io.github.gusandrianos.foxforreddit.data.network;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/*
+    Sets up retrofit for usage with the OAuthToken interface or the RedditAPI interface
+ */
 public class RetrofitService {
     private RetrofitService() {
     }

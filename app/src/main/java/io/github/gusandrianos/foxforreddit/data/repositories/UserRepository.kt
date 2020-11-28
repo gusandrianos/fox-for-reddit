@@ -20,6 +20,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/*
+    Singleton class used as an MVVM repository for Users
+ */
 object UserRepository {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     private var user: MutableLiveData<Data> = MutableLiveData()

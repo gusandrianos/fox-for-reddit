@@ -8,6 +8,9 @@ import java.util.List;
 
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 
+/*
+    Data access object for Token
+ */
 @Dao
 public interface TokenDao {
     @Insert

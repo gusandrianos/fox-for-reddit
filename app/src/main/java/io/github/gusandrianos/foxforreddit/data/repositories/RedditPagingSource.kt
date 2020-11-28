@@ -13,7 +13,9 @@ import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import retrofit2.HttpException
 import java.io.IOException
 
-
+/*
+    Paging Source used for all paginated endpoints
+ */
 class RedditPagingSource() : PagingSource<String, Data>() {
 
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()

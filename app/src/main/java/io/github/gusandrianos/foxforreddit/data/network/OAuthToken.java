@@ -7,6 +7,11 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 
+/*
+    Models some methods from the Reddit API.
+    The functionality of each one is thoroughly described here
+    https://www.reddit.com/dev/api/
+ */
 public interface OAuthToken {
     @FormUrlEncoded
     @POST("/api/v1/access_token")

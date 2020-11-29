@@ -27,6 +27,10 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
+/*
+    Create a message (user, subject, body) and send it to a user
+*/
+
 public class ComposeMessageFragment extends Fragment {
     @Nullable
     @Override

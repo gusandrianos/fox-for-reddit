@@ -7,9 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Listing
-import io.github.gusandrianos.foxforreddit.data.repositories.RedditPagingSource
 import io.github.gusandrianos.foxforreddit.data.repositories.SearchRepository
-import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit
 
 class SearchViewModel(private val mSearchRepository: SearchRepository) : ViewModel() {
     private var searchPost: LiveData<PagingData<Data>>? = null

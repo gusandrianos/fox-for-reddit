@@ -83,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:gravity="center_vertical"
-            android:text="1.4k"
+            android:text="0"
             app:layout_constraintBottom_toBottomOf="@id/btn_comment_more_actions"
             app:layout_constraintEnd_toStartOf="@id/btn_comment_down_vote"
             app:layout_constraintStart_toEndOf="@id/btn_comment_up_vote"

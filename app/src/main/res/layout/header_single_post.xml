@@ -20,7 +20,7 @@
         style="@style/CustomPostTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="This is the title" />
+        android:text="Title of post" />
 
     <include
         android:id="@+id/single_post_link_flair"

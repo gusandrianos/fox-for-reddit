@@ -51,7 +51,7 @@ class ExpandableCommentGroup constructor(
                     gson.fromJson(gson.toJsonTree(comment).asJsonObject, childType)
                 }
                 add(ExpandableCommentGroup(item, item.data!!.depth, linkId, listener, mainActivity, markwon))
-                        .apply { isExpanded = true }
+                        .apply { isExpanded = true }    //Show every comment (threaded or not)
             }
     }
 }
@@ -75,12 +75,12 @@ open class ExpandableCommentItem constructor(
     }
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-        if (mComment.kind.equals("more")) {
+        if (mComment.kind.equals("more")) {     //If child's kind equals more
             addDepthViewsForLoadMore(viewHolder)
-            viewHolder.itemView.cl_comment.visibility = View.GONE
-            viewHolder.itemView.cl_load_more.visibility = View.VISIBLE
+            viewHolder.itemView.cl_comment.visibility = View.GONE       //make Comment View gone
+            viewHolder.itemView.cl_load_more.visibility = View.VISIBLE  //and load_more View visible
             viewHolder.itemView.cl_load_more.tag = mComment.data!!.parentId
-            val moreChildren = arrayListOf<String>()
+            val moreChildren = arrayListOf<String>()    //Keep ids of more comments in an array list
 
             for (child in mComment.data.children!!) {
                 moreChildren.add(child as String)
@@ -93,7 +93,7 @@ open class ExpandableCommentItem constructor(
                 }
             }
             viewHolder.itemView.txt_more_children.text = "Show more"
-        } else {
+        } else {    //if child is a comment, add content to comment View
             setCommentActions(viewHolder.itemView)
             addDepthViews(viewHolder)
             viewHolder.itemView.cl_comment.visibility = View.VISIBLE
@@ -104,12 +104,12 @@ open class ExpandableCommentItem constructor(
             viewHolder.itemView.txt_comment_score.text = formatValue(mComment.data.score.toDouble())
             viewHolder.itemView.comment_body.apply {
                 setOnClickListener {
-                    expandableGroup.onToggleExpanded()
+                    expandableGroup.onToggleExpanded()  //Collapse/Expand threaded comments
                 }
             }
             viewHolder.itemView.apply {
                 setOnClickListener {
-                    expandableGroup.onToggleExpanded()
+                    expandableGroup.onToggleExpanded()  //Collapse/Expand threaded comments
                 }
             }
         }
@@ -158,6 +158,7 @@ open class ExpandableCommentItem constructor(
         }
     }
 
+    //Add separator in start of comment based on its depth
     private fun addDepthViews(viewHolder: GroupieViewHolder) {
         viewHolder.itemView.separatorContainer.removeAllViews()
         viewHolder.itemView.separatorContainer.visibility =
@@ -174,6 +175,7 @@ open class ExpandableCommentItem constructor(
         }
     }
 
+    //Add separator in start of show more View based on its depth
     private fun addDepthViewsForLoadMore(viewHolder: GroupieViewHolder) {
         viewHolder.itemView.separatorContainer2.removeAllViews()
         viewHolder.itemView.separatorContainer2.visibility =

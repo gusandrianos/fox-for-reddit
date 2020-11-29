@@ -85,9 +85,9 @@
             android:id="@+id/action_subredditFragment_to_moderatorsListFragment"
             app:destination="@id/moderatorsListFragment" />
         <deepLink
-            android:id="@+id/deepLink3"
+            android:id="@+id/deepLink4"
             android:autoVerify="true"
-            app:uri="www.reddit.com/r/{subredditName}" />
+            app:uri="www.reddit.com/r/{subredditName}/" />
     </fragment>
     <action
         android:id="@+id/action_global_userFragment"

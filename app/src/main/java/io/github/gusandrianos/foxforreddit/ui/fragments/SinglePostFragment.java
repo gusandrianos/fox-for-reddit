@@ -114,13 +114,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Data singlePostData = getArguments().getParcelable("data");
-        int postType = getArguments().getInt("postType");
-
-        if (singlePostData == null) {
-            postType = SinglePostFragmentArgs.fromBundle(requireArguments()).getPostType();
-            singlePostData = SinglePostFragmentArgs.fromBundle(requireArguments()).getPost();
-        }
+        Data singlePostData = SinglePostFragmentArgs.fromBundle(requireArguments()).getPost();
+        int postType = SinglePostFragmentArgs.fromBundle(requireArguments()).getPostType();
 
         switch (postType) {
             case Constants.LINK:
@@ -148,13 +143,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 .usePlugin(LinkifyPlugin.create())
                 .build();
 
-        Data singlePostData = getArguments().getParcelable("data");
-        int postType = getArguments().getInt("postType");
-
-        if (singlePostData == null) {
-            postType = SinglePostFragmentArgs.fromBundle(requireArguments()).getPostType();
-            singlePostData = SinglePostFragmentArgs.fromBundle(requireArguments()).getPost();
-        }
+        Data singlePostData = SinglePostFragmentArgs.fromBundle(requireArguments()).getPost();
+        int postType = SinglePostFragmentArgs.fromBundle(requireArguments()).getPostType();
 
         subreddit = singlePostData.getSubredditNamePrefixed();
         mCommentsRecyclerView = view.findViewById(R.id.recyclerview_single_post);
@@ -175,7 +165,6 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         String permalink = singlePostData.getPermalink().substring(1, singlePostData.getPermalink().length() - 1);
 
-        Data finalSinglePostData = singlePostData;
         viewModel.getSinglePostComments(permalink, requireActivity().getApplication())
                 .observe(getViewLifecycleOwner(), commentListing -> {
                     groupAdapter = new GroupAdapter<>();
@@ -192,7 +181,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                         }
                         groupAdapter.add(new ExpandableCommentGroup(item,
                                 Objects.requireNonNull(item.getData()).getDepth(),
-                                finalSinglePostData.getName(),
+                                singlePostData.getName(),
                                 SinglePostFragment.this, (MainActivity) requireActivity(), markwon));
                     }
                 });
@@ -420,7 +409,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         imgPostImage.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
 
-        if(singlePostData.getMedia().getOembed().getThumbnailUrl().contains(".gif"))
+        if (singlePostData.getMedia().getOembed().getThumbnailUrl().contains(".gif"))
             imgPostPlayButton.setVisibility(View.GONE);
 
         Glide.with(view).load(singlePostData.getMedia().getOembed().getThumbnailUrl()).into(imgPostImage);
@@ -665,7 +654,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
             NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
             NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-            navController.navigate(SinglePostFragmentDirections.actionSinglePostFragmentToCommentsFragment(linkId, loadChildren.toString(), moreChildrenList,subreddit));
+            navController.navigate(SinglePostFragmentDirections.actionSinglePostFragmentToCommentsFragment(linkId, loadChildren.toString(), moreChildrenList, subreddit));
         } else {
             PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
             PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
@@ -1100,7 +1089,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         NavController navController = NavHostFragment.findNavController(this);
 
         if (FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
-        setUpMenu(toolbar, postData, postType, view, mainActivity);
+            setUpMenu(toolbar, postData, postType, view, mainActivity);
 
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;
         bottomNavigationView.setVisibility(View.GONE);

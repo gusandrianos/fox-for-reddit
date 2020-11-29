@@ -32,44 +32,58 @@ import io.github.gusandrianos.foxforreddit.utilities.ModeratorsListAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
-public class ModeratorsListFragment extends Fragment implements ModeratorsListAdapter.OnItemClickListener {
+/*
+    Fragment displaying the moderator list of a subreddit
+ */
+public class ModeratorsListFragment extends Fragment
+        implements ModeratorsListAdapter.OnItemClickListener {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_moderators, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String subreddit = ModeratorsListFragmentArgs.fromBundle(requireArguments()).getSubredditName();
+        String subreddit = ModeratorsListFragmentArgs.fromBundle(requireArguments())
+                .getSubredditName();
         setUpNavigation(view);
         setUpRecyclerView(view, subreddit);
     }
 
     void setUpRecyclerView(View view, String subreddit) {
-        SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+        SubredditViewModelFactory factory = InjectorUtils.getInstance()
+                .provideSubredditViewModelFactory();
+        SubredditViewModel viewModel = new ViewModelProvider(this, factory)
+                .get(SubredditViewModel.class);
 
-        viewModel.getSubredditModerators(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), moderators -> {
-            if (moderators != null) {
-                RecyclerView moderatorsRV = view.findViewById(R.id.recycler_moderators);
-                ModeratorsListAdapter adapter = new ModeratorsListAdapter(moderators.getModerators(), this);
-                adapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
-                moderatorsRV.addItemDecoration(new DividerItemDecoration(moderatorsRV.getContext(), DividerItemDecoration.VERTICAL));
-                moderatorsRV.setHasFixedSize(true);
-                moderatorsRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
-                moderatorsRV.setAdapter(adapter);
-            }
-        });
+        viewModel.getSubredditModerators(subreddit, requireActivity().getApplication())
+                .observe(getViewLifecycleOwner(), moderators -> {
+                    if (moderators != null) {
+                        RecyclerView moderatorsRV = view.findViewById(R.id.recycler_moderators);
+                        ModeratorsListAdapter adapter = new ModeratorsListAdapter(
+                                moderators.getModerators(), this);
+                        adapter.setStateRestorationPolicy(
+                                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
+                        moderatorsRV.addItemDecoration(new DividerItemDecoration(
+                                moderatorsRV.getContext(), DividerItemDecoration.VERTICAL));
+                        moderatorsRV.setHasFixedSize(true);
+                        moderatorsRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
+                        moderatorsRV.setAdapter(adapter);
+                    }
+                });
     }
 
     @Override
     public void onItemClick(@NotNull String username) {
-        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                .getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-        NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(username);
+        NavGraphDirections.ActionGlobalUserFragment action =
+                NavGraphDirections.actionGlobalUserFragment(username);
         navController.navigate(action);
     }
 

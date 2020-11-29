@@ -23,11 +23,14 @@ import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 
-
+/*
+    Fragment used as a dialog for choosing what to post (link/text)
+ */
 public class ComposeChooserFragment extends BottomSheetDialogFragment {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_compose_chooser, container, false);
     }
 
@@ -54,10 +57,13 @@ public class ComposeChooserFragment extends BottomSheetDialogFragment {
     }
 
     void compose(int postType) {
-        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                .getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
 
-        ComposeChooserFragmentDirections.ActionComposeChooserFragmentToComposeFragment action = ComposeChooserFragmentDirections.actionComposeChooserFragmentToComposeFragment(postType);
+        ComposeChooserFragmentDirections.ActionComposeChooserFragmentToComposeFragment action =
+                ComposeChooserFragmentDirections
+                        .actionComposeChooserFragmentToComposeFragment(postType);
         navController.navigate(action);
     }
 
@@ -65,7 +71,8 @@ public class ComposeChooserFragment extends BottomSheetDialogFragment {
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
         MainActivity mainActivity = (MainActivity) requireActivity();
-        MenuItem bottomNavMenuItem = mainActivity.bottomNavView.getMenu().findItem(mainActivity.getFoxSharedViewModel().getPreviousDestination());
+        MenuItem bottomNavMenuItem = mainActivity.bottomNavView.getMenu()
+                .findItem(mainActivity.getFoxSharedViewModel().getPreviousDestination());
         bottomNavMenuItem.setChecked(true);
     }
 }

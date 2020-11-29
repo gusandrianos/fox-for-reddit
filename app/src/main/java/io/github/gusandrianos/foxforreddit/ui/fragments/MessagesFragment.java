@@ -41,9 +41,8 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 import kotlin.Unit;
 
 /*
-MessagesFragment contains the messages with all users (subjects and time sent)
+    MessagesFragment contains the messages with all users (subjects and time sent)
  */
-
 
 public class MessagesFragment extends Fragment implements MessagesAdapter.MessagesItemClickListener {
 

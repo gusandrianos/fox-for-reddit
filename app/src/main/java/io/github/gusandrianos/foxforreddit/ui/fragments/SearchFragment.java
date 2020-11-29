@@ -40,7 +40,6 @@ import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModelFactory;
 /*
     SearchFragment shows top 5 results of the search
  */
-
 public class SearchFragment extends Fragment implements SearchAdapter.OnSearchItemClickListener {
     TextView txtResultsFromSearch;
 

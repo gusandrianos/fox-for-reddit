@@ -33,7 +33,6 @@ import static io.github.gusandrianos.foxforreddit.Constants.KIND_USER;
 /*
     SearchResultsFragment contains the results of a search (posts, subreddits and users)
  */
-
 public class SearchResultsFragment extends Fragment {
 
     @Nullable

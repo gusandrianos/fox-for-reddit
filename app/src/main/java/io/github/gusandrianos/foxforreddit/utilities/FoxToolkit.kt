@@ -225,7 +225,6 @@ object FoxToolkit {
         return if (formattedNumber.length > 4) formattedNumber.replace("\\.[0-9]+".toRegex(), "").trim() else formattedNumber.trim()
     }
 
-    // TODO: Handle emoji in flair text
     fun makeFlair(type: String?, richtext: List<RichtextItem>?, text: String?, textColor: String?,
                   backgroundColor: String?, view: CustomTextView) {
 

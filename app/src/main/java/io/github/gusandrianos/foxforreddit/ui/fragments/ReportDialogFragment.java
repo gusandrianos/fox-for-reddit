@@ -38,7 +38,6 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 /*
     ReportDialogFragment is responsible for sending a report
  */
-
 public class ReportDialogFragment extends BottomSheetDialogFragment {
 
     RulesBundle rulesBundle;

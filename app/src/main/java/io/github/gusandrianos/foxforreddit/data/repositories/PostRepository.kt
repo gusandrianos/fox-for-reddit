@@ -30,9 +30,6 @@ object PostRepository {
         return RedditPagingSource(subreddit, filter, time, getBearer(application))
     }
 
-    /*
-        Used for Voting a Post/Comment
-     */
     fun votePost(dir: String, id: String, application: Application) {
         val bearer = getBearer(application)
         val vote = redditAPI.votePost(bearer, dir, id, 123)
@@ -45,9 +42,6 @@ object PostRepository {
         })
     }
 
-    /*
-        Gets both the post and comment data of a single post
-     */
     fun getSinglePost(permalink: String, application: Application): LiveData<SinglePost> {
         val singlePostData = MutableLiveData<SinglePost>()
         val bearer = getBearer(application)
@@ -75,9 +69,6 @@ object PostRepository {
         return singlePostData
     }
 
-    /*
-        Gets the comment data of a single post
-     */
     fun getSinglePostComments(permalink: String, application: Application):
             LiveData<CommentListing> {
         val bearer = getBearer(application)
@@ -100,9 +91,6 @@ object PostRepository {
         return commentsData
     }
 
-    /*
-        Gets the hidden children of a comment or more comments from a single post
-     */
     fun getMoreChildren(linkId: String, children: String, application: Application):
             LiveData<MoreChildren> {
         val dataMoreChildren = MutableLiveData<MoreChildren>()
@@ -120,9 +108,6 @@ object PostRepository {
         return dataMoreChildren
     }
 
-    /*
-        Submits a new selftext post
-     */
     fun submitText(type: String, subreddit: String, title: String, url: String, text: String,
                    nsfw: Boolean, spoiler: Boolean, flair_id: String, flair_text: String,
                    application: Application): LiveData<SubmitResponse> {
@@ -144,9 +129,6 @@ object PostRepository {
         return submissionData
     }
 
-    /*
-        Saves a post
-     */
     fun savePost(id: String, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
@@ -163,9 +145,6 @@ object PostRepository {
         return success
     }
 
-    /*
-        Unsaves a post
-     */
     fun unSavePost(id: String, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
@@ -182,9 +161,6 @@ object PostRepository {
         return success
     }
 
-    /*
-        Hides a post
-     */
     fun hidePost(id: String, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
@@ -201,9 +177,6 @@ object PostRepository {
         return success
     }
 
-    /*
-        Unhides a post
-     */
     fun unHidePost(id: String, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
@@ -220,9 +193,6 @@ object PostRepository {
         return success
     }
 
-    /*
-       Reports a post
-    */
     fun reportPost(thing_id: String, reason: String, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
@@ -239,9 +209,6 @@ object PostRepository {
         return success
     }
 
-    /*
-       Selects a flair (when editing or submitting a new post)
-    */
     fun selectFlair(subreddit: String, link: String, templateId: String,
                     application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
@@ -261,9 +228,6 @@ object PostRepository {
         return success
     }
 
-    /*
-        Toggles NSFW for a post
-     */
     fun markNSFW(id: String, isNSFW: Boolean, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
@@ -284,9 +248,6 @@ object PostRepository {
         return success
     }
 
-    /*
-        Toggles spoiler for a post
-     */
     fun markSpoiler(id: String, isSpoiler: Boolean, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
@@ -307,9 +268,6 @@ object PostRepository {
         return success
     }
 
-    /*
-        Deletes a post
-     */
     fun deleteSubmission(id: String, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
         val bearer = getBearer(application)
@@ -327,9 +285,6 @@ object PostRepository {
         return success
     }
 
-    /*
-        Edits a post
-     */
     fun editSubmission(text: String, thing_id: String, application: Application)
             : LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()

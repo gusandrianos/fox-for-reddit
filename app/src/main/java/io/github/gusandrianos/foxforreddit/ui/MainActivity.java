@@ -2,7 +2,6 @@ package io.github.gusandrianos.foxforreddit.ui;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
@@ -38,7 +37,9 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 
-
+/*
+    Other than the custom browser Activity, this is the only Activity of the app.
+ */
 public class MainActivity extends CyaneaAppCompatActivity implements
         BottomNavigationView.OnNavigationItemReselectedListener,
         BottomNavigationView.OnNavigationItemSelectedListener {
@@ -54,12 +55,17 @@ public class MainActivity extends CyaneaAppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        topLevelDestinationIds = Arrays.asList(R.id.mainFragment, R.id.userFragment, R.id.subredditListFragment, R.id.inboxFragment);
+        // Top Level Destinations are used by Navigation Component to determine the
+        // up button behavior
+        topLevelDestinationIds = Arrays.asList(R.id.mainFragment, R.id.userFragment,
+                R.id.subredditListFragment, R.id.inboxFragment);
 
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
         navController = Objects.requireNonNull(navHostFragment).getNavController();
 
-        appBarConfiguration = new AppBarConfiguration.Builder(new HashSet<>(topLevelDestinationIds)).build();
+        appBarConfiguration = new AppBarConfiguration.Builder(new HashSet<>(topLevelDestinationIds))
+                .build();
 
         bottomNavView = findViewById(R.id.bottom_nav_view);
         bottomNavView.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
@@ -77,7 +83,8 @@ public class MainActivity extends CyaneaAppCompatActivity implements
 
     private void setAuthorizedUI() {
         if (mToken == null) {
-            mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(getApplication());
+            mToken = InjectorUtils.getInstance().provideTokenRepository()
+                    .getToken(getApplication());
             MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.userFragment);
             bottomNavMenuItem.setEnabled(true);
         }
@@ -87,18 +94,19 @@ public class MainActivity extends CyaneaAppCompatActivity implements
 
     public void getCurrentUser() {
         UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
-        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        UserViewModel viewModel = new ViewModelProvider(this, factory)
+                .get(UserViewModel.class);
 
         viewModel.getMe(getApplication()).observe(this, user -> {
             if (user != null) {
                 String username = user.getName();
                 if (username != null) {
                     getFoxSharedViewModel().setCurrentUserUsername(user.getName());
-                    MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.userFragment);
+                    MenuItem bottomNavMenuItem = bottomNavView.getMenu()
+                            .findItem(R.id.userFragment);
                     bottomNavMenuItem.setEnabled(true);
                 }
             }
-            //TODO: Handle this by showing appropriate error
         });
 
         viewModel.getPrefs(getApplication()).observe(this, prefs ->
@@ -107,7 +115,8 @@ public class MainActivity extends CyaneaAppCompatActivity implements
 
     @Override
     public boolean onSupportNavigateUp() {
-        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
+                || super.onSupportNavigateUp();
     }
 
     public FoxSharedViewModel getFoxSharedViewModel() {
@@ -115,6 +124,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
         return new ViewModelProvider(backStackEntry).get(FoxSharedViewModel.class);
     }
 
+    // Opens a browser activity to login on Reddit
     public void logInOnReddit() {
         Intent load = new Intent(this, LoginActivity.class);
         load.putExtra("URL", constructOAuthURL());
@@ -143,14 +153,17 @@ public class MainActivity extends CyaneaAppCompatActivity implements
                 //When all goes well, there is the line "code=[something]"
                 if (state.equals(Constants.STATE) && error.equals("code")) {
                     String code = inputs[1].split("=")[1];
-                    mToken = InjectorUtils.getInstance().provideTokenRepository().getNewToken(getApplication(), code, Constants.REDIRECT_URI);
+                    mToken = InjectorUtils.getInstance().provideTokenRepository()
+                            .getNewToken(getApplication(), code, Constants.REDIRECT_URI);
                 } else
-                    Toast.makeText(this, "Log In unsuccessful", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Log In unsuccessful", Toast.LENGTH_SHORT)
+                            .show();
 
                 setAuthorizedUI();
             }
         }
-        MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(getFoxSharedViewModel().getPreviousDestination());
+        MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(getFoxSharedViewModel()
+                .getPreviousDestination());
         bottomNavMenuItem.setChecked(true);
     }
 
@@ -158,12 +171,14 @@ public class MainActivity extends CyaneaAppCompatActivity implements
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.mainFragment) {
-            NavOptions options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
+            NavOptions options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true)
+                    .build();
             navController.navigate(R.id.mainFragment, null, options);
             return true;
         } else if (id == R.id.userFragment) {
             if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(getApplication())) {
-                NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(getFoxSharedViewModel().getCurrentUserUsername());
+                NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections
+                        .actionGlobalUserFragment(getFoxSharedViewModel().getCurrentUserUsername());
                 navController.navigate(action);
             } else
                 FoxToolkit.INSTANCE.promptLogIn(this);
@@ -179,7 +194,8 @@ public class MainActivity extends CyaneaAppCompatActivity implements
                 } else {
                     getFoxSharedViewModel().clearComposeData();
                 }
-                NavGraphDirections.ActionGlobalComposeChooserFragment action = NavGraphDirections.actionGlobalComposeChooserFragment(postTo);
+                NavGraphDirections.ActionGlobalComposeChooserFragment action = NavGraphDirections
+                        .actionGlobalComposeChooserFragment(postTo);
                 getFoxSharedViewModel().setPreviousDestination(bottomNavView.getSelectedItemId());
                 navController.navigate(action);
             } else
@@ -198,7 +214,8 @@ public class MainActivity extends CyaneaAppCompatActivity implements
     @Override
     public void onNavigationItemReselected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        int currentItemID = Navigation.findNavController(this, R.id.nav_host_fragment).getCurrentDestination().getId();
+        int currentItemID = Navigation.findNavController(this, R.id.nav_host_fragment)
+                .getCurrentDestination().getId();
         if (id == R.id.subredditListFragment && id != currentItemID) {
             navController.navigate(R.id.subredditListFragment);
         }

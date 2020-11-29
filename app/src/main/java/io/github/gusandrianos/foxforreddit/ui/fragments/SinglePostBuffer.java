@@ -12,13 +12,11 @@ import androidx.navigation.fragment.NavHostFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
 
-import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
@@ -27,6 +25,11 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
+/*
+    This fragment gets the post when navigated to from a link, so it passes the post type to
+    SinglePostFragment and inflate the correct layout.
+    Only works from a deep link
+ */
 public class SinglePostBuffer extends Fragment {
 
     @Override
@@ -54,8 +57,10 @@ public class SinglePostBuffer extends Fragment {
         viewModel.getSinglePost(permalink, requireActivity().getApplication())
                 .observe(getViewLifecycleOwner(), post -> {
                     Data postData = post.getData().getData().getChildren().get(0).getData();
-                    NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-                    NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
+                    NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                            .getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+                    NavController navController = Objects.requireNonNull(navHostFragment)
+                            .getNavController();
                     SinglePostBufferDirections.ActionSinglePostBufferToSinglePostFragment action =
                             SinglePostBufferDirections.
                                     actionSinglePostBufferToSinglePostFragment(

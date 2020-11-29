@@ -89,9 +89,8 @@ import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
 /*
-    SinglePostFragment presents a post and each comments
+    SinglePostFragment presents a post and its comments
  */
-
 public class SinglePostFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
     private boolean wasPlaying;
     private boolean isFullscreen;
@@ -118,7 +117,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         int postType = SinglePostFragmentArgs.fromBundle(requireArguments()).getPostType();
 
         /*
-         Inflate layout based on post type
+            Inflate layout based on post type
         */
         switch (postType) {
             case Constants.LINK:
@@ -153,7 +152,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         mCommentsRecyclerView = view.findViewById(R.id.recyclerview_single_post);
 
         /*
-        In case of configuration change, while video was playing in fullscreen
+            In case of configuration change, while video was playing in fullscreen
          */
         if (savedInstanceState != null)
             isFullscreen = savedInstanceState.getBoolean("isFullscreen");
@@ -345,7 +344,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             int i = 0;
 
             /*
-            Find the "fittest" image thumbnail for the device
+                Find the "fittest" image thumbnail for the device
              */
             for (ResolutionsItem item : singlePostData.getPreview().getImages().get(0).getResolutions()) {
                 widthDiff = Math.abs(width - item.getWidth());
@@ -356,7 +355,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 i++;
             }
             /*
-            Parse it to the thumbnail ImageView
+                Parse it to the thumbnail ImageView
              */
             String url = singlePostData.getPreview().getImages().get(0).getResolutions().get(res).getUrl();
             url = url.replace("amp;", "");
@@ -590,7 +589,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         imgFullscreen.setImageResource(R.drawable.exo_ic_fullscreen_enter);
 
-        //Video has different position in layout based on orientation, thus must be handled differently
+        // Video has different position in layout based on orientation, thus must be handled differently
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             playerView.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
             appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(
@@ -663,7 +662,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     /*
-    Keep truck of the video progress (time)
+        Keep track of the video progress (time)
      */
     private void changeSeekBar(SimpleExoPlayer player, SeekBar videoSeekBar,
                                TextView videoCurrentTime, Handler handler) {
@@ -681,7 +680,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     /*
-    ExpandableCommentGroup listener
+        ExpandableCommentGroup listener
      */
     @Override
     public void onClick(@NotNull String linkId, ArrayList<String> moreChildren,
@@ -691,7 +690,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             List<String> moreChildrenArray = new ArrayList<>();
 
             for (int i = 1; i < moreChildren.size(); i++)
-                if (i < 100)
+                if (i < 100)    // Only the first 100 ids are loaded, the rest are kept.
                     loadChildren.append(",").append(moreChildren.get(i));
                 else
                     moreChildrenArray.add(moreChildren.get(i));

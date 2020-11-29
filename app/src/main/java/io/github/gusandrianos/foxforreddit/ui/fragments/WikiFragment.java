@@ -29,6 +29,9 @@ import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
+/*
+    Fragment displaying a subreddit's Wiki
+ */
 public class WikiFragment extends Fragment {
 
     @Override
@@ -45,26 +48,32 @@ public class WikiFragment extends Fragment {
     }
 
     void setUpContent(View view) {
-        SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+        SubredditViewModelFactory factory = InjectorUtils.getInstance()
+                .provideSubredditViewModelFactory();
+        SubredditViewModel viewModel = new ViewModelProvider(this, factory)
+                .get(SubredditViewModel.class);
 
         String contentText = "This looks empty";
         TextView content = view.findViewById(R.id.text_wiki_body);
         content.setText(contentText);
 
-        String subreddit = ((MainActivity) requireActivity()).getFoxSharedViewModel().getCurrentSubreddit();
+        String subreddit = ((MainActivity) requireActivity()).getFoxSharedViewModel()
+                .getCurrentSubreddit();
 
-        viewModel.getSubredditWiki(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
-        {
-            Markwon markwon = Markwon.builder(requireContext())
-                    .usePlugin(TablePlugin.create(requireContext()))
-                    .usePlugin(LinkifyPlugin.create())
-                    .build();
+        viewModel.getSubredditWiki(subreddit, requireActivity().getApplication())
+                .observe(getViewLifecycleOwner(), subredditInfo ->
+                {
+                    Markwon markwon = Markwon.builder(requireContext())
+                            .usePlugin(TablePlugin.create(requireContext()))
+                            .usePlugin(LinkifyPlugin.create())
+                            .build();
 
-            if (subredditInfo.getWikiContent() != null && !subredditInfo.getWikiContent().isEmpty()) {
-                markwon.setMarkdown(content, StringEscapeUtils.unescapeXml(subredditInfo.getWikiContent()));
-            }
-        });
+                    if (subredditInfo.getWikiContent() != null &&
+                            !subredditInfo.getWikiContent().isEmpty()) {
+                        markwon.setMarkdown(content, StringEscapeUtils
+                                .unescapeXml(subredditInfo.getWikiContent()));
+                    }
+                });
     }
 
     private void setUpNavigation(View view) {

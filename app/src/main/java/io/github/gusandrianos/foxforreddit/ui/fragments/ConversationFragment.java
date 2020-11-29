@@ -44,7 +44,6 @@ import io.noties.markwon.linkify.LinkifyPlugin;
 /*
     ConversationFragment contains the conversation with a user
  */
-
 public class ConversationFragment extends Fragment implements ConversationAdapter.UserClickedListener {
 
     Data data;

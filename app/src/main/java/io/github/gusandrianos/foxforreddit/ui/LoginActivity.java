@@ -13,6 +13,9 @@ import io.github.gusandrianos.foxforreddit.R;
 
 import static io.github.gusandrianos.foxforreddit.Constants.REDIRECT_URI;
 
+/*
+    Custom single-purpose browser activity. Only retrieves the log-in data.
+ */
 public class LoginActivity extends AppCompatActivity {
 
     @Override

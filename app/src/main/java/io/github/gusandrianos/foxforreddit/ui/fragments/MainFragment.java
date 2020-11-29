@@ -31,11 +31,16 @@ import io.github.gusandrianos.foxforreddit.ui.ThemeSettings;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 
+/*
+    The home destination for the application
+    Contains a ViewPager with Tabs, sorting, search and a menu for theme settings
+ */
 public class MainFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
@@ -96,6 +101,7 @@ public class MainFragment extends Fragment {
         MenuItem item = bottomNavigationView.getMenu().findItem(R.id.mainFragment);
         item.setChecked(true);
 
-        NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
+        NavigationUI.setupWithNavController(toolbar, navController,
+                mainActivity.appBarConfiguration);
     }
 }

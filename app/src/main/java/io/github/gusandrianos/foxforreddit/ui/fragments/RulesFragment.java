@@ -25,11 +25,15 @@ import io.github.gusandrianos.foxforreddit.utilities.RulesListAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
+/*
+    Shows the list of rules from the current subreddit
+ */
 public class RulesFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_rules, container, false);
     }
 
@@ -42,20 +46,25 @@ public class RulesFragment extends Fragment {
     }
 
     private void setUpRecyclerView(View view, String subreddit) {
-        SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+        SubredditViewModelFactory factory = InjectorUtils.getInstance()
+                .provideSubredditViewModelFactory();
+        SubredditViewModel viewModel = new ViewModelProvider(this, factory)
+                .get(SubredditViewModel.class);
 
-        viewModel.getSubredditRules(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), rules -> {
-            if (rules != null) {
-                RecyclerView rulesRV = view.findViewById(R.id.recycler_rules);
-                RulesListAdapter adapter = new RulesListAdapter(rules.getRules());
-                adapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
-                rulesRV.addItemDecoration(new DividerItemDecoration(rulesRV.getContext(), DividerItemDecoration.VERTICAL));
-                rulesRV.setHasFixedSize(true);
-                rulesRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
-                rulesRV.setAdapter(adapter);
-            }
-        });
+        viewModel.getSubredditRules(subreddit, requireActivity().getApplication())
+                .observe(getViewLifecycleOwner(), rules -> {
+                    if (rules != null) {
+                        RecyclerView rulesRV = view.findViewById(R.id.recycler_rules);
+                        RulesListAdapter adapter = new RulesListAdapter(rules.getRules());
+                        adapter.setStateRestorationPolicy(
+                                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
+                        rulesRV.addItemDecoration(new DividerItemDecoration(rulesRV.getContext(),
+                                DividerItemDecoration.VERTICAL));
+                        rulesRV.setHasFixedSize(true);
+                        rulesRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
+                        rulesRV.setAdapter(adapter);
+                    }
+                });
     }
 
     private void setUpNavigation(View view) {

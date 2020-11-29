@@ -162,30 +162,30 @@ public class TokenRepository {
     }
 
     public Token getToken(Application application) {
-        if (mToken != null) {
+        if (mToken != null) {   // If there's a Token present
 
             if (!mToken.hasExpired())
                 return mToken;
-            else {
-                if (refreshToken(application) != null)
+            else {                      // If Token has expired
+                if (refreshToken(application) != null)  // Try to refresh and return it if ok
                     return mToken;
-                else if (getNewToken(application) != null) {
+                else if (getNewToken(application) != null) { // Try to get a new token and return it
                     return mToken;
                 }
             }
         }
 
-        if (getCachedToken(application) != null) {
-            if (!mToken.hasExpired()) {
+        if (getCachedToken(application) != null) { // If there's no Token, check for a cached Token
+            if (!mToken.hasExpired()) { // Return if present and it hasn't expired yet
                 return mToken;
             } else {
-                if (refreshToken(application) != null) {
+                if (refreshToken(application) != null) { // Try to refresh it if it has and return
                     return mToken;
                 }
             }
         }
 
-        getNewToken(application);
+        getNewToken(application); // If everything fails, try to get a new userless token
 
         return mToken;
     }

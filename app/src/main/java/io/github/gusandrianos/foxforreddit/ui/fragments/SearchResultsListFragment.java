@@ -47,7 +47,6 @@ import static io.github.gusandrianos.foxforreddit.Constants.KIND_SUBREDDIT;
 /*
     SearchResultsListFragment provides search results (subreddits or users)
  */
-
 public class SearchResultsListFragment extends Fragment implements SearchResultsAdapter.OnSearchResultsItemClickListener {
 
     private View mView;

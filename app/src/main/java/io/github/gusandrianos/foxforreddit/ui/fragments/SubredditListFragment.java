@@ -36,6 +36,9 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 
+/*
+    Fragment with the list of user subscriptions
+ */
 public class SubredditListFragment extends Fragment implements SubredditListAdapter.OnItemClickListener {
 
     SubredditListAdapter mSubredditListAdapter;

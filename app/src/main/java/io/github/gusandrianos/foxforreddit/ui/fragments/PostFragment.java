@@ -60,9 +60,9 @@ import static io.github.gusandrianos.foxforreddit.Constants.ARG_SEARCH_TYPE;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_TYPE_OF_ACTION;
 
 /*
-    PostFragment provides a list of posts
+    This fragment is responsible for displaying a paginated list of posts from *any* valid source
+    It is usually used as part of a ViewPager.
  */
-
 public class PostFragment extends Fragment implements PostAdapter.OnItemClickListener {
     private Token mToken;
 
@@ -120,6 +120,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         mPostRecyclerView.setAdapter(mPostRecyclerViewAdapter.withLoadStateFooter(postLoadStateAdapter));
     }
 
+    /*
+        requestChanged is used for scrapping the old data and load new with the updated params
+     */
     void loadPosts(boolean requestChanged) {
         if (type_of_action.equals(ACTION_POST)) {
             PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
@@ -326,6 +329,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 });
     }
 
+    /*
+        PostFragment is used in various places, this is essential for getting the correct toolbar.
+     */
     private Toolbar getCurrentToolbar() {
         if (getParentFragment() instanceof UserFragment)
             return requireActivity().findViewById(R.id.profile_toolbar);
@@ -339,6 +345,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             return requireActivity().findViewById(R.id.toolbar_main);
     }
 
+    /*
+        When used in a ViewPager, this method updates the sorting menu for the current fragment.
+     */
     void setMenuItemClickForCurrentFragment() {
         Toolbar toolbar = getCurrentToolbar();
 
@@ -429,6 +438,9 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         return fragment;
     }
 
+    /*
+        When the Token is changed, this is used for scrapping the old data and requesting new.
+     */
     @Override
     public void onResume() {
         super.onResume();

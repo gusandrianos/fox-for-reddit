@@ -26,6 +26,9 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
+/*
+    Fragment for editing post or comment
+*/
 public class EditThingFragment extends Fragment {
 
     @Override

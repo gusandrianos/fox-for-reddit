@@ -4,6 +4,9 @@ import android.os.Bundle;
 
 import com.jaredrummler.cyanea.prefs.CyaneaSettingsActivity;
 
+/*
+    Boilerplate code for Cyanea.
+ */
 public class ThemeSettings extends CyaneaSettingsActivity {
 
     @Override

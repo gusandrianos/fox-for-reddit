@@ -30,7 +30,11 @@ import io.github.gusandrianos.foxforreddit.utilities.LinkFlairListAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
-public class LinkFlairListFragment extends Fragment implements LinkFlairListAdapter.OnItemClickListener {
+/*
+    Fragment for selecting a flair from the current subreddit
+ */
+public class LinkFlairListFragment extends Fragment
+        implements LinkFlairListAdapter.OnItemClickListener {
 
     @Nullable
     @Override
@@ -42,25 +46,30 @@ public class LinkFlairListFragment extends Fragment implements LinkFlairListAdap
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String subredditName = LinkFlairListFragmentArgs.fromBundle(requireArguments()).getSubredditName();
+        String subredditName = LinkFlairListFragmentArgs.fromBundle(requireArguments())
+                .getSubredditName();
         setUpNavigation(view);
         setUpRecyclerView(view, subredditName);
     }
 
     void setUpRecyclerView(View view, String subredditName) {
-        SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+        SubredditViewModelFactory factory = InjectorUtils.getInstance()
+                .provideSubredditViewModelFactory();
+        SubredditViewModel viewModel = new ViewModelProvider(this, factory)
+                .get(SubredditViewModel.class);
 
-        viewModel.getSubredditLinkFlair(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), linkFlair -> {
-            if (linkFlair != null) {
-                RecyclerView linkFlairRV = view.findViewById(R.id.recycler_link_flairs);
-                LinkFlairListAdapter adapter = new LinkFlairListAdapter(linkFlair, this);
-                adapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
-                linkFlairRV.setHasFixedSize(true);
-                linkFlairRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
-                linkFlairRV.setAdapter(adapter);
-            }
-        });
+        viewModel.getSubredditLinkFlair(subredditName, requireActivity().getApplication())
+                .observe(getViewLifecycleOwner(), linkFlair -> {
+                    if (linkFlair != null) {
+                        RecyclerView linkFlairRV = view.findViewById(R.id.recycler_link_flairs);
+                        LinkFlairListAdapter adapter = new LinkFlairListAdapter(linkFlair, this);
+                        adapter.setStateRestorationPolicy(
+                                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
+                        linkFlairRV.setHasFixedSize(true);
+                        linkFlairRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
+                        linkFlairRV.setAdapter(adapter);
+                    }
+                });
     }
 
     private void setCurrentFlair(Flair flair) {
@@ -90,17 +99,18 @@ public class LinkFlairListFragment extends Fragment implements LinkFlairListAdap
         toolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
 
         toolbar.inflateMenu(R.menu.button_clear_link_flair);
-        toolbar.getMenu().findItem(R.id.button_clear_link_flair).setOnMenuItemClickListener(clear -> {
-            int mode = LinkFlairListFragmentArgs.fromBundle(requireArguments()).getMode();
+        toolbar.getMenu().findItem(R.id.button_clear_link_flair)
+                .setOnMenuItemClickListener(clear -> {
+                    int mode = LinkFlairListFragmentArgs.fromBundle(requireArguments()).getMode();
 
-            if (mode == 0)
-                setCurrentFlair(null);
-            else {
-                setCurrentFlair(new Flair());
-            }
+                    if (mode == 0)
+                        setCurrentFlair(null);
+                    else {
+                        setCurrentFlair(new Flair());
+                    }
 
-            return true;
-        });
+                    return true;
+                });
 
         NavigationUI.setupWithNavController(toolbar, navController);
     }

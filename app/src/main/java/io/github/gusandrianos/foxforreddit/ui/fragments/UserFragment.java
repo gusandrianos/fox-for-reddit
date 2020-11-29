@@ -1,25 +1,19 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -38,7 +32,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jaredrummler.cyanea.Cyanea;
-import com.jaredrummler.cyanea.prefs.CyaneaSettingsActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -61,11 +54,15 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 
+/*
+    Fragment displaying a User
+ */
 public class UserFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_user, container, false);
     }
 
@@ -79,27 +76,31 @@ public class UserFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         FoxSharedViewModel sharedViewModel = mainActivity.getFoxSharedViewModel();
 
-        if (sharedViewModel.getCurrentUserUsername().isEmpty() && FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication())) {
-            UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
-            UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        if (sharedViewModel.getCurrentUserUsername().isEmpty() && FoxToolkit.INSTANCE.isAuthorized(
+                requireActivity().getApplication())) {
+            UserViewModelFactory factory = InjectorUtils.getInstance()
+                    .provideUserViewModelFactory();
+            UserViewModel viewModel = new ViewModelProvider(this, factory)
+                    .get(UserViewModel.class);
 
-            viewModel.getMe(requireActivity().getApplication()).observe(getViewLifecycleOwner(), user -> {
-                if (user != null) {
-                    String currentUserUsername = user.getName();
-                    if (currentUserUsername != null) {
-                        sharedViewModel.setCurrentUserUsername(currentUserUsername);
-                        initializeUI(sharedViewModel, username, view);
-                    }
-                }
-                //TODO: Handle this by showing appropriate error
-            });
+            viewModel.getMe(requireActivity().getApplication()).observe(getViewLifecycleOwner(),
+                    user -> {
+                        if (user != null) {
+                            String currentUserUsername = user.getName();
+                            if (currentUserUsername != null) {
+                                sharedViewModel.setCurrentUserUsername(currentUserUsername);
+                                initializeUI(sharedViewModel, username, view);
+                            }
+                        }
+                    });
         } else
             initializeUI(sharedViewModel, username, view);
     }
 
     private void initializeUI(FoxSharedViewModel sharedViewModel, String username, View view) {
         UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
-        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        UserViewModel viewModel = new ViewModelProvider(this, factory)
+                .get(UserViewModel.class);
         sharedViewModel.setViewingSelf(username.equals(sharedViewModel.getCurrentUserUsername()));
 
         setUpNavigation(view);
@@ -122,46 +123,30 @@ public class UserFragment extends Fragment {
         else
             tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
-        // TODO: Use appropriate API Endpoint to make this meaningful
-//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(TabLayout.Tab tab) {
-//                Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
-//
-//                if (tab.getPosition() < 2) {
-//                    toolbar = view.findViewById(R.id.profile_toolbar);
-//                    toolbar.getMenu().setGroupVisible(0, true);
-//                } else
-//                    toolbar.getMenu().setGroupVisible(0, false);
-//            }
-//
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) {
-//            }
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) {
-//            }
-//        });
-
         ArrayList<Fragment> userFragments = new ArrayList<>();
         ArrayList<String> tabTitles = new ArrayList<>();
 
-        userFragments.add(PostFragment.newInstance(buildURL(username, "/submitted"), "", ""));
+        userFragments.add(PostFragment.newInstance(buildURL(username, "/submitted"), "",
+                ""));
         tabTitles.add(Constants.USER_UI_TAB_POSTS);
-        userFragments.add(PostFragment.newInstance(buildURL(username, "/comments"), "", ""));
+        userFragments.add(PostFragment.newInstance(buildURL(username, "/comments"), "",
+                ""));
         tabTitles.add(Constants.USER_UI_TAB_COMMENTS);
         userFragments.add(AboutUserFragment.newInstance(username));
         tabTitles.add(Constants.USER_UI_TAB_ABOUT);
 
         if (isSelf) {
-            userFragments.add(PostFragment.newInstance(buildURL(username, "/upvoted"), "", ""));
+            userFragments.add(PostFragment.newInstance(buildURL(username, "/upvoted"), "",
+                    ""));
             tabTitles.add(Constants.USER_UI_TAB_UPVOTED);
-            userFragments.add(PostFragment.newInstance(buildURL(username, "/downvoted"), "", ""));
+            userFragments.add(PostFragment.newInstance(buildURL(username, "/downvoted"), "",
+                    ""));
             tabTitles.add(Constants.USER_UI_TAB_DOWNVOTED);
-            userFragments.add(PostFragment.newInstance(buildURL(username, "/hidden"), "", ""));
+            userFragments.add(PostFragment.newInstance(buildURL(username, "/hidden"), "",
+                    ""));
             tabTitles.add(Constants.USER_UI_TAB_HIDDEN);
-            userFragments.add(PostFragment.newInstance(buildURL(username, "/saved"), "", ""));
+            userFragments.add(PostFragment.newInstance(buildURL(username, "/saved"), "",
+                    ""));
             tabTitles.add(Constants.USER_UI_TAB_SAVED);
         }
 
@@ -180,14 +165,17 @@ public class UserFragment extends Fragment {
         ImageView coverPic = view.findViewById(R.id.profile_cover);
         ImageView gradient = view.findViewById(R.id.profile_cover_gradient);
 
-        Glide.with(view).load(Objects.requireNonNull(user.getIconImg()).split("\\?")[0]).into(profilePic);
+        Glide.with(view).load(Objects.requireNonNull(user.getIconImg()).split("\\?")[0])
+                .into(profilePic);
 
         Type subredditType = new TypeToken<Subreddit>() {
         }.getType();
         Gson gson = new Gson();
-        Subreddit subreddit = gson.fromJson(gson.toJsonTree(user.getSubreddit()).getAsJsonObject(), subredditType);
+        Subreddit subreddit = gson.fromJson(gson.toJsonTree(user.getSubreddit()).getAsJsonObject(),
+                subredditType);
 
-        Glide.with(view).load(Objects.requireNonNull(subreddit.getBannerImg()).split("\\?")[0]).into(coverPic);
+        Glide.with(view).load(Objects.requireNonNull(subreddit.getBannerImg()).split("\\?")[0])
+                .into(coverPic);
         Glide.with(view).load(R.drawable.cover_gradient).into(gradient);
 
         Data userSubreddit = getUserSubreddit(user);
@@ -199,24 +187,29 @@ public class UserFragment extends Fragment {
         if (FoxToolkit.INSTANCE.isAuthorized(mainActivity.getApplication()))
             profileButton.setOnClickListener(button -> {
                 if (!mainActivity.getFoxSharedViewModel().getViewingSelf()) {
-                    SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-                    SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+                    SubredditViewModelFactory factory = InjectorUtils.getInstance()
+                            .provideSubredditViewModelFactory();
+                    SubredditViewModel viewModel = new ViewModelProvider(this, factory)
+                            .get(SubredditViewModel.class);
                     viewModel.toggleSubscribed(getFinalAction(userSubreddit),
                             userSubreddit.getDisplayName(),
                             requireActivity().getApplication())
                             .observe(getViewLifecycleOwner(), status -> {
                                 if (status) {
-                                    userSubreddit.setUserIsSubscriber(!userSubreddit.getUserIsSubscriber());
+                                    userSubreddit.setUserIsSubscriber(
+                                            !userSubreddit.getUserIsSubscriber());
                                     setupButton(userSubreddit, view);
                                 }
                             });
                 } else {
                     CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
-                    customTabsIntent.launchUrl(requireContext(), Uri.parse(Constants.EDIT_PROFILE_URL));
+                    customTabsIntent.launchUrl(requireContext(),
+                            Uri.parse(Constants.EDIT_PROFILE_URL));
                 }
             });
         else
-            profileButton.setOnClickListener(button -> FoxToolkit.INSTANCE.promptLogIn(mainActivity));
+            profileButton.setOnClickListener(button ->
+                    FoxToolkit.INSTANCE.promptLogIn(mainActivity));
 
         AppBarLayout appBarLayout = view.findViewById(R.id.fragment_profile_appbar);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
@@ -243,7 +236,8 @@ public class UserFragment extends Fragment {
         NavController navController = NavHostFragment.findNavController(this);
 
         if (FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
-            setUpMenu(mainActivity.getFoxSharedViewModel().getViewingSelf(), toolbar, mainActivity, navController, user);
+            setUpMenu(mainActivity.getFoxSharedViewModel().getViewingSelf(), toolbar, mainActivity,
+                    navController, user);
     }
 
     private String buildURL(String username, String location) {
@@ -296,7 +290,8 @@ public class UserFragment extends Fragment {
         return gson.fromJson(gson.toJsonTree(user.getSubreddit()).getAsJsonObject(), subredditType);
     }
 
-    private void setUpMenu(boolean isSelf, Toolbar toolbar, MainActivity mainActivity, NavController navController, Data user) {
+    private void setUpMenu(boolean isSelf, Toolbar toolbar, MainActivity mainActivity,
+                           NavController navController, Data user) {
         toolbar.getMenu().findItem(R.id.log_out).setVisible(isSelf);
         toolbar.getMenu().findItem(R.id.message_user).setVisible(!isSelf);
         toolbar.getMenu().findItem(R.id.block_user).setVisible(!isSelf);
@@ -310,16 +305,22 @@ public class UserFragment extends Fragment {
             });
         } else {
             toolbar.getMenu().findItem(R.id.message_user).setOnMenuItemClickListener(menuItem -> {
-                navController.navigate(ComposeMessageFragmentDirections.actionGlobalComposeMessageFragment(user.getName()));
+                navController.navigate(ComposeMessageFragmentDirections
+                        .actionGlobalComposeMessageFragment(user.getName()));
                 return true;
             });
 
-            // TODO: Show appropriate error when blocking someone and trying to load their profile again
             toolbar.getMenu().findItem(R.id.block_user).setOnMenuItemClickListener(menuItem -> {
-                UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
-                UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
-                viewModel.blockUser(requireActivity().getApplication(), user.getId(), user.getName()).observe(getViewLifecycleOwner(), status -> {
-                    Toast.makeText(requireContext(), "User " + user.getName() + " successfully blocked", Toast.LENGTH_SHORT).show();
+                UserViewModelFactory factory = InjectorUtils.getInstance()
+                        .provideUserViewModelFactory();
+                UserViewModel viewModel = new ViewModelProvider(this, factory)
+                        .get(UserViewModel.class);
+                viewModel.blockUser(requireActivity().getApplication(), user.getId(),
+                        user.getName()).observe(getViewLifecycleOwner(), status -> {
+                    Toast.makeText(requireContext(), "User "
+                                    + user.getName()
+                                    + " successfully blocked"
+                            , Toast.LENGTH_SHORT).show();
                     navigateHome(navController);
                 });
                 return true;
@@ -328,14 +329,16 @@ public class UserFragment extends Fragment {
     }
 
     private void navigateHome(NavController navController) {
-        NavOptions options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build();
+        NavOptions options = new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true)
+                .build();
         navController.navigate(R.id.mainFragment, null, options);
     }
 
     private void setUpNavigation(View view) {
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
-        CollapsingToolbarLayout profileCollapsingToolbar = view.findViewById(R.id.profile_collapsing_toolbar);
+        CollapsingToolbarLayout profileCollapsingToolbar = view.findViewById(
+                R.id.profile_collapsing_toolbar);
         Toolbar toolbar = view.findViewById(R.id.profile_toolbar);
         profileCollapsingToolbar.setBackgroundColor(Cyanea.getInstance().getPrimary());
         profileCollapsingToolbar.setContentScrimColor(Cyanea.getInstance().getPrimary());
@@ -346,7 +349,8 @@ public class UserFragment extends Fragment {
         if (mainActivity.getFoxSharedViewModel().getViewingSelf()) {
             bottomNavigationView.setVisibility(View.VISIBLE);
             bottomNavigationView.getMenu().findItem(R.id.userFragment).setChecked(true);
-            NavigationUI.setupWithNavController(toolbar, navController, mainActivity.appBarConfiguration);
+            NavigationUI.setupWithNavController(toolbar, navController,
+                    mainActivity.appBarConfiguration);
         } else {
             bottomNavigationView.setVisibility(View.GONE);
             NavigationUI.setupWithNavController(toolbar, navController);

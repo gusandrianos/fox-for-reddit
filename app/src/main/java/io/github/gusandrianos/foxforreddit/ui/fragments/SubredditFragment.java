@@ -47,11 +47,15 @@ import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
+/*
+    Fragment displaying a subreddit
+ */
 public class SubredditFragment extends Fragment {
     FoxToolkit toolkit = FoxToolkit.INSTANCE;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_subreddit, container, false);
     }
 
@@ -61,26 +65,36 @@ public class SubredditFragment extends Fragment {
         SubredditFragmentArgs args = SubredditFragmentArgs.fromBundle(requireArguments());
         String subredditName = args.getSubredditName();
 
+        // In case the name comes from a deep link where it won't have an r/ preceding it.
         if (!subredditName.startsWith("r/"))
             subredditName = "r/" + subredditName;
 
-        ((MainActivity) requireActivity()).getFoxSharedViewModel().setCurrentSubreddit(subredditName);
+        ((MainActivity) requireActivity()).getFoxSharedViewModel()
+                .setCurrentSubreddit(subredditName);
 
         TextView titleTextView = view.findViewById(R.id.text_subreddit_title);
         titleTextView.setText(subredditName);
         setUpNavigation(view, subredditName);
         setUpMenuItemClicks(view, subredditName);
 
-        SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+        SubredditViewModelFactory factory = InjectorUtils.getInstance()
+                .provideSubredditViewModelFactory();
+        SubredditViewModel viewModel = new ViewModelProvider(this, factory)
+                .get(SubredditViewModel.class);
 
         String finalSubredditName = subredditName;
-        viewModel.getSubreddit(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
+        viewModel.getSubreddit(subredditName, requireActivity().getApplication())
+                .observe(getViewLifecycleOwner(), subredditInfo ->
         {
             setupHeader(subredditInfo, view);
             setUpSidebar(subredditInfo, view);
-            PostFragment subredditPostFragment = (PostFragment) getChildFragmentManager().findFragmentByTag(Constants.SUBREDDIT_POST_FRAGMENT_TAG);
 
+            // Checks for already added Post Fragment
+            PostFragment subredditPostFragment = (PostFragment) getChildFragmentManager()
+                    .findFragmentByTag(Constants.SUBREDDIT_POST_FRAGMENT_TAG);
+
+            // If no Post Fragment is added, replaces the FrameLayout R.id.subreddit_posts_fragment
+            //with one
             if (subredditPostFragment == null) {
                 subredditPostFragment = PostFragment.newInstance(finalSubredditName, "", "");
                 getChildFragmentManager().beginTransaction()
@@ -100,20 +114,24 @@ public class SubredditFragment extends Fragment {
         setupButton(subredditInfo, view);
         if (FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
             subUnsubButton.setOnClickListener(button -> {
-                SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-                SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+                SubredditViewModelFactory factory = InjectorUtils.getInstance()
+                        .provideSubredditViewModelFactory();
+                SubredditViewModel viewModel = new ViewModelProvider(this, factory)
+                        .get(SubredditViewModel.class);
                 viewModel.toggleSubscribed(getFinalAction(subredditInfo),
                         subredditInfo.getDisplayName(),
                         requireActivity().getApplication())
                         .observe(getViewLifecycleOwner(), status -> {
                             if (status) {
-                                subredditInfo.setUserIsSubscriber(!subredditInfo.getUserIsSubscriber());
+                                subredditInfo.setUserIsSubscriber(!subredditInfo
+                                        .getUserIsSubscriber());
                                 setupButton(subredditInfo, view);
                             }
                         });
             });
         else
-            subUnsubButton.setOnClickListener(button -> FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity()));
+            subUnsubButton.setOnClickListener(button -> FoxToolkit.INSTANCE
+                    .promptLogIn((MainActivity) requireActivity()));
 
         AppBarLayout appBarLayout = view.findViewById(R.id.fragment_subreddit_appbar);
         Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);
@@ -222,7 +240,8 @@ public class SubredditFragment extends Fragment {
 
     private void setUpMenuItemClicks(View view, String subredditName) {
         Toolbar toolbar = view.findViewById(R.id.subreddit_toolbar);
-        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                .getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
 
         toolbar.getMenu().findItem(R.id.view_sidebar).setOnMenuItemClickListener(menuItem -> {
@@ -232,23 +251,27 @@ public class SubredditFragment extends Fragment {
         });
 
         toolbar.getMenu().findItem(R.id.view_rules).setOnMenuItemClickListener(menuItem -> {
-            navController.navigate(SubredditFragmentDirections.actionSubredditFragmentToRulesFragment(subredditName));
+            navController.navigate(SubredditFragmentDirections
+                    .actionSubredditFragmentToRulesFragment(subredditName));
             return true;
         });
 
         toolbar.getMenu().findItem(R.id.view_mods).setOnMenuItemClickListener(menuItem -> {
-            navController.navigate(SubredditFragmentDirections.actionSubredditFragmentToModeratorsListFragment(subredditName));
+            navController.navigate(SubredditFragmentDirections
+                    .actionSubredditFragmentToModeratorsListFragment(subredditName));
             return true;
         });
 
         toolbar.getMenu().findItem(R.id.view_wiki).setOnMenuItemClickListener(menuItem -> {
-            navController.navigate(SubredditFragmentDirections.actionSubredditFragmentToMoreInfoFragment());
+            navController.navigate(SubredditFragmentDirections
+                    .actionSubredditFragmentToMoreInfoFragment());
             return true;
         });
     }
 
     private void setUpNavigation(View view, String subreddit) {
-        CollapsingToolbarLayout collapsingToolbar = requireActivity().findViewById(R.id.subreddit_collapsing_toolbar);
+        CollapsingToolbarLayout collapsingToolbar = requireActivity()
+                .findViewById(R.id.subreddit_collapsing_toolbar);
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
 
@@ -264,7 +287,8 @@ public class SubredditFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                navController.navigate(SubredditFragmentDirections.actionSubredditFragmentToSubredditSearchResultsFragment(subreddit, query));
+                navController.navigate(SubredditFragmentDirections
+                        .actionSubredditFragmentToSubredditSearchResultsFragment(subreddit, query));
                 return true;
             }
 
@@ -278,6 +302,7 @@ public class SubredditFragment extends Fragment {
         bottomNavigationView.setVisibility(View.VISIBLE);
         MenuItem item = bottomNavigationView.getMenu().findItem(R.id.subredditListFragment);
         item.setChecked(true);
-        NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController, mainActivity.appBarConfiguration);
+        NavigationUI.setupWithNavController(collapsingToolbar, toolbar, navController,
+                mainActivity.appBarConfiguration);
     }
 }

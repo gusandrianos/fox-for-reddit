@@ -53,9 +53,8 @@ import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
 /*
- CommentsFragment provides more comments of a post
+    CommentsFragment provides more comments of a post
  */
-
 public class CommentsFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
 
     RecyclerView mCommentsRecyclerView;
@@ -99,7 +98,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
             String moreReplies = "Show more";
             txtMoreComments.setText(moreReplies);
             txtMoreComments.setTag("1"); //In case of tag equals "1", there are more comments to be loaded
-                                        //in the end of the comments
+            //in the end of the comments
 
             txtMoreComments.setOnClickListener(v -> {
                 StringBuilder loadChildren1 = new StringBuilder(moreChildren.get(0));
@@ -116,7 +115,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
 
                 NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
                 NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-                navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren1.toString(), moreChildrenList1,subreddit));
+                navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren1.toString(), moreChildrenList1, subreddit));
 
             });
         }
@@ -155,9 +154,9 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
     }
 
 
-/*
-    ExpandableCommentGroup's listener
- */
+    /*
+        ExpandableCommentGroup's listener
+     */
     @Override
     public void onClick(@NotNull String linkId, ArrayList<String> moreChildren,
                         ChildrenItem comment, String actionType, View view) {
@@ -179,7 +178,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
             moreChildrenList.setMoreChildrenList(moreChildrenArray);
 
 
-            navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren.toString(), moreChildrenList,subreddit));
+            navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren.toString(), moreChildrenList, subreddit));
         } else {
             PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
             PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);

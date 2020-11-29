@@ -21,6 +21,11 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
+/*
+    The "about" tab displayed on every user's profile
+    Shows Karma and Trophies list.
+    Never used as is, only in tabs.
+ */
 public class AboutUserFragment extends Fragment {
 
     @Override
@@ -46,16 +51,18 @@ public class AboutUserFragment extends Fragment {
                     commentKarma.setText(String.valueOf(data.getCommentKarma()));
                 });
 
-        viewModel.getTrophies(requireActivity().getApplication(), username).observe(getViewLifecycleOwner(), trophies -> {
-            if (trophies != null) {
-                RecyclerView trophiesRV = view.findViewById(R.id.recycler_trophies);
-                TrophyAdapter adapter = new TrophyAdapter(trophies);
-                adapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
-                trophiesRV.setHasFixedSize(true);
-                trophiesRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
-                trophiesRV.setAdapter(adapter);
-            }
-        });
+        viewModel.getTrophies(requireActivity().getApplication(), username)
+                .observe(getViewLifecycleOwner(), trophies -> {
+                    if (trophies != null) {
+                        RecyclerView trophiesRV = view.findViewById(R.id.recycler_trophies);
+                        TrophyAdapter adapter = new TrophyAdapter(trophies);
+                        adapter.setStateRestorationPolicy(
+                                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
+                        trophiesRV.setHasFixedSize(true);
+                        trophiesRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
+                        trophiesRV.setAdapter(adapter);
+                    }
+                });
     }
 
     public static AboutUserFragment newInstance(String username) {

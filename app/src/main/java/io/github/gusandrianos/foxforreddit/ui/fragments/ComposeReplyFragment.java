@@ -31,7 +31,6 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 /*
     Reply to a message
  */
-
 public class ComposeReplyFragment extends Fragment {
 
     String thing_id;

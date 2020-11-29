@@ -28,6 +28,10 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
+/*
+    Reply to a message
+ */
+
 public class ComposeReplyFragment extends Fragment {
 
     String thing_id;

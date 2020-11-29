@@ -23,7 +23,7 @@
             android:layout_height="110dp"
             android:layout_gravity="top"
             android:background="@color/cyanea_primary_dark"
-            android:contentDescription="TODO"
+            android:contentDescription="Profile cover"
             android:scaleType="centerCrop" />
 
         <ImageView

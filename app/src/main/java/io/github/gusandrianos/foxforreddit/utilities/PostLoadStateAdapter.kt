@@ -30,7 +30,7 @@ class PostLoadStateAdapter(private val retry: () -> Unit) : LoadStateAdapter<Pos
 
         init {
             mBtnRetry.setOnClickListener {
-                retry.invoke()
+                retry.invoke()  //if failed to load more posts, retry
             }
         }
 

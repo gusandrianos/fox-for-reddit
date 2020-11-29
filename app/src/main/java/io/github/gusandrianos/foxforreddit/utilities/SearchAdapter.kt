@@ -24,7 +24,7 @@ class SearchAdapter(private val listener: OnSearchItemClickListener, private val
         val kind = child.kind
         val data = child.data!!
 
-        if (kind.equals("t5")) {
+        if (kind.equals("t5")) {    //if search result item is a subreddit
             val members = "${formatValue(child.data.subscribers.toDouble())} members"
             holder.txtName.text = child.data.displayNamePrefixed
             holder.txtInfo.text = members
@@ -36,7 +36,7 @@ class SearchAdapter(private val listener: OnSearchItemClickListener, private val
             else
                 holder.icon.setImageResource(R.drawable.default_subreddit_image)
 
-        } else {
+        } else {     //if search result item is a user
             val prefixefName = "u/${child.data.name}"
             val totalKarma = data.awardeeKarma + data.awarderKarma + data.commentKarma + data.linkKarma
             val karma = "${formatValue(totalKarma.toDouble())} karma"

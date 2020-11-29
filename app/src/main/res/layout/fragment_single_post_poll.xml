@@ -47,7 +47,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/vertical_margin_small"
-                        android:text="body body bodyt"
                         android:visibility="visible"
                         app:layout_constraintBottom_toTopOf="@id/stub_txt_vote_num"
                         app:layout_constraintEnd_toEndOf="parent"

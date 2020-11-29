@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:text="Subreddit Title"
+        android:text="Subreddit"
         android:textColor="@color/cyanea_accent"
         app:layout_constraintBottom_toTopOf="@id/txt_post_user"
         app:layout_constraintEnd_toEndOf="parent"

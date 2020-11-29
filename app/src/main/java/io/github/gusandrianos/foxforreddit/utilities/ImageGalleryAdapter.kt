@@ -1,12 +1,9 @@
 package io.github.gusandrianos.foxforreddit.utilities
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.stfalcon.imageviewer.StfalconImageViewer
@@ -29,7 +26,7 @@ class ImageGalleryAdapter(
         Glide.with(holder.itemView.img_gallery).load(currentImage).into(holder.itemView.img_gallery)
         holder.itemView.setOnClickListener {
             StfalconImageViewer.Builder(context,images){ imageView, imageUrl -> Glide.with(context).load(imageUrl).into(imageView) }
-                    .withStartPosition(position)
+                    .withStartPosition(position)    //Open fullscreen in certain position of gallery
                     .show()
         }
     }

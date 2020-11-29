@@ -2,14 +2,12 @@ package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,7 +29,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -55,7 +52,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jaredrummler.cyanea.Cyanea;
-import com.jaredrummler.cyanea.tinting.CyaneaTinter;
 import com.libRG.CustomTextView;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
@@ -92,6 +88,10 @@ import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
+/*
+    SinglePostFragment presents a post and each comments
+ */
+
 public class SinglePostFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
     private boolean wasPlaying;
     private boolean isFullscreen;
@@ -117,6 +117,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         Data singlePostData = SinglePostFragmentArgs.fromBundle(requireArguments()).getPost();
         int postType = SinglePostFragmentArgs.fromBundle(requireArguments()).getPostType();
 
+        /*
+         Inflate layout based on post type
+        */
         switch (postType) {
             case Constants.LINK:
                 return inflater.inflate(R.layout.fragment_single_post_link, container, false);
@@ -149,6 +152,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         subreddit = singlePostData.getSubredditNamePrefixed();
         mCommentsRecyclerView = view.findViewById(R.id.recyclerview_single_post);
 
+        /*
+        In case of configuration change, while video was playing in fullscreen
+         */
         if (savedInstanceState != null)
             isFullscreen = savedInstanceState.getBoolean("isFullscreen");
 
@@ -215,7 +221,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             case Constants.POLL:
                 bindAsPoll(singlePostData, view);
                 break;
-            default: //Self by default  //ToDo Comment
+            default: //Self by default
                 bindAsSelf(singlePostData, view);
                 break;
         }
@@ -238,14 +244,19 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         mTxtPostSubreddit.setText(singlePostData.getSubredditNamePrefixed());
         String user = "u/" + singlePostData.getAuthor();
         mTxtPostUser.setText(user);
-        mTxtTimePosted.setText(DateUtils.getRelativeTimeSpanString((long) singlePostData.getCreatedUtc() * 1000).toString());
+        mTxtTimePosted.setText(DateUtils
+                .getRelativeTimeSpanString((long) singlePostData.getCreatedUtc() * 1000)
+                .toString()
+        );
         String escapedText = StringEscapeUtils.unescapeXml(singlePostData.getTitle());
         txtPostTitle.setText(escapedText);
 
         if (singlePostData.getLinkFlairText() != null && !singlePostData.getLinkFlairText().isEmpty())
             FoxToolkit.INSTANCE.makeFlair(singlePostData.getLinkFlairType(),
-                    singlePostData.getLinkFlairRichtext(), singlePostData.getLinkFlairText(),
-                    singlePostData.getLinkFlairTextColor(), singlePostData.getLinkFlairBackgroundColor(),
+                    singlePostData.getLinkFlairRichtext(),
+                    singlePostData.getLinkFlairText(),
+                    singlePostData.getLinkFlairTextColor(),
+                    singlePostData.getLinkFlairBackgroundColor(),
                     customTxtPostFlair);
 
         mTxtPostScore.setText(FoxToolkit.INSTANCE.formatValue(singlePostData.getScore()));
@@ -253,10 +264,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         if (singlePostData.getLikes() != null) {
             if (singlePostData.getLikes()) {
                 mImgBtnPostVoteUp.setImageResource(R.drawable.ic_round_arrow_upward_24_orange);
-                mTxtPostScore.setTextColor(Color.parseColor("#FFE07812"));
+                mTxtPostScore.setTextColor(Color.parseColor("#FFE07812")); //Holo dark red
             } else {
                 mImgBtnPostVoteDown.setImageResource(R.drawable.ic_round_arrow_downward_24_blue);
-                mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF"));
+                mTxtPostScore.setTextColor(Color.parseColor("#FF5AA4FF")); // Holo dark blue
             }
         }
 
@@ -305,7 +316,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             }
         });
 
-        mBtnPostShare.setOnClickListener(view1 -> startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(singlePostData), "Share via")));
+        mBtnPostShare.setOnClickListener(view1 -> startActivity(
+                Intent.createChooser(FoxToolkit.INSTANCE.shareLink(singlePostData),
+                        "Share via"))
+        );
     }
 
     private void bindAsSelf(Data singlePostData, View view) {
@@ -329,6 +343,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             int widthDiff;
             int res = 0;
             int i = 0;
+
+            /*
+            Find the "fittest" image thumbnail for the device
+             */
             for (ResolutionsItem item : singlePostData.getPreview().getImages().get(0).getResolutions()) {
                 widthDiff = Math.abs(width - item.getWidth());
                 if (widthDiff < bestWidthDiff) {
@@ -337,6 +355,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 }
                 i++;
             }
+            /*
+            Parse it to the thumbnail ImageView
+             */
             String url = singlePostData.getPreview().getImages().get(0).getResolutions().get(res).getUrl();
             url = url.replace("amp;", "");
             Glide.with(view).load(url).into(imgPostThumbnail);
@@ -357,6 +378,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         if (singlePostData.getGalleryData() != null) {
             for (GalleryItem galleryItem : singlePostData.getGalleryData().getItems()) {
+                //Easy access to the resources of a gallery can be found in https://i.redd.it/
                 String imageUrl = "https://i.redd.it/" + galleryItem.getMediaId() + ".jpg";
                 imagesUrl.add(imageUrl);
             }
@@ -408,9 +430,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         imgPostPlayButton.setVisibility(View.VISIBLE);
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         imgPostImage.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
-
-        if (singlePostData.getMedia().getOembed().getThumbnailUrl().contains(".gif"))
-            imgPostPlayButton.setVisibility(View.GONE);
+        if (singlePostData.getMedia().getOembed().getThumbnailUrl().contains(".gif")) //If video is a gif
+            imgPostPlayButton.setVisibility(View.GONE);                               //Remove PlayButton Image
 
         Glide.with(view).load(singlePostData.getMedia().getOembed().getThumbnailUrl()).into(imgPostImage);
 
@@ -569,18 +590,26 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         imgFullscreen.setImageResource(R.drawable.exo_ic_fullscreen_enter);
 
+        //Video has different position in layout based on orientation, thus must be handled differently
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             playerView.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
-            appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT)));
+            appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(
+                    CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                    CoordinatorLayout.LayoutParams.WRAP_CONTENT))
+            );
             collapsingToolbar.setVisibility(View.VISIBLE);
         } else {
-            appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
+            appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(
+                    CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                    CoordinatorLayout.LayoutParams.MATCH_PARENT))
+            );
             singlePostHeader.setVisibility(View.VISIBLE);
             toolbar.setVisibility(View.VISIBLE);
             singlePostTitle.setVisibility(View.VISIBLE);
         }
 
-        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+                | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
         collapsingToolbar.setLayoutParams(params);
         singlePostFooter.setVisibility(View.VISIBLE);
         mCommentsRecyclerView.setVisibility(View.VISIBLE);
@@ -600,8 +629,14 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
 
-            appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
-            playerView.setLayoutParams((new FrameLayout.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT)));
+            appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(
+                    CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                    CoordinatorLayout.LayoutParams.MATCH_PARENT))
+            );
+            playerView.setLayoutParams((new FrameLayout.LayoutParams(
+                    PlayerView.LayoutParams.MATCH_PARENT,
+                    PlayerView.LayoutParams.MATCH_PARENT))
+            );
 
             collapsingToolbar.setVisibility(View.GONE);
             singlePostFooter.setVisibility(View.GONE);
@@ -611,8 +646,13 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             ConstraintLayout singlePostFooter = view.findViewById(R.id.include_single_post_footer);
             Toolbar toolbar = view.findViewById(R.id.single_post_toolbar);
 
-            appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)));
-            playerView.setLayoutParams((new FrameLayout.LayoutParams(PlayerView.LayoutParams.MATCH_PARENT, PlayerView.LayoutParams.MATCH_PARENT)));
+            appBarLayout.setLayoutParams((new CoordinatorLayout.LayoutParams(
+                    CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                    CoordinatorLayout.LayoutParams.MATCH_PARENT))
+            );
+            playerView.setLayoutParams((new FrameLayout.LayoutParams(
+                    PlayerView.LayoutParams.MATCH_PARENT,
+                    PlayerView.LayoutParams.MATCH_PARENT)));
 
             toolbar.setVisibility(View.GONE);
             singlePostTitle.setVisibility(View.GONE);
@@ -622,7 +662,11 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         mCommentsRecyclerView.setVisibility(View.GONE);
     }
 
-    private void changeSeekBar(SimpleExoPlayer player, SeekBar videoSeekBar, TextView videoCurrentTime, Handler handler) {
+    /*
+    Keep truck of the video progress (time)
+     */
+    private void changeSeekBar(SimpleExoPlayer player, SeekBar videoSeekBar,
+                               TextView videoCurrentTime, Handler handler) {
         videoSeekBar.setProgress((int) player.getCurrentPosition() / 1000);
         videoCurrentTime.setText(FoxToolkit.INSTANCE.getTimeOfVideo(player.getCurrentPosition() / 1000));
         Runnable runnable = () -> changeSeekBar(player, videoSeekBar, videoCurrentTime, handler);
@@ -636,6 +680,9 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         mCommentsRecyclerView.setAdapter(groupAdapter);
     }
 
+    /*
+    ExpandableCommentGroup listener
+     */
     @Override
     public void onClick(@NotNull String linkId, ArrayList<String> moreChildren,
                         ChildrenItem comment, String actionType, View view) {
@@ -652,9 +699,17 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             MoreChildrenList moreChildrenList = new MoreChildrenList();
             moreChildrenList.setMoreChildrenList(moreChildrenArray);
 
-            NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                    .getSupportFragmentManager()
+                    .findFragmentById(R.id.nav_host_fragment);
+
             NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-            navController.navigate(SinglePostFragmentDirections.actionSinglePostFragmentToCommentsFragment(linkId, loadChildren.toString(), moreChildrenList, subreddit));
+            navController.navigate(SinglePostFragmentDirections
+                    .actionSinglePostFragmentToCommentsFragment(linkId,
+                            loadChildren.toString(),
+                            moreChildrenList,
+                            subreddit)
+            );
         } else {
             PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
             PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
@@ -742,15 +797,17 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     private void popUpMenuSave(ChildrenItem comment, PostViewModel viewModel) {
         if (comment.getData().isSaved())
-            viewModel.unSavePost(comment.getData().getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
-                if (succeed)
-                    comment.getData().setSaved(false);
-            });
+            viewModel.unSavePost(comment.getData().getName(), requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), succeed -> {
+                        if (succeed)
+                            comment.getData().setSaved(false);
+                    });
         else
-            viewModel.savePost(comment.getData().getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
-                if (succeed)
-                    comment.getData().setSaved(true);
-            });
+            viewModel.savePost(comment.getData().getName(), requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), succeed -> {
+                        if (succeed)
+                            comment.getData().setSaved(true);
+                    });
     }
 
     private void popUpMenuReport(ChildrenItem comment) {
@@ -807,7 +864,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         }
     }
 
-    private void setUpMenu(Toolbar toolbar, Data postData, int postType, View view, MainActivity mainActivity) {
+    private void setUpMenu(Toolbar toolbar, Data postData,
+                           int postType, View view, MainActivity mainActivity) {
 
         PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
@@ -831,13 +889,15 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                     return true;
                 });
 
-                getParentFragmentManager().setFragmentResultListener("editThing", getViewLifecycleOwner(), (key, bundle) -> {
-                    String result = bundle.getString("updatedText");
-                    if (result != null) {
-                        postData.setSelftext(result);
-                        bindAsSelf(postData, view);
-                    }
-                });
+                getParentFragmentManager().setFragmentResultListener("editThing",
+                        getViewLifecycleOwner(),
+                        (key, bundle) -> {
+                            String result = bundle.getString("updatedText");
+                            if (result != null) {
+                                postData.setSelftext(result);
+                                bindAsSelf(postData, view);
+                            }
+                        });
             }
 
             menu.findItem(R.id.self_single_post_mark_nsfw).setOnMenuItemClickListener(markNSFW -> {
@@ -929,40 +989,46 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     private void postSave(Data data, PostViewModel viewModel, MenuItem menuItem) {
         if (data.isSaved())
-            viewModel.unSavePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
-                if (succeed) {
-                    data.setSaved(false);
-                    menuItem.setTitle("Save");
-                }
-            });
+            viewModel.unSavePost(data.getName(), requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), succeed -> {
+                        if (succeed) {
+                            data.setSaved(false);
+                            menuItem.setTitle("Save");
+                        }
+                    });
         else
-            viewModel.savePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
-                if (succeed) {
-                    data.setSaved(true);
-                    menuItem.setTitle("Unsave");
-                }
-            });
+            viewModel.savePost(data.getName(), requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), succeed -> {
+                        if (succeed) {
+                            data.setSaved(true);
+                            menuItem.setTitle("Unsave");
+                        }
+                    });
     }
 
     private void postHide(Data data, PostViewModel viewModel, MenuItem menuItem) {
         if (data.getHidden())
-            viewModel.unHidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
-                if (succeed) {
-                    data.setHidden(false);
-                    menuItem.setTitle("Hide");
-                }
-            });
+            viewModel.unHidePost(data.getName(), requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), succeed -> {
+                        if (succeed) {
+                            data.setHidden(false);
+                            menuItem.setTitle("Hide");
+                        }
+                    });
         else
-            viewModel.hidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
-                if (succeed) {
-                    data.setHidden(true);
-                    menuItem.setTitle("Unhide");
-                }
-            });
+            viewModel.hidePost(data.getName(), requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), succeed -> {
+                        if (succeed) {
+                            data.setHidden(true);
+                            menuItem.setTitle("Unhide");
+                        }
+                    });
     }
 
     private void postReport(Data data) {
-        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                .getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
 
         SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
@@ -1077,11 +1143,10 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
         appBarLayout.addOnOffsetChangedListener((AppBarLayout.OnOffsetChangedListener) (appBarLayout1, verticalOffset) -> {
             float normalize = (float) (1 - ((float) -verticalOffset / includeHeader.getMeasuredHeight())) * 255;
-            if (Math.abs(verticalOffset) >= includeHeader.getMeasuredHeight()) {
+            if (Math.abs(verticalOffset) >= includeHeader.getMeasuredHeight())
                 toolbar.setTitleTextColor(Color.argb(255, colorRed, colorGreen, colorBlue));
-            } else {
+            else
                 toolbar.setTitleTextColor(Color.argb((int) -normalize, colorRed, colorGreen, colorBlue));
-            }
         });
 
         toolbar.setTitle(postData.getSubredditNamePrefixed());

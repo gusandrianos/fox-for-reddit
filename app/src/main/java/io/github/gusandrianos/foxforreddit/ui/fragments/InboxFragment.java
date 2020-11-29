@@ -25,6 +25,10 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 
+/*
+    InboxFragment hosts messagesFragment
+ */
+
 public class InboxFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -34,7 +34,6 @@ import java.util.Objects;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
@@ -60,6 +59,9 @@ import static io.github.gusandrianos.foxforreddit.Constants.ARG_TIME_NAME;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_SEARCH_TYPE;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_TYPE_OF_ACTION;
 
+/*
+    PostFragment provides a list of posts
+ */
 
 public class PostFragment extends Fragment implements PostAdapter.OnItemClickListener {
     private Token mToken;
@@ -90,7 +92,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
         type_of_action = getArguments().getString(ARG_TYPE_OF_ACTION, ACTION_POST);
 
-        if (type_of_action.equals(ACTION_SEARCH)) {
+        if (type_of_action.equals(ACTION_SEARCH)) { //If PostFragment instance is created for a search
             query = getArguments().getString(ARG_QUERY_STRING, "");
             sr_restrict = getArguments().getBoolean(ARG_SR_RESTRICT_BOOLEAN);
             searchType = getArguments().getString(ARG_SEARCH_TYPE);
@@ -161,8 +163,12 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         });
     }
 
+
+/*
+ PostAdapter's click listener
+ */
     @Override
-    public void onItemClick(@NotNull Data data, @NotNull String clicked, int postType, View view) {      //ToDo improve voting system (Binding Adapter and viewModel)
+    public void onItemClick(@NotNull Data data, @NotNull String clicked, int postType, View view) {
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
         int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
@@ -271,28 +277,32 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
     private void popUpMenuSave(Data data, PostViewModel viewModel) {
         if (data.isSaved())
-            viewModel.unSavePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
-                if (succeed)
-                    data.setSaved(false);
-            });
+            viewModel.unSavePost(data.getName(), requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), succeed -> {
+                        if (succeed)
+                            data.setSaved(false);
+                    });
         else
-            viewModel.savePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
-                if (succeed)
-                    data.setSaved(true);
-            });
+            viewModel.savePost(data.getName(), requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), succeed -> {
+                        if (succeed)
+                            data.setSaved(true);
+                    });
     }
 
     private void popUpMenuHide(Data data, PostViewModel viewModel) {
         if (data.getHidden())
-            viewModel.unHidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
-                if (succeed)
-                    data.setHidden(false);
-            });
+            viewModel.unHidePost(data.getName(), requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), succeed -> {
+                        if (succeed)
+                            data.setHidden(false);
+                    });
         else
-            viewModel.hidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
-                if (succeed)
-                    data.setHidden(true);
-            });
+            viewModel.hidePost(data.getName(), requireActivity().getApplication())
+                    .observe(getViewLifecycleOwner(), succeed -> {
+                        if (succeed)
+                            data.setHidden(true);
+                    });
     }
 
     private void popUpMenuReport(Data data) {
@@ -402,7 +412,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         return fragment;
     }
 
-    public static PostFragment newSearchInstance(String query, String sort, String time, Boolean restrict_sr, String type, String subreddit) {
+    public static PostFragment newSearchInstance(String query, String sort, String time,
+                                                 Boolean restrict_sr, String type, String subreddit) {
         PostFragment fragment = new PostFragment();
 
         Bundle args = new Bundle();

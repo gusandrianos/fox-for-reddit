@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 import io.github.gusandrianos.foxforreddit.Constants;
-import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
@@ -40,6 +39,10 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 import kotlin.Unit;
+
+/*
+MessagesFragment contains the messages with all users (subjects and time sent)
+ */
 
 
 public class MessagesFragment extends Fragment implements MessagesAdapter.MessagesItemClickListener {

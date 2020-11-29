@@ -35,6 +35,10 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 
+/*
+Fullscreen Video Player
+ */
+
 public class VideoDialogFragment extends BottomSheetDialogFragment {
 
     NavHostFragment navHostFragment;
@@ -53,6 +57,9 @@ public class VideoDialogFragment extends BottomSheetDialogFragment {
         return inflater.inflate(R.layout.fragment_dialog_video, container, false);
     }
 
+    /*
+    Set dialog to be fullscreen
+     */
     @Nullable
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -200,6 +207,9 @@ public class VideoDialogFragment extends BottomSheetDialogFragment {
         });
     }
 
+    /*
+    Keep progress of video
+     */
     private void changeSeekBar(SimpleExoPlayer player, SeekBar videoSeekBar, TextView videoCurrentTime, Handler handler) {
         videoSeekBar.setProgress((int) player.getCurrentPosition() / 1000);
         videoCurrentTime.setText(FoxToolkit.INSTANCE.getTimeOfVideo((int) player.getCurrentPosition() / 1000));

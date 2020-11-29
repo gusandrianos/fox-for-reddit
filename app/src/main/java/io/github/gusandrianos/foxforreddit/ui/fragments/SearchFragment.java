@@ -37,6 +37,10 @@ import io.github.gusandrianos.foxforreddit.utilities.SearchAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModelFactory;
 
+/*
+    SearchFragment shows top 5 results of the search
+ */
+
 public class SearchFragment extends Fragment implements SearchAdapter.OnSearchItemClickListener {
     TextView txtResultsFromSearch;
 
@@ -107,17 +111,19 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
                 MainActivity mainActivity = (MainActivity) requireActivity();
                 boolean includeOver18 = mainActivity.getFoxSharedViewModel().getIncludeOver18();
 
-                viewModel.searchTopSubreddits(newText, includeOver18, true, requireActivity().getApplication()).observe(getViewLifecycleOwner(), searchData -> {
-                    initRecyclerView(searchData);
-                    if (!newText.trim().isEmpty()) {
-                        String resultsFromSearch = "Results for \"" + newText.trim() + "\"";
-                        txtResultsFromSearch.setText(resultsFromSearch);
-                        txtResultsFromSearch.setTag(newText);
-                        txtResultsFromSearch.setVisibility(View.VISIBLE);
-                    } else {
-                        txtResultsFromSearch.setVisibility(View.GONE);
-                    }
-                });
+                viewModel.searchTopSubreddits(newText, includeOver18, true,
+                        requireActivity().getApplication()).observe(getViewLifecycleOwner(),
+                        searchData -> {
+                            initRecyclerView(searchData);
+                            if (!newText.trim().isEmpty()) {
+                                String resultsFromSearch = "Results for \"" + newText.trim() + "\"";
+                                txtResultsFromSearch.setText(resultsFromSearch);
+                                txtResultsFromSearch.setTag(newText);
+                                txtResultsFromSearch.setVisibility(View.VISIBLE);
+                            } else {
+                                txtResultsFromSearch.setVisibility(View.GONE);
+                            }
+                        });
                 return true;
             }
         });
@@ -148,13 +154,15 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
 
     public void openResultsFromSearch(String searched) {
         if (!searched.trim().isEmpty()) {
-            if (searched.length() < 3) {    //ifsearch String is < 3,  Reddit Search returns empty String and app stops
+            if (searched.length() < 3) {    //if search String is < 3,  Reddit Search returns empty String and app stops
                 StringBuilder searchedBuilder = new StringBuilder(searched);
                 while (searchedBuilder.length() < 3)
                     searchedBuilder.append(" ");
                 searched = searchedBuilder.toString();
             }
-            NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
+                    .getSupportFragmentManager()
+                    .findFragmentById(R.id.nav_host_fragment);
             NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
             navController.navigate(SearchFragmentDirections.actionSearchFragmentToSearchResultsFragment(searched));
         }

@@ -41,6 +41,10 @@ import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
+/*
+    ConversationFragment contains the conversation with a user
+ */
+
 public class ConversationFragment extends Fragment implements ConversationAdapter.UserClickedListener {
 
     Data data;
@@ -52,11 +56,13 @@ public class ConversationFragment extends Fragment implements ConversationAdapte
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        getParentFragmentManager().setFragmentResultListener(Constants.MESSAGE_REQUEST_KEY, getViewLifecycleOwner(), (key, bundle) -> {
-            boolean success = bundle.getBoolean(Constants.MESSAGE_SENT_SUCCESS);
-            if (success)
-                requireActivity().onBackPressed();
-        });
+        getParentFragmentManager().setFragmentResultListener(Constants.MESSAGE_REQUEST_KEY,
+                getViewLifecycleOwner(),
+                (key, bundle) -> {
+                    boolean success = bundle.getBoolean(Constants.MESSAGE_SENT_SUCCESS);
+                    if (success)
+                        requireActivity().onBackPressed();
+                });
 
         return inflater.inflate(R.layout.fragment_conversation, container, false);
     }
@@ -92,11 +98,14 @@ public class ConversationFragment extends Fragment implements ConversationAdapte
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireActivity());
             linearLayoutManager.setStackFromEnd(true);
 
-            messagesRecyclerView.addItemDecoration(new DividerItemDecoration(messagesRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
+            messagesRecyclerView.addItemDecoration(new DividerItemDecoration(
+                    messagesRecyclerView.getContext(),
+                    DividerItemDecoration.VERTICAL));
             messagesRecyclerView.setHasFixedSize(true);
 
             messagesRecyclerView.setLayoutManager(linearLayoutManager);
 
+            //Get first message's data and construct new ReplyThing
             ReplyThing replyThing = new ReplyThing(data);
             Thing extraReply;
 
@@ -105,6 +114,7 @@ public class ConversationFragment extends Fragment implements ConversationAdapte
             Gson gson = new Gson();
             extraReply = gson.fromJson(gson.toJsonTree(replyThing).getAsJsonObject(), type);
 
+            //Parse that ReplyThing as Thing in replies' children
             replies.getData().getChildren().add(0, extraReply);
 
             ConversationAdapter adapter = new ConversationAdapter(replies, this, markwon);
@@ -112,6 +122,7 @@ public class ConversationFragment extends Fragment implements ConversationAdapte
 
             messagesRecyclerView.setAdapter(adapter);
 
+            //Get last message sent from the other person (use fullname for response)
             for (int i = replies.getData().getChildren().size() - 1; i >= 0; i--) {
                 if (!replies.getData().getChildren().get(i).getData().getAuthor().equals(currentUser)) {
                     replyToFullname = replies.getData().getChildren().get(i).getData().getName();
@@ -120,13 +131,16 @@ public class ConversationFragment extends Fragment implements ConversationAdapte
                 }
             }
 
-        } else {
+        } else { //If there are no replies, just create View and parse the parent message
             TextView txtUser = view.findViewById(R.id.txt_messages_with_user_item_username);
             TextView txtTimeSent = view.findViewById(R.id.txt_messages_with_user_item_time_sent);
             TextView txtBody = view.findViewById(R.id.txt_messages_with_user_item_body);
 
             txtUser.setText(data.getAuthor());
-            txtTimeSent.setText(DateUtils.getRelativeTimeSpanString(data.getCreatedUtc() * 1000).toString());
+            txtTimeSent.setText(DateUtils
+                    .getRelativeTimeSpanString(data.getCreatedUtc() * 1000)
+                    .toString()
+            );
             markwon.setMarkdown(txtBody, StringEscapeUtils.unescapeXml(data.getBody()));
 
             txtUser.setOnClickListener(v -> navigateToUser(txtUser.getText().toString()));

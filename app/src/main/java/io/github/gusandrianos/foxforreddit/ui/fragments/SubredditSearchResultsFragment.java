@@ -27,6 +27,10 @@ import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 
 import static io.github.gusandrianos.foxforreddit.Constants.KIND_POST;
 
+/*
+    SubredditSearchResultsFragment contains searched posts of a certain subreddit
+ */
+
 public class SubredditSearchResultsFragment extends Fragment {
 
     String mSubreddit;

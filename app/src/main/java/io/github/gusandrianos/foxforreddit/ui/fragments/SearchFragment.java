@@ -63,7 +63,7 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
         setUpSearchView(searchBarItem);
 
         txtResultsFromSearch = view.findViewById(R.id.txt_results_from_search);
-        txtResultsFromSearch.setOnClickListener(v -> openResultsFromSearch(txtResultsFromSearch.getTag().toString()));
+        txtResultsFromSearch.setOnClickListener(v -> showSearchResults(txtResultsFromSearch.getTag().toString()));
     }
 
     private void initRecyclerView(Listing searchData) {
@@ -101,7 +101,7 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                openResultsFromSearch(query);
+                showSearchResults(query);
                 return true;
             }
 
@@ -151,7 +151,7 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
         }
     }
 
-    public void openResultsFromSearch(String searched) {
+    public void showSearchResults(String searched) {
         if (!searched.trim().isEmpty()) {
             if (searched.length() < 3) {    //if search String is < 3,  Reddit Search returns empty String and app stops
                 StringBuilder searchedBuilder = new StringBuilder(searched);

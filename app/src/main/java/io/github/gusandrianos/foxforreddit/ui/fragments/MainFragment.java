@@ -56,13 +56,9 @@ public class MainFragment extends Fragment {
         ArrayList<Fragment> homeFragments = new ArrayList<>();
         ArrayList<String> tabTitles = new ArrayList<>();
 
-        if (FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication())) {
-            homeFragments.add(PostFragment.newInstance("", "best", ""));
-            tabTitles.add("Home");
-        } else {
-            homeFragments.add(PostFragment.newInstance("r/popular", "best", ""));
-            tabTitles.add("Popular");
-        }
+        // If the user is logged in, it shows their homepage, else it shows the popular page.
+        homeFragments.add(PostFragment.newInstance("", "best", ""));
+        tabTitles.add("Home");
 
         homeFragments.add(PostFragment.newInstance("r/all", "hot", ""));
         tabTitles.add("All");

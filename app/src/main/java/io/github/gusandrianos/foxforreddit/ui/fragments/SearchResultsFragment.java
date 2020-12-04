@@ -53,6 +53,8 @@ public class SearchResultsFragment extends Fragment {
         TabLayout tabLayout = view.findViewById(R.id.tab_layout_fragment_results_search);
         tabLayout.setBackgroundColor(Cyanea.getInstance().getBackgroundColor());
 
+        Toolbar toolbar = view.findViewById(R.id.toolbar_fragment_results_search);
+        toolbar.getMenu().findItem(R.id.cyanea_settings).setVisible(false);
         ArrayList<Fragment> searchResultsFragments = new ArrayList<>();
         ArrayList<String> tabTitles = new ArrayList<>();
 
@@ -74,7 +76,6 @@ public class SearchResultsFragment extends Fragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Toolbar toolbar = view.findViewById(R.id.toolbar_fragment_results_search);
                 toolbar.getMenu().findItem(R.id.search_sorting).setVisible(tab.getPosition() == 0);
             }
 

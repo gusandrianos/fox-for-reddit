@@ -766,7 +766,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
                         if (menu.getMenu().findItem(R.id.comment_edit).isVisible()) {
                             menu.getMenu().findItem(R.id.comment_edit).setOnMenuItemClickListener(edit -> {
-                                goToEditThing(comment.getData().getName(), comment.getData().getBody());
+                                goToEditThing(comment.getData().getName(), comment.getData().getBody(), Constants.EDIT_COMMENT_TEXT);
                                 return true;
                             });
 
@@ -884,7 +884,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
             if (menu.findItem(R.id.self_single_post_edit).isVisible()) {
                 menu.findItem(R.id.self_single_post_edit).setOnMenuItemClickListener(edit -> {
-                    goToEditThing(postData.getName(), postData.getSelftext());
+                    goToEditThing(postData.getName(), postData.getSelftext(), Constants.EDIT_POST_TEXT);
                     return true;
                 });
 
@@ -1047,13 +1047,13 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 });
     }
 
-    private void goToEditThing(String fullname, String selftext) {
+    private void goToEditThing(String fullname, String selftext, int mode) {
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity()
                 .getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
         navController.navigate(SinglePostFragmentDirections
-                .actionSinglePostFragmentToEditThingFragment(Constants.EDIT_POST_TEXT,
+                .actionSinglePostFragmentToEditThingFragment(mode,
                         fullname, selftext));
     }
 

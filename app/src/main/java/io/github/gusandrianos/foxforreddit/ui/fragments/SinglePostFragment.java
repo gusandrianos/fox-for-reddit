@@ -429,7 +429,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         imgPostPlayButton.setVisibility(View.VISIBLE);
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         imgPostImage.getLayoutParams().height = Math.round(displayMetrics.widthPixels * .5625f);
-        if (singlePostData.getMedia().getOembed().getThumbnailUrl().contains(".gif")) //If video is a gif
+        if (singlePostData.getMedia() !=null && singlePostData.getMedia().getOembed().getThumbnailUrl()!= null &&
+                singlePostData.getMedia().getOembed().getThumbnailUrl().contains(".gif")) //If video is a gif
             imgPostPlayButton.setVisibility(View.GONE);                               //Remove PlayButton Image
 
         Glide.with(view).load(singlePostData.getMedia().getOembed().getThumbnailUrl()).into(imgPostImage);

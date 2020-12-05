@@ -41,7 +41,8 @@ public class EditThingFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setUpNavigation(view, 0);
+        int type = EditThingFragmentArgs.fromBundle(requireArguments()).getType();
+        setUpNavigation(view, type);
         setUpContent(view);
     }
 
@@ -55,7 +56,6 @@ public class EditThingFragment extends Fragment {
     private void setUpSubmitAction(View view) {
         Toolbar toolbar = view.findViewById(R.id.toolbar_edit_thing);
         toolbar.getMenu().findItem(R.id.button_submit_post).setOnMenuItemClickListener(submit -> {
-            String selftext = EditThingFragmentArgs.fromBundle(requireArguments()).getThingText();
             String thingFullname = EditThingFragmentArgs.fromBundle(requireArguments()).getThingFullname();
             TextInputEditText bodyEditText = view.findViewById(R.id.edit_edit_thing_text_body);
 
@@ -89,7 +89,7 @@ public class EditThingFragment extends Fragment {
         if (type == Constants.EDIT_POST_TEXT)
             toolbarTitle += " post";
         else
-            toolbarTitle += " Comment";
+            toolbarTitle += " comment";
 
         toolbar.setTitle(toolbarTitle);
     }

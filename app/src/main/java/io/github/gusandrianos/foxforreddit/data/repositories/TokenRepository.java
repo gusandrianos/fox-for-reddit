@@ -52,7 +52,7 @@ public class TokenRepository {
         }
 
         Call<Token> token;
-        String clientID = "n1R0bc_lPPTtVg";
+        String clientID = ""; // Removed from source for Thesis
         String password = "";
         if (code.isEmpty() || redirectURI.isEmpty()) {
             String uuid = UUID.randomUUID().toString();

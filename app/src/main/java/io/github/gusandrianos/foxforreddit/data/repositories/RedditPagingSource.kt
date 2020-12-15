@@ -9,14 +9,11 @@ import io.github.gusandrianos.foxforreddit.Constants.STARTER_PAGE
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
-import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import retrofit2.HttpException
 import java.io.IOException
 
 
-class RedditPagingSource() : PagingSource<String, Data>() {
-
-    private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
+class RedditPagingSource(private val redditAPI: RedditAPI) : PagingSource<String, Data>() {
     private lateinit var mSubreddit: String
     private lateinit var mFilter: String
     private lateinit var mTime: String
@@ -28,7 +25,7 @@ class RedditPagingSource() : PagingSource<String, Data>() {
 
     private var MODE = 0
 
-    constructor (subreddit: String, filter: String, time: String, bearer: String) : this() {
+    constructor (subreddit: String, filter: String, time: String, bearer: String, redditAPI: RedditAPI) : this(redditAPI) {
         mSubreddit = subreddit
         mFilter = filter
         mTime = time
@@ -36,13 +33,13 @@ class RedditPagingSource() : PagingSource<String, Data>() {
         MODE = MODE_POST
     }
 
-    constructor (where: String, bearer: String, mode: Int) : this() {
+    constructor (where: String, bearer: String, mode: Int, redditAPI: RedditAPI) : this(redditAPI) {
         mBearer = bearer
         mLocation = where
         MODE = mode
     }
 
-    constructor(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String, bearer: String) : this() {
+    constructor(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String, bearer: String, redditAPI: RedditAPI) : this(redditAPI) {
         mSubreddit = subreddit
         mQuery = query
         mFilter = sort

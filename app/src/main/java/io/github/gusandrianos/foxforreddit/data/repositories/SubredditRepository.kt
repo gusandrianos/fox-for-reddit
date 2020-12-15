@@ -8,7 +8,6 @@ import io.github.gusandrianos.foxforreddit.Constants.ACTION_UNSUBSCRIBE
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.*
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
-import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
 import retrofit2.Call
 import retrofit2.Callback
@@ -17,8 +16,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SubredditRepository @Inject constructor(private val mTokenDao: TokenDao, private val mTokenRepository: TokenRepository) {
-    private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
+class SubredditRepository @Inject constructor(
+    private val mTokenDao: TokenDao,
+    private val mTokenRepository: TokenRepository,
+    private val redditAPI: RedditAPI
+) {
 
     fun getSubredditLinkFlair(subredditName: String): LiveData<List<Flair>> {
         val subredditLinkFlair: MutableLiveData<List<Flair>> = MutableLiveData()

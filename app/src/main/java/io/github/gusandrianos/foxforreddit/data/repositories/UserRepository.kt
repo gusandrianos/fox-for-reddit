@@ -13,9 +13,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
-import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
-
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,8 +21,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRepository @Inject constructor(private val mTokenDao: TokenDao, private val mTokenRepository: TokenRepository) {
-    private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
+class UserRepository @Inject constructor(
+    private val mTokenDao: TokenDao,
+    private val mTokenRepository: TokenRepository,
+    private val redditAPI: RedditAPI
+) {
     private var user: MutableLiveData<Data> = MutableLiveData()
     private var me: MutableLiveData<Data> = MutableLiveData()
     private var trophies: MutableLiveData<List<Thing>> = MutableLiveData()
@@ -79,7 +80,7 @@ class UserRepository @Inject constructor(private val mTokenDao: TokenDao, privat
     }
 
     fun getSubreddits(location: String): RedditPagingSource {
-        return RedditPagingSource(location, getBearer(mTokenDao, mTokenRepository), Constants.MODE_SUBREDDIT)
+        return RedditPagingSource(location, getBearer(mTokenDao, mTokenRepository), Constants.MODE_SUBREDDIT, redditAPI)
     }
 
     fun getPrefs(): LiveData<UserPrefs> {
@@ -100,7 +101,7 @@ class UserRepository @Inject constructor(private val mTokenDao: TokenDao, privat
     fun getMessagesWhere(where: String) =
         Pager(
             config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-            pagingSourceFactory = { RedditPagingSource(where, getBearer(mTokenDao, mTokenRepository), Constants.MODE_MESSAGES) }
+            pagingSourceFactory = { RedditPagingSource(where, getBearer(mTokenDao, mTokenRepository), Constants.MODE_MESSAGES, redditAPI) }
         ).liveData
 
     fun blockUser(accountId: String, name: String): LiveData<Boolean> {

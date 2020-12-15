@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
-import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
 import retrofit2.Call
 import retrofit2.Callback
@@ -14,8 +13,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SearchRepository @Inject constructor(private val mTokenDao: TokenDao, private val mTokenRepository: TokenRepository) {
-    private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
+class SearchRepository @Inject constructor(
+    private val mTokenDao: TokenDao,
+    private val mTokenRepository: TokenRepository,
+    private val redditAPI: RedditAPI
+) {
 
     fun searchTopSubreddits(query: String, includeOver18: Boolean, includeProfiles: Boolean): LiveData<Listing> {
         val searchTopSubreddits = MutableLiveData<Listing>()
@@ -33,6 +35,6 @@ class SearchRepository @Inject constructor(private val mTokenDao: TokenDao, priv
     }
 
     fun searchResults(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String): RedditPagingSource {
-        return RedditPagingSource(query, sort, time, restrict_sr, type, subreddit, getBearer(mTokenDao, mTokenRepository))
+        return RedditPagingSource(query, sort, time, restrict_sr, type, subreddit, getBearer(mTokenDao, mTokenRepository), redditAPI)
     }
 }

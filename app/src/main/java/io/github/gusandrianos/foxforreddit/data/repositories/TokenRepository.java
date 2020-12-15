@@ -15,30 +15,19 @@ import java.util.concurrent.Future;
 
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
-import io.github.gusandrianos.foxforreddit.data.network.OAuthToken;
-import io.github.gusandrianos.foxforreddit.data.network.RetrofitService;
+import io.github.gusandrianos.foxforreddit.data.network.OAuthTokenAPI;
 import okhttp3.Credentials;
 import retrofit2.Call;
 import retrofit2.Response;
 
 // TODO: Rewrite in Kotlin
 public class TokenRepository {
-    private static TokenRepository instance;
-    OAuthToken tokenRequest = RetrofitService.getTokenRequestInstance();
+    OAuthTokenAPI tokenRequest;
     private TokenDao mTokenDao;
     Token mToken;
 
-    private TokenRepository() {
-    }
-
-    public static TokenRepository getInstance() {
-        if (instance == null) {
-            instance = new TokenRepository();
-            Log.i("INSTANCE", "created new instance");
-        } else {
-            Log.i("INSTANCE", "passed same instance");
-        }
-        return instance;
+    public TokenRepository(OAuthTokenAPI tokenRequest) {
+        this.tokenRequest = tokenRequest;
     }
 
     public Token getNewToken(@NotNull TokenDao tokenDao, String code, String redirectURI) {

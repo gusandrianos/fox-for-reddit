@@ -12,7 +12,6 @@ import io.github.gusandrianos.foxforreddit.data.models.SubmitResponse
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
-import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,12 +20,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PostRepository @Inject constructor(private val mTokenDao: TokenDao, private val mTokenRepository: TokenRepository) {
-    private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
+class PostRepository @Inject constructor(
+    private val mTokenDao: TokenDao,
+    private val mTokenRepository: TokenRepository,
+    private val redditAPI: RedditAPI
+) {
     private val commentsData = MutableLiveData<CommentListing>()
 
     fun getPosts(subreddit: String, filter: String, time: String): RedditPagingSource {
-        return RedditPagingSource(subreddit, filter, time, getBearer(mTokenDao, mTokenRepository))
+        return RedditPagingSource(subreddit, filter, time, getBearer(mTokenDao, mTokenRepository), redditAPI)
     }
 
     fun votePost(dir: String, id: String) {

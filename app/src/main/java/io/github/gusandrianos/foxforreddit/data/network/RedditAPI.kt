@@ -8,14 +8,11 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface RedditAPI {
-    /**
-     * @param subreddit
-     * Optional, references the subreddit to load posts from
-     * @param filter
-     * Possible values: Hot, New, Rising, Random.
-     * @return
-     * List of Posts
-     */
+
+    companion object {
+        const val BASE_URL = "https://oauth.reddit.com/"
+    }
+
     @GET("{subreddit}/{filter}")
     suspend fun getPostList(
         @Path("subreddit") subreddit: String,

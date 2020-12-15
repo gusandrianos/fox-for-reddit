@@ -9,10 +9,12 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.R;
 
 import static io.github.gusandrianos.foxforreddit.Constants.REDIRECT_URI;
 
+@AndroidEntryPoint
 public class LoginActivity extends AppCompatActivity {
 
     @Override

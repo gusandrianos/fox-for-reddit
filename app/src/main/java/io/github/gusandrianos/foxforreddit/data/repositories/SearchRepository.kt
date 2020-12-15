@@ -7,6 +7,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.liveData
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
@@ -16,12 +17,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-object SearchRepository {
+class SearchRepository (private val mTokenDao: TokenDao){
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
 
     fun searchTopSubreddits(query: String, includeOver18: Boolean, includeProfiles: Boolean, application: Application): LiveData<Listing> {
         val searchTopSubreddits = MutableLiveData<Listing>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val search = redditAPI.searchTopSubreddits(bearer, query, includeOver18, includeProfiles, true)
         search.enqueue(object : Callback<Listing> {
             override fun onResponse(call: Call<Listing>, response: Response<Listing>) {
@@ -35,6 +36,6 @@ object SearchRepository {
     }
 
     fun searchResults(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String, application: Application): RedditPagingSource {
-        return RedditPagingSource(query, sort, time, restrict_sr, type, subreddit, getBearer(application))
+        return RedditPagingSource(query, sort, time, restrict_sr, type, subreddit, getBearer(mTokenDao))
     }
 }

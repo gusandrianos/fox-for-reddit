@@ -29,6 +29,7 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import java.lang.reflect.Type;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
@@ -41,6 +42,7 @@ import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
+@AndroidEntryPoint
 public class ConversationFragment extends Fragment implements ConversationAdapter.UserClickedListener {
 
     Data data;

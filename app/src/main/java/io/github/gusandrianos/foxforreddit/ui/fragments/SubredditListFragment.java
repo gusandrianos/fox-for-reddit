@@ -24,8 +24,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
@@ -36,10 +40,14 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 
+@AndroidEntryPoint
 public class SubredditListFragment extends Fragment implements SubredditListAdapter.OnItemClickListener {
 
     SubredditListAdapter mSubredditListAdapter;
     RecyclerView mSubredditsRV;
+
+    @Inject
+    TokenDao mTokenDao;
 
     @Nullable
     @Override
@@ -56,9 +64,9 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
     }
 
     private void initializeUI() {
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
+        UserViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
-        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
+        Token token = InjectorUtils.getInstance(mTokenDao).provideTokenRepository().getToken(mTokenDao);
         String location = Constants.AUTHORIZED_SUB_LIST_LOCATION;
         if (token.getRefreshToken() == null) {
             location = Constants.VISITOR_SUB_LIST_LOCATION;

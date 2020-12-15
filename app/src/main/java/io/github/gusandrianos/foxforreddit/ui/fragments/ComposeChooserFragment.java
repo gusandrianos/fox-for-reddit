@@ -19,11 +19,12 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.Objects;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 
-
+@AndroidEntryPoint
 public class ComposeChooserFragment extends BottomSheetDialogFragment {
 
     @Override

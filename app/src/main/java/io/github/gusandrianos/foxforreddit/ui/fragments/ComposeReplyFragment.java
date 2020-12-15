@@ -21,16 +21,24 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.jaredrummler.cyanea.Cyanea;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
+@AndroidEntryPoint
 public class ComposeReplyFragment extends Fragment {
 
     String thing_id;
+
+    @Inject
+    TokenDao mTokenDao;
 
     @Nullable
     @Override
@@ -83,7 +91,7 @@ public class ComposeReplyFragment extends Fragment {
         String text = messageTextField.getText().toString();
         Bundle result = new Bundle();
 
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
+        UserViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
         viewModel.commentCompose(requireActivity().getApplication(), thing_id, text).observe(getViewLifecycleOwner(), success -> {
 

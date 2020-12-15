@@ -26,9 +26,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -41,7 +45,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 import kotlin.Unit;
 
-
+@AndroidEntryPoint
 public class MessagesFragment extends Fragment implements MessagesAdapter.MessagesItemClickListener {
 
     private View mView;
@@ -51,6 +55,9 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
     MessagesAdapter mMessagesRecyclerViewAdapter;
     RecyclerView mMessagesRecyclerView;
     SwipeRefreshLayout pullToRefresh;
+
+    @Inject
+    TokenDao mTokenDao;
 
     @Nullable
     @Override
@@ -72,7 +79,7 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
     }
 
     void loadMessagesList(boolean requestChanged) {
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
+        UserViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
 
         if (requestChanged)
@@ -142,10 +149,10 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
                 navController.navigate(InboxFragmentDirections.actionInboxFragmentToConversationFragment(item, item.getAuthor()));
                 break;
             case Constants.THING_MORE_ACTIONS:
-                UserViewModelFactory userViewModelFactory = InjectorUtils.getInstance().provideUserViewModelFactory();
+                UserViewModelFactory userViewModelFactory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
                 UserViewModel userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
 
-                PostViewModelFactory postViewModelFactory = InjectorUtils.getInstance().providePostViewModelFactory();
+                PostViewModelFactory postViewModelFactory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
                 PostViewModel postViewModel = new ViewModelProvider(this, postViewModelFactory).get(PostViewModel.class);
 
                 PopupMenu menu = new PopupMenu(requireContext(), view);

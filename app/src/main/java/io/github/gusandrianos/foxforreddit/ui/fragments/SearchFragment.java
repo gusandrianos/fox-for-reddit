@@ -28,8 +28,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Listing;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -37,6 +41,7 @@ import io.github.gusandrianos.foxforreddit.utilities.SearchAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModelFactory;
 
+@AndroidEntryPoint
 public class SearchFragment extends Fragment implements SearchAdapter.OnSearchItemClickListener {
     TextView txtResultsFromSearch;
 
@@ -44,6 +49,8 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
     SearchAdapter searchAdapter;
 
     MenuItem searchBarItem;
+    @Inject
+    TokenDao mTokenDao;
 
     @Nullable
     @Override
@@ -92,7 +99,7 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
         searchView.setIconifiedByDefault(true);
         searchView.setIconified(false);
 
-        SearchViewModelFactory factory = InjectorUtils.getInstance().provideSearchViewModelFactory();
+        SearchViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSearchViewModelFactory();
         SearchViewModel viewModel = new ViewModelProvider(this, factory).get(SearchViewModel.class);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

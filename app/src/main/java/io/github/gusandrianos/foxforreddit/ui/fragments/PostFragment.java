@@ -31,9 +31,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
@@ -60,7 +64,7 @@ import static io.github.gusandrianos.foxforreddit.Constants.ARG_TIME_NAME;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_SEARCH_TYPE;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_TYPE_OF_ACTION;
 
-
+@AndroidEntryPoint
 public class PostFragment extends Fragment implements PostAdapter.OnItemClickListener {
     private Token mToken;
 
@@ -77,6 +81,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     PostAdapter mPostRecyclerViewAdapter;
     RecyclerView mPostRecyclerView;
     SwipeRefreshLayout pullToRefresh;
+    @Inject
+    TokenDao mTokenDao;
 
     @Nullable
     @Override
@@ -87,7 +93,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
+        mToken = InjectorUtils.getInstance(mTokenDao).provideTokenRepository().getToken(mTokenDao);
         type_of_action = getArguments().getString(ARG_TYPE_OF_ACTION, ACTION_POST);
 
         if (type_of_action.equals(ACTION_SEARCH)) {
@@ -106,7 +112,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
     private void initRecycleView(View view) {
         mPostRecyclerView = view.findViewById(R.id.recyclerview);
-        mPostRecyclerViewAdapter = new PostAdapter((MainActivity) requireActivity(), this);
+        mPostRecyclerViewAdapter = new PostAdapter((MainActivity) requireActivity(), this, mTokenDao);
         mPostRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY); //keep recyclerview on position
         mPostRecyclerView.setHasFixedSize(true);
         mPostRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -120,7 +126,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
     void loadPosts(boolean requestChanged) {
         if (type_of_action.equals(ACTION_POST)) {
-            PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+            PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
             PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
 
             if (requestChanged)
@@ -129,7 +135,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             viewModel.getPosts(subreddit, filter, time, requireActivity().getApplication())
                     .observe(getViewLifecycleOwner(), this::submitToAdapter);
         } else {
-            SearchViewModelFactory factory = InjectorUtils.getInstance().provideSearchViewModelFactory();
+            SearchViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSearchViewModelFactory();
             SearchViewModel viewModel = new ViewModelProvider(this, factory).get(SearchViewModel.class);
 
             if (requestChanged)
@@ -166,7 +172,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
         int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
-        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
 
         switch (clicked) {
@@ -210,13 +216,13 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 }
                 break;
             case Constants.THING_VOTE_UP:
-                if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                     FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                 else
                     FoxToolkit.INSTANCE.upVoteModel(viewModel, requireActivity().getApplication(), data);
                 break;
             case Constants.THING_VOTE_DOWN:
-                if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                     FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                 else
                     FoxToolkit.INSTANCE.downVoteModel(viewModel, requireActivity().getApplication(), data);
@@ -229,7 +235,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 customTabsIntent.launchUrl(requireContext(), Uri.parse(data.getUrl()));
                 break;
             case Constants.THING_MORE_ACTIONS:
-                if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                     FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                 else {
                     PopupMenu menu = new PopupMenu(requireContext(), view);
@@ -299,7 +305,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
 
-        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
         SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
         subredditViewModel.getSubredditRules(data.getSubredditNamePrefixed(),
                 requireActivity().getApplication()).observe(getViewLifecycleOwner(),
@@ -421,7 +427,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     @Override
     public void onResume() {
         super.onResume();
-        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
+        Token token = InjectorUtils.getInstance(mTokenDao).provideTokenRepository().getToken(mTokenDao);
         if (!mToken.getAccessToken().equals(token.getAccessToken())) {
             mToken = token;
             loadPosts(true);

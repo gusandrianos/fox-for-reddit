@@ -34,7 +34,11 @@ import org.apache.commons.text.StringEscapeUtils;
 import java.text.NumberFormat;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
@@ -47,8 +51,11 @@ import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
+@AndroidEntryPoint
 public class SubredditFragment extends Fragment {
     FoxToolkit toolkit = FoxToolkit.INSTANCE;
+    @Inject
+    TokenDao mTokenDao;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,7 +78,7 @@ public class SubredditFragment extends Fragment {
         setUpNavigation(view, subredditName);
         setUpMenuItemClicks(view, subredditName);
 
-        SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+        SubredditViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
         SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
 
         String finalSubredditName = subredditName;
@@ -98,9 +105,9 @@ public class SubredditFragment extends Fragment {
         MaterialButton subUnsubButton = view.findViewById(R.id.button_subreddit_sub_unsub);
 
         setupButton(subredditInfo, view);
-        if (FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
             subUnsubButton.setOnClickListener(button -> {
-                SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+                SubredditViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
                 SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
                 viewModel.toggleSubscribed(getFinalAction(subredditInfo),
                         subredditInfo.getDisplayName(),

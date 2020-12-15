@@ -34,9 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.MoreChildrenList;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
@@ -52,6 +56,7 @@ import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
+@AndroidEntryPoint
 public class CommentsFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
 
     RecyclerView mCommentsRecyclerView;
@@ -61,6 +66,8 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
     Markwon markwon;
 
     String subreddit;
+    @Inject
+    TokenDao mTokenDao;
 
     @Nullable
     @Override
@@ -111,12 +118,12 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
 
                 NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
                 NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-                navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren1.toString(), moreChildrenList1,subreddit));
+                navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren1.toString(), moreChildrenList1, subreddit));
 
             });
         }
 
-        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         viewModel.getMoreChildren(linkId, loadChildren, requireActivity().getApplication()).observe(getViewLifecycleOwner(), commentListing -> {
             groupAdapter = new GroupAdapter<>();
@@ -133,7 +140,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                 }
                 groupAdapter.add(new ExpandableCommentGroup(item,
                         Objects.requireNonNull(item.getData()).getDepth(),
-                        linkId, this, (MainActivity) requireActivity(), markwon));
+                        linkId, this, (MainActivity) requireActivity(), markwon, mTokenDao));
             }
             if (txtMoreComments.getTag().equals("1"))
                 txtMoreComments.setVisibility(View.VISIBLE);
@@ -170,28 +177,28 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
             moreChildrenList.setMoreChildrenList(moreChildrenArray);
 
 
-            navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren.toString(), moreChildrenList,subreddit));
+            navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren.toString(), moreChildrenList, subreddit));
         } else {
-            PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+            PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
             PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
 
             switch (actionType) {
                 case Constants.THING_VOTE_UP:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
                         FoxToolkit.INSTANCE.upVoteCommentModel(viewModel,
                                 requireActivity().getApplication(), comment.getData());
                     break;
                 case Constants.THING_VOTE_DOWN:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
                         FoxToolkit.INSTANCE.downVoteCommentModel(viewModel,
                                 requireActivity().getApplication(), comment.getData());
                     break;
                 case Constants.THING_REPLY:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
                         navController.navigate(
@@ -205,7 +212,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                     navController.navigate(action);
                     break;
                 case Constants.THING_MORE_ACTIONS:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else {
                         PopupMenu menu = new PopupMenu(requireContext(), view);
@@ -297,7 +304,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
     }
 
     private void popUpMenuReport(ChildrenItem comment) {
-        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
         SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
         subredditViewModel.getSubredditRules(comment.getData().getSubredditNamePrefixed(),
                 requireActivity().getApplication()).observe(getViewLifecycleOwner(),

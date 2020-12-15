@@ -1,5 +1,8 @@
 package io.github.gusandrianos.foxforreddit.utilities;
 
+import javax.inject.Inject;
+
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository;
 import io.github.gusandrianos.foxforreddit.data.repositories.SearchRepository;
 import io.github.gusandrianos.foxforreddit.data.repositories.SubredditRepository;
@@ -13,10 +16,12 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 public class InjectorUtils {
 
     private static InjectorUtils instance;
+    TokenDao mTokenDao;
 
-    public static InjectorUtils getInstance() {
+    public static InjectorUtils getInstance(TokenDao tokenDao) {
         if (instance == null) {
             instance = new InjectorUtils();
+            instance.mTokenDao = tokenDao;
         }
         return instance;
     }
@@ -26,7 +31,7 @@ public class InjectorUtils {
     }
 
     public PostViewModelFactory providePostViewModelFactory() {
-        PostRepository postRepository = PostRepository.INSTANCE;
+        PostRepository postRepository = new PostRepository(mTokenDao);
         return new PostViewModelFactory(postRepository);
     }
 
@@ -35,17 +40,17 @@ public class InjectorUtils {
     }
 
     public UserViewModelFactory provideUserViewModelFactory() {
-        UserRepository userRepository = UserRepository.INSTANCE;
+        UserRepository userRepository = new UserRepository(mTokenDao);
         return new UserViewModelFactory(userRepository);
     }
 
     public SubredditViewModelFactory provideSubredditViewModelFactory() {
-        SubredditRepository subredditRepository = SubredditRepository.INSTANCE;
+        SubredditRepository subredditRepository = new SubredditRepository(mTokenDao);
         return new SubredditViewModelFactory(subredditRepository);
     }
 
     public SearchViewModelFactory provideSearchViewModelFactory() {
-        SearchRepository searchRepository = SearchRepository.INSTANCE;
+        SearchRepository searchRepository = new SearchRepository(mTokenDao);
         return new SearchViewModelFactory(searchRepository);
     }
 }

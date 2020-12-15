@@ -27,8 +27,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -38,7 +42,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 
-
+@AndroidEntryPoint
 public class MainActivity extends CyaneaAppCompatActivity implements
         BottomNavigationView.OnNavigationItemReselectedListener,
         BottomNavigationView.OnNavigationItemSelectedListener {
@@ -48,6 +52,8 @@ public class MainActivity extends CyaneaAppCompatActivity implements
     public AppBarConfiguration appBarConfiguration;
     public BottomNavigationView bottomNavView;
     List<Integer> topLevelDestinationIds;
+    @Inject
+    TokenDao mTokenDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,16 +83,16 @@ public class MainActivity extends CyaneaAppCompatActivity implements
 
     private void setAuthorizedUI() {
         if (mToken == null) {
-            mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(getApplication());
+            mToken = InjectorUtils.getInstance(mTokenDao).provideTokenRepository().getToken(mTokenDao);
             MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.userFragment);
             bottomNavMenuItem.setEnabled(true);
         }
-        if (FoxToolkit.INSTANCE.isAuthorized(getApplication()))
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
             getCurrentUser();
     }
 
     public void getCurrentUser() {
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
+        UserViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
 
         viewModel.getMe(getApplication()).observe(this, user -> {
@@ -143,7 +149,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
                 //When all goes well, there is the line "code=[something]"
                 if (state.equals(Constants.STATE) && error.equals("code")) {
                     String code = inputs[1].split("=")[1];
-                    mToken = InjectorUtils.getInstance().provideTokenRepository().getNewToken(getApplication(), code, Constants.REDIRECT_URI);
+                    mToken = InjectorUtils.getInstance(mTokenDao).provideTokenRepository().getNewToken(mTokenDao, code, Constants.REDIRECT_URI);
                 } else
                     Toast.makeText(this, "Log In unsuccessful", Toast.LENGTH_SHORT).show();
 
@@ -162,7 +168,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
             navController.navigate(R.id.mainFragment, null, options);
             return true;
         } else if (id == R.id.userFragment) {
-            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(getApplication())) {
+            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(mTokenDao)) {
                 NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(getFoxSharedViewModel().getCurrentUserUsername());
                 navController.navigate(action);
             } else
@@ -172,7 +178,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
             navController.navigate(R.id.subredditListFragment);
             return true;
         } else if (id == R.id.composeChooserFragment) {
-            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(getApplication())) {
+            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(mTokenDao)) {
                 String postTo = "Reddit";
                 if (navController.getCurrentDestination().getId() == R.id.subredditFragment) {
                     postTo = getFoxSharedViewModel().getCurrentSubreddit();
@@ -186,7 +192,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
                 FoxToolkit.INSTANCE.promptLogIn(this);
             return true;
         } else if (id == R.id.inboxFragment) {
-            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(getApplication()))
+            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                 navController.navigate(R.id.inboxFragment);
             else
                 FoxToolkit.INSTANCE.promptLogIn(this);

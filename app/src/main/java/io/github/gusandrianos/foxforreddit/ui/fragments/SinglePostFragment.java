@@ -68,9 +68,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Flair;
@@ -92,6 +96,7 @@ import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
+@AndroidEntryPoint
 public class SinglePostFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
     private boolean wasPlaying;
     private boolean isFullscreen;
@@ -110,6 +115,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     DisplayMetrics displayMetrics = new DisplayMetrics();
     Markwon markwon;
+    @Inject
+    TokenDao mTokenDao;
 
     @Nullable
     @Override
@@ -161,7 +168,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         setUpNavigation(view, singlePostData, postType);
         initializeUI(singlePostData, view, postType);
 
-        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         String permalink = singlePostData.getPermalink().substring(1, singlePostData.getPermalink().length() - 1);
 
@@ -182,7 +189,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                         groupAdapter.add(new ExpandableCommentGroup(item,
                                 Objects.requireNonNull(item.getData()).getDepth(),
                                 singlePostData.getName(),
-                                SinglePostFragment.this, (MainActivity) requireActivity(), markwon));
+                                SinglePostFragment.this, (MainActivity) requireActivity(), markwon, mTokenDao));
                     }
                 });
     }
@@ -268,7 +275,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         mBtnPostNumComments.setText(FoxToolkit.INSTANCE.formatValue(singlePostData.getNumComments()));
 
         int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
-        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
 
         mTxtPostSubreddit.setOnClickListener(view1 -> {
@@ -286,7 +293,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         });
 
         mImgBtnPostVoteUp.setOnClickListener(view1 -> {
-            if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+            if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                 FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
             else {
                 FoxToolkit.INSTANCE.upVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp,
@@ -296,7 +303,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         });
 
         mImgBtnPostVoteDown.setOnClickListener(view1 -> {
-            if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+            if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                 FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
             else {
                 FoxToolkit.INSTANCE.downVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp,
@@ -656,26 +663,26 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
             navController.navigate(SinglePostFragmentDirections.actionSinglePostFragmentToCommentsFragment(linkId, loadChildren.toString(), moreChildrenList, subreddit));
         } else {
-            PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+            PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
             PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
 
             switch (actionType) {
                 case Constants.THING_VOTE_UP:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
                         FoxToolkit.INSTANCE.upVoteCommentModel(viewModel,
                                 requireActivity().getApplication(), comment.getData());
                     break;
                 case Constants.THING_VOTE_DOWN:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
                         FoxToolkit.INSTANCE.downVoteCommentModel(viewModel,
                                 requireActivity().getApplication(), comment.getData());
                     break;
                 case Constants.THING_REPLY:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
                         navController.navigate(
@@ -689,7 +696,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                     navController.navigate(action);
                     break;
                 case Constants.THING_MORE_ACTIONS:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else {
                         PopupMenu menu = new PopupMenu(requireContext(), view);
@@ -754,7 +761,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void popUpMenuReport(ChildrenItem comment) {
-        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
         SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
         subredditViewModel.getSubredditRules(comment.getData().getSubredditNamePrefixed(),
                 requireActivity().getApplication()).observe(getViewLifecycleOwner(),
@@ -809,7 +816,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     private void setUpMenu(Toolbar toolbar, Data postData, int postType, View view, MainActivity mainActivity) {
 
-        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
 
         toolbar.inflateMenu(R.menu.self_single_post_menu);
@@ -965,7 +972,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
 
-        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
         SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
         subredditViewModel.getSubredditRules(data.getSubredditNamePrefixed(),
                 requireActivity().getApplication()).observe(getViewLifecycleOwner(),
@@ -1027,7 +1034,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         getParentFragmentManager().setFragmentResultListener("flairChoice", getViewLifecycleOwner(), (key, bundle) -> {
             Flair result = bundle.getParcelable("flair");
             if (result != null) {
-                PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+                PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
                 PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
 
                 viewModel.selectFlair(postData.getSubredditNamePrefixed(), postData.getName(),
@@ -1088,7 +1095,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
 
-        if (FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
             setUpMenu(toolbar, postData, postType, view, mainActivity);
 
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;

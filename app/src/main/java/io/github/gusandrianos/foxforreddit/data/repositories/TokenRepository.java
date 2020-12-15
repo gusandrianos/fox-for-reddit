@@ -1,7 +1,8 @@
 package io.github.gusandrianos.foxforreddit.data.repositories;
 
-import android.app.Application;
 import android.util.Log;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 import java.util.List;
@@ -12,7 +13,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import io.github.gusandrianos.foxforreddit.data.db.FoxDatabase;
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.data.network.OAuthToken;
@@ -21,10 +21,11 @@ import okhttp3.Credentials;
 import retrofit2.Call;
 import retrofit2.Response;
 
+// TODO: Rewrite in Kotlin
 public class TokenRepository {
     private static TokenRepository instance;
     OAuthToken tokenRequest = RetrofitService.getTokenRequestInstance();
-    private TokenDao tokenDao;
+    private TokenDao mTokenDao;
     Token mToken;
 
     private TokenRepository() {
@@ -40,13 +41,12 @@ public class TokenRepository {
         return instance;
     }
 
-    public Token getNewToken(Application application, String code, String redirectURI) {
+    public Token getNewToken(@NotNull TokenDao tokenDao, String code, String redirectURI) {
         if (mToken != null && (code.isEmpty() || redirectURI.isEmpty()))
             return mToken;
 
-        if (tokenDao == null) {
-            initDB(application);
-        }
+        if (mTokenDao == null)
+            mTokenDao = tokenDao;
 
         Call<Token> token;
         String clientID = "n1R0bc_lPPTtVg";
@@ -84,14 +84,12 @@ public class TokenRepository {
         return mToken;
     }
 
-    public Token refreshToken(Application application) {
+    public Token refreshToken() {
         if (mToken.getRefreshToken() == null) {
             mToken = null;
             return mToken;
         }
-        if (tokenDao == null) {
-            initDB(application);
-        }
+
         Log.i("Token Refresh", "Token Dao created");
 
         Call<Token> token;
@@ -127,21 +125,18 @@ public class TokenRepository {
         return mToken;
     }
 
-    public Token getNewToken(Application application) {
-        return getNewToken(application, "", "");
+    public Token getNewToken() {
+        return getNewToken(mTokenDao, "", "");
     }
 
-    public Token getCachedToken(Application application) {
-        if (tokenDao == null) {
-            initDB(application);
-        }
+    public Token getCachedToken() {
 
         ExecutorService service = Executors.newSingleThreadExecutor();
 
         class SelectTask implements Callable<List<Token>> {
             @Override
             public List<Token> call() {
-                return tokenDao.getToken();
+                return mTokenDao.getToken();
             }
         }
 
@@ -158,52 +153,46 @@ public class TokenRepository {
         return mToken;
     }
 
-    public Token getToken(Application application) {
+    public Token getToken(TokenDao tokenDao) {
+        mTokenDao = tokenDao;
         if (mToken != null) {
 
             if (!mToken.hasExpired())
                 return mToken;
             else {
-                if (refreshToken(application) != null)
+                if (refreshToken() != null)
                     return mToken;
-                else if (getNewToken(application) != null) {
+                else if (getNewToken() != null) {
                     return mToken;
                 }
             }
         }
 
-        if (getCachedToken(application) != null) {
+        if (getCachedToken() != null) {
             if (!mToken.hasExpired()) {
                 return mToken;
             } else {
-                if (refreshToken(application) != null) {
+                if (refreshToken() != null) {
                     return mToken;
                 }
             }
         }
 
-        getNewToken(application);
+        getNewToken();
 
         return mToken;
     }
 
     public void setCachedToken(Token token) {
         Executors.newSingleThreadExecutor().execute(() -> {
-            tokenDao.delete();
-            tokenDao.insert(token);
+            mTokenDao.delete();
+            mTokenDao.insert(token);
         });
     }
 
     public void logOut() {
-        Executors.newSingleThreadExecutor().execute(() -> tokenDao.delete());
+        Executors.newSingleThreadExecutor().execute(() -> mTokenDao.delete());
         mToken = null;
-    }
-
-    public void initDB(Application application) {
-        if (application != null) {
-            FoxDatabase foxDatabase = FoxDatabase.getInstance(application);
-            tokenDao = foxDatabase.tokenDao();
-        }
     }
 
     public void logToken(Token token) {

@@ -24,14 +24,21 @@ import com.jaredrummler.cyanea.Cyanea;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.ui.ThemeSettings;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 
+@AndroidEntryPoint
 public class MainFragment extends Fragment {
+    @Inject
+    TokenDao mTokenDao;
 
     @Nullable
     @Override
@@ -51,7 +58,7 @@ public class MainFragment extends Fragment {
         ArrayList<Fragment> homeFragments = new ArrayList<>();
         ArrayList<String> tabTitles = new ArrayList<>();
 
-        if (FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication())) {
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao)) {
             homeFragments.add(PostFragment.newInstance("", "best", ""));
             tabTitles.add("Home");
         } else {

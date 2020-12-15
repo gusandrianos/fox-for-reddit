@@ -1,25 +1,19 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -38,7 +32,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jaredrummler.cyanea.Cyanea;
-import com.jaredrummler.cyanea.prefs.CyaneaSettingsActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +39,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Subreddit;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
@@ -61,7 +58,10 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 
+@AndroidEntryPoint
 public class UserFragment extends Fragment {
+    @Inject
+    TokenDao mTokenDao;
 
     @Nullable
     @Override
@@ -79,8 +79,8 @@ public class UserFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         FoxSharedViewModel sharedViewModel = mainActivity.getFoxSharedViewModel();
 
-        if (sharedViewModel.getCurrentUserUsername().isEmpty() && FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication())) {
-            UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
+        if (sharedViewModel.getCurrentUserUsername().isEmpty() && FoxToolkit.INSTANCE.isAuthorized(mTokenDao)) {
+            UserViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
             UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
 
             viewModel.getMe(requireActivity().getApplication()).observe(getViewLifecycleOwner(), user -> {
@@ -98,7 +98,7 @@ public class UserFragment extends Fragment {
     }
 
     private void initializeUI(FoxSharedViewModel sharedViewModel, String username, View view) {
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
+        UserViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
         UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
         sharedViewModel.setViewingSelf(username.equals(sharedViewModel.getCurrentUserUsername()));
 
@@ -196,10 +196,10 @@ public class UserFragment extends Fragment {
 
         setupButton(userSubreddit, view);
         MainActivity mainActivity = (MainActivity) requireActivity();
-        if (FoxToolkit.INSTANCE.isAuthorized(mainActivity.getApplication()))
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
             profileButton.setOnClickListener(button -> {
                 if (!mainActivity.getFoxSharedViewModel().getViewingSelf()) {
-                    SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+                    SubredditViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
                     SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
                     viewModel.toggleSubscribed(getFinalAction(userSubreddit),
                             userSubreddit.getDisplayName(),
@@ -242,7 +242,7 @@ public class UserFragment extends Fragment {
 
         NavController navController = NavHostFragment.findNavController(this);
 
-        if (FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
             setUpMenu(mainActivity.getFoxSharedViewModel().getViewingSelf(), toolbar, mainActivity, navController, user);
     }
 
@@ -303,7 +303,7 @@ public class UserFragment extends Fragment {
 
         if (isSelf) {
             toolbar.getMenu().findItem(R.id.log_out).setOnMenuItemClickListener(menuItem -> {
-                InjectorUtils.getInstance().provideTokenRepository().logOut();
+                InjectorUtils.getInstance(mTokenDao).provideTokenRepository().logOut();
                 mainActivity.mToken = null;
                 navigateHome(navController);
                 return true;
@@ -316,7 +316,7 @@ public class UserFragment extends Fragment {
 
             // TODO: Show appropriate error when blocking someone and trying to load their profile again
             toolbar.getMenu().findItem(R.id.block_user).setOnMenuItemClickListener(menuItem -> {
-                UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
+                UserViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
                 UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
                 viewModel.blockUser(requireActivity().getApplication(), user.getId(), user.getName()).observe(getViewLifecycleOwner(), status -> {
                     Toast.makeText(requireContext(), "User " + user.getName() + " successfully blocked", Toast.LENGTH_SHORT).show();

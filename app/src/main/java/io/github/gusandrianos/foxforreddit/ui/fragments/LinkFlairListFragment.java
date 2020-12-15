@@ -22,7 +22,11 @@ import com.jaredrummler.cyanea.Cyanea;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Flair;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
@@ -30,7 +34,10 @@ import io.github.gusandrianos.foxforreddit.utilities.LinkFlairListAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
+@AndroidEntryPoint
 public class LinkFlairListFragment extends Fragment implements LinkFlairListAdapter.OnItemClickListener {
+    @Inject
+    TokenDao mTokenDao;
 
     @Nullable
     @Override
@@ -48,7 +55,7 @@ public class LinkFlairListFragment extends Fragment implements LinkFlairListAdap
     }
 
     void setUpRecyclerView(View view, String subredditName) {
-        SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
+        SubredditViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
         SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
 
         viewModel.getSubredditLinkFlair(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), linkFlair -> {

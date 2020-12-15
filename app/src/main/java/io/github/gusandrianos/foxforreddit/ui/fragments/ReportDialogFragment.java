@@ -25,8 +25,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.NextStepReasonsItem;
 import io.github.gusandrianos.foxforreddit.data.models.RulesBundle;
 import io.github.gusandrianos.foxforreddit.data.models.RulesItem;
@@ -35,6 +39,7 @@ import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
+@AndroidEntryPoint
 public class ReportDialogFragment extends BottomSheetDialogFragment {
 
     RulesBundle rulesBundle;
@@ -42,6 +47,8 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
     int rulesToShow;
     String subredditName;
     String thingId;
+    @Inject
+    TokenDao mTokenDao;
 
     @Nullable
     @Override
@@ -193,7 +200,7 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
         submit.setAlpha(1f);
         submit.setClickable(true);
 
-        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
 
         submit.setOnClickListener(v -> viewModel.reportPost(thingId, reason, requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {

@@ -21,12 +21,14 @@ import com.jaredrummler.cyanea.Cyanea;
 
 import java.util.ArrayList;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 
 import static io.github.gusandrianos.foxforreddit.Constants.KIND_POST;
 
+@AndroidEntryPoint
 public class SubredditSearchResultsFragment extends Fragment {
 
     String mSubreddit;

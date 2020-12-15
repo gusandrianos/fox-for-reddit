@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.*
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
@@ -15,16 +16,16 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-object PostRepository {
+class PostRepository(private val mTokenDao: TokenDao) {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     private val commentsData = MutableLiveData<CommentListing>()
 
     fun getPosts(subreddit: String, filter: String, time: String, application: Application): RedditPagingSource {
-        return RedditPagingSource(subreddit, filter, time, getBearer(application))
+        return RedditPagingSource(subreddit, filter, time, getBearer(mTokenDao))
     }
 
     fun votePost(dir: String, id: String, application: Application) {
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val vote = redditAPI.votePost(bearer, dir, id, 123)
         vote.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -37,7 +38,7 @@ object PostRepository {
 
     fun getSinglePost(permalink: String, application: Application): LiveData<SinglePost> {
         val singlePostData = MutableLiveData<SinglePost>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val singlePost = redditAPI.getSinglePost(bearer, permalink)
         singlePost.enqueue(object : Callback<List<Any>> {
             override fun onResponse(call: Call<List<Any>>, response: Response<List<Any>>) {
@@ -47,7 +48,7 @@ object PostRepository {
                     val postType = object : TypeToken<Thing?>() {}.type
                     val commentsType = object : TypeToken<CommentListing?>() {}.type
                     val post = gson.fromJson<Thing>(gson.toJsonTree(response.body()!![0])
-                            .asJsonObject, postType)
+                        .asJsonObject, postType)
                     val comments = gson.fromJson<CommentListing>(gson.toJsonTree(response.body()
                     !![1]).asJsonObject, commentsType)
 
@@ -63,8 +64,8 @@ object PostRepository {
     }
 
     fun getSinglePostComments(permalink: String, application: Application):
-            LiveData<CommentListing> {
-        val bearer = getBearer(application)
+        LiveData<CommentListing> {
+        val bearer = getBearer(mTokenDao)
         val singlePost = redditAPI.getSinglePost(bearer, permalink)
         singlePost.enqueue(object : Callback<List<Any>> {
             override fun onResponse(call: Call<List<Any>>, response: Response<List<Any>>) {
@@ -85,9 +86,9 @@ object PostRepository {
     }
 
     fun getMoreChildren(linkId: String, children: String, application: Application):
-            LiveData<MoreChildren> {
+        LiveData<MoreChildren> {
         val dataMoreChildren = MutableLiveData<MoreChildren>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val moreChildren = redditAPI.getMoreChildren(bearer, linkId, children, "json")
         moreChildren.enqueue(object : Callback<MoreChildren> {
             override fun onResponse(call: Call<MoreChildren>, response: Response<MoreChildren>) {
@@ -105,9 +106,9 @@ object PostRepository {
                    nsfw: Boolean, spoiler: Boolean, flair_id: String, flair_text: String,
                    application: Application): LiveData<SubmitResponse> {
         val submissionData = MutableLiveData<SubmitResponse>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val submit = redditAPI.submitText(bearer, type, subreddit, title, url, text, nsfw,
-                spoiler, flair_id, flair_text, "json", true)
+            spoiler, flair_id, flair_text, "json", true)
         submit.enqueue(object : Callback<SubmitResponse> {
             override fun onResponse(call: Call<SubmitResponse>, response:
             Response<SubmitResponse>) {
@@ -124,7 +125,7 @@ object PostRepository {
 
     fun savePost(id: String, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val save = redditAPI.savePost(bearer, id)
         save.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -140,7 +141,7 @@ object PostRepository {
 
     fun unSavePost(id: String, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val unSave = redditAPI.unSavePost(bearer, id)
         unSave.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -156,7 +157,7 @@ object PostRepository {
 
     fun hidePost(id: String, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val hide = redditAPI.hidePost(bearer, id)
         hide.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -172,7 +173,7 @@ object PostRepository {
 
     fun unHidePost(id: String, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val unHide = redditAPI.unHidePost(bearer, id)
         unHide.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -188,7 +189,7 @@ object PostRepository {
 
     fun reportPost(thing_id: String, reason: String, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val report = redditAPI.reportPost(bearer, thing_id, reason)
         report.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -205,9 +206,9 @@ object PostRepository {
     fun selectFlair(subreddit: String, link: String, templateId: String,
                     application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val selectFlair = redditAPI.selectFlair(bearer, subreddit, "json", link,
-                templateId)
+            templateId)
 
         selectFlair.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -223,7 +224,7 @@ object PostRepository {
 
     fun markNSFW(id: String, isNSFW: Boolean, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val markNSFW = if (isNSFW)
             redditAPI.unmarkNSFW(bearer, id)
         else
@@ -243,7 +244,7 @@ object PostRepository {
 
     fun markSpoiler(id: String, isSpoiler: Boolean, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val markSpoiler = if (isSpoiler)
             redditAPI.unmarkSpoiler(bearer, id)
         else
@@ -263,7 +264,7 @@ object PostRepository {
 
     fun deleteSubmission(id: String, application: Application): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val deleteSubmission = redditAPI.deleteSubmission(bearer, id)
 
         deleteSubmission.enqueue(object : Callback<Void> {
@@ -279,9 +280,9 @@ object PostRepository {
     }
 
     fun editSubmission(text: String, thing_id: String, application: Application)
-            : LiveData<Boolean> {
+        : LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao)
         val editSubmission = redditAPI.editSubmission(bearer, "json", text, thing_id)
 
         editSubmission.enqueue(object : Callback<Void> {

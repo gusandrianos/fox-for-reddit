@@ -27,7 +27,11 @@ import com.libRG.CustomTextView;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Flair;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
@@ -38,7 +42,10 @@ import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
+@AndroidEntryPoint
 public class ComposeFragment extends Fragment {
+    @Inject
+    TokenDao mTokenDao;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -179,7 +186,7 @@ public class ComposeFragment extends Fragment {
     }
 
     private boolean postAction(View view, View inflated, int composeType) {
-        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
+        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
         PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
         TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subreddit_field);
         TextInputEditText titleTextField = view.findViewById(R.id.edit_compose_title_field);

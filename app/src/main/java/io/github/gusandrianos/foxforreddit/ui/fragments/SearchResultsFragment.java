@@ -23,6 +23,7 @@ import com.jaredrummler.cyanea.Cyanea;
 
 import java.util.ArrayList;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
@@ -32,6 +33,7 @@ import static io.github.gusandrianos.foxforreddit.Constants.KIND_POST;
 import static io.github.gusandrianos.foxforreddit.Constants.KIND_SUBREDDIT;
 import static io.github.gusandrianos.foxforreddit.Constants.KIND_USER;
 
+@AndroidEntryPoint
 public class SearchResultsFragment extends Fragment {
 
     @Nullable

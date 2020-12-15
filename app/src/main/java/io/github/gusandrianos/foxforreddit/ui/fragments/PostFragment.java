@@ -3,6 +3,10 @@ package io.github.gusandrianos.foxforreddit.ui.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,11 +23,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.jaredrummler.cyanea.Cyanea;
 
@@ -54,10 +53,10 @@ import static io.github.gusandrianos.foxforreddit.Constants.ACTION_POST;
 import static io.github.gusandrianos.foxforreddit.Constants.ACTION_SEARCH;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_FILTER_NAME;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_QUERY_STRING;
+import static io.github.gusandrianos.foxforreddit.Constants.ARG_SEARCH_TYPE;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_SR_RESTRICT_BOOLEAN;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_SUBREDDIT_NAME;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_TIME_NAME;
-import static io.github.gusandrianos.foxforreddit.Constants.ARG_SEARCH_TYPE;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_TYPE_OF_ACTION;
 
 @AndroidEntryPoint
@@ -129,7 +128,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             if (requestChanged)
                 viewModel.deleteCached();
 
-            viewModel.getPosts(subreddit, filter, time, requireActivity().getApplication())
+            viewModel.getPosts(subreddit, filter, time)
                     .observe(getViewLifecycleOwner(), this::submitToAdapter);
         } else {
             SearchViewModel viewModel = new ViewModelProvider(this).get(SearchViewModel.class);
@@ -137,8 +136,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             if (requestChanged)
                 viewModel.deleteCached();
 
-            viewModel.searchResults(query, filter, time, sr_restrict, searchType, subreddit,
-                    requireActivity().getApplication()).observe(getViewLifecycleOwner(), this::submitToAdapter);
+            viewModel.searchResults(query, filter, time, sr_restrict, searchType, subreddit).observe(getViewLifecycleOwner(), this::submitToAdapter);
         }
     }
 
@@ -214,13 +212,13 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                     FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                 else
-                    FoxToolkit.INSTANCE.upVoteModel(viewModel, requireActivity().getApplication(), data);
+                    FoxToolkit.INSTANCE.upVoteModel(viewModel, data);
                 break;
             case Constants.THING_VOTE_DOWN:
                 if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                     FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                 else
-                    FoxToolkit.INSTANCE.downVoteModel(viewModel, requireActivity().getApplication(), data);
+                    FoxToolkit.INSTANCE.downVoteModel(viewModel, data);
                 break;
             case Constants.POST_SHARE:
                 startActivity(Intent.createChooser(FoxToolkit.INSTANCE.shareLink(data), Constants.SHARE_TEXT));
@@ -272,12 +270,12 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
     private void popUpMenuSave(Data data, PostViewModel viewModel) {
         if (data.isSaved())
-            viewModel.unSavePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.unSavePost(data.getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed)
                     data.setSaved(false);
             });
         else
-            viewModel.savePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.savePost(data.getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed)
                     data.setSaved(true);
             });
@@ -285,12 +283,12 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
     private void popUpMenuHide(Data data, PostViewModel viewModel) {
         if (data.getHidden())
-            viewModel.unHidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.unHidePost(data.getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed)
                     data.setHidden(false);
             });
         else
-            viewModel.hidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.hidePost(data.getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed)
                     data.setHidden(true);
             });
@@ -301,8 +299,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
 
         SubredditViewModel subredditViewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
-        subredditViewModel.getSubredditRules(data.getSubredditNamePrefixed(),
-                requireActivity().getApplication()).observe(getViewLifecycleOwner(),
+        subredditViewModel.getSubredditRules(data.getSubredditNamePrefixed()).observe(getViewLifecycleOwner(),
                 rulesBundle -> {
                     if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
                         navController.navigate(NavGraphDirections.actionGlobalReportDialogFragment(

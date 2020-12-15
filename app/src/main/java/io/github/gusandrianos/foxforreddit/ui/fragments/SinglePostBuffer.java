@@ -1,6 +1,9 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,10 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -53,7 +52,7 @@ public class SinglePostBuffer extends Fragment {
 
         PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
-        viewModel.getSinglePost(permalink, requireActivity().getApplication())
+        viewModel.getSinglePost(permalink)
                 .observe(getViewLifecycleOwner(), post -> {
                     Data postData = post.getData().getData().getChildren().get(0).getData();
                     NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);

@@ -15,7 +15,7 @@ class PostLoadStateAdapter(private val retry: () -> Unit) : LoadStateAdapter<Pos
 
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): LoadStateViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.post_loading_footer_layout, parent, false)
+            .inflate(R.layout.post_loading_footer_layout, parent, false)
         return LoadStateViewHolder(view)
     }
 

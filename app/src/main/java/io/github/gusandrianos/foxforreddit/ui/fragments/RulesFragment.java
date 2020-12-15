@@ -49,7 +49,7 @@ public class RulesFragment extends Fragment {
     private void setUpRecyclerView(View view, String subreddit) {
         SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
 
-        viewModel.getSubredditRules(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), rules -> {
+        viewModel.getSubredditRules(subreddit).observe(getViewLifecycleOwner(), rules -> {
             if (rules != null) {
                 RecyclerView rulesRV = view.findViewById(R.id.recycler_rules);
                 RulesListAdapter adapter = new RulesListAdapter(rules.getRules());

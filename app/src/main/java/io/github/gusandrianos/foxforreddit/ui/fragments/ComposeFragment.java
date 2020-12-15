@@ -1,6 +1,11 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,12 +16,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewStub;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
@@ -30,14 +29,13 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Flair;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.viewmodels.FoxSharedViewModel;
-
-import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 
 @AndroidEntryPoint
@@ -216,7 +214,7 @@ public class ComposeFragment extends Fragment {
 
 
         viewModel.submitText(type, subreddit, title, url, text, isNSFW, isSpoiler, flairId,
-                flairText, requireActivity().getApplication()).observe(getViewLifecycleOwner(),
+                flairText).observe(getViewLifecycleOwner(),
                 posted -> {
                     if (posted.getJson().getErrors().isEmpty()) {
                         // TODO: SinglePost needs refactoring to support navigating to it from links, for now, navigating back.

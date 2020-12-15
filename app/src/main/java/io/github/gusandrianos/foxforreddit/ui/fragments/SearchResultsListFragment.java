@@ -113,7 +113,7 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
         if (requestChanged)
             viewModel.deleteCached();
 
-        viewModel.searchResults(query, filter, time, sr_restrict, searchType, "", getActivity().getApplication()).observe(getViewLifecycleOwner(), searchPostPagingData -> {
+        viewModel.searchResults(query, filter, time, sr_restrict, searchType, "").observe(getViewLifecycleOwner(), searchPostPagingData -> {
             mSearchRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), searchPostPagingData);
             mSearchRecyclerViewAdapter.addLoadStateListener(loadStates -> {
                 if (loadStates.getRefresh() instanceof LoadState.Loading)

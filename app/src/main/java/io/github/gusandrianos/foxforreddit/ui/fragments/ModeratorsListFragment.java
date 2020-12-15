@@ -56,7 +56,7 @@ public class ModeratorsListFragment extends Fragment implements ModeratorsListAd
     void setUpRecyclerView(View view, String subreddit) {
         SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
 
-        viewModel.getSubredditModerators(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), moderators -> {
+        viewModel.getSubredditModerators(subreddit).observe(getViewLifecycleOwner(), moderators -> {
             if (moderators != null) {
                 RecyclerView moderatorsRV = view.findViewById(R.id.recycler_moderators);
                 ModeratorsListAdapter adapter = new ModeratorsListAdapter(moderators.getModerators(), this);

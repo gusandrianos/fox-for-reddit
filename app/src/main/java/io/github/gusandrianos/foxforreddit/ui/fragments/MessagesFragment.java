@@ -34,7 +34,6 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
-
 import io.github.gusandrianos.foxforreddit.utilities.MessagesAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
@@ -80,7 +79,7 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
         if (requestChanged)
             viewModel.deleteCached();
 
-        viewModel.getMessagesWhere(getActivity().getApplication(), where).observe(getViewLifecycleOwner(), this::submitToAdapter);
+        viewModel.getMessagesWhere(where).observe(getViewLifecycleOwner(), this::submitToAdapter);
     }
 
     private void submitToAdapter(PagingData pagingData) {
@@ -170,14 +169,14 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
                 .setNegativeButton("Nope", (dialog, id) -> dialog.cancel())
                 .setPositiveButton("Do it!", (dialog, id) -> {
                     if (author.equals(currentUser))
-                        postViewModel.deleteSubmission(fullname, requireActivity().getApplication())
+                        postViewModel.deleteSubmission(fullname)
                                 .observe(getViewLifecycleOwner(), success -> {
                                     if (success) {
                                         mMessagesRecyclerViewAdapter.refresh();
                                     }
                                 });
                     else
-                        userViewModel.deleteMsg(requireActivity().getApplication(), fullname)
+                        userViewModel.deleteMsg(fullname)
                                 .observe(getViewLifecycleOwner(), success -> {
                                     if (success) {
                                         mMessagesRecyclerViewAdapter.refresh();

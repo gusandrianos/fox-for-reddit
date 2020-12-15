@@ -29,7 +29,6 @@ import com.xwray.groupie.GroupieViewHolder;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.annotation.Inherited;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,7 +124,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
         }
 
         PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
-        viewModel.getMoreChildren(linkId, loadChildren, requireActivity().getApplication()).observe(getViewLifecycleOwner(), commentListing -> {
+        viewModel.getMoreChildren(linkId, loadChildren).observe(getViewLifecycleOwner(), commentListing -> {
             groupAdapter = new GroupAdapter<>();
             initRecyclerView(groupAdapter);
             for (Object child : commentListing.getJson().getData().getChildren()) {
@@ -186,15 +185,13 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                     if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
-                        FoxToolkit.INSTANCE.upVoteCommentModel(viewModel,
-                                requireActivity().getApplication(), comment.getData());
+                        FoxToolkit.INSTANCE.upVoteCommentModel(viewModel, comment.getData());
                     break;
                 case Constants.THING_VOTE_DOWN:
                     if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
-                        FoxToolkit.INSTANCE.downVoteCommentModel(viewModel,
-                                requireActivity().getApplication(), comment.getData());
+                        FoxToolkit.INSTANCE.downVoteCommentModel(viewModel, comment.getData());
                     break;
                 case Constants.THING_REPLY:
                     if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
@@ -278,7 +275,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                 .setCancelable(false)
                 .setNegativeButton("Nope", (dialog, id) -> dialog.cancel())
                 .setPositiveButton("Do it!", (dialog, id) ->
-                        viewModel.deleteSubmission(fullname, requireActivity().getApplication())
+                        viewModel.deleteSubmission(fullname)
                                 .observe(getViewLifecycleOwner(), success -> {
                                     if (success) {
                                         requireActivity().onBackPressed();
@@ -291,12 +288,12 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
 
     private void popUpMenuSave(ChildrenItem comment, PostViewModel viewModel) {
         if (comment.getData().isSaved())
-            viewModel.unSavePost(comment.getData().getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.unSavePost(comment.getData().getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed)
                     comment.getData().setSaved(false);
             });
         else
-            viewModel.savePost(comment.getData().getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.savePost(comment.getData().getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed)
                     comment.getData().setSaved(true);
             });
@@ -304,8 +301,8 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
 
     private void popUpMenuReport(ChildrenItem comment) {
         SubredditViewModel subredditViewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
-        subredditViewModel.getSubredditRules(comment.getData().getSubredditNamePrefixed(),
-                requireActivity().getApplication()).observe(getViewLifecycleOwner(),
+        subredditViewModel.getSubredditRules(comment.getData().getSubredditNamePrefixed()
+        ).observe(getViewLifecycleOwner(),
                 rulesBundle -> {
                     if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
                         navController.navigate(NavGraphDirections.actionGlobalReportDialogFragment(

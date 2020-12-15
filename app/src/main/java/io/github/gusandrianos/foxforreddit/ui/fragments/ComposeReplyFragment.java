@@ -90,7 +90,7 @@ public class ComposeReplyFragment extends Fragment {
         Bundle result = new Bundle();
 
         UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        viewModel.commentCompose(requireActivity().getApplication(), thing_id, text).observe(getViewLifecycleOwner(), success -> {
+        viewModel.commentCompose(thing_id, text).observe(getViewLifecycleOwner(), success -> {
 
             if (success)
                 Toast.makeText(getContext(), "Reply has been sent.", Toast.LENGTH_SHORT).show();

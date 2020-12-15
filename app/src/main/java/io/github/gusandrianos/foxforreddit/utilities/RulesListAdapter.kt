@@ -24,9 +24,9 @@ class RulesListAdapter(private val rules: List<RulesItem>) : RecyclerView.Adapte
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val markwon = Markwon.builder(holder.itemView.context)
-                .usePlugin(TablePlugin.create(holder.itemView.context))
-                .usePlugin(LinkifyPlugin.create())
-                .build()
+            .usePlugin(TablePlugin.create(holder.itemView.context))
+            .usePlugin(LinkifyPlugin.create())
+            .build()
         holder.ruleTitle.text = StringEscapeUtils.unescapeXml(rules[position].shortName)
 
         if (rules[position].description.isNullOrEmpty())

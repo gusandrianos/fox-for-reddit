@@ -42,6 +42,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
@@ -53,8 +54,6 @@ import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.FoxSharedViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
-
-import io.github.gusandrianos.foxforreddit.Constants;
 
 @AndroidEntryPoint
 public class UserFragment extends Fragment {
@@ -82,7 +81,7 @@ public class UserFragment extends Fragment {
         if (sharedViewModel.getCurrentUserUsername().isEmpty() && FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository)) {
             UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
-            viewModel.getMe(requireActivity().getApplication()).observe(getViewLifecycleOwner(), user -> {
+            viewModel.getMe().observe(getViewLifecycleOwner(), user -> {
                 if (user != null) {
                     String currentUserUsername = user.getName();
                     if (currentUserUsername != null) {
@@ -103,7 +102,7 @@ public class UserFragment extends Fragment {
         setUpNavigation(view);
 
         if (!username.isEmpty()) {
-            viewModel.getUser(requireActivity().getApplication(), username)
+            viewModel.getUser(username)
                     .observe(getViewLifecycleOwner(), data -> buildUserProfile(data, view));
 
             setUpContent(username, view, username.equals(sharedViewModel.getCurrentUserUsername()));
@@ -199,8 +198,8 @@ public class UserFragment extends Fragment {
                 if (!mainActivity.getFoxSharedViewModel().getViewingSelf()) {
                     SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
                     viewModel.toggleSubscribed(getFinalAction(userSubreddit),
-                            userSubreddit.getDisplayName(),
-                            requireActivity().getApplication())
+                            userSubreddit.getDisplayName()
+                    )
                             .observe(getViewLifecycleOwner(), status -> {
                                 if (status) {
                                     userSubreddit.setUserIsSubscriber(!userSubreddit.getUserIsSubscriber());
@@ -314,7 +313,7 @@ public class UserFragment extends Fragment {
             // TODO: Show appropriate error when blocking someone and trying to load their profile again
             toolbar.getMenu().findItem(R.id.block_user).setOnMenuItemClickListener(menuItem -> {
                 UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
-                viewModel.blockUser(requireActivity().getApplication(), user.getId(), user.getName()).observe(getViewLifecycleOwner(), status -> {
+                viewModel.blockUser(user.getId(), user.getName()).observe(getViewLifecycleOwner(), status -> {
                     Toast.makeText(requireContext(), "User " + user.getName() + " successfully blocked", Toast.LENGTH_SHORT).show();
                     navigateHome(navController);
                 });

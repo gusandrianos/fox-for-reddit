@@ -1,6 +1,9 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,10 +15,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jaredrummler.cyanea.Cyanea;
@@ -51,7 +50,7 @@ public class LinkFlairListFragment extends Fragment implements LinkFlairListAdap
 
     void setUpRecyclerView(View view, String subredditName) {
 
-        viewModel.getSubredditLinkFlair(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), linkFlair -> {
+        viewModel.getSubredditLinkFlair(subredditName).observe(getViewLifecycleOwner(), linkFlair -> {
             if (linkFlair != null) {
                 RecyclerView linkFlairRV = view.findViewById(R.id.recycler_link_flairs);
                 LinkFlairListAdapter adapter = new LinkFlairListAdapter(linkFlair, this);

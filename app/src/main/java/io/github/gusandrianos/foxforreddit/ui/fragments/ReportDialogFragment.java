@@ -200,7 +200,7 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
 
         PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
-        submit.setOnClickListener(v -> viewModel.reportPost(thingId, reason, requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+        submit.setOnClickListener(v -> viewModel.reportPost(thingId, reason).observe(getViewLifecycleOwner(), succeed -> {
             String message = (succeed) ? "Report has been sent" : "Failed to report";
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
             dismiss();

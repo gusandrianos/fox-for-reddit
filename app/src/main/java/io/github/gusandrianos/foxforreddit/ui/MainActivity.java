@@ -1,5 +1,11 @@
 package io.github.gusandrianos.foxforreddit.ui;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
@@ -10,12 +16,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jaredrummler.cyanea.Cyanea;
@@ -29,6 +29,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
@@ -37,8 +38,6 @@ import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.viewmodels.FoxSharedViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
-
-import io.github.gusandrianos.foxforreddit.Constants;
 
 @AndroidEntryPoint
 public class MainActivity extends CyaneaAppCompatActivity implements
@@ -94,7 +93,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
     public void getCurrentUser() {
         UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
-        viewModel.getMe(getApplication()).observe(this, user -> {
+        viewModel.getMe().observe(this, user -> {
             if (user != null) {
                 String username = user.getName();
                 if (username != null) {
@@ -106,7 +105,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
             //TODO: Handle this by showing appropriate error
         });
 
-        viewModel.getPrefs(getApplication()).observe(this, prefs ->
+        viewModel.getPrefs().observe(this, prefs ->
                 getFoxSharedViewModel().setIncludeOver18(prefs.getSearchIncludeOver18()));
     }
 

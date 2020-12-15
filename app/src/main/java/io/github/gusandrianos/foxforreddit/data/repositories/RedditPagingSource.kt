@@ -1,8 +1,8 @@
 package io.github.gusandrianos.foxforreddit.data.repositories
 
 import androidx.paging.PagingSource
-import io.github.gusandrianos.foxforreddit.Constants.MODE_POST
 import io.github.gusandrianos.foxforreddit.Constants.MODE_MESSAGES
+import io.github.gusandrianos.foxforreddit.Constants.MODE_POST
 import io.github.gusandrianos.foxforreddit.Constants.MODE_SEARCH_RESULTS
 import io.github.gusandrianos.foxforreddit.Constants.MODE_SUBREDDIT
 import io.github.gusandrianos.foxforreddit.Constants.STARTER_PAGE
@@ -69,9 +69,9 @@ class RedditPagingSource() : PagingSource<String, Data>() {
             val items = response.data!!.children?.map { it.data!! } ?: emptyList()
 
             LoadResult.Page(
-                    data = items,
-                    prevKey = null,
-                    nextKey = if (items.isEmpty()) null else response.data?.after
+                data = items,
+                prevKey = null,
+                nextKey = if (items.isEmpty()) null else response.data?.after
             )
         } catch (exception: IOException) {  //Maybe there is no Internet Connection when try to make request
             LoadResult.Error(exception)

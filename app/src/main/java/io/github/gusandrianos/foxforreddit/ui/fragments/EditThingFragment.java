@@ -1,6 +1,9 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,10 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -62,7 +61,7 @@ public class EditThingFragment extends Fragment {
 
             PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
-            viewModel.editSubmission(bodyEditText.getText().toString(), thingFullname, requireActivity().getApplication())
+            viewModel.editSubmission(bodyEditText.getText().toString(), thingFullname)
                     .observe(getViewLifecycleOwner(), success -> {
                         if (success) {
                             Bundle result = new Bundle();

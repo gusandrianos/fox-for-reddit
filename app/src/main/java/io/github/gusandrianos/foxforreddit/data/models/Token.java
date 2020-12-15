@@ -73,11 +73,19 @@ public class Token {
         return scope;
     }
 
-    public String getRefreshToken() { return refreshToken; }
+    public String getRefreshToken() {
+        return refreshToken;
+    }
 
-    public long getExpirationTimestamp() { return expirationTimestamp; }
+    public long getExpirationTimestamp() {
+        return expirationTimestamp;
+    }
 
-    public void setExpirationTimestamp(long expirationTimestamp) { this.expirationTimestamp = expirationTimestamp; }
+    public void setExpirationTimestamp(long expirationTimestamp) {
+        this.expirationTimestamp = expirationTimestamp;
+    }
 
-    public void setAccessToken(@NonNull String accessToken) { this.accessToken = accessToken; }
+    public void setAccessToken(@NonNull String accessToken) {
+        this.accessToken = accessToken;
+    }
 }

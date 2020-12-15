@@ -2,14 +2,12 @@ package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,7 +29,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -42,7 +39,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
-
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -55,7 +51,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jaredrummler.cyanea.Cyanea;
-import com.jaredrummler.cyanea.tinting.CyaneaTinter;
 import com.libRG.CustomTextView;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
@@ -81,7 +76,6 @@ import io.github.gusandrianos.foxforreddit.data.models.Flair;
 import io.github.gusandrianos.foxforreddit.data.models.GalleryItem;
 import io.github.gusandrianos.foxforreddit.data.models.MoreChildrenList;
 import io.github.gusandrianos.foxforreddit.data.models.ResolutionsItem;
-
 import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentGroup;
@@ -171,7 +165,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
         String permalink = singlePostData.getPermalink().substring(1, singlePostData.getPermalink().length() - 1);
 
-        viewModel.getSinglePostComments(permalink, requireActivity().getApplication())
+        viewModel.getSinglePostComments(permalink)
                 .observe(getViewLifecycleOwner(), commentListing -> {
                     groupAdapter = new GroupAdapter<>();
                     initRecyclerView(groupAdapter);
@@ -296,7 +290,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             else {
                 FoxToolkit.INSTANCE.upVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp,
                         mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity(), mBtnPostShare.getCurrentTextColor());
-                FoxToolkit.INSTANCE.upVoteModel(viewModel, requireActivity().getApplication(), singlePostData);
+                FoxToolkit.INSTANCE.upVoteModel(viewModel, singlePostData);
             }
         });
 
@@ -306,7 +300,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             else {
                 FoxToolkit.INSTANCE.downVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp,
                         mImgBtnPostVoteDown, mTxtPostScore, (MainActivity) requireActivity(), mBtnPostShare.getCurrentTextColor());
-                FoxToolkit.INSTANCE.downVoteModel(viewModel, requireActivity().getApplication(), singlePostData);
+                FoxToolkit.INSTANCE.downVoteModel(viewModel, singlePostData);
             }
         });
 
@@ -668,15 +662,13 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                     if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
-                        FoxToolkit.INSTANCE.upVoteCommentModel(viewModel,
-                                requireActivity().getApplication(), comment.getData());
+                        FoxToolkit.INSTANCE.upVoteCommentModel(viewModel, comment.getData());
                     break;
                 case Constants.THING_VOTE_DOWN:
                     if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
-                        FoxToolkit.INSTANCE.downVoteCommentModel(viewModel,
-                                requireActivity().getApplication(), comment.getData());
+                        FoxToolkit.INSTANCE.downVoteCommentModel(viewModel, comment.getData());
                     break;
                 case Constants.THING_REPLY:
                     if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
@@ -746,12 +738,12 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     private void popUpMenuSave(ChildrenItem comment, PostViewModel viewModel) {
         if (comment.getData().isSaved())
-            viewModel.unSavePost(comment.getData().getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.unSavePost(comment.getData().getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed)
                     comment.getData().setSaved(false);
             });
         else
-            viewModel.savePost(comment.getData().getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.savePost(comment.getData().getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed)
                     comment.getData().setSaved(true);
             });
@@ -759,8 +751,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     private void popUpMenuReport(ChildrenItem comment) {
         SubredditViewModel subredditViewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
-        subredditViewModel.getSubredditRules(comment.getData().getSubredditNamePrefixed(),
-                requireActivity().getApplication()).observe(getViewLifecycleOwner(),
+        subredditViewModel.getSubredditRules(comment.getData().getSubredditNamePrefixed()).observe(getViewLifecycleOwner(),
                 rulesBundle -> {
                     if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
                         navController.navigate(NavGraphDirections.actionGlobalReportDialogFragment(
@@ -845,7 +836,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             menu.findItem(R.id.self_single_post_mark_nsfw).setOnMenuItemClickListener(markNSFW -> {
                 Boolean isNSFW = postData.isOver18();
 
-                viewModel.markNSFW(postData.getName(), isNSFW, requireActivity().getApplication())
+                viewModel.markNSFW(postData.getName(), isNSFW)
                         .observe(getViewLifecycleOwner(), success -> {
                             if (success) {
                                 TextView txtIsOver18 = view.findViewById(R.id.txt_post_is_over_18);
@@ -865,7 +856,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             menu.findItem(R.id.self_single_post_mark_spoiler).setOnMenuItemClickListener(markSpoiler -> {
                 Boolean isSpoiler = postData.getSpoiler();
 
-                viewModel.markSpoiler(postData.getName(), isSpoiler, requireActivity().getApplication())
+                viewModel.markSpoiler(postData.getName(), isSpoiler)
                         .observe(getViewLifecycleOwner(), success -> {
                             if (success) {
                                 TextView txtIsSpoiler = view.findViewById(R.id.txt_post_is_spoiler);
@@ -931,14 +922,14 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     private void postSave(Data data, PostViewModel viewModel, MenuItem menuItem) {
         if (data.isSaved())
-            viewModel.unSavePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.unSavePost(data.getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed) {
                     data.setSaved(false);
                     menuItem.setTitle("Save");
                 }
             });
         else
-            viewModel.savePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.savePost(data.getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed) {
                     data.setSaved(true);
                     menuItem.setTitle("Unsave");
@@ -948,14 +939,14 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     private void postHide(Data data, PostViewModel viewModel, MenuItem menuItem) {
         if (data.getHidden())
-            viewModel.unHidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.unHidePost(data.getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed) {
                     data.setHidden(false);
                     menuItem.setTitle("Hide");
                 }
             });
         else
-            viewModel.hidePost(data.getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.hidePost(data.getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed) {
                     data.setHidden(true);
                     menuItem.setTitle("Unhide");
@@ -968,8 +959,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
 
         SubredditViewModel subredditViewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
-        subredditViewModel.getSubredditRules(data.getSubredditNamePrefixed(),
-                requireActivity().getApplication()).observe(getViewLifecycleOwner(),
+        subredditViewModel.getSubredditRules(data.getSubredditNamePrefixed()).observe(getViewLifecycleOwner(),
                 rulesBundle -> {
                     if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
                         navController.navigate(NavGraphDirections.actionGlobalReportDialogFragment(
@@ -999,7 +989,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                 .setCancelable(false)
                 .setNegativeButton("Nope", (dialog, id) -> dialog.cancel())
                 .setPositiveButton("Do it!", (dialog, id) ->
-                        viewModel.deleteSubmission(fullname, requireActivity().getApplication())
+                        viewModel.deleteSubmission(fullname)
                                 .observe(getViewLifecycleOwner(), success -> {
                                     if (success) {
                                         requireActivity().onBackPressed();
@@ -1030,8 +1020,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             if (result != null) {
                 PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
-                viewModel.selectFlair(postData.getSubredditNamePrefixed(), postData.getName(),
-                        result.getId(), requireActivity().getApplication())
+                viewModel.selectFlair(postData.getSubredditNamePrefixed(), postData.getName(), result.getId())
                         .observe(getViewLifecycleOwner(), success -> {
 
                             CustomTextView customTxtPostFlair = view.findViewById(R.id.single_post_link_flair);

@@ -1,6 +1,10 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,11 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.jaredrummler.cyanea.Cyanea;
 
@@ -59,7 +58,7 @@ public class WikiFragment extends Fragment {
 
         String subreddit = ((MainActivity) requireActivity()).getFoxSharedViewModel().getCurrentSubreddit();
 
-        viewModel.getSubredditWiki(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
+        viewModel.getSubredditWiki(subreddit).observe(getViewLifecycleOwner(), subredditInfo ->
         {
             Markwon markwon = Markwon.builder(requireContext())
                     .usePlugin(TablePlugin.create(requireContext()))

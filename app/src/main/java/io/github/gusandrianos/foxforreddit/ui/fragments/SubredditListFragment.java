@@ -27,6 +27,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
@@ -36,8 +37,6 @@ import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.SubredditListAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
-
-import io.github.gusandrianos.foxforreddit.Constants;
 
 @AndroidEntryPoint
 public class SubredditListFragment extends Fragment implements SubredditListAdapter.OnItemClickListener {
@@ -72,7 +71,7 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
             location = Constants.VISITOR_SUB_LIST_LOCATION;
         }
 
-        viewModel.getSubreddits(requireActivity().getApplication(), location).observe(getViewLifecycleOwner(), subredditPagingData -> {
+        viewModel.getSubreddits(location).observe(getViewLifecycleOwner(), subredditPagingData -> {
             mSubredditListAdapter.submitData(getViewLifecycleOwner().getLifecycle(), subredditPagingData);
         });
     }

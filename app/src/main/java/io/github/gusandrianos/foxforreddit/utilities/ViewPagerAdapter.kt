@@ -2,7 +2,6 @@ package io.github.gusandrianos.foxforreddit.utilities
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import kotlin.collections.ArrayList
 
 class ViewPagerAdapter(val fragments: ArrayList<Fragment>,
                        private val tabTitles: ArrayList<String>,

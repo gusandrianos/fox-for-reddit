@@ -113,7 +113,7 @@ public class ComposeMessageFragment extends Fragment {
         String text = messageTextField.getText().toString();
 
         UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        viewModel.messageCompose(requireActivity().getApplication(), toUser, subject, text).observe(getViewLifecycleOwner(), success -> {
+        viewModel.messageCompose(toUser, subject, text).observe(getViewLifecycleOwner(), success -> {
             if (success == null)
                 Toast.makeText(getContext(), "User does not exist.", Toast.LENGTH_SHORT).show();
             else if (success)

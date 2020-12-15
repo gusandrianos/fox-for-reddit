@@ -1,6 +1,5 @@
 package io.github.gusandrianos.foxforreddit.data.repositories
 
-import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,7 +20,7 @@ import javax.inject.Singleton
 class SubredditRepository @Inject constructor(private val mTokenDao: TokenDao, private val mTokenRepository: TokenRepository) {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
 
-    fun getSubredditLinkFlair(subredditName: String, application: Application): LiveData<List<Flair>> {
+    fun getSubredditLinkFlair(subredditName: String): LiveData<List<Flair>> {
         val subredditLinkFlair: MutableLiveData<List<Flair>> = MutableLiveData()
         val bearer = getBearer(mTokenDao, mTokenRepository)
         val subLinkFlairCall = redditAPI.getSubredditLinkFlair(bearer, subredditName)
@@ -38,7 +37,7 @@ class SubredditRepository @Inject constructor(private val mTokenDao: TokenDao, p
         return subredditLinkFlair
     }
 
-    fun getSubreddit(subredditName: String, application: Application): LiveData<Data> {
+    fun getSubreddit(subredditName: String): LiveData<Data> {
         val subreddit: MutableLiveData<Data> = MutableLiveData()
 
         val bearer = getBearer(mTokenDao, mTokenRepository)
@@ -55,7 +54,7 @@ class SubredditRepository @Inject constructor(private val mTokenDao: TokenDao, p
         return subreddit
     }
 
-    fun getSubredditWiki(subredditName: String, application: Application): LiveData<Data> {
+    fun getSubredditWiki(subredditName: String): LiveData<Data> {
         val subredditWiki: MutableLiveData<Data> = MutableLiveData()
         val bearer = getBearer(mTokenDao, mTokenRepository)
         val wikiCall = redditAPI.getSubredditWiki(bearer, subredditName)
@@ -71,7 +70,7 @@ class SubredditRepository @Inject constructor(private val mTokenDao: TokenDao, p
         return subredditWiki
     }
 
-    fun getSubredditRules(subredditName: String, application: Application): LiveData<RulesBundle> {
+    fun getSubredditRules(subredditName: String): LiveData<RulesBundle> {
         val subredditRules: MutableLiveData<RulesBundle> = MutableLiveData()
         val bearer = getBearer(mTokenDao, mTokenRepository)
         val rulesCall = redditAPI.getSubredditRules(bearer, subredditName)
@@ -87,7 +86,7 @@ class SubredditRepository @Inject constructor(private val mTokenDao: TokenDao, p
         return subredditRules
     }
 
-    fun getSubredditModerators(subredditName: String, application: Application): LiveData<ModeratorsList> {
+    fun getSubredditModerators(subredditName: String): LiveData<ModeratorsList> {
         val subredditModerators: MutableLiveData<ModeratorsList> = MutableLiveData()
         val bearer = getBearer(mTokenDao, mTokenRepository)
         val modsCall = redditAPI.getSubredditModerators(bearer, subredditName)
@@ -103,7 +102,7 @@ class SubredditRepository @Inject constructor(private val mTokenDao: TokenDao, p
         return subredditModerators
     }
 
-    fun toggleSubscribed(action: Int, subredditName: String, application: Application): LiveData<Boolean> {
+    fun toggleSubscribed(action: Int, subredditName: String): LiveData<Boolean> {
         val subscribeStatus: MutableLiveData<Boolean> = MutableLiveData()
         val bearer = getBearer(mTokenDao, mTokenRepository)
         var actionString = ""

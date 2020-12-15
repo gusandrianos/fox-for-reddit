@@ -126,8 +126,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
     void loadPosts(boolean requestChanged) {
         if (type_of_action.equals(ACTION_POST)) {
-            PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-            PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+            PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
             if (requestChanged)
                 viewModel.deleteCached();
@@ -172,8 +171,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
         int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
-        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
         switch (clicked) {
             case Constants.POST_SUBREDDIT:

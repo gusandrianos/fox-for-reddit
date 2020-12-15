@@ -30,11 +30,6 @@ public class InjectorUtils {
 
     }
 
-    public PostViewModelFactory providePostViewModelFactory() {
-        PostRepository postRepository = new PostRepository(mTokenDao);
-        return new PostViewModelFactory(postRepository);
-    }
-
     public TokenRepository provideTokenRepository() {
         return TokenRepository.getInstance();
     }

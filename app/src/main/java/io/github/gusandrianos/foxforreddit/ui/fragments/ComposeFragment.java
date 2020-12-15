@@ -186,8 +186,7 @@ public class ComposeFragment extends Fragment {
     }
 
     private boolean postAction(View view, View inflated, int composeType) {
-        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
         TextInputEditText subredditTextField = view.findViewById(R.id.edit_compose_subreddit_field);
         TextInputEditText titleTextField = view.findViewById(R.id.edit_compose_title_field);
         MainActivity mainActivity = (MainActivity) requireActivity();

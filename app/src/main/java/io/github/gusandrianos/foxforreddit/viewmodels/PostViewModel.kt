@@ -1,6 +1,7 @@
 package io.github.gusandrianos.foxforreddit.viewmodels
 
 import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,21 +12,23 @@ import io.github.gusandrianos.foxforreddit.data.models.SinglePost
 import io.github.gusandrianos.foxforreddit.data.models.SubmitResponse
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import io.github.gusandrianos.foxforreddit.data.repositories.PostRepository
+import javax.inject.Singleton
 
-class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
+@Singleton
+class PostViewModel @ViewModelInject constructor(private val mPostRepository: PostRepository) : ViewModel() {
     var posts: LiveData<PagingData<Data>>? = null
 
     fun getPosts(subreddit: String, filter: String, time: String, application: Application)
-            : LiveData<PagingData<Data>> {
+        : LiveData<PagingData<Data>> {
         if (posts != null)
             return posts!!
 
         posts = Pager(
-                config = PagingConfig(pageSize = 25, prefetchDistance = 25,
-                        enablePlaceholders = false),
-                pagingSourceFactory = {
-                    mPostRepository.getPosts(subreddit, filter, time, application)
-                }
+            config = PagingConfig(pageSize = 25, prefetchDistance = 25,
+                enablePlaceholders = false),
+            pagingSourceFactory = {
+                mPostRepository.getPosts(subreddit, filter, time, application)
+            }
         ).liveData.cachedIn(viewModelScope)
 
         return posts!!
@@ -44,12 +47,12 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
     }
 
     fun getSinglePostComments(permalink: String, application: Application):
-            LiveData<CommentListing> {
+        LiveData<CommentListing> {
         return mPostRepository.getSinglePostComments(permalink, application)
     }
 
     fun getMoreChildren(linkId: String, children: String, application: Application)
-            : LiveData<MoreChildren> {
+        : LiveData<MoreChildren> {
         return mPostRepository.getMoreChildren(linkId, children, application)
     }
 
@@ -57,7 +60,7 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
                    nsfw: Boolean, spoiler: Boolean, flair_id: String, flair_text: String,
                    application: Application): LiveData<SubmitResponse> {
         return mPostRepository.submitText(type, subreddit, title, url, text, nsfw, spoiler,
-                flair_id, flair_text, application)
+            flair_id, flair_text, application)
     }
 
     fun savePost(id: String, application: Application): LiveData<Boolean> {
@@ -98,7 +101,7 @@ class PostViewModel(private val mPostRepository: PostRepository) : ViewModel() {
     }
 
     fun editSubmission(text: String, thing_id: String, application: Application)
-            : LiveData<Boolean> {
+        : LiveData<Boolean> {
         return mPostRepository.editSubmission(text, thing_id, application)
     }
 }

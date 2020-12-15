@@ -168,8 +168,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         setUpNavigation(view, singlePostData, postType);
         initializeUI(singlePostData, view, postType);
 
-        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
         String permalink = singlePostData.getPermalink().substring(1, singlePostData.getPermalink().length() - 1);
 
         viewModel.getSinglePostComments(permalink, requireActivity().getApplication())
@@ -275,8 +274,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         mBtnPostNumComments.setText(FoxToolkit.INSTANCE.formatValue(singlePostData.getNumComments()));
 
         int currentDestinationID = Objects.requireNonNull(navController.getCurrentDestination()).getId();
-        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
         mTxtPostSubreddit.setOnClickListener(view1 -> {
             if (currentDestinationID != R.id.subredditFragment) {
@@ -663,8 +661,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
             NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
             navController.navigate(SinglePostFragmentDirections.actionSinglePostFragmentToCommentsFragment(linkId, loadChildren.toString(), moreChildrenList, subreddit));
         } else {
-            PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-            PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+            PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
             switch (actionType) {
                 case Constants.THING_VOTE_UP:
@@ -815,8 +812,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
     private void setUpMenu(Toolbar toolbar, Data postData, int postType, View view, MainActivity mainActivity) {
 
-        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
         toolbar.inflateMenu(R.menu.self_single_post_menu);
         Menu menu = toolbar.getMenu();
@@ -1032,8 +1028,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         getParentFragmentManager().setFragmentResultListener("flairChoice", getViewLifecycleOwner(), (key, bundle) -> {
             Flair result = bundle.getParcelable("flair");
             if (result != null) {
-                PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-                PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+                PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
                 viewModel.selectFlair(postData.getSubredditNamePrefixed(), postData.getName(),
                         result.getId(), requireActivity().getApplication())

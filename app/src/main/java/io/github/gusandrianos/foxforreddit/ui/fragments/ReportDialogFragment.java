@@ -200,8 +200,7 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
         submit.setAlpha(1f);
         submit.setClickable(true);
 
-        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
         submit.setOnClickListener(v -> viewModel.reportPost(thingId, reason, requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
             String message = (succeed) ? "Report has been sent" : "Failed to report";

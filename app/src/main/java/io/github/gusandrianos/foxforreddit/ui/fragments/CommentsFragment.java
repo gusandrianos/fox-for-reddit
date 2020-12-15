@@ -52,6 +52,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
+import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
@@ -123,8 +124,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
             });
         }
 
-        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
         viewModel.getMoreChildren(linkId, loadChildren, requireActivity().getApplication()).observe(getViewLifecycleOwner(), commentListing -> {
             groupAdapter = new GroupAdapter<>();
             initRecyclerView(groupAdapter);
@@ -179,8 +179,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
 
             navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren.toString(), moreChildrenList, subreddit));
         } else {
-            PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-            PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+            PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
             switch (actionType) {
                 case Constants.THING_VOTE_UP:

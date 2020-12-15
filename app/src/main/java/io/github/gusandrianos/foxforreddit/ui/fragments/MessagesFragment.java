@@ -149,9 +149,7 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
                 break;
             case Constants.THING_MORE_ACTIONS:
                 UserViewModel userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-
-                PostViewModelFactory postViewModelFactory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-                PostViewModel postViewModel = new ViewModelProvider(this, postViewModelFactory).get(PostViewModel.class);
+                PostViewModel postViewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
                 PopupMenu menu = new PopupMenu(requireContext(), view);
                 menu.inflate(R.menu.private_messages_popup);

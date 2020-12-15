@@ -62,8 +62,7 @@ public class EditThingFragment extends Fragment {
             String thingFullname = EditThingFragmentArgs.fromBundle(requireArguments()).getThingFullname();
             TextInputEditText bodyEditText = view.findViewById(R.id.edit_edit_thing_text_body);
 
-            PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-            PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+            PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
             viewModel.editSubmission(bodyEditText.getText().toString(), thingFullname, requireActivity().getApplication())
                     .observe(getViewLifecycleOwner(), success -> {

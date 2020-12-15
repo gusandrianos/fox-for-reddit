@@ -55,8 +55,7 @@ public class SinglePostBuffer extends Fragment {
 
         String permalink = "r/" + subreddit + "/comments/" + subdir;
 
-        PostViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
-        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+        PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
         viewModel.getSinglePost(permalink, requireActivity().getApplication())
                 .observe(getViewLifecycleOwner(), post -> {

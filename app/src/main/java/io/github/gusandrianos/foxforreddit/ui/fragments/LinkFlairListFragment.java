@@ -6,7 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStore;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -36,8 +38,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
 @AndroidEntryPoint
 public class LinkFlairListFragment extends Fragment implements LinkFlairListAdapter.OnItemClickListener {
-    @Inject
-    TokenDao mTokenDao;
+    SubredditViewModel viewModel;
 
     @Nullable
     @Override
@@ -49,14 +50,13 @@ public class LinkFlairListFragment extends Fragment implements LinkFlairListAdap
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
         String subredditName = LinkFlairListFragmentArgs.fromBundle(requireArguments()).getSubredditName();
         setUpNavigation(view);
         setUpRecyclerView(view, subredditName);
     }
 
     void setUpRecyclerView(View view, String subredditName) {
-        SubredditViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
 
         viewModel.getSubredditLinkFlair(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), linkFlair -> {
             if (linkFlair != null) {

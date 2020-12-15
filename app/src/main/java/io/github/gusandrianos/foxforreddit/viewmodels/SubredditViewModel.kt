@@ -1,6 +1,7 @@
 package io.github.gusandrianos.foxforreddit.viewmodels
 
 import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import io.github.gusandrianos.foxforreddit.data.models.Data
@@ -8,8 +9,10 @@ import io.github.gusandrianos.foxforreddit.data.models.Flair
 import io.github.gusandrianos.foxforreddit.data.models.ModeratorsList
 import io.github.gusandrianos.foxforreddit.data.models.RulesBundle
 import io.github.gusandrianos.foxforreddit.data.repositories.SubredditRepository
+import javax.inject.Singleton
 
-class SubredditViewModel(private val mSubredditRepository: SubredditRepository) : ViewModel() {
+@Singleton
+class SubredditViewModel @ViewModelInject constructor(private val mSubredditRepository: SubredditRepository) : ViewModel() {
 
     fun getSubreddit(subredditName: String, application: Application): LiveData<Data> {
         return mSubredditRepository.getSubreddit(subredditName, application)

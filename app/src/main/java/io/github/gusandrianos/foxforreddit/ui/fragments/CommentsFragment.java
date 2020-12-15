@@ -304,8 +304,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
     }
 
     private void popUpMenuReport(ChildrenItem comment) {
-        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
-        SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
+        SubredditViewModel subredditViewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
         subredditViewModel.getSubredditRules(comment.getData().getSubredditNamePrefixed(),
                 requireActivity().getApplication()).observe(getViewLifecycleOwner(),
                 rulesBundle -> {

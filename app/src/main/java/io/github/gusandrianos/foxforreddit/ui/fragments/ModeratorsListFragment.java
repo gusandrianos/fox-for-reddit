@@ -56,8 +56,7 @@ public class ModeratorsListFragment extends Fragment implements ModeratorsListAd
     }
 
     void setUpRecyclerView(View view, String subreddit) {
-        SubredditViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+        SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
 
         viewModel.getSubredditModerators(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), moderators -> {
             if (moderators != null) {

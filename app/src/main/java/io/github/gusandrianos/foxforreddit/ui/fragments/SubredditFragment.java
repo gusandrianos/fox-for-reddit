@@ -78,8 +78,7 @@ public class SubredditFragment extends Fragment {
         setUpNavigation(view, subredditName);
         setUpMenuItemClicks(view, subredditName);
 
-        SubredditViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+        SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
 
         String finalSubredditName = subredditName;
         viewModel.getSubreddit(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
@@ -107,8 +106,7 @@ public class SubredditFragment extends Fragment {
         setupButton(subredditInfo, view);
         if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
             subUnsubButton.setOnClickListener(button -> {
-                SubredditViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
-                SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+                SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
                 viewModel.toggleSubscribed(getFinalAction(subredditInfo),
                         subredditInfo.getDisplayName(),
                         requireActivity().getApplication())

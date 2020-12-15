@@ -49,8 +49,7 @@ public class RulesFragment extends Fragment {
     }
 
     private void setUpRecyclerView(View view, String subreddit) {
-        SubredditViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+        SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
 
         viewModel.getSubredditRules(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), rules -> {
             if (rules != null) {

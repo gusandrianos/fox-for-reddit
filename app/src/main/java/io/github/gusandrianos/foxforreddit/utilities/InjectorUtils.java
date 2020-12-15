@@ -44,11 +44,6 @@ public class InjectorUtils {
         return new UserViewModelFactory(userRepository);
     }
 
-    public SubredditViewModelFactory provideSubredditViewModelFactory() {
-        SubredditRepository subredditRepository = new SubredditRepository(mTokenDao);
-        return new SubredditViewModelFactory(subredditRepository);
-    }
-
     public SearchViewModelFactory provideSearchViewModelFactory() {
         SearchRepository searchRepository = new SearchRepository(mTokenDao);
         return new SearchViewModelFactory(searchRepository);

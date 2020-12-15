@@ -199,8 +199,7 @@ public class UserFragment extends Fragment {
         if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
             profileButton.setOnClickListener(button -> {
                 if (!mainActivity.getFoxSharedViewModel().getViewingSelf()) {
-                    SubredditViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
-                    SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+                    SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
                     viewModel.toggleSubscribed(getFinalAction(userSubreddit),
                             userSubreddit.getDisplayName(),
                             requireActivity().getApplication())

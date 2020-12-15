@@ -305,8 +305,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
 
-        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
-        SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
+        SubredditViewModel subredditViewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
         subredditViewModel.getSubredditRules(data.getSubredditNamePrefixed(),
                 requireActivity().getApplication()).observe(getViewLifecycleOwner(),
                 rulesBundle -> {

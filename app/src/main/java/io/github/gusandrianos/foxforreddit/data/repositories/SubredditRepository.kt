@@ -14,8 +14,11 @@ import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SubredditRepository(private val mTokenDao: TokenDao) {
+@Singleton
+class SubredditRepository @Inject constructor(private val mTokenDao: TokenDao) {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
 
     fun getSubredditLinkFlair(subredditName: String, application: Application): LiveData<List<Flair>> {

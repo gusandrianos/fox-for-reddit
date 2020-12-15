@@ -53,8 +53,7 @@ public class WikiFragment extends Fragment {
     }
 
     void setUpContent(View view) {
-        SubredditViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+        SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
 
         String contentText = "This looks empty";
         TextView content = view.findViewById(R.id.text_wiki_body);

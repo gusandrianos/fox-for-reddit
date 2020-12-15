@@ -761,8 +761,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     }
 
     private void popUpMenuReport(ChildrenItem comment) {
-        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
-        SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
+        SubredditViewModel subredditViewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
         subredditViewModel.getSubredditRules(comment.getData().getSubredditNamePrefixed(),
                 requireActivity().getApplication()).observe(getViewLifecycleOwner(),
                 rulesBundle -> {
@@ -972,8 +971,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
 
-        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance(mTokenDao).provideSubredditViewModelFactory();
-        SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
+        SubredditViewModel subredditViewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
         subredditViewModel.getSubredditRules(data.getSubredditNamePrefixed(),
                 requireActivity().getApplication()).observe(getViewLifecycleOwner(),
                 rulesBundle -> {

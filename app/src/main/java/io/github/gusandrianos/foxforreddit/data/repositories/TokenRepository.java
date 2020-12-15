@@ -2,8 +2,6 @@ package io.github.gusandrianos.foxforreddit.data.repositories;
 
 import android.util.Log;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +11,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.data.network.OAuthTokenAPI;
@@ -21,30 +22,30 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 // TODO: Rewrite in Kotlin
+@Singleton
 public class TokenRepository {
-    OAuthTokenAPI tokenRequest;
+    OAuthTokenAPI mTokenRequest;
     private TokenDao mTokenDao;
     Token mToken;
 
-    public TokenRepository(OAuthTokenAPI tokenRequest) {
-        this.tokenRequest = tokenRequest;
+    @Inject
+    public TokenRepository(OAuthTokenAPI tokenRequest, TokenDao tokenDao) {
+        mTokenRequest = tokenRequest;
+        mTokenDao = tokenDao;
     }
 
-    public Token getNewToken(@NotNull TokenDao tokenDao, String code, String redirectURI) {
+    public Token getNewToken(String code, String redirectURI) {
         if (mToken != null && (code.isEmpty() || redirectURI.isEmpty()))
             return mToken;
-
-        if (mTokenDao == null)
-            mTokenDao = tokenDao;
 
         Call<Token> token;
         String clientID = "n1R0bc_lPPTtVg";
         String password = "";
         if (code.isEmpty() || redirectURI.isEmpty()) {
             String uuid = UUID.randomUUID().toString();
-            token = tokenRequest.getUserlessToken(Credentials.basic(clientID, password), "https://oauth.reddit.com/grants/installed_client", uuid);
+            token = mTokenRequest.getUserlessToken(Credentials.basic(clientID, password), "https://oauth.reddit.com/grants/installed_client", uuid);
         } else {
-            token = tokenRequest.getAuthorizedUserToken(Credentials.basic(clientID, password), "authorization_code", code, redirectURI);
+            token = mTokenRequest.getAuthorizedUserToken(Credentials.basic(clientID, password), "authorization_code", code, redirectURI);
         }
 
         ExecutorService service = Executors.newSingleThreadExecutor();
@@ -79,13 +80,11 @@ public class TokenRepository {
             return mToken;
         }
 
-        Log.i("Token Refresh", "Token Dao created");
-
         Call<Token> token;
         String clientID = "n1R0bc_lPPTtVg";
         String password = "";
 
-        token = tokenRequest.refreshAuthorizedUserToken(Credentials.basic(clientID, password), "refresh_token", mToken.getRefreshToken());
+        token = mTokenRequest.refreshAuthorizedUserToken(Credentials.basic(clientID, password), "refresh_token", mToken.getRefreshToken());
 
         ExecutorService service = Executors.newSingleThreadExecutor();
 
@@ -115,7 +114,7 @@ public class TokenRepository {
     }
 
     public Token getNewToken() {
-        return getNewToken(mTokenDao, "", "");
+        return getNewToken("", "");
     }
 
     public Token getCachedToken() {
@@ -142,8 +141,7 @@ public class TokenRepository {
         return mToken;
     }
 
-    public Token getToken(TokenDao tokenDao) {
-        mTokenDao = tokenDao;
+    public Token getToken() {
         if (mToken != null) {
 
             if (!mToken.hasExpired())

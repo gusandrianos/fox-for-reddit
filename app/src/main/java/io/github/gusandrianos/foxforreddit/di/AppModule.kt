@@ -9,7 +9,6 @@ import dagger.hilt.components.SingletonComponent
 import io.github.gusandrianos.foxforreddit.data.db.FoxDatabase
 import io.github.gusandrianos.foxforreddit.data.network.OAuthTokenAPI
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
-import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -32,11 +31,6 @@ object AppModule {
     @Provides
     fun provideTokenDao(database: FoxDatabase) =
         database.tokenDao()
-
-    @Provides
-    @Singleton
-    fun provideTokenRepository(oAuthTokenAPI: OAuthTokenAPI): TokenRepository =
-        TokenRepository(oAuthTokenAPI)
 
     @Provides
     @Singleton

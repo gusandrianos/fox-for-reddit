@@ -44,7 +44,6 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Subreddit;
 import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
@@ -57,8 +56,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 
 @AndroidEntryPoint
 public class UserFragment extends Fragment {
-    @Inject
-    TokenDao mTokenDao;
+
     @Inject
     TokenRepository mTokenRepository;
 
@@ -78,7 +76,7 @@ public class UserFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         FoxSharedViewModel sharedViewModel = mainActivity.getFoxSharedViewModel();
 
-        if (sharedViewModel.getCurrentUserUsername().isEmpty() && FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository)) {
+        if (sharedViewModel.getCurrentUserUsername().isEmpty() && FoxToolkit.INSTANCE.isAuthorized(mTokenRepository)) {
             UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
             viewModel.getMe().observe(getViewLifecycleOwner(), user -> {
@@ -193,7 +191,7 @@ public class UserFragment extends Fragment {
 
         setupButton(userSubreddit, view);
         MainActivity mainActivity = (MainActivity) requireActivity();
-        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenRepository))
             profileButton.setOnClickListener(button -> {
                 if (!mainActivity.getFoxSharedViewModel().getViewingSelf()) {
                     SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
@@ -238,7 +236,7 @@ public class UserFragment extends Fragment {
 
         NavController navController = NavHostFragment.findNavController(this);
 
-        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenRepository))
             setUpMenu(mainActivity.getFoxSharedViewModel().getViewingSelf(), toolbar, mainActivity, navController, user);
     }
 

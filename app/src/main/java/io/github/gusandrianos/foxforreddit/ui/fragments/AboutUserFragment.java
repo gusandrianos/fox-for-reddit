@@ -13,19 +13,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.utilities.TrophyAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 
 @AndroidEntryPoint
 public class AboutUserFragment extends Fragment {
-    @Inject
-    TokenDao mTokenDao;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

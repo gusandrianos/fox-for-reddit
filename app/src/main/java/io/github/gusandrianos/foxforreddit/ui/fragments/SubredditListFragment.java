@@ -30,7 +30,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
@@ -43,9 +42,6 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
 
     SubredditListAdapter mSubredditListAdapter;
     RecyclerView mSubredditsRV;
-
-    @Inject
-    TokenDao mTokenDao;
     @Inject
     TokenRepository mTokenRepository;
 
@@ -65,7 +61,7 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
 
     private void initializeUI() {
         UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        Token token = mTokenRepository.getToken(mTokenDao);
+        Token token = mTokenRepository.getToken();
         String location = Constants.AUTHORIZED_SUB_LIST_LOCATION;
         if (token.getRefreshToken() == null) {
             location = Constants.VISITOR_SUB_LIST_LOCATION;

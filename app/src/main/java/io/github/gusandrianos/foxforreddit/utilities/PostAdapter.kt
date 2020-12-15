@@ -17,7 +17,6 @@ import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.libRG.CustomTextView
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
@@ -30,7 +29,6 @@ import org.apache.commons.text.StringEscapeUtils
 
 class PostAdapter(private val mainActivity: MainActivity,
                   private val listener: OnItemClickListener,
-                  private val mTokenDao: TokenDao,
                   private val mTokenRepository: TokenRepository
 ) : PagingDataAdapter<Data, RecyclerView.ViewHolder>(POST_COMPARATOR) {
 
@@ -171,7 +169,7 @@ class PostAdapter(private val mainActivity: MainActivity,
             }
 
             mImgBtnPostVoteUp.setOnClickListener {
-                if (!FoxToolkit.isAuthorized(mTokenDao, mTokenRepository))
+                if (!FoxToolkit.isAuthorized(mTokenRepository))
                     FoxToolkit.promptLogIn(mainActivity)
                 else
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
@@ -185,7 +183,7 @@ class PostAdapter(private val mainActivity: MainActivity,
             }
 
             mImgBtnPostVoteDown.setOnClickListener {
-                if (!FoxToolkit.isAuthorized(mTokenDao, mTokenRepository))
+                if (!FoxToolkit.isAuthorized(mTokenRepository))
                     FoxToolkit.promptLogIn(mainActivity)
                 else
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {

@@ -25,12 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.NextStepReasonsItem;
 import io.github.gusandrianos.foxforreddit.data.models.RulesBundle;
 import io.github.gusandrianos.foxforreddit.data.models.RulesItem;
@@ -45,8 +42,6 @@ public class ReportDialogFragment extends BottomSheetDialogFragment {
     int rulesToShow;
     String subredditName;
     String thingId;
-    @Inject
-    TokenDao mTokenDao;
 
     @Nullable
     @Override

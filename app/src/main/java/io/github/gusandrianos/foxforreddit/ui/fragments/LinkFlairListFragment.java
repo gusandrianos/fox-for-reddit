@@ -30,6 +30,7 @@ import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 
 @AndroidEntryPoint
 public class LinkFlairListFragment extends Fragment implements LinkFlairListAdapter.OnItemClickListener {
+
     SubredditViewModel viewModel;
 
     @Nullable

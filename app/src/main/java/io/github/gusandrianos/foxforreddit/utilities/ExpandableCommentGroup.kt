@@ -13,7 +13,6 @@ import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem
 import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
@@ -31,9 +30,8 @@ class ExpandableCommentGroup constructor(
     listener: ExpandableCommentItem.OnItemClickListener,
     mainActivity: MainActivity,
     markwon: Markwon,
-    mTokenDao: TokenDao,
     mTokenRepository: TokenRepository
-) : ExpandableGroup(ExpandableCommentItem(mComment, depth, linkId, listener, mainActivity, markwon, mTokenDao, mTokenRepository)) {
+) : ExpandableGroup(ExpandableCommentItem(mComment, depth, linkId, listener, mainActivity, markwon, mTokenRepository)) {
 
     init {
         var repliesItem: ChildrenItem? = null
@@ -57,7 +55,7 @@ class ExpandableCommentGroup constructor(
                     val gson = Gson()
                     gson.fromJson(gson.toJsonTree(comment).asJsonObject, childType)
                 }
-                add(ExpandableCommentGroup(item, item.data!!.depth, linkId, listener, mainActivity, markwon, mTokenDao, mTokenRepository))
+                add(ExpandableCommentGroup(item, item.data!!.depth, linkId, listener, mainActivity, markwon, mTokenRepository))
                     .apply { isExpanded = true }
             }
     }
@@ -70,7 +68,6 @@ open class ExpandableCommentItem constructor(
     private val listener: OnItemClickListener,
     private val mainActivity: MainActivity,
     private val markwon: Markwon,
-    private val mTokenDao: TokenDao,
     private val mTokenRepository: TokenRepository
 ) : Item<GroupieViewHolder>(), ExpandableItem {
     private lateinit var expandableGroup: ExpandableGroup
@@ -137,7 +134,7 @@ open class ExpandableCommentItem constructor(
             score, mainActivity, comment.currentTextColor)
 
         upvote.setOnClickListener {
-            if (!FoxToolkit.isAuthorized(mTokenDao, mTokenRepository))
+            if (!FoxToolkit.isAuthorized(mTokenRepository))
                 FoxToolkit.promptLogIn(mainActivity)
             else {
                 upVoteColor(mComment.data?.likes, upvote, downvote, score, mainActivity, comment.currentTextColor)
@@ -146,7 +143,7 @@ open class ExpandableCommentItem constructor(
         }
 
         downvote.setOnClickListener {
-            if (!FoxToolkit.isAuthorized(mTokenDao, mTokenRepository))
+            if (!FoxToolkit.isAuthorized(mTokenRepository))
                 FoxToolkit.promptLogIn(mainActivity)
             else {
                 downVoteColor(mComment.data?.likes, upvote, downvote, score, mainActivity, comment.currentTextColor)

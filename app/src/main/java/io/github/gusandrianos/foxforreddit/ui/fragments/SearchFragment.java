@@ -28,12 +28,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Listing;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.SearchAdapter;
@@ -41,14 +38,11 @@ import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModel;
 
 @AndroidEntryPoint
 public class SearchFragment extends Fragment implements SearchAdapter.OnSearchItemClickListener {
-    TextView txtResultsFromSearch;
 
+    TextView txtResultsFromSearch;
     RecyclerView search;
     SearchAdapter searchAdapter;
-
     MenuItem searchBarItem;
-    @Inject
-    TokenDao mTokenDao;
 
     @Nullable
     @Override

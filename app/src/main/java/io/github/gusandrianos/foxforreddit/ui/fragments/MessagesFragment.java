@@ -26,12 +26,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.MessagesAdapter;
@@ -44,15 +41,10 @@ import kotlin.Unit;
 public class MessagesFragment extends Fragment implements MessagesAdapter.MessagesItemClickListener {
 
     private View mView;
-
     private String where;
-
     MessagesAdapter mMessagesRecyclerViewAdapter;
     RecyclerView mMessagesRecyclerView;
     SwipeRefreshLayout pullToRefresh;
-
-    @Inject
-    TokenDao mTokenDao;
 
     @Nullable
     @Override

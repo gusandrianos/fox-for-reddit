@@ -40,7 +40,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.MoreChildrenList;
 import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
@@ -64,8 +63,6 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
     Markwon markwon;
 
     String subreddit;
-    @Inject
-    TokenDao mTokenDao;
     @Inject
     TokenRepository mTokenRepository;
 
@@ -139,7 +136,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                 }
                 groupAdapter.add(new ExpandableCommentGroup(item,
                         Objects.requireNonNull(item.getData()).getDepth(),
-                        linkId, this, (MainActivity) requireActivity(), markwon, mTokenDao, mTokenRepository));
+                        linkId, this, (MainActivity) requireActivity(), markwon, mTokenRepository));
             }
             if (txtMoreComments.getTag().equals("1"))
                 txtMoreComments.setVisibility(View.VISIBLE);
@@ -182,19 +179,19 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
 
             switch (actionType) {
                 case Constants.THING_VOTE_UP:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
                         FoxToolkit.INSTANCE.upVoteCommentModel(viewModel, comment.getData());
                     break;
                 case Constants.THING_VOTE_DOWN:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
                         FoxToolkit.INSTANCE.downVoteCommentModel(viewModel, comment.getData());
                     break;
                 case Constants.THING_REPLY:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
                         navController.navigate(
@@ -208,7 +205,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                     navController.navigate(action);
                     break;
                 case Constants.THING_MORE_ACTIONS:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else {
                         PopupMenu menu = new PopupMenu(requireContext(), view);

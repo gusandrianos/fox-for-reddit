@@ -19,18 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jaredrummler.cyanea.Cyanea;
 
-import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.utilities.RulesListAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 
 @AndroidEntryPoint
 public class RulesFragment extends Fragment {
-    @Inject
-    TokenDao mTokenDao;
 
     @Nullable
     @Override

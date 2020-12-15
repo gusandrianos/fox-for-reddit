@@ -28,17 +28,14 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.ui.ThemeSettings;
-import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 
 @AndroidEntryPoint
 public class MainFragment extends Fragment {
-    @Inject
-    TokenDao mTokenDao;
+
     @Inject
     TokenRepository mTokenRepository;
 

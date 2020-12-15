@@ -8,7 +8,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.liveData
 import com.google.gson.JsonObject
 import io.github.gusandrianos.foxforreddit.Constants
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
@@ -22,7 +21,6 @@ import javax.inject.Singleton
 
 @Singleton
 class UserRepository @Inject constructor(
-    private val mTokenDao: TokenDao,
     private val mTokenRepository: TokenRepository,
     private val redditAPI: RedditAPI
 ) {
@@ -32,7 +30,7 @@ class UserRepository @Inject constructor(
     private var userPrefs: MutableLiveData<UserPrefs> = MutableLiveData()
 
     fun getUser(username: String): LiveData<Data> {
-        val bearer = getBearer(mTokenDao, mTokenRepository)
+        val bearer = getBearer(mTokenRepository)
         val about = redditAPI.getUser(username, bearer)
         about.enqueue(object : Callback<Thing> {
             override fun onResponse(call: Call<Thing>, response: Response<Thing>) {
@@ -48,7 +46,7 @@ class UserRepository @Inject constructor(
     }
 
     fun getMe(): LiveData<Data> {
-        val bearer = getBearer(mTokenDao, mTokenRepository)
+        val bearer = getBearer(mTokenRepository)
         val about = redditAPI.getMe(bearer)
         about.enqueue(object : Callback<Data> {
             override fun onResponse(call: Call<Data>, response: Response<Data>) {
@@ -64,7 +62,7 @@ class UserRepository @Inject constructor(
     }
 
     fun getTrophies(username: String): LiveData<List<Thing>> {
-        val bearer = getBearer(mTokenDao, mTokenRepository)
+        val bearer = getBearer(mTokenRepository)
         val trophiesRequest = redditAPI.getTrophies(bearer, username)
         trophiesRequest.enqueue(object : Callback<Thing> {
             override fun onResponse(call: Call<Thing>, response: Response<Thing>) {
@@ -80,11 +78,11 @@ class UserRepository @Inject constructor(
     }
 
     fun getSubreddits(location: String): RedditPagingSource {
-        return RedditPagingSource(location, getBearer(mTokenDao, mTokenRepository), Constants.MODE_SUBREDDIT, redditAPI)
+        return RedditPagingSource(location, getBearer(mTokenRepository), Constants.MODE_SUBREDDIT, redditAPI)
     }
 
     fun getPrefs(): LiveData<UserPrefs> {
-        val bearer = getBearer(mTokenDao, mTokenRepository)
+        val bearer = getBearer(mTokenRepository)
         val prefsRequest = redditAPI.getPrefs(bearer)
         prefsRequest.enqueue((object : Callback<UserPrefs> {
             override fun onResponse(call: Call<UserPrefs>, response: Response<UserPrefs>) {
@@ -101,12 +99,12 @@ class UserRepository @Inject constructor(
     fun getMessagesWhere(where: String) =
         Pager(
             config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-            pagingSourceFactory = { RedditPagingSource(where, getBearer(mTokenDao, mTokenRepository), Constants.MODE_MESSAGES, redditAPI) }
+            pagingSourceFactory = { RedditPagingSource(where, getBearer(mTokenRepository), Constants.MODE_MESSAGES, redditAPI) }
         ).liveData
 
     fun blockUser(accountId: String, name: String): LiveData<Boolean> {
         val status = MutableLiveData<Boolean>()
-        val bearer = getBearer(mTokenDao, mTokenRepository)
+        val bearer = getBearer(mTokenRepository)
         val blockRequest = redditAPI.blockUser(bearer, accountId, "json", name)
         blockRequest.enqueue((object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -122,7 +120,7 @@ class UserRepository @Inject constructor(
 
     fun messageCompose(toUser: String, subject: String, text: String): LiveData<Boolean?> {
         val success = MutableLiveData<Boolean?>()
-        val bearer = getBearer(mTokenDao, mTokenRepository)
+        val bearer = getBearer(mTokenRepository)
         val sendMessage = redditAPI.messageCompose(bearer, toUser, subject, text, "json")
         sendMessage.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -143,7 +141,7 @@ class UserRepository @Inject constructor(
 
     fun commentCompose(thing_id: String, text: String): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
-        val bearer = getBearer(mTokenDao, mTokenRepository)
+        val bearer = getBearer(mTokenRepository)
         val sendComment = redditAPI.commentCompose(bearer, thing_id, text, "json")
         sendComment.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -160,7 +158,7 @@ class UserRepository @Inject constructor(
 
     fun deleteMsg(id: String): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
-        val bearer = getBearer(mTokenDao, mTokenRepository)
+        val bearer = getBearer(mTokenRepository)
         val deleteMessage = redditAPI.deleteMsg(bearer, id)
         deleteMessage.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {

@@ -29,7 +29,6 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
 import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
@@ -65,8 +64,6 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     SwipeRefreshLayout pullToRefresh;
 
     @Inject
-    TokenDao mTokenDao;
-    @Inject
     TokenRepository mTokenRepository;
 
     @Nullable
@@ -79,7 +76,7 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mView = getView();
-        mToken = mTokenRepository.getToken(mTokenDao);
+        mToken = mTokenRepository.getToken();
 
         query = getArguments().getString(ARG_QUERY_STRING, "");
         sr_restrict = getArguments().getBoolean(ARG_SR_RESTRICT_BOOLEAN);
@@ -163,7 +160,7 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     @Override
     public void onResume() {
         super.onResume();
-        Token token = mTokenRepository.getToken(mTokenDao);
+        Token token = mTokenRepository.getToken();
         if (!mToken.getAccessToken().equals(token.getAccessToken())) {
             mToken = token;
             initRecycleView();

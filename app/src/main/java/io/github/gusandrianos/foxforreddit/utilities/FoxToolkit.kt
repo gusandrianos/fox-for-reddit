@@ -14,7 +14,6 @@ import com.libRG.CustomTextView
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
-import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.CommentData
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.RichtextItem
@@ -28,13 +27,13 @@ import java.time.Instant
 import kotlin.math.pow
 
 object FoxToolkit {
-    fun getBearer(tokenDao: TokenDao, tokenRepository: TokenRepository): String {
-        val token = tokenRepository.getToken(tokenDao)
+    fun getBearer(tokenRepository: TokenRepository): String {
+        val token = tokenRepository.getToken()
         return " " + token.tokenType + " " + token.accessToken
     }
 
-    fun isAuthorized(tokenDao: TokenDao, tokenRepository: TokenRepository): Boolean {
-        val token = tokenRepository.getToken(tokenDao)
+    fun isAuthorized(tokenRepository: TokenRepository): Boolean {
+        val token = tokenRepository.getToken()
         return !token.refreshToken.isNullOrEmpty()
     }
 

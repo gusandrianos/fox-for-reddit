@@ -82,16 +82,14 @@ import io.github.gusandrianos.foxforreddit.data.models.GalleryItem;
 import io.github.gusandrianos.foxforreddit.data.models.MoreChildrenList;
 import io.github.gusandrianos.foxforreddit.data.models.ResolutionsItem;
 
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentGroup;
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentItem;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.ImageGalleryAdapter;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
@@ -117,6 +115,8 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
     Markwon markwon;
     @Inject
     TokenDao mTokenDao;
+    @Inject
+    TokenRepository mTokenRepository;
 
     @Nullable
     @Override
@@ -188,7 +188,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                         groupAdapter.add(new ExpandableCommentGroup(item,
                                 Objects.requireNonNull(item.getData()).getDepth(),
                                 singlePostData.getName(),
-                                SinglePostFragment.this, (MainActivity) requireActivity(), markwon, mTokenDao));
+                                SinglePostFragment.this, (MainActivity) requireActivity(), markwon, mTokenDao, mTokenRepository));
                     }
                 });
     }
@@ -291,7 +291,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         });
 
         mImgBtnPostVoteUp.setOnClickListener(view1 -> {
-            if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
+            if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                 FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
             else {
                 FoxToolkit.INSTANCE.upVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp,
@@ -301,7 +301,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         });
 
         mImgBtnPostVoteDown.setOnClickListener(view1 -> {
-            if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
+            if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                 FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
             else {
                 FoxToolkit.INSTANCE.downVoteColor(singlePostData.getLikes(), mImgBtnPostVoteUp,
@@ -665,21 +665,21 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
 
             switch (actionType) {
                 case Constants.THING_VOTE_UP:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
                         FoxToolkit.INSTANCE.upVoteCommentModel(viewModel,
                                 requireActivity().getApplication(), comment.getData());
                     break;
                 case Constants.THING_VOTE_DOWN:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
                         FoxToolkit.INSTANCE.downVoteCommentModel(viewModel,
                                 requireActivity().getApplication(), comment.getData());
                     break;
                 case Constants.THING_REPLY:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
                         navController.navigate(
@@ -693,7 +693,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
                     navController.navigate(action);
                     break;
                 case Constants.THING_MORE_ACTIONS:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else {
                         PopupMenu menu = new PopupMenu(requireContext(), view);
@@ -1088,7 +1088,7 @@ public class SinglePostFragment extends Fragment implements ExpandableCommentIte
         MainActivity mainActivity = (MainActivity) requireActivity();
         NavController navController = NavHostFragment.findNavController(this);
 
-        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
             setUpMenu(toolbar, postData, postType, view, mainActivity);
 
         BottomNavigationView bottomNavigationView = mainActivity.bottomNavView;

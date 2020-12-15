@@ -35,9 +35,7 @@ import io.github.gusandrianos.foxforreddit.data.models.NextStepReasonsItem;
 import io.github.gusandrianos.foxforreddit.data.models.RulesBundle;
 import io.github.gusandrianos.foxforreddit.data.models.RulesItem;
 import io.github.gusandrianos.foxforreddit.data.models.SiteRulesFlowItem;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
 @AndroidEntryPoint
 public class ReportDialogFragment extends BottomSheetDialogFragment {

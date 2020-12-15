@@ -32,11 +32,10 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.SearchResultsAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModelFactory;
 import kotlin.Unit;
 
 import static io.github.gusandrianos.foxforreddit.Constants.ACTION_SEARCH;
@@ -67,6 +66,8 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
 
     @Inject
     TokenDao mTokenDao;
+    @Inject
+    TokenRepository mTokenRepository;
 
     @Nullable
     @Override
@@ -78,7 +79,7 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mView = getView();
-        mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(mTokenDao);
+        mToken = mTokenRepository.getToken(mTokenDao);
 
         query = getArguments().getString(ARG_QUERY_STRING, "");
         sr_restrict = getArguments().getBoolean(ARG_SR_RESTRICT_BOOLEAN);
@@ -162,7 +163,7 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     @Override
     public void onResume() {
         super.onResume();
-        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(mTokenDao);
+        Token token = mTokenRepository.getToken(mTokenDao);
         if (!mToken.getAccessToken().equals(token.getAccessToken())) {
             mToken = token;
             initRecycleView();

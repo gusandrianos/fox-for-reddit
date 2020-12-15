@@ -20,6 +20,7 @@ import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.noties.markwon.Markwon
 import io.noties.markwon.ext.tables.TablePlugin
@@ -30,7 +31,8 @@ import org.apache.commons.text.StringEscapeUtils
 
 class PostAdapter(private val mainActivity: MainActivity,
                   private val listener: OnItemClickListener,
-                  private val mTokenDao: TokenDao
+                  private val mTokenDao: TokenDao,
+                  private val mTokenRepository: TokenRepository
 ) : PagingDataAdapter<Data, RecyclerView.ViewHolder>(POST_COMPARATOR) {
 
     companion object {
@@ -156,7 +158,6 @@ class PostAdapter(private val mainActivity: MainActivity,
         private val mTxtPostShare: TextView = itemView.findViewById(R.id.btn_post_share)
         private val mTxtPostMoreActions: TextView = itemView.findViewById(R.id.txt_post_more_actions)
 
-
         init {
             itemView.setOnClickListener {
                 onClick(bindingAdapterPosition, Constants.POST_ITEM, mPostType, it)
@@ -171,7 +172,7 @@ class PostAdapter(private val mainActivity: MainActivity,
             }
 
             mImgBtnPostVoteUp.setOnClickListener {
-                if (!FoxToolkit.isAuthorized(mTokenDao))
+                if (!FoxToolkit.isAuthorized(mTokenDao, mTokenRepository))
                     FoxToolkit.promptLogIn(mainActivity)
                 else
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
@@ -185,7 +186,7 @@ class PostAdapter(private val mainActivity: MainActivity,
             }
 
             mImgBtnPostVoteDown.setOnClickListener {
-                if (!FoxToolkit.isAuthorized(mTokenDao))
+                if (!FoxToolkit.isAuthorized(mTokenDao, mTokenRepository))
                     FoxToolkit.promptLogIn(mainActivity)
                 else
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {

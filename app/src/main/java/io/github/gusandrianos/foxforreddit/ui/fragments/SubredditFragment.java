@@ -40,11 +40,10 @@ import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.noties.markwon.Markwon;
@@ -56,6 +55,8 @@ public class SubredditFragment extends Fragment {
     FoxToolkit toolkit = FoxToolkit.INSTANCE;
     @Inject
     TokenDao mTokenDao;
+    @Inject
+    TokenRepository mTokenRepository;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -104,7 +105,7 @@ public class SubredditFragment extends Fragment {
         MaterialButton subUnsubButton = view.findViewById(R.id.button_subreddit_sub_unsub);
 
         setupButton(subredditInfo, view);
-        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
             subUnsubButton.setOnClickListener(button -> {
                 SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
                 viewModel.toggleSubscribed(getFinalAction(subredditInfo),

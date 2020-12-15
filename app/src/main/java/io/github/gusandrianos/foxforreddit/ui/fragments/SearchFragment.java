@@ -36,10 +36,8 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Listing;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.utilities.SearchAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModelFactory;
 
 @AndroidEntryPoint
 public class SearchFragment extends Fragment implements SearchAdapter.OnSearchItemClickListener {

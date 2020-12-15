@@ -22,6 +22,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.jaredrummler.cyanea.Cyanea;
 
+import java.lang.annotation.Inherited;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -30,6 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.ui.ThemeSettings;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
@@ -39,6 +41,8 @@ import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
 public class MainFragment extends Fragment {
     @Inject
     TokenDao mTokenDao;
+    @Inject
+    TokenRepository mTokenRepository;
 
     @Nullable
     @Override
@@ -58,7 +62,7 @@ public class MainFragment extends Fragment {
         ArrayList<Fragment> homeFragments = new ArrayList<>();
         ArrayList<String> tabTitles = new ArrayList<>();
 
-        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao)) {
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository)) {
             homeFragments.add(PostFragment.newInstance("", "best", ""));
             tabTitles.add("Home");
         } else {

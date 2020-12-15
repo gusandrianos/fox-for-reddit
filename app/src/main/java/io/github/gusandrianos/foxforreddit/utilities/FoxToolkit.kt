@@ -19,6 +19,7 @@ import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.CommentData
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.RichtextItem
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel
 import org.apache.commons.text.StringEscapeUtils
@@ -28,13 +29,13 @@ import java.time.Instant
 import kotlin.math.pow
 
 object FoxToolkit {
-    fun getBearer(tokenDao: TokenDao): String {
-        val token = InjectorUtils.getInstance().provideTokenRepository().getToken(tokenDao)
+    fun getBearer(tokenDao: TokenDao, tokenRepository: TokenRepository): String {
+        val token = tokenRepository.getToken(tokenDao)
         return " " + token.tokenType + " " + token.accessToken
     }
 
-    fun isAuthorized(tokenDao: TokenDao): Boolean {
-        val token = InjectorUtils.getInstance().provideTokenRepository().getToken(tokenDao)
+    fun isAuthorized(tokenDao: TokenDao, tokenRepository: TokenRepository): Boolean {
+        val token = tokenRepository.getToken(tokenDao)
         return !token.refreshToken.isNullOrEmpty()
     }
 
@@ -87,7 +88,7 @@ object FoxToolkit {
 
     fun getTypeOfVideo(data: Data): Int {
         return if ((data.preview != null && data.preview.redditVideoPreview == null && !data.isVideo)
-                || (data.preview == null && !data.isVideo))
+            || (data.preview == null && !data.isVideo))
             Constants.UNPLAYABLE_VIDEO
         else
             Constants.PLAYABLE_VIDEO
@@ -164,12 +165,12 @@ object FoxToolkit {
                 upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
                 downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24)
                 score.setTextColor(ContextCompat.getColor(
-                        mainActivity.applicationContext, android.R.color.holo_orange_dark))
+                    mainActivity.applicationContext, android.R.color.holo_orange_dark))
             } else {
                 downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
                 upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)
                 score.setTextColor(ContextCompat.getColor(
-                        mainActivity.applicationContext, android.R.color.holo_blue_dark))
+                    mainActivity.applicationContext, android.R.color.holo_blue_dark))
             }
         } else {
             upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)

@@ -46,14 +46,13 @@ import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Subreddit;
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.ViewPagerAdapter;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.FoxSharedViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
 import io.github.gusandrianos.foxforreddit.Constants;
 
@@ -61,6 +60,8 @@ import io.github.gusandrianos.foxforreddit.Constants;
 public class UserFragment extends Fragment {
     @Inject
     TokenDao mTokenDao;
+    @Inject
+    TokenRepository mTokenRepository;
 
     @Nullable
     @Override
@@ -78,7 +79,7 @@ public class UserFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) requireActivity();
         FoxSharedViewModel sharedViewModel = mainActivity.getFoxSharedViewModel();
 
-        if (sharedViewModel.getCurrentUserUsername().isEmpty() && FoxToolkit.INSTANCE.isAuthorized(mTokenDao)) {
+        if (sharedViewModel.getCurrentUserUsername().isEmpty() && FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository)) {
             UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
             viewModel.getMe(requireActivity().getApplication()).observe(getViewLifecycleOwner(), user -> {
@@ -193,7 +194,7 @@ public class UserFragment extends Fragment {
 
         setupButton(userSubreddit, view);
         MainActivity mainActivity = (MainActivity) requireActivity();
-        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
             profileButton.setOnClickListener(button -> {
                 if (!mainActivity.getFoxSharedViewModel().getViewingSelf()) {
                     SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
@@ -238,7 +239,7 @@ public class UserFragment extends Fragment {
 
         NavController navController = NavHostFragment.findNavController(this);
 
-        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
             setUpMenu(mainActivity.getFoxSharedViewModel().getViewingSelf(), toolbar, mainActivity, navController, user);
     }
 
@@ -299,7 +300,7 @@ public class UserFragment extends Fragment {
 
         if (isSelf) {
             toolbar.getMenu().findItem(R.id.log_out).setOnMenuItemClickListener(menuItem -> {
-                InjectorUtils.getInstance().provideTokenRepository().logOut();
+                mTokenRepository.logOut();
                 mainActivity.mToken = null;
                 navigateHome(navController);
                 return true;

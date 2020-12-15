@@ -38,20 +38,16 @@ import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
-import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
 import io.github.gusandrianos.foxforreddit.utilities.PostAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 import kotlin.Unit;
 
 import static io.github.gusandrianos.foxforreddit.Constants.ACTION_POST;
@@ -83,6 +79,8 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     SwipeRefreshLayout pullToRefresh;
     @Inject
     TokenDao mTokenDao;
+    @Inject
+    TokenRepository mTokenRepository;
 
     @Nullable
     @Override
@@ -93,7 +91,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(mTokenDao);
+        mToken = mTokenRepository.getToken(mTokenDao);
         type_of_action = getArguments().getString(ARG_TYPE_OF_ACTION, ACTION_POST);
 
         if (type_of_action.equals(ACTION_SEARCH)) {
@@ -112,7 +110,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
 
     private void initRecycleView(View view) {
         mPostRecyclerView = view.findViewById(R.id.recyclerview);
-        mPostRecyclerViewAdapter = new PostAdapter((MainActivity) requireActivity(), this, mTokenDao);
+        mPostRecyclerViewAdapter = new PostAdapter((MainActivity) requireActivity(), this, mTokenDao, mTokenRepository);
         mPostRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY); //keep recyclerview on position
         mPostRecyclerView.setHasFixedSize(true);
         mPostRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -213,13 +211,13 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 }
                 break;
             case Constants.THING_VOTE_UP:
-                if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
+                if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                     FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                 else
                     FoxToolkit.INSTANCE.upVoteModel(viewModel, requireActivity().getApplication(), data);
                 break;
             case Constants.THING_VOTE_DOWN:
-                if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
+                if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                     FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                 else
                     FoxToolkit.INSTANCE.downVoteModel(viewModel, requireActivity().getApplication(), data);
@@ -232,7 +230,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
                 customTabsIntent.launchUrl(requireContext(), Uri.parse(data.getUrl()));
                 break;
             case Constants.THING_MORE_ACTIONS:
-                if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao))
+                if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                     FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                 else {
                     PopupMenu menu = new PopupMenu(requireContext(), view);
@@ -423,7 +421,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     @Override
     public void onResume() {
         super.onResume();
-        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(mTokenDao);
+        Token token = mTokenRepository.getToken(mTokenDao);
         if (!mToken.getAccessToken().equals(token.getAccessToken())) {
             mToken = token;
             loadPosts(true);

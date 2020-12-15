@@ -12,6 +12,7 @@ import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.downVoteColor
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.formatValue
@@ -21,14 +22,15 @@ import kotlinx.android.synthetic.main.single_post_expandable_comment.view.*
 import org.apache.commons.text.StringEscapeUtils
 
 class ExpandableCommentGroup constructor(
-        mComment: ChildrenItem,
-        depth: Int = 0,
-        linkId: String,
-        listener: ExpandableCommentItem.OnItemClickListener,
-        mainActivity: MainActivity,
-        markwon: Markwon,
-        mTokenDao: TokenDao
-) : ExpandableGroup(ExpandableCommentItem(mComment, depth, linkId, listener, mainActivity, markwon, mTokenDao)) {
+    mComment: ChildrenItem,
+    depth: Int = 0,
+    linkId: String,
+    listener: ExpandableCommentItem.OnItemClickListener,
+    mainActivity: MainActivity,
+    markwon: Markwon,
+    mTokenDao: TokenDao,
+    mTokenRepository: TokenRepository
+) : ExpandableGroup(ExpandableCommentItem(mComment, depth, linkId, listener, mainActivity, markwon, mTokenDao, mTokenRepository)) {
 
     init {
         var repliesItem: ChildrenItem? = null
@@ -52,20 +54,21 @@ class ExpandableCommentGroup constructor(
                     val gson = Gson()
                     gson.fromJson(gson.toJsonTree(comment).asJsonObject, childType)
                 }
-                add(ExpandableCommentGroup(item, item.data!!.depth, linkId, listener, mainActivity, markwon, mTokenDao))
-                        .apply { isExpanded = true }
+                add(ExpandableCommentGroup(item, item.data!!.depth, linkId, listener, mainActivity, markwon, mTokenDao, mTokenRepository))
+                    .apply { isExpanded = true }
             }
     }
 }
 
 open class ExpandableCommentItem constructor(
-        private val mComment: ChildrenItem,
-        private val depth: Int,
-        private val linkId: String,
-        private val listener: OnItemClickListener,
-        private val mainActivity: MainActivity,
-        private val markwon: Markwon,
-        private val mTokenDao: TokenDao
+    private val mComment: ChildrenItem,
+    private val depth: Int,
+    private val linkId: String,
+    private val listener: OnItemClickListener,
+    private val mainActivity: MainActivity,
+    private val markwon: Markwon,
+    private val mTokenDao: TokenDao,
+    private val mTokenRepository: TokenRepository
 ) : Item<GroupieViewHolder>(), ExpandableItem {
     private lateinit var expandableGroup: ExpandableGroup
 
@@ -103,7 +106,7 @@ open class ExpandableCommentItem constructor(
             viewHolder.itemView.cl_load_more.visibility = View.GONE
             viewHolder.itemView.txt_comment_user.text = mComment.data!!.author
             markwon.setMarkdown(viewHolder.itemView.comment_body,
-                    StringEscapeUtils.unescapeXml(mComment.data.body))
+                StringEscapeUtils.unescapeXml(mComment.data.body))
             viewHolder.itemView.txt_comment_score.text = formatValue(mComment.data.score.toDouble())
             viewHolder.itemView.comment_body.apply {
                 setOnClickListener {
@@ -128,10 +131,10 @@ open class ExpandableCommentItem constructor(
         val comment: TextView = view.findViewById(R.id.comment_body) as TextView
 
         FoxToolkit.setLikedStatusOnButtons(mComment.data?.likes, upvote, downvote,
-                score, mainActivity, comment.currentTextColor)
+            score, mainActivity, comment.currentTextColor)
 
         upvote.setOnClickListener {
-            if (!FoxToolkit.isAuthorized(mTokenDao))
+            if (!FoxToolkit.isAuthorized(mTokenDao, mTokenRepository))
                 FoxToolkit.promptLogIn(mainActivity)
             else {
                 upVoteColor(mComment.data?.likes, upvote, downvote, score, mainActivity, comment.currentTextColor)
@@ -140,7 +143,7 @@ open class ExpandableCommentItem constructor(
         }
 
         downvote.setOnClickListener {
-            if (!FoxToolkit.isAuthorized(mTokenDao))
+            if (!FoxToolkit.isAuthorized(mTokenDao, mTokenRepository))
                 FoxToolkit.promptLogIn(mainActivity)
             else {
                 downVoteColor(mComment.data?.likes, upvote, downvote, score, mainActivity, comment.currentTextColor)
@@ -164,14 +167,14 @@ open class ExpandableCommentItem constructor(
     private fun addDepthViews(viewHolder: GroupieViewHolder) {
         viewHolder.itemView.separatorContainer.removeAllViews()
         viewHolder.itemView.separatorContainer.visibility =
-                if (depth > 0) {
-                    View.VISIBLE
-                } else {
-                    View.GONE
-                }
+            if (depth > 0) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
         for (i in 1..depth) {
             val v: View = LayoutInflater.from(viewHolder.itemView.context)
-                    .inflate(R.layout.separator_view, viewHolder.itemView.separatorContainer, false)
+                .inflate(R.layout.separator_view, viewHolder.itemView.separatorContainer, false)
             v.setBackgroundColor(Cyanea.instance.accent)
             viewHolder.itemView.separatorContainer.addView((v))
         }
@@ -180,14 +183,14 @@ open class ExpandableCommentItem constructor(
     private fun addDepthViewsForLoadMore(viewHolder: GroupieViewHolder) {
         viewHolder.itemView.separatorContainer2.removeAllViews()
         viewHolder.itemView.separatorContainer2.visibility =
-                if (depth > 0) {
-                    View.VISIBLE
-                } else {
-                    View.GONE
-                }
+            if (depth > 0) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
         for (i in 1..depth) {
             val v: View = LayoutInflater.from(viewHolder.itemView.context)
-                    .inflate(R.layout.separator_view, viewHolder.itemView.separatorContainer2, false)
+                .inflate(R.layout.separator_view, viewHolder.itemView.separatorContainer2, false)
             v.setBackgroundColor(Cyanea.instance.accent)
             viewHolder.itemView.separatorContainer2.addView((v))
         }

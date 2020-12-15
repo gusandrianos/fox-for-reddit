@@ -20,12 +20,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SearchRepository @Inject constructor(private val mTokenDao: TokenDao) {
+class SearchRepository @Inject constructor(private val mTokenDao: TokenDao, private val mTokenRepository: TokenRepository) {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
 
     fun searchTopSubreddits(query: String, includeOver18: Boolean, includeProfiles: Boolean, application: Application): LiveData<Listing> {
         val searchTopSubreddits = MutableLiveData<Listing>()
-        val bearer = getBearer(mTokenDao)
+        val bearer = getBearer(mTokenDao, mTokenRepository)
         val search = redditAPI.searchTopSubreddits(bearer, query, includeOver18, includeProfiles, true)
         search.enqueue(object : Callback<Listing> {
             override fun onResponse(call: Call<Listing>, response: Response<Listing>) {
@@ -39,6 +39,6 @@ class SearchRepository @Inject constructor(private val mTokenDao: TokenDao) {
     }
 
     fun searchResults(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String, application: Application): RedditPagingSource {
-        return RedditPagingSource(query, sort, time, restrict_sr, type, subreddit, getBearer(mTokenDao))
+        return RedditPagingSource(query, sort, time, restrict_sr, type, subreddit, getBearer(mTokenDao, mTokenRepository))
     }
 }

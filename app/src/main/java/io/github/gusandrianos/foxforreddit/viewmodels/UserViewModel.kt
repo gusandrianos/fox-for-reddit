@@ -1,6 +1,7 @@
 package io.github.gusandrianos.foxforreddit.viewmodels
 
 import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +11,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
 import io.github.gusandrianos.foxforreddit.data.repositories.UserRepository
 
-class UserViewModel(private val mUserRepository: UserRepository) : ViewModel() {
+class UserViewModel @ViewModelInject constructor(private val mUserRepository: UserRepository) : ViewModel() {
     private var subreddits: LiveData<PagingData<Data>>? = null
     private var userPrefs: LiveData<UserPrefs>? = null
     private var messages: LiveData<PagingData<Data>>? = null
@@ -32,10 +33,10 @@ class UserViewModel(private val mUserRepository: UserRepository) : ViewModel() {
             return subreddits!!
 
         subreddits = Pager(
-                config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-                pagingSourceFactory = {
-                    mUserRepository.getSubreddits(application, location)
-                }
+            config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+            pagingSourceFactory = {
+                mUserRepository.getSubreddits(application, location)
+            }
         ).liveData.cachedIn(viewModelScope)
 
         return subreddits!!

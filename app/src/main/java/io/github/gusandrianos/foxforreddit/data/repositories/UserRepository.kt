@@ -20,8 +20,11 @@ import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class UserRepository(private val mTokenDao: TokenDao) {
+@Singleton
+class UserRepository @Inject constructor(private val mTokenDao: TokenDao) {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
     private var user: MutableLiveData<Data> = MutableLiveData()
     private var me: MutableLiveData<Data> = MutableLiveData()
@@ -96,10 +99,10 @@ class UserRepository(private val mTokenDao: TokenDao) {
     }
 
     fun getMessagesWhere(application: Application, where: String) =
-            Pager(
-                    config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-                    pagingSourceFactory = { RedditPagingSource(where, getBearer(mTokenDao), Constants.MODE_MESSAGES) }
-            ).liveData
+        Pager(
+            config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+            pagingSourceFactory = { RedditPagingSource(where, getBearer(mTokenDao), Constants.MODE_MESSAGES) }
+        ).liveData
 
     fun blockUser(application: Application, accountId: String, name: String): LiveData<Boolean> {
         val status = MutableLiveData<Boolean>()

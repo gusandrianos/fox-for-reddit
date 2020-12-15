@@ -39,11 +39,6 @@ public class InjectorUtils {
         return TokenRepository.getInstance();
     }
 
-    public UserViewModelFactory provideUserViewModelFactory() {
-        UserRepository userRepository = new UserRepository(mTokenDao);
-        return new UserViewModelFactory(userRepository);
-    }
-
     public SearchViewModelFactory provideSearchViewModelFactory() {
         SearchRepository searchRepository = new SearchRepository(mTokenDao);
         return new SearchViewModelFactory(searchRepository);

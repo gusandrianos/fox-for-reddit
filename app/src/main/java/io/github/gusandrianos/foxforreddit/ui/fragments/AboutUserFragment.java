@@ -42,8 +42,7 @@ public class AboutUserFragment extends Fragment {
 
         String username = getArguments().getString(Constants.ARG_USERNAME_NAME, "");
 
-        UserViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
-        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         viewModel.getUser(requireActivity().getApplication(), username)
                 .observe(getViewLifecycleOwner(), data -> {

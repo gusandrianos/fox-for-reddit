@@ -114,8 +114,7 @@ public class ComposeMessageFragment extends Fragment {
         String subject = subjectTextField.getText().toString();
         String text = messageTextField.getText().toString();
 
-        UserViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
-        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
         viewModel.messageCompose(requireActivity().getApplication(), toUser, subject, text).observe(getViewLifecycleOwner(), success -> {
             if (success == null)
                 Toast.makeText(getContext(), "User does not exist.", Toast.LENGTH_SHORT).show();

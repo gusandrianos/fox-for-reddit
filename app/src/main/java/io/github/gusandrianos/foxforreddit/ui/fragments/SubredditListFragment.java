@@ -64,8 +64,7 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
     }
 
     private void initializeUI() {
-        UserViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
-        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
         Token token = InjectorUtils.getInstance(mTokenDao).provideTokenRepository().getToken(mTokenDao);
         String location = Constants.AUTHORIZED_SUB_LIST_LOCATION;
         if (token.getRefreshToken() == null) {

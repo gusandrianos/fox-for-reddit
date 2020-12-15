@@ -79,8 +79,7 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
     }
 
     void loadMessagesList(boolean requestChanged) {
-        UserViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
-        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         if (requestChanged)
             viewModel.deleteCached();
@@ -149,8 +148,7 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
                 navController.navigate(InboxFragmentDirections.actionInboxFragmentToConversationFragment(item, item.getAuthor()));
                 break;
             case Constants.THING_MORE_ACTIONS:
-                UserViewModelFactory userViewModelFactory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
-                UserViewModel userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
+                UserViewModel userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
                 PostViewModelFactory postViewModelFactory = InjectorUtils.getInstance(mTokenDao).providePostViewModelFactory();
                 PostViewModel postViewModel = new ViewModelProvider(this, postViewModelFactory).get(PostViewModel.class);

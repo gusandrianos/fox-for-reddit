@@ -92,8 +92,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
     }
 
     public void getCurrentUser() {
-        UserViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
-        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         viewModel.getMe(getApplication()).observe(this, user -> {
             if (user != null) {

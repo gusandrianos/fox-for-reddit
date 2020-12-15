@@ -91,8 +91,7 @@ public class ComposeReplyFragment extends Fragment {
         String text = messageTextField.getText().toString();
         Bundle result = new Bundle();
 
-        UserViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideUserViewModelFactory();
-        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
         viewModel.commentCompose(requireActivity().getApplication(), thing_id, text).observe(getViewLifecycleOwner(), success -> {
 
             if (success)

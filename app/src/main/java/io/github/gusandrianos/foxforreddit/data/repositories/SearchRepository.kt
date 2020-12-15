@@ -16,8 +16,11 @@ import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SearchRepository (private val mTokenDao: TokenDao){
+@Singleton
+class SearchRepository @Inject constructor(private val mTokenDao: TokenDao) {
     private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
 
     fun searchTopSubreddits(query: String, includeOver18: Boolean, includeProfiles: Boolean, application: Application): LiveData<Listing> {

@@ -99,8 +99,7 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnSearchIt
         searchView.setIconifiedByDefault(true);
         searchView.setIconified(false);
 
-        SearchViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSearchViewModelFactory();
-        SearchViewModel viewModel = new ViewModelProvider(this, factory).get(SearchViewModel.class);
+        SearchViewModel viewModel = new ViewModelProvider(this).get(SearchViewModel.class);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

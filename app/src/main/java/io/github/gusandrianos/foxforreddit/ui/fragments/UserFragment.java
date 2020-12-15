@@ -299,7 +299,7 @@ public class UserFragment extends Fragment {
 
         if (isSelf) {
             toolbar.getMenu().findItem(R.id.log_out).setOnMenuItemClickListener(menuItem -> {
-                InjectorUtils.getInstance(mTokenDao).provideTokenRepository().logOut();
+                InjectorUtils.getInstance().provideTokenRepository().logOut();
                 mainActivity.mToken = null;
                 navigateHome(navController);
                 return true;

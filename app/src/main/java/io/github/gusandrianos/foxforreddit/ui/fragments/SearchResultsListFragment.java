@@ -78,7 +78,7 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mView = getView();
-        mToken = InjectorUtils.getInstance(mTokenDao).provideTokenRepository().getToken(mTokenDao);
+        mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(mTokenDao);
 
         query = getArguments().getString(ARG_QUERY_STRING, "");
         sr_restrict = getArguments().getBoolean(ARG_SR_RESTRICT_BOOLEAN);
@@ -107,8 +107,7 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     }
 
     void loadSearchList(boolean requestChanged) {
-        SearchViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSearchViewModelFactory();
-        SearchViewModel viewModel = new ViewModelProvider(this, factory).get(SearchViewModel.class);
+        SearchViewModel viewModel = new ViewModelProvider(this).get(SearchViewModel.class);
 
         if (requestChanged)
             viewModel.deleteCached();
@@ -163,7 +162,7 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     @Override
     public void onResume() {
         super.onResume();
-        Token token = InjectorUtils.getInstance(mTokenDao).provideTokenRepository().getToken(mTokenDao);
+        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(mTokenDao);
         if (!mToken.getAccessToken().equals(token.getAccessToken())) {
             mToken = token;
             initRecycleView();

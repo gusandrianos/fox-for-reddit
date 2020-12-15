@@ -93,7 +93,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mToken = InjectorUtils.getInstance(mTokenDao).provideTokenRepository().getToken(mTokenDao);
+        mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(mTokenDao);
         type_of_action = getArguments().getString(ARG_TYPE_OF_ACTION, ACTION_POST);
 
         if (type_of_action.equals(ACTION_SEARCH)) {
@@ -134,8 +134,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             viewModel.getPosts(subreddit, filter, time, requireActivity().getApplication())
                     .observe(getViewLifecycleOwner(), this::submitToAdapter);
         } else {
-            SearchViewModelFactory factory = InjectorUtils.getInstance(mTokenDao).provideSearchViewModelFactory();
-            SearchViewModel viewModel = new ViewModelProvider(this, factory).get(SearchViewModel.class);
+            SearchViewModel viewModel = new ViewModelProvider(this).get(SearchViewModel.class);
 
             if (requestChanged)
                 viewModel.deleteCached();
@@ -424,7 +423,7 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
     @Override
     public void onResume() {
         super.onResume();
-        Token token = InjectorUtils.getInstance(mTokenDao).provideTokenRepository().getToken(mTokenDao);
+        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(mTokenDao);
         if (!mToken.getAccessToken().equals(token.getAccessToken())) {
             mToken = token;
             loadPosts(true);

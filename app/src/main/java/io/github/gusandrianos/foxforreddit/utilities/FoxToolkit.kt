@@ -29,12 +29,12 @@ import kotlin.math.pow
 
 object FoxToolkit {
     fun getBearer(tokenDao: TokenDao): String {
-        val token = InjectorUtils.getInstance(tokenDao).provideTokenRepository().getToken(tokenDao)
+        val token = InjectorUtils.getInstance().provideTokenRepository().getToken(tokenDao)
         return " " + token.tokenType + " " + token.accessToken
     }
 
     fun isAuthorized(tokenDao: TokenDao): Boolean {
-        val token = InjectorUtils.getInstance(tokenDao).provideTokenRepository().getToken(tokenDao)
+        val token = InjectorUtils.getInstance().provideTokenRepository().getToken(tokenDao)
         return !token.refreshToken.isNullOrEmpty()
     }
 

@@ -83,7 +83,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
 
     private void setAuthorizedUI() {
         if (mToken == null) {
-            mToken = InjectorUtils.getInstance(mTokenDao).provideTokenRepository().getToken(mTokenDao);
+            mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(mTokenDao);
             MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.userFragment);
             bottomNavMenuItem.setEnabled(true);
         }
@@ -148,7 +148,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
                 //When all goes well, there is the line "code=[something]"
                 if (state.equals(Constants.STATE) && error.equals("code")) {
                     String code = inputs[1].split("=")[1];
-                    mToken = InjectorUtils.getInstance(mTokenDao).provideTokenRepository().getNewToken(mTokenDao, code, Constants.REDIRECT_URI);
+                    mToken = InjectorUtils.getInstance().provideTokenRepository().getNewToken(mTokenDao, code, Constants.REDIRECT_URI);
                 } else
                     Toast.makeText(this, "Log In unsuccessful", Toast.LENGTH_SHORT).show();
 

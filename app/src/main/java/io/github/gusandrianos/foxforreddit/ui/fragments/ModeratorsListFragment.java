@@ -24,15 +24,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.utilities.ModeratorsListAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
+@AndroidEntryPoint
 public class ModeratorsListFragment extends Fragment implements ModeratorsListAdapter.OnItemClickListener {
+    @Inject
+    TokenDao mTokenDao;
 
     @Nullable
     @Override
@@ -49,10 +54,9 @@ public class ModeratorsListFragment extends Fragment implements ModeratorsListAd
     }
 
     void setUpRecyclerView(View view, String subreddit) {
-        SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+        SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
 
-        viewModel.getSubredditModerators(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), moderators -> {
+        viewModel.getSubredditModerators(subreddit).observe(getViewLifecycleOwner(), moderators -> {
             if (moderators != null) {
                 RecyclerView moderatorsRV = view.findViewById(R.id.recycler_moderators);
                 ModeratorsListAdapter adapter = new ModeratorsListAdapter(moderators.getModerators(), this);

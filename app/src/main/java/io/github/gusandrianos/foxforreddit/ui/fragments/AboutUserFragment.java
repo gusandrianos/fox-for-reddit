@@ -1,6 +1,10 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,19 +13,19 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.utilities.TrophyAdapter;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
+@AndroidEntryPoint
 public class AboutUserFragment extends Fragment {
+    @Inject
+    TokenDao mTokenDao;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,10 +39,9 @@ public class AboutUserFragment extends Fragment {
 
         String username = getArguments().getString(Constants.ARG_USERNAME_NAME, "");
 
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
-        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
-        viewModel.getUser(requireActivity().getApplication(), username)
+        viewModel.getUser(username)
                 .observe(getViewLifecycleOwner(), data -> {
                     TextView postKarma = view.findViewById(R.id.txt_post_karma);
                     TextView commentKarma = view.findViewById(R.id.txt_comment_karma);
@@ -46,7 +49,7 @@ public class AboutUserFragment extends Fragment {
                     commentKarma.setText(String.valueOf(data.getCommentKarma()));
                 });
 
-        viewModel.getTrophies(requireActivity().getApplication(), username).observe(getViewLifecycleOwner(), trophies -> {
+        viewModel.getTrophies(username).observe(getViewLifecycleOwner(), trophies -> {
             if (trophies != null) {
                 RecyclerView trophiesRV = view.findViewById(R.id.recycler_trophies);
                 TrophyAdapter adapter = new TrophyAdapter(trophies);

@@ -9,8 +9,8 @@ import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Flair
 
 class LinkFlairListAdapter(
-        private val flairList: List<Flair>,
-        private val listener: LinkFlairListAdapter.OnItemClickListener)
+    private val flairList: List<Flair>,
+    private val listener: LinkFlairListAdapter.OnItemClickListener)
     : RecyclerView.Adapter<LinkFlairListAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

@@ -1,7 +1,5 @@
 package io.github.gusandrianos.foxforreddit.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,10 +7,14 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.R;
 
 import static io.github.gusandrianos.foxforreddit.Constants.REDIRECT_URI;
 
+@AndroidEntryPoint
 public class LoginActivity extends AppCompatActivity {
 
     @Override

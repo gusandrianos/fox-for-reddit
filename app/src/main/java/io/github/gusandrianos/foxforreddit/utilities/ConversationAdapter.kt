@@ -12,9 +12,9 @@ import io.noties.markwon.Markwon
 import org.apache.commons.text.StringEscapeUtils
 
 class ConversationAdapter(
-        private val thing: Thing,
-        private val listener: UserClickedListener,
-        private val markwon: Markwon
+    private val thing: Thing,
+    private val listener: UserClickedListener,
+    private val markwon: Markwon
 ) : RecyclerView.Adapter<ConversationAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

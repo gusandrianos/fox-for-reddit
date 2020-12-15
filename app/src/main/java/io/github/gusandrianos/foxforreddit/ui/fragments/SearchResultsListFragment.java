@@ -24,15 +24,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.SearchResultsAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.SearchViewModelFactory;
 import kotlin.Unit;
 
 import static io.github.gusandrianos.foxforreddit.Constants.ACTION_SEARCH;
@@ -44,6 +47,7 @@ import static io.github.gusandrianos.foxforreddit.Constants.ARG_TIME_NAME;
 import static io.github.gusandrianos.foxforreddit.Constants.ARG_TYPE_OF_ACTION;
 import static io.github.gusandrianos.foxforreddit.Constants.KIND_SUBREDDIT;
 
+@AndroidEntryPoint
 public class SearchResultsListFragment extends Fragment implements SearchResultsAdapter.OnSearchResultsItemClickListener {
 
     private View mView;
@@ -60,6 +64,11 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     RecyclerView mSearchRecyclerView;
     SwipeRefreshLayout pullToRefresh;
 
+    @Inject
+    TokenDao mTokenDao;
+    @Inject
+    TokenRepository mTokenRepository;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -70,7 +79,7 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mView = getView();
-        mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
+        mToken = mTokenRepository.getToken(mTokenDao);
 
         query = getArguments().getString(ARG_QUERY_STRING, "");
         sr_restrict = getArguments().getBoolean(ARG_SR_RESTRICT_BOOLEAN);
@@ -99,13 +108,12 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     }
 
     void loadSearchList(boolean requestChanged) {
-        SearchViewModelFactory factory = InjectorUtils.getInstance().provideSearchViewModelFactory();
-        SearchViewModel viewModel = new ViewModelProvider(this, factory).get(SearchViewModel.class);
+        SearchViewModel viewModel = new ViewModelProvider(this).get(SearchViewModel.class);
 
         if (requestChanged)
             viewModel.deleteCached();
 
-        viewModel.searchResults(query, filter, time, sr_restrict, searchType, "", getActivity().getApplication()).observe(getViewLifecycleOwner(), searchPostPagingData -> {
+        viewModel.searchResults(query, filter, time, sr_restrict, searchType, "").observe(getViewLifecycleOwner(), searchPostPagingData -> {
             mSearchRecyclerViewAdapter.submitData(getViewLifecycleOwner().getLifecycle(), searchPostPagingData);
             mSearchRecyclerViewAdapter.addLoadStateListener(loadStates -> {
                 if (loadStates.getRefresh() instanceof LoadState.Loading)
@@ -155,7 +163,7 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
     @Override
     public void onResume() {
         super.onResume();
-        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
+        Token token = mTokenRepository.getToken(mTokenDao);
         if (!mToken.getAccessToken().equals(token.getAccessToken())) {
             mToken = token;
             initRecycleView();

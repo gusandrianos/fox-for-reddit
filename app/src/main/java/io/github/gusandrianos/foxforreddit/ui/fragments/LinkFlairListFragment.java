@@ -1,6 +1,9 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,24 +16,21 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jaredrummler.cyanea.Cyanea;
 
 import org.jetbrains.annotations.NotNull;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.data.models.Flair;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.utilities.LinkFlairListAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 
+@AndroidEntryPoint
 public class LinkFlairListFragment extends Fragment implements LinkFlairListAdapter.OnItemClickListener {
+    SubredditViewModel viewModel;
 
     @Nullable
     @Override
@@ -42,16 +42,15 @@ public class LinkFlairListFragment extends Fragment implements LinkFlairListAdap
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
         String subredditName = LinkFlairListFragmentArgs.fromBundle(requireArguments()).getSubredditName();
         setUpNavigation(view);
         setUpRecyclerView(view, subredditName);
     }
 
     void setUpRecyclerView(View view, String subredditName) {
-        SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
 
-        viewModel.getSubredditLinkFlair(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), linkFlair -> {
+        viewModel.getSubredditLinkFlair(subredditName).observe(getViewLifecycleOwner(), linkFlair -> {
             if (linkFlair != null) {
                 RecyclerView linkFlairRV = view.findViewById(R.id.recycler_link_flairs);
                 LinkFlairListAdapter adapter = new LinkFlairListAdapter(linkFlair, this);

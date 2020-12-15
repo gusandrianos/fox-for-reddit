@@ -2,14 +2,12 @@ package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -23,6 +21,7 @@ import com.jaredrummler.cyanea.Cyanea;
 
 import java.util.ArrayList;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
@@ -32,6 +31,7 @@ import static io.github.gusandrianos.foxforreddit.Constants.KIND_POST;
 import static io.github.gusandrianos.foxforreddit.Constants.KIND_SUBREDDIT;
 import static io.github.gusandrianos.foxforreddit.Constants.KIND_USER;
 
+@AndroidEntryPoint
 public class SearchResultsFragment extends Fragment {
 
     @Nullable

@@ -1,27 +1,27 @@
 package io.github.gusandrianos.foxforreddit.data.repositories
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.liveData
-import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
-import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object SearchRepository {
-    private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
+@Singleton
+class SearchRepository @Inject constructor(
+    private val mTokenDao: TokenDao,
+    private val mTokenRepository: TokenRepository,
+    private val redditAPI: RedditAPI
+) {
 
-    fun searchTopSubreddits(query: String, includeOver18: Boolean, includeProfiles: Boolean, application: Application): LiveData<Listing> {
+    fun searchTopSubreddits(query: String, includeOver18: Boolean, includeProfiles: Boolean): LiveData<Listing> {
         val searchTopSubreddits = MutableLiveData<Listing>()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao, mTokenRepository)
         val search = redditAPI.searchTopSubreddits(bearer, query, includeOver18, includeProfiles, true)
         search.enqueue(object : Callback<Listing> {
             override fun onResponse(call: Call<Listing>, response: Response<Listing>) {
@@ -34,7 +34,7 @@ object SearchRepository {
         return searchTopSubreddits
     }
 
-    fun searchResults(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String, application: Application): RedditPagingSource {
-        return RedditPagingSource(query, sort, time, restrict_sr, type, subreddit, getBearer(application))
+    fun searchResults(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String): RedditPagingSource {
+        return RedditPagingSource(query, sort, time, restrict_sr, type, subreddit, getBearer(mTokenDao, mTokenRepository), redditAPI)
     }
 }

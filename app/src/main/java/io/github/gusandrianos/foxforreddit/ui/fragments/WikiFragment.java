@@ -1,6 +1,10 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,25 +15,26 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
 import com.jaredrummler.cyanea.Cyanea;
 
 import org.apache.commons.text.StringEscapeUtils;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
+@AndroidEntryPoint
 public class WikiFragment extends Fragment {
+
+    @Inject
+    TokenDao mTokenDao;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,8 +50,7 @@ public class WikiFragment extends Fragment {
     }
 
     void setUpContent(View view) {
-        SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+        SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
 
         String contentText = "This looks empty";
         TextView content = view.findViewById(R.id.text_wiki_body);
@@ -54,7 +58,7 @@ public class WikiFragment extends Fragment {
 
         String subreddit = ((MainActivity) requireActivity()).getFoxSharedViewModel().getCurrentSubreddit();
 
-        viewModel.getSubredditWiki(subreddit, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
+        viewModel.getSubredditWiki(subreddit).observe(getViewLifecycleOwner(), subredditInfo ->
         {
             Markwon markwon = Markwon.builder(requireContext())
                     .usePlugin(TablePlugin.create(requireContext()))

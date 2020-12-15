@@ -24,22 +24,30 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.SubredditListAdapter;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
-import io.github.gusandrianos.foxforreddit.Constants;
-
+@AndroidEntryPoint
 public class SubredditListFragment extends Fragment implements SubredditListAdapter.OnItemClickListener {
 
     SubredditListAdapter mSubredditListAdapter;
     RecyclerView mSubredditsRV;
+
+    @Inject
+    TokenDao mTokenDao;
+    @Inject
+    TokenRepository mTokenRepository;
 
     @Nullable
     @Override
@@ -56,15 +64,14 @@ public class SubredditListFragment extends Fragment implements SubredditListAdap
     }
 
     private void initializeUI() {
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
-        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
-        Token token = InjectorUtils.getInstance().provideTokenRepository().getToken(requireActivity().getApplication());
+        UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        Token token = mTokenRepository.getToken(mTokenDao);
         String location = Constants.AUTHORIZED_SUB_LIST_LOCATION;
         if (token.getRefreshToken() == null) {
             location = Constants.VISITOR_SUB_LIST_LOCATION;
         }
 
-        viewModel.getSubreddits(requireActivity().getApplication(), location).observe(getViewLifecycleOwner(), subredditPagingData -> {
+        viewModel.getSubreddits(location).observe(getViewLifecycleOwner(), subredditPagingData -> {
             mSubredditListAdapter.submitData(getViewLifecycleOwner().getLifecycle(), subredditPagingData);
         });
     }

@@ -1,6 +1,9 @@
 package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,22 +14,23 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.jaredrummler.cyanea.Cyanea;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 
+@AndroidEntryPoint
 public class EditThingFragment extends Fragment {
+    @Inject
+    TokenDao mTokenDao;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,10 +59,9 @@ public class EditThingFragment extends Fragment {
             String thingFullname = EditThingFragmentArgs.fromBundle(requireArguments()).getThingFullname();
             TextInputEditText bodyEditText = view.findViewById(R.id.edit_edit_thing_text_body);
 
-            PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
-            PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+            PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
-            viewModel.editSubmission(bodyEditText.getText().toString(), thingFullname, requireActivity().getApplication())
+            viewModel.editSubmission(bodyEditText.getText().toString(), thingFullname)
                     .observe(getViewLifecycleOwner(), success -> {
                         if (success) {
                             Bundle result = new Bundle();

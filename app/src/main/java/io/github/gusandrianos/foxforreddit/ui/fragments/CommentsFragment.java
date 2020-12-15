@@ -34,24 +34,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.ChildrenItem;
 import io.github.gusandrianos.foxforreddit.data.models.MoreChildrenList;
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentGroup;
 import io.github.gusandrianos.foxforreddit.utilities.ExpandableCommentItem;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
+@AndroidEntryPoint
 public class CommentsFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
 
     RecyclerView mCommentsRecyclerView;
@@ -61,6 +64,10 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
     Markwon markwon;
 
     String subreddit;
+    @Inject
+    TokenDao mTokenDao;
+    @Inject
+    TokenRepository mTokenRepository;
 
     @Nullable
     @Override
@@ -111,14 +118,13 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
 
                 NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
                 NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
-                navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren1.toString(), moreChildrenList1,subreddit));
+                navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren1.toString(), moreChildrenList1, subreddit));
 
             });
         }
 
-        PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
-        PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
-        viewModel.getMoreChildren(linkId, loadChildren, requireActivity().getApplication()).observe(getViewLifecycleOwner(), commentListing -> {
+        PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
+        viewModel.getMoreChildren(linkId, loadChildren).observe(getViewLifecycleOwner(), commentListing -> {
             groupAdapter = new GroupAdapter<>();
             initRecyclerView(groupAdapter);
             for (Object child : commentListing.getJson().getData().getChildren()) {
@@ -133,7 +139,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                 }
                 groupAdapter.add(new ExpandableCommentGroup(item,
                         Objects.requireNonNull(item.getData()).getDepth(),
-                        linkId, this, (MainActivity) requireActivity(), markwon));
+                        linkId, this, (MainActivity) requireActivity(), markwon, mTokenDao, mTokenRepository));
             }
             if (txtMoreComments.getTag().equals("1"))
                 txtMoreComments.setVisibility(View.VISIBLE);
@@ -170,28 +176,25 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
             moreChildrenList.setMoreChildrenList(moreChildrenArray);
 
 
-            navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren.toString(), moreChildrenList,subreddit));
+            navController.navigate(CommentsFragmentDirections.actionCommentsFragmentSelf(linkId, loadChildren.toString(), moreChildrenList, subreddit));
         } else {
-            PostViewModelFactory factory = InjectorUtils.getInstance().providePostViewModelFactory();
-            PostViewModel viewModel = new ViewModelProvider(this, factory).get(PostViewModel.class);
+            PostViewModel viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
             switch (actionType) {
                 case Constants.THING_VOTE_UP:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
-                        FoxToolkit.INSTANCE.upVoteCommentModel(viewModel,
-                                requireActivity().getApplication(), comment.getData());
+                        FoxToolkit.INSTANCE.upVoteCommentModel(viewModel, comment.getData());
                     break;
                 case Constants.THING_VOTE_DOWN:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
-                        FoxToolkit.INSTANCE.downVoteCommentModel(viewModel,
-                                requireActivity().getApplication(), comment.getData());
+                        FoxToolkit.INSTANCE.downVoteCommentModel(viewModel, comment.getData());
                     break;
                 case Constants.THING_REPLY:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else
                         navController.navigate(
@@ -205,7 +208,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                     navController.navigate(action);
                     break;
                 case Constants.THING_MORE_ACTIONS:
-                    if (!FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+                    if (!FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                         FoxToolkit.INSTANCE.promptLogIn((MainActivity) requireActivity());
                     else {
                         PopupMenu menu = new PopupMenu(requireContext(), view);
@@ -272,7 +275,7 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
                 .setCancelable(false)
                 .setNegativeButton("Nope", (dialog, id) -> dialog.cancel())
                 .setPositiveButton("Do it!", (dialog, id) ->
-                        viewModel.deleteSubmission(fullname, requireActivity().getApplication())
+                        viewModel.deleteSubmission(fullname)
                                 .observe(getViewLifecycleOwner(), success -> {
                                     if (success) {
                                         requireActivity().onBackPressed();
@@ -285,22 +288,21 @@ public class CommentsFragment extends Fragment implements ExpandableCommentItem.
 
     private void popUpMenuSave(ChildrenItem comment, PostViewModel viewModel) {
         if (comment.getData().isSaved())
-            viewModel.unSavePost(comment.getData().getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.unSavePost(comment.getData().getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed)
                     comment.getData().setSaved(false);
             });
         else
-            viewModel.savePost(comment.getData().getName(), requireActivity().getApplication()).observe(getViewLifecycleOwner(), succeed -> {
+            viewModel.savePost(comment.getData().getName()).observe(getViewLifecycleOwner(), succeed -> {
                 if (succeed)
                     comment.getData().setSaved(true);
             });
     }
 
     private void popUpMenuReport(ChildrenItem comment) {
-        SubredditViewModelFactory subredditFactory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-        SubredditViewModel subredditViewModel = new ViewModelProvider(this, subredditFactory).get(SubredditViewModel.class);
-        subredditViewModel.getSubredditRules(comment.getData().getSubredditNamePrefixed(),
-                requireActivity().getApplication()).observe(getViewLifecycleOwner(),
+        SubredditViewModel subredditViewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
+        subredditViewModel.getSubredditRules(comment.getData().getSubredditNamePrefixed()
+        ).observe(getViewLifecycleOwner(),
                 rulesBundle -> {
                     if (rulesBundle.getSiteRulesFlow() != null && rulesBundle.getRules() != null)
                         navController.navigate(NavGraphDirections.actionGlobalReportDialogFragment(

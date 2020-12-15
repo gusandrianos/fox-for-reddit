@@ -2,6 +2,12 @@ package io.github.gusandrianos.foxforreddit.ui.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,13 +21,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -34,21 +33,28 @@ import org.apache.commons.text.StringEscapeUtils;
 import java.text.NumberFormat;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.SubredditViewModelFactory;
-
-import io.github.gusandrianos.foxforreddit.Constants;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
+@AndroidEntryPoint
 public class SubredditFragment extends Fragment {
     FoxToolkit toolkit = FoxToolkit.INSTANCE;
+    @Inject
+    TokenDao mTokenDao;
+    @Inject
+    TokenRepository mTokenRepository;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,11 +77,10 @@ public class SubredditFragment extends Fragment {
         setUpNavigation(view, subredditName);
         setUpMenuItemClicks(view, subredditName);
 
-        SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-        SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+        SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
 
         String finalSubredditName = subredditName;
-        viewModel.getSubreddit(subredditName, requireActivity().getApplication()).observe(getViewLifecycleOwner(), subredditInfo ->
+        viewModel.getSubreddit(subredditName).observe(getViewLifecycleOwner(), subredditInfo ->
         {
             setupHeader(subredditInfo, view);
             setUpSidebar(subredditInfo, view);
@@ -98,13 +103,11 @@ public class SubredditFragment extends Fragment {
         MaterialButton subUnsubButton = view.findViewById(R.id.button_subreddit_sub_unsub);
 
         setupButton(subredditInfo, view);
-        if (FoxToolkit.INSTANCE.isAuthorized(requireActivity().getApplication()))
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
             subUnsubButton.setOnClickListener(button -> {
-                SubredditViewModelFactory factory = InjectorUtils.getInstance().provideSubredditViewModelFactory();
-                SubredditViewModel viewModel = new ViewModelProvider(this, factory).get(SubredditViewModel.class);
+                SubredditViewModel viewModel = new ViewModelProvider(this).get(SubredditViewModel.class);
                 viewModel.toggleSubscribed(getFinalAction(subredditInfo),
-                        subredditInfo.getDisplayName(),
-                        requireActivity().getApplication())
+                        subredditInfo.getDisplayName())
                         .observe(getViewLifecycleOwner(), status -> {
                             if (status) {
                                 subredditInfo.setUserIsSubscriber(!subredditInfo.getUserIsSubscriber());

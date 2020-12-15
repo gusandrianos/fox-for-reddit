@@ -9,7 +9,6 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +17,9 @@ import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.libRG.CustomTextView
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.noties.markwon.Markwon
 import io.noties.markwon.ext.tables.TablePlugin
@@ -27,7 +28,11 @@ import jp.wasabeef.glide.transformations.BlurTransformation
 import org.apache.commons.text.StringEscapeUtils
 
 
-class PostAdapter(private val mainActivity: MainActivity, private val listener: OnItemClickListener) : PagingDataAdapter<Data, RecyclerView.ViewHolder>(POST_COMPARATOR) {
+class PostAdapter(private val mainActivity: MainActivity,
+                  private val listener: OnItemClickListener,
+                  private val mTokenDao: TokenDao,
+                  private val mTokenRepository: TokenRepository
+) : PagingDataAdapter<Data, RecyclerView.ViewHolder>(POST_COMPARATOR) {
 
     companion object {
         private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Data>() {
@@ -152,7 +157,6 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
         private val mTxtPostShare: TextView = itemView.findViewById(R.id.btn_post_share)
         private val mTxtPostMoreActions: TextView = itemView.findViewById(R.id.txt_post_more_actions)
 
-
         init {
             itemView.setOnClickListener {
                 onClick(bindingAdapterPosition, Constants.POST_ITEM, mPostType, it)
@@ -167,28 +171,28 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             }
 
             mImgBtnPostVoteUp.setOnClickListener {
-                if (!FoxToolkit.isAuthorized(mainActivity.application))
+                if (!FoxToolkit.isAuthorized(mTokenDao, mTokenRepository))
                     FoxToolkit.promptLogIn(mainActivity)
                 else
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                         val item = getItem(bindingAdapterPosition)
                         if (item != null) {
                             FoxToolkit.upVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
-                                    mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
+                                mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
                             onClick(bindingAdapterPosition, Constants.THING_VOTE_UP, mPostType, it)
                         }
                     }
             }
 
             mImgBtnPostVoteDown.setOnClickListener {
-                if (!FoxToolkit.isAuthorized(mainActivity.application))
+                if (!FoxToolkit.isAuthorized(mTokenDao, mTokenRepository))
                     FoxToolkit.promptLogIn(mainActivity)
                 else
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                         val item = getItem(bindingAdapterPosition)
                         if (item != null) {
                             FoxToolkit.downVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
-                                    mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
+                                mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
                             onClick(bindingAdapterPosition, Constants.THING_VOTE_DOWN, mPostType, it)
                         }
                     }
@@ -219,7 +223,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
             mTxtPostNumComments.text = FoxToolkit.formatValue(post.numComments.toDouble())
 
             FoxToolkit.setLikedStatusOnButtons(post.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
-                    mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
+                mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
 
             if (post.isOver18 != null && post.isOver18 == true)
                 txtIsOver18.visibility = View.VISIBLE
@@ -233,7 +237,7 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
             if (!post.linkFlairText.isNullOrEmpty())
                 FoxToolkit.makeFlair(post.linkFlairType, post.linkFlairRichtext, post.linkFlairText,
-                        post.linkFlairTextColor, post.linkFlairBackgroundColor, customTxtPostFlair)
+                    post.linkFlairTextColor, post.linkFlairBackgroundColor, customTxtPostFlair)
             else
                 customTxtPostFlair.visibility = View.GONE
         }
@@ -346,9 +350,9 @@ class PostAdapter(private val mainActivity: MainActivity, private val listener: 
 
         fun onBind(comment: Data) {
             val markwon = Markwon.builder(context)
-                    .usePlugin(TablePlugin.create(context))
-                    .usePlugin(LinkifyPlugin.create())
-                    .build()
+                .usePlugin(TablePlugin.create(context))
+                .usePlugin(LinkifyPlugin.create())
+                .build()
             mTxtPostUser.text = comment.author
             mTxtTimePosted.text = DateUtils.getRelativeTimeSpanString(comment.createdUtc * 1000).toString()
             mTxtPostScore.text = comment.score.toString().trim()

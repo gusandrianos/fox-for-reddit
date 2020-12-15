@@ -1,25 +1,30 @@
 package io.github.gusandrianos.foxforreddit.data.repositories
 
-import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.github.gusandrianos.foxforreddit.Constants.ACTION_SUBSCRIBE
 import io.github.gusandrianos.foxforreddit.Constants.ACTION_UNSUBSCRIBE
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.*
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
-import io.github.gusandrianos.foxforreddit.data.network.RetrofitService
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object SubredditRepository {
-    private val redditAPI: RedditAPI = RetrofitService.getRedditAPIInstance()
+@Singleton
+class SubredditRepository @Inject constructor(
+    private val mTokenDao: TokenDao,
+    private val mTokenRepository: TokenRepository,
+    private val redditAPI: RedditAPI
+) {
 
-    fun getSubredditLinkFlair(subredditName: String, application: Application): LiveData<List<Flair>> {
+    fun getSubredditLinkFlair(subredditName: String): LiveData<List<Flair>> {
         val subredditLinkFlair: MutableLiveData<List<Flair>> = MutableLiveData()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao, mTokenRepository)
         val subLinkFlairCall = redditAPI.getSubredditLinkFlair(bearer, subredditName)
         subLinkFlairCall.enqueue(object : Callback<List<Flair>> {
             override fun onResponse(call: Call<List<Flair>>, response: Response<List<Flair>>) {
@@ -34,10 +39,10 @@ object SubredditRepository {
         return subredditLinkFlair
     }
 
-    fun getSubreddit(subredditName: String, application: Application): LiveData<Data> {
+    fun getSubreddit(subredditName: String): LiveData<Data> {
         val subreddit: MutableLiveData<Data> = MutableLiveData()
 
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao, mTokenRepository)
         val aboutCall = redditAPI.getSubreddit(bearer, subredditName)
         aboutCall.enqueue(object : Callback<Thing> {
             override fun onResponse(call: Call<Thing>, response: Response<Thing>) {
@@ -51,9 +56,9 @@ object SubredditRepository {
         return subreddit
     }
 
-    fun getSubredditWiki(subredditName: String, application: Application): LiveData<Data> {
+    fun getSubredditWiki(subredditName: String): LiveData<Data> {
         val subredditWiki: MutableLiveData<Data> = MutableLiveData()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao, mTokenRepository)
         val wikiCall = redditAPI.getSubredditWiki(bearer, subredditName)
         wikiCall.enqueue(object : Callback<Thing> {
             override fun onResponse(call: Call<Thing>, response: Response<Thing>) {
@@ -67,9 +72,9 @@ object SubredditRepository {
         return subredditWiki
     }
 
-    fun getSubredditRules(subredditName: String, application: Application): LiveData<RulesBundle> {
+    fun getSubredditRules(subredditName: String): LiveData<RulesBundle> {
         val subredditRules: MutableLiveData<RulesBundle> = MutableLiveData()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao, mTokenRepository)
         val rulesCall = redditAPI.getSubredditRules(bearer, subredditName)
         rulesCall.enqueue(object : Callback<RulesBundle> {
             override fun onResponse(call: Call<RulesBundle>, response: Response<RulesBundle>) {
@@ -83,9 +88,9 @@ object SubredditRepository {
         return subredditRules
     }
 
-    fun getSubredditModerators(subredditName: String, application: Application): LiveData<ModeratorsList> {
+    fun getSubredditModerators(subredditName: String): LiveData<ModeratorsList> {
         val subredditModerators: MutableLiveData<ModeratorsList> = MutableLiveData()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao, mTokenRepository)
         val modsCall = redditAPI.getSubredditModerators(bearer, subredditName)
         modsCall.enqueue(object : Callback<ModeratorsResponse> {
             override fun onResponse(call: Call<ModeratorsResponse>, response: Response<ModeratorsResponse>) {
@@ -99,9 +104,9 @@ object SubredditRepository {
         return subredditModerators
     }
 
-    fun toggleSubscribed(action: Int, subredditName: String, application: Application): LiveData<Boolean> {
+    fun toggleSubscribed(action: Int, subredditName: String): LiveData<Boolean> {
         val subscribeStatus: MutableLiveData<Boolean> = MutableLiveData()
-        val bearer = getBearer(application)
+        val bearer = getBearer(mTokenDao, mTokenRepository)
         var actionString = ""
         if (action == ACTION_SUBSCRIBE)
             actionString = "sub"

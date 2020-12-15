@@ -26,22 +26,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.gusandrianos.foxforreddit.Constants;
-import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Data;
 import io.github.gusandrianos.foxforreddit.ui.MainActivity;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
-
 import io.github.gusandrianos.foxforreddit.utilities.MessagesAdapter;
 import io.github.gusandrianos.foxforreddit.utilities.PostLoadStateAdapter;
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModelFactory;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 import kotlin.Unit;
 
-
+@AndroidEntryPoint
 public class MessagesFragment extends Fragment implements MessagesAdapter.MessagesItemClickListener {
 
     private View mView;
@@ -51,6 +50,9 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
     MessagesAdapter mMessagesRecyclerViewAdapter;
     RecyclerView mMessagesRecyclerView;
     SwipeRefreshLayout pullToRefresh;
+
+    @Inject
+    TokenDao mTokenDao;
 
     @Nullable
     @Override
@@ -72,13 +74,12 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
     }
 
     void loadMessagesList(boolean requestChanged) {
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
-        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         if (requestChanged)
             viewModel.deleteCached();
 
-        viewModel.getMessagesWhere(getActivity().getApplication(), where).observe(getViewLifecycleOwner(), this::submitToAdapter);
+        viewModel.getMessagesWhere(where).observe(getViewLifecycleOwner(), this::submitToAdapter);
     }
 
     private void submitToAdapter(PagingData pagingData) {
@@ -142,11 +143,8 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
                 navController.navigate(InboxFragmentDirections.actionInboxFragmentToConversationFragment(item, item.getAuthor()));
                 break;
             case Constants.THING_MORE_ACTIONS:
-                UserViewModelFactory userViewModelFactory = InjectorUtils.getInstance().provideUserViewModelFactory();
-                UserViewModel userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
-
-                PostViewModelFactory postViewModelFactory = InjectorUtils.getInstance().providePostViewModelFactory();
-                PostViewModel postViewModel = new ViewModelProvider(this, postViewModelFactory).get(PostViewModel.class);
+                UserViewModel userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+                PostViewModel postViewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
                 PopupMenu menu = new PopupMenu(requireContext(), view);
                 menu.inflate(R.menu.private_messages_popup);
@@ -171,14 +169,14 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
                 .setNegativeButton("Nope", (dialog, id) -> dialog.cancel())
                 .setPositiveButton("Do it!", (dialog, id) -> {
                     if (author.equals(currentUser))
-                        postViewModel.deleteSubmission(fullname, requireActivity().getApplication())
+                        postViewModel.deleteSubmission(fullname)
                                 .observe(getViewLifecycleOwner(), success -> {
                                     if (success) {
                                         mMessagesRecyclerViewAdapter.refresh();
                                     }
                                 });
                     else
-                        userViewModel.deleteMsg(requireActivity().getApplication(), fullname)
+                        userViewModel.deleteMsg(fullname)
                                 .observe(getViewLifecycleOwner(), success -> {
                                     if (success) {
                                         mMessagesRecyclerViewAdapter.refresh();

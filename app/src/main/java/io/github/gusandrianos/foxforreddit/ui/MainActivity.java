@@ -1,8 +1,13 @@
 package io.github.gusandrianos.foxforreddit.ui;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
@@ -11,12 +16,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jaredrummler.cyanea.Cyanea;
@@ -27,18 +26,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+import io.github.gusandrianos.foxforreddit.Constants;
 import io.github.gusandrianos.foxforreddit.NavGraphDirections;
 import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
 import io.github.gusandrianos.foxforreddit.data.models.Token;
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository;
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
 import io.github.gusandrianos.foxforreddit.viewmodels.FoxSharedViewModel;
 import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
 
-import io.github.gusandrianos.foxforreddit.Constants;
-
-
+@AndroidEntryPoint
 public class MainActivity extends CyaneaAppCompatActivity implements
         BottomNavigationView.OnNavigationItemReselectedListener,
         BottomNavigationView.OnNavigationItemSelectedListener {
@@ -48,6 +49,10 @@ public class MainActivity extends CyaneaAppCompatActivity implements
     public AppBarConfiguration appBarConfiguration;
     public BottomNavigationView bottomNavView;
     List<Integer> topLevelDestinationIds;
+    @Inject
+    TokenDao mTokenDao;
+    @Inject
+    TokenRepository mTokenRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,19 +82,18 @@ public class MainActivity extends CyaneaAppCompatActivity implements
 
     private void setAuthorizedUI() {
         if (mToken == null) {
-            mToken = InjectorUtils.getInstance().provideTokenRepository().getToken(getApplication());
+            mToken = mTokenRepository.getToken(mTokenDao);
             MenuItem bottomNavMenuItem = bottomNavView.getMenu().findItem(R.id.userFragment);
             bottomNavMenuItem.setEnabled(true);
         }
-        if (FoxToolkit.INSTANCE.isAuthorized(getApplication()))
+        if (FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
             getCurrentUser();
     }
 
     public void getCurrentUser() {
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
-        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
+        UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
-        viewModel.getMe(getApplication()).observe(this, user -> {
+        viewModel.getMe().observe(this, user -> {
             if (user != null) {
                 String username = user.getName();
                 if (username != null) {
@@ -101,7 +105,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
             //TODO: Handle this by showing appropriate error
         });
 
-        viewModel.getPrefs(getApplication()).observe(this, prefs ->
+        viewModel.getPrefs().observe(this, prefs ->
                 getFoxSharedViewModel().setIncludeOver18(prefs.getSearchIncludeOver18()));
     }
 
@@ -143,7 +147,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
                 //When all goes well, there is the line "code=[something]"
                 if (state.equals(Constants.STATE) && error.equals("code")) {
                     String code = inputs[1].split("=")[1];
-                    mToken = InjectorUtils.getInstance().provideTokenRepository().getNewToken(getApplication(), code, Constants.REDIRECT_URI);
+                    mToken = mTokenRepository.getNewToken(mTokenDao, code, Constants.REDIRECT_URI);
                 } else
                     Toast.makeText(this, "Log In unsuccessful", Toast.LENGTH_SHORT).show();
 
@@ -162,7 +166,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
             navController.navigate(R.id.mainFragment, null, options);
             return true;
         } else if (id == R.id.userFragment) {
-            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(getApplication())) {
+            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository)) {
                 NavGraphDirections.ActionGlobalUserFragment action = NavGraphDirections.actionGlobalUserFragment(getFoxSharedViewModel().getCurrentUserUsername());
                 navController.navigate(action);
             } else
@@ -172,7 +176,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
             navController.navigate(R.id.subredditListFragment);
             return true;
         } else if (id == R.id.composeChooserFragment) {
-            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(getApplication())) {
+            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository)) {
                 String postTo = "Reddit";
                 if (navController.getCurrentDestination().getId() == R.id.subredditFragment) {
                     postTo = getFoxSharedViewModel().getCurrentSubreddit();
@@ -186,7 +190,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
                 FoxToolkit.INSTANCE.promptLogIn(this);
             return true;
         } else if (id == R.id.inboxFragment) {
-            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(getApplication()))
+            if (mToken != null && FoxToolkit.INSTANCE.isAuthorized(mTokenDao, mTokenRepository))
                 navController.navigate(R.id.inboxFragment);
             else
                 FoxToolkit.INSTANCE.promptLogIn(this);

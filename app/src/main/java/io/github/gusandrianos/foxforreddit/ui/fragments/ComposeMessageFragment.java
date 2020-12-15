@@ -21,13 +21,19 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.jaredrummler.cyanea.Cyanea;
 
-import io.github.gusandrianos.foxforreddit.R;
-import io.github.gusandrianos.foxforreddit.ui.MainActivity;
-import io.github.gusandrianos.foxforreddit.utilities.InjectorUtils;
-import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
-import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModelFactory;
+import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+import io.github.gusandrianos.foxforreddit.R;
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao;
+import io.github.gusandrianos.foxforreddit.ui.MainActivity;
+import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
+
+@AndroidEntryPoint
 public class ComposeMessageFragment extends Fragment {
+    @Inject
+    TokenDao mTokenDao;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -106,9 +112,8 @@ public class ComposeMessageFragment extends Fragment {
         String subject = subjectTextField.getText().toString();
         String text = messageTextField.getText().toString();
 
-        UserViewModelFactory factory = InjectorUtils.getInstance().provideUserViewModelFactory();
-        UserViewModel viewModel = new ViewModelProvider(this, factory).get(UserViewModel.class);
-        viewModel.messageCompose(requireActivity().getApplication(), toUser, subject, text).observe(getViewLifecycleOwner(), success -> {
+        UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        viewModel.messageCompose(toUser, subject, text).observe(getViewLifecycleOwner(), success -> {
             if (success == null)
                 Toast.makeText(getContext(), "User does not exist.", Toast.LENGTH_SHORT).show();
             else if (success)

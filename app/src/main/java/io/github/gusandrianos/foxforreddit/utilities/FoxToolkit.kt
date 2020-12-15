@@ -1,6 +1,5 @@
 package io.github.gusandrianos.foxforreddit.utilities
 
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -15,9 +14,11 @@ import com.libRG.CustomTextView
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.github.gusandrianos.foxforreddit.Constants
 import io.github.gusandrianos.foxforreddit.R
+import io.github.gusandrianos.foxforreddit.data.db.TokenDao
 import io.github.gusandrianos.foxforreddit.data.models.CommentData
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.RichtextItem
+import io.github.gusandrianos.foxforreddit.data.repositories.TokenRepository
 import io.github.gusandrianos.foxforreddit.ui.MainActivity
 import io.github.gusandrianos.foxforreddit.viewmodels.PostViewModel
 import org.apache.commons.text.StringEscapeUtils
@@ -27,13 +28,13 @@ import java.time.Instant
 import kotlin.math.pow
 
 object FoxToolkit {
-    fun getBearer(application: Application): String {
-        val token = InjectorUtils.getInstance().provideTokenRepository().getToken(application)
+    fun getBearer(tokenDao: TokenDao, tokenRepository: TokenRepository): String {
+        val token = tokenRepository.getToken(tokenDao)
         return " " + token.tokenType + " " + token.accessToken
     }
 
-    fun isAuthorized(application: Application): Boolean {
-        val token = InjectorUtils.getInstance().provideTokenRepository().getToken(application)
+    fun isAuthorized(tokenDao: TokenDao, tokenRepository: TokenRepository): Boolean {
+        val token = tokenRepository.getToken(tokenDao)
         return !token.refreshToken.isNullOrEmpty()
     }
 
@@ -86,7 +87,7 @@ object FoxToolkit {
 
     fun getTypeOfVideo(data: Data): Int {
         return if ((data.preview != null && data.preview.redditVideoPreview == null && !data.isVideo)
-                || (data.preview == null && !data.isVideo))
+            || (data.preview == null && !data.isVideo))
             Constants.UNPLAYABLE_VIDEO
         else
             Constants.PLAYABLE_VIDEO
@@ -116,42 +117,42 @@ object FoxToolkit {
         }
     }
 
-    fun upVoteModel(viewModel: PostViewModel, application: Application, data: Data) {
+    fun upVoteModel(viewModel: PostViewModel, data: Data) {
         if (data.likes == null || !(data.likes as Boolean)) {          //If down or no voted
-            viewModel.votePost("1", data.name!!, application)     //then send up vote
+            viewModel.votePost("1", data.name!!)     //then send up vote
             data.likes = true
         } else {                                                      //else (up voted)
-            viewModel.votePost("0", data.name!!, application)    //send no vote
+            viewModel.votePost("0", data.name!!)    //send no vote
             data.likes = null
         }
     }
 
-    fun downVoteModel(viewModel: PostViewModel, application: Application, data: Data) {
+    fun downVoteModel(viewModel: PostViewModel, data: Data) {
         if (data.likes == null || (data.likes as Boolean)) {     //If up or no voted
-            viewModel.votePost("-1", data.name!!, application) //then send down vote
+            viewModel.votePost("-1", data.name!!) //then send down vote
             data.likes = false
         } else {                                                   //else (down voted)
-            viewModel.votePost("0", data.name!!, application) //send no vote
+            viewModel.votePost("0", data.name!!) //send no vote
             data.likes = null
         }
     }
 
-    fun upVoteCommentModel(viewModel: PostViewModel, application: Application, data: CommentData) {
+    fun upVoteCommentModel(viewModel: PostViewModel, data: CommentData) {
         if (data.likes == null || data.likes == false) {          //If down or no voted
-            viewModel.votePost("1", data.name!!, application)     //then send up vote
+            viewModel.votePost("1", data.name!!)     //then send up vote
             data.likes = true
         } else {                                                      //else (up voted)
-            viewModel.votePost("0", data.name!!, application)    //send no vote
+            viewModel.votePost("0", data.name!!)    //send no vote
             data.likes = null
         }
     }
 
-    fun downVoteCommentModel(viewModel: PostViewModel, application: Application, data: CommentData) {
+    fun downVoteCommentModel(viewModel: PostViewModel, data: CommentData) {
         if (data.likes == null || data.likes == true) {     //If up or no voted
-            viewModel.votePost("-1", data.name!!, application) //then send down vote
+            viewModel.votePost("-1", data.name!!) //then send down vote
             data.likes = false
         } else {                                                   //else (down voted)
-            viewModel.votePost("0", data.name!!, application) //send no vote
+            viewModel.votePost("0", data.name!!) //send no vote
             data.likes = null
         }
     }
@@ -163,12 +164,12 @@ object FoxToolkit {
                 upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
                 downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24)
                 score.setTextColor(ContextCompat.getColor(
-                        mainActivity.applicationContext, android.R.color.holo_orange_dark))
+                    mainActivity.applicationContext, android.R.color.holo_orange_dark))
             } else {
                 downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
                 upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)
                 score.setTextColor(ContextCompat.getColor(
-                        mainActivity.applicationContext, android.R.color.holo_blue_dark))
+                    mainActivity.applicationContext, android.R.color.holo_blue_dark))
             }
         } else {
             upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)

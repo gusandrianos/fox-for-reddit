@@ -7,7 +7,9 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 
-public interface OAuthToken {
+public interface OAuthTokenAPI {
+    String BASE_URL = "https://www.reddit.com/";
+
     @FormUrlEncoded
     @POST("/api/v1/access_token")
     Call<Token> getUserlessToken(

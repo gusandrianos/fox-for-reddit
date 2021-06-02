@@ -26,13 +26,14 @@ import io.noties.markwon.linkify.LinkifyPlugin
 import jp.wasabeef.glide.transformations.BlurTransformation
 import org.apache.commons.text.StringEscapeUtils
 
-
-class PostAdapter(private val mainActivity: MainActivity,
-                  private val listener: OnItemClickListener,
-                  private val mTokenRepository: TokenRepository
+class PostAdapter(
+    private val mainActivity: MainActivity,
+    private val listener: OnItemClickListener,
+    private val mTokenRepository: TokenRepository
 ) : PagingDataAdapter<Data, RecyclerView.ViewHolder>(POST_COMPARATOR) {
 
     companion object {
+
         private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Data>() {
 
             override fun areItemsTheSame(oldItem: Data, newItem: Data): Boolean {
@@ -84,22 +85,27 @@ class PostAdapter(private val mainActivity: MainActivity,
                 view = layoutInflater.inflate(R.layout.post_self_layout, parent, false)
                 return PostSelfViewHolder(view, Constants.SELF)
             }
+
             Constants.IMAGE -> {
                 view = layoutInflater.inflate(R.layout.post_image_layout, parent, false)
                 return PostImageViewHolder(view, Constants.IMAGE)
             }
+
             Constants.LINK -> {
                 view = layoutInflater.inflate(R.layout.post_link_layout, parent, false)
                 return PostLinkViewHolder(view, Constants.LINK)
             }
+
             Constants.VIDEO -> {
                 view = layoutInflater.inflate(R.layout.post_video_layout, parent, false)
                 return PostVideoViewHolder(view, Constants.VIDEO)
             }
+
             Constants.POLL -> {
                 view = layoutInflater.inflate(R.layout.post_poll_layout, parent, false)
                 return PostPollViewHolder(view, Constants.POLL)
             }
+
             Constants.COMMENT -> {
                 view = layoutInflater.inflate(R.layout.post_comment_layout, parent, false)
                 return PostCommentViewHolder(view, Constants.COMMENT, parent.context)
@@ -116,22 +122,27 @@ class PostAdapter(private val mainActivity: MainActivity,
                 val postSelfViewHolder = holder as PostSelfViewHolder
                 postSelfViewHolder.onBind(currentItem!!)
             }
+
             Constants.IMAGE -> {
                 val postImageViewHolder = holder as PostImageViewHolder
                 postImageViewHolder.onBind(currentItem!!)
             }
+
             Constants.LINK -> {
                 val postLinkViewHolder = holder as PostLinkViewHolder
                 postLinkViewHolder.onBind(currentItem!!)
             }
+
             Constants.VIDEO -> {
                 val postVideoViewHolder = holder as PostVideoViewHolder
                 postVideoViewHolder.onBind(currentItem!!)
             }
+
             Constants.POLL -> {
                 val postPollViewHolder = holder as PostPollViewHolder
                 postPollViewHolder.onBind(currentItem!!)
             }
+
             Constants.COMMENT -> {
                 val postCommentViewHolder = holder as PostCommentViewHolder
                 postCommentViewHolder.onBind(currentItem!!)
@@ -139,7 +150,9 @@ class PostAdapter(private val mainActivity: MainActivity,
         }
     }
 
-    abstract inner class AbstractPostViewHolder(itemView: View, private val mPostType: Int) : RecyclerView.ViewHolder(itemView) {
+    abstract inner class AbstractPostViewHolder(itemView: View, private val mPostType: Int) :
+        RecyclerView.ViewHolder(itemView) {
+
         private val mTxtPostSubreddit: TextView = itemView.findViewById(R.id.txt_post_subreddit)
         private val mTxtPostUser: TextView = itemView.findViewById(R.id.txt_post_user)
         private val mTxtTimePosted: TextView = itemView.findViewById(R.id.txt_time_posted)
@@ -175,8 +188,10 @@ class PostAdapter(private val mainActivity: MainActivity,
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                         val item = getItem(bindingAdapterPosition)
                         if (item != null) {
-                            FoxToolkit.upVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
-                                mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
+                            FoxToolkit.upVoteColor(
+                                item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
+                                mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor
+                            )
                             onClick(bindingAdapterPosition, Constants.THING_VOTE_UP, mPostType, it)
                         }
                     }
@@ -189,8 +204,10 @@ class PostAdapter(private val mainActivity: MainActivity,
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                         val item = getItem(bindingAdapterPosition)
                         if (item != null) {
-                            FoxToolkit.downVoteColor(item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
-                                mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
+                            FoxToolkit.downVoteColor(
+                                item.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
+                                mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor
+                            )
                             onClick(bindingAdapterPosition, Constants.THING_VOTE_DOWN, mPostType, it)
                         }
                     }
@@ -220,8 +237,10 @@ class PostAdapter(private val mainActivity: MainActivity,
             mTxtPostScore.text = FoxToolkit.formatValue(post.score.toDouble())
             mTxtPostNumComments.text = FoxToolkit.formatValue(post.numComments.toDouble())
 
-            FoxToolkit.setLikedStatusOnButtons(post.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
-                mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor)
+            FoxToolkit.setLikedStatusOnButtons(
+                post.likes, mImgBtnPostVoteUp, mImgBtnPostVoteDown,
+                mTxtPostScore, mainActivity, mTxtPostShare.currentTextColor
+            )
 
             if (post.isOver18 != null && post.isOver18 == true)
                 txtIsOver18.visibility = View.VISIBLE
@@ -234,8 +253,10 @@ class PostAdapter(private val mainActivity: MainActivity,
                 txtIsSpoiler.visibility = View.GONE
 
             if (!post.linkFlairText.isNullOrEmpty())
-                FoxToolkit.makeFlair(post.linkFlairType, post.linkFlairRichtext, post.linkFlairText,
-                    post.linkFlairTextColor, post.linkFlairBackgroundColor, customTxtPostFlair)
+                FoxToolkit.makeFlair(
+                    post.linkFlairType, post.linkFlairRichtext, post.linkFlairText,
+                    post.linkFlairTextColor, post.linkFlairBackgroundColor, customTxtPostFlair
+                )
             else
                 customTxtPostFlair.visibility = View.GONE
         }
@@ -243,7 +264,9 @@ class PostAdapter(private val mainActivity: MainActivity,
 
     inner class PostSelfViewHolder(itemView: View, mPostType: Int) : AbstractPostViewHolder(itemView, mPostType)
 
-    inner class PostImageViewHolder(itemView: View, private val mPostType: Int) : AbstractPostViewHolder(itemView, mPostType) {
+    inner class PostImageViewHolder(itemView: View, private val mPostType: Int) :
+        AbstractPostViewHolder(itemView, mPostType) {
+
         private val mImgPostThumbnail: ImageView = itemView.findViewById(R.id.img_post_thumbnail)
 
         init {
@@ -255,13 +278,18 @@ class PostAdapter(private val mainActivity: MainActivity,
         override fun onBind(post: Data) {
             super.onBind(post)
             if ((post.spoiler != null && post.spoiler == true) || (post.isOver18 != null && post.isOver18 == true))
-                Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_photo_size_select_actual_80).apply(bitmapTransform(BlurTransformation(25, 3))).into(mImgPostThumbnail)
+                Glide.with(itemView).load(post.thumbnail)
+                    .placeholder(R.drawable.placeholder_ic_baseline_photo_size_select_actual_80)
+                    .apply(bitmapTransform(BlurTransformation(25, 3))).into(mImgPostThumbnail)
             else
-                Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_photo_size_select_actual_80).into(mImgPostThumbnail)
+                Glide.with(itemView).load(post.thumbnail)
+                    .placeholder(R.drawable.placeholder_ic_baseline_photo_size_select_actual_80).into(mImgPostThumbnail)
         }
     }
 
-    inner class PostLinkViewHolder(itemView: View, private val mPostType: Int) : AbstractPostViewHolder(itemView, mPostType) {
+    inner class PostLinkViewHolder(itemView: View, private val mPostType: Int) :
+        AbstractPostViewHolder(itemView, mPostType) {
+
         private val mFlThumbnail: FrameLayout = itemView.findViewById(R.id.fl_thumbnail)
         private val mImgPostThumbnail: ImageView = itemView.findViewById(R.id.img_post_thumbnail)
         private val mTxtPostDomain: TextView = itemView.findViewById(R.id.txt_post_domain)
@@ -275,15 +303,19 @@ class PostAdapter(private val mainActivity: MainActivity,
         override fun onBind(post: Data) {
             super.onBind(post)
             if ((post.spoiler != null && post.spoiler == true) || (post.isOver18 != null && post.isOver18 == true))
-                Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_link_80).apply(bitmapTransform(BlurTransformation(25, 3))).into(mImgPostThumbnail)
+                Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_link_80)
+                    .apply(bitmapTransform(BlurTransformation(25, 3))).into(mImgPostThumbnail)
             else
-                Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_link_80).into(mImgPostThumbnail)
+                Glide.with(itemView).load(post.thumbnail).placeholder(R.drawable.placeholder_ic_baseline_link_80)
+                    .into(mImgPostThumbnail)
             mTxtPostDomain.text = post.domain
             mTxtPostDomain.tag = post.urlOverriddenByDest
         }
     }
 
-    inner class PostVideoViewHolder(itemView: View, private val mPostType: Int) : AbstractPostViewHolder(itemView, mPostType) {
+    inner class PostVideoViewHolder(itemView: View, private val mPostType: Int) :
+        AbstractPostViewHolder(itemView, mPostType) {
+
         private val mFlThumbnail: FrameLayout = itemView.findViewById(R.id.fl_thumbnail)
         private val mImgPostThumbnail: ImageView = itemView.findViewById(R.id.img_post_thumbnail)
 
@@ -296,13 +328,16 @@ class PostAdapter(private val mainActivity: MainActivity,
         override fun onBind(post: Data) {
             super.onBind(post)
             if ((post.spoiler != null && post.spoiler == true) || (post.isOver18 != null && post.isOver18 == true))
-                Glide.with(itemView).load(post.thumbnail).apply(bitmapTransform(BlurTransformation(25, 3))).into(mImgPostThumbnail)
+                Glide.with(itemView).load(post.thumbnail).apply(bitmapTransform(BlurTransformation(25, 3)))
+                    .into(mImgPostThumbnail)
             else
                 Glide.with(itemView).load(post.thumbnail).into(mImgPostThumbnail)
         }
     }
 
-    inner class PostPollViewHolder(itemView: View, private val mPostType: Int) : AbstractPostViewHolder(itemView, mPostType) {
+    inner class PostPollViewHolder(itemView: View, private val mPostType: Int) :
+        AbstractPostViewHolder(itemView, mPostType) {
+
         private val mBtnPostVoteNow: ImageButton = itemView.findViewById(R.id.btn_post_vote_now)
         private val mTxtPostVoteNum: TextView = itemView.findViewById(R.id.txt_post_vote_num)
         private val mTxtPostVoteTimeLeft: TextView = itemView.findViewById(R.id.txt_post_vote_time_left)
@@ -323,7 +358,9 @@ class PostAdapter(private val mainActivity: MainActivity,
     }
 
     // We know naming it PostComment instead of Comment is stupid, don't judge hey :p
-    inner class PostCommentViewHolder(itemView: View, private val mPostType: Int, private val context: Context) : RecyclerView.ViewHolder(itemView) {
+    inner class PostCommentViewHolder(itemView: View, private val mPostType: Int, private val context: Context) :
+        RecyclerView.ViewHolder(itemView) {
+
         private val mTxtPostUser: TextView = itemView.findViewById(R.id.txt_post_user)
         private val mTxtTimePosted: TextView = itemView.findViewById(R.id.txt_time_posted)
         private val mTxtPostScore: TextView = itemView.findViewById(R.id.txt_post_score)
@@ -370,6 +407,7 @@ class PostAdapter(private val mainActivity: MainActivity,
     }
 
     interface OnItemClickListener {
+
         fun onItemClick(post: Data, clicked: String, postType: Int, view: View)
     }
 }

@@ -14,6 +14,7 @@ import org.apache.commons.text.StringEscapeUtils
 
 class RulesListAdapter(private val rules: List<RulesItem>) : RecyclerView.Adapter<RulesListAdapter.ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         var ruleTitle = view.findViewById(R.id.text_rule_title) as TextView
         var ruleBody = view.findViewById(R.id.text_rule_body) as TextView
     }

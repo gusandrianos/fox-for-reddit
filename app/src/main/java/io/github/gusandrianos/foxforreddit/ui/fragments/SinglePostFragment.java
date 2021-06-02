@@ -89,25 +89,21 @@ import io.noties.markwon.linkify.LinkifyPlugin;
 
 @AndroidEntryPoint
 public class SinglePostFragment extends Fragment implements ExpandableCommentItem.OnItemClickListener {
-    private boolean wasPlaying;
-    private boolean isFullscreen;
-    private int orientation;
-    private String subreddit;
-
     NavHostFragment navHostFragment;
     NavController navController;
-
     SimpleExoPlayer player = null;
     ImageView imgPlay;
     SeekBar videoSeekBar;
-
     RecyclerView mCommentsRecyclerView;
     GroupAdapter<GroupieViewHolder> groupAdapter;
-
     DisplayMetrics displayMetrics = new DisplayMetrics();
     Markwon markwon;
     @Inject
     TokenRepository mTokenRepository;
+    private boolean wasPlaying;
+    private boolean isFullscreen;
+    private int orientation;
+    private String subreddit;
 
     @Nullable
     @Override

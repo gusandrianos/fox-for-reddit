@@ -60,23 +60,49 @@ import static io.github.gusandrianos.foxforreddit.Constants.ARG_TYPE_OF_ACTION;
 
 @AndroidEntryPoint
 public class PostFragment extends Fragment implements PostAdapter.OnItemClickListener {
-    private Token mToken;
-
     String type_of_action;
     String subreddit;
     String filter;
     String timedFilter;
     String time;
-
     String query;
     boolean sr_restrict;
     String searchType;
-
     PostAdapter mPostRecyclerViewAdapter;
     RecyclerView mPostRecyclerView;
     SwipeRefreshLayout pullToRefresh;
     @Inject
     TokenRepository mTokenRepository;
+    private Token mToken;
+
+    public static PostFragment newInstance(String subreddit, String filter, String time) {
+        PostFragment fragment = new PostFragment();
+
+        Bundle args = new Bundle();
+        args.putString(Constants.ARG_SUBREDDIT_NAME, subreddit);
+        args.putString(Constants.ARG_FILTER_NAME, filter);
+        args.putString(Constants.ARG_TIME_NAME, time);
+        args.putString(ARG_TYPE_OF_ACTION, ACTION_POST);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    public static PostFragment newSearchInstance(String query, String sort, String time, Boolean restrict_sr, String type, String subreddit) {
+        PostFragment fragment = new PostFragment();
+
+        Bundle args = new Bundle();
+        args.putString(ARG_SUBREDDIT_NAME, subreddit);
+        args.putString(ARG_QUERY_STRING, query);
+        args.putString(ARG_FILTER_NAME, sort);
+        args.putString(ARG_TIME_NAME, time);
+        args.putBoolean(ARG_SR_RESTRICT_BOOLEAN, restrict_sr);
+        args.putString(ARG_SEARCH_TYPE, type);
+        args.putString(ARG_TYPE_OF_ACTION, ACTION_SEARCH);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -381,35 +407,6 @@ public class PostFragment extends Fragment implements PostAdapter.OnItemClickLis
             }
             return false;
         });
-    }
-
-    public static PostFragment newInstance(String subreddit, String filter, String time) {
-        PostFragment fragment = new PostFragment();
-
-        Bundle args = new Bundle();
-        args.putString(Constants.ARG_SUBREDDIT_NAME, subreddit);
-        args.putString(Constants.ARG_FILTER_NAME, filter);
-        args.putString(Constants.ARG_TIME_NAME, time);
-        args.putString(ARG_TYPE_OF_ACTION, ACTION_POST);
-        fragment.setArguments(args);
-
-        return fragment;
-    }
-
-    public static PostFragment newSearchInstance(String query, String sort, String time, Boolean restrict_sr, String type, String subreddit) {
-        PostFragment fragment = new PostFragment();
-
-        Bundle args = new Bundle();
-        args.putString(ARG_SUBREDDIT_NAME, subreddit);
-        args.putString(ARG_QUERY_STRING, query);
-        args.putString(ARG_FILTER_NAME, sort);
-        args.putString(ARG_TIME_NAME, time);
-        args.putBoolean(ARG_SR_RESTRICT_BOOLEAN, restrict_sr);
-        args.putString(ARG_SEARCH_TYPE, type);
-        args.putString(ARG_TYPE_OF_ACTION, ACTION_SEARCH);
-        fragment.setArguments(args);
-
-        return fragment;
     }
 
     @Override

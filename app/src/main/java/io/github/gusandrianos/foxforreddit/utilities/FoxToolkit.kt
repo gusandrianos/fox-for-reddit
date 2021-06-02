@@ -27,13 +27,14 @@ import java.time.Instant
 import kotlin.math.pow
 
 object FoxToolkit {
+
     fun getBearer(tokenRepository: TokenRepository): String {
-        val token = tokenRepository.getToken()
+        val token = tokenRepository.token
         return " " + token.tokenType + " " + token.accessToken
     }
 
     fun isAuthorized(tokenRepository: TokenRepository): Boolean {
-        val token = tokenRepository.getToken()
+        val token = tokenRepository.token
         return !token.refreshToken.isNullOrEmpty()
     }
 
@@ -86,14 +87,17 @@ object FoxToolkit {
 
     fun getTypeOfVideo(data: Data): Int {
         return if ((data.preview != null && data.preview.redditVideoPreview == null && !data.isVideo)
-            || (data.preview == null && !data.isVideo))
+            || (data.preview == null && !data.isVideo)
+        )
             Constants.UNPLAYABLE_VIDEO
         else
             Constants.PLAYABLE_VIDEO
     }
 
-    fun upVoteColor(likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton,
-                    score: TextView, activity: MainActivity, defaultColor: Int) {
+    fun upVoteColor(
+        likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton,
+        score: TextView, activity: MainActivity, defaultColor: Int
+    ) {
         if (likes == null || !(likes)) {
             upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
             downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24)
@@ -104,8 +108,10 @@ object FoxToolkit {
         }
     }
 
-    fun downVoteColor(likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton,
-                      score: TextView, activity: MainActivity, defaultColor: Int) {
+    fun downVoteColor(
+        likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton,
+        score: TextView, activity: MainActivity, defaultColor: Int
+    ) {
         if (likes == null || (likes)) {
             upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)
             downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
@@ -156,19 +162,27 @@ object FoxToolkit {
         }
     }
 
-    fun setLikedStatusOnButtons(likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton,
-                                score: TextView, mainActivity: MainActivity, defaultColor: Int) {
+    fun setLikedStatusOnButtons(
+        likes: Boolean?, upVoteBtn: ImageButton, downVoteBtn: ImageButton,
+        score: TextView, mainActivity: MainActivity, defaultColor: Int
+    ) {
         if (likes != null) {
             if (likes == true) {
                 upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24_orange)
                 downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24)
-                score.setTextColor(ContextCompat.getColor(
-                    mainActivity.applicationContext, android.R.color.holo_orange_dark))
+                score.setTextColor(
+                    ContextCompat.getColor(
+                        mainActivity.applicationContext, android.R.color.holo_orange_dark
+                    )
+                )
             } else {
                 downVoteBtn.setImageResource(R.drawable.ic_round_arrow_downward_24_blue)
                 upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)
-                score.setTextColor(ContextCompat.getColor(
-                    mainActivity.applicationContext, android.R.color.holo_blue_dark))
+                score.setTextColor(
+                    ContextCompat.getColor(
+                        mainActivity.applicationContext, android.R.color.holo_blue_dark
+                    )
+                )
             }
         } else {
             upVoteBtn.setImageResource(R.drawable.ic_round_arrow_upward_24)
@@ -207,7 +221,9 @@ object FoxToolkit {
             images.add(post.urlOverriddenByDest)
         }
 
-        StfalconImageViewer.Builder<String>(context, images) { imageView, imageUrl -> Glide.with(context).load(imageUrl).into(imageView) }.show()
+        StfalconImageViewer.Builder<String>(context, images) { imageView, imageUrl ->
+            Glide.with(context).load(imageUrl).into(imageView)
+        }.show()
     }
 
     fun formatValue(number: Double): String {
@@ -222,12 +238,15 @@ object FoxToolkit {
         value /= 10.0.pow(power / 3 * 3.toDouble())
         formattedNumber = formatter.format(value)
         formattedNumber += suffix[power / 3]
-        return if (formattedNumber.length > 4) formattedNumber.replace("\\.[0-9]+".toRegex(), "").trim() else formattedNumber.trim()
+        return if (formattedNumber.length > 4) formattedNumber.replace("\\.[0-9]+".toRegex(), "")
+            .trim() else formattedNumber.trim()
     }
 
     // TODO: Handle emoji in flair text
-    fun makeFlair(type: String?, richtext: List<RichtextItem>?, text: String?, textColor: String?,
-                  backgroundColor: String?, view: CustomTextView) {
+    fun makeFlair(
+        type: String?, richtext: List<RichtextItem>?, text: String?, textColor: String?,
+        backgroundColor: String?, view: CustomTextView
+    ) {
 
         if (!view.text.isNullOrEmpty()) {
             if (type.equals("richtext") && !richtext.isNullOrEmpty()) {

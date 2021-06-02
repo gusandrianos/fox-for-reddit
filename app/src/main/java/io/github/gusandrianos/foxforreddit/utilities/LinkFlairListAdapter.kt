@@ -10,10 +10,11 @@ import io.github.gusandrianos.foxforreddit.data.models.Flair
 
 class LinkFlairListAdapter(
     private val flairList: List<Flair>,
-    private val listener: LinkFlairListAdapter.OnItemClickListener)
-    : RecyclerView.Adapter<LinkFlairListAdapter.ViewHolder>() {
+    private val listener: LinkFlairListAdapter.OnItemClickListener
+) : RecyclerView.Adapter<LinkFlairListAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         var flair = view.findViewById(R.id.item_custom_text_link_flair) as CustomTextView
 
         init {
@@ -44,6 +45,7 @@ class LinkFlairListAdapter(
     }
 
     interface OnItemClickListener {
+
         fun onItemClick(flair: Flair)
     }
 }

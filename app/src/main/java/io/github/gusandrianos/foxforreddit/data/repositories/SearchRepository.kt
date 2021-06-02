@@ -32,7 +32,14 @@ class SearchRepository @Inject constructor(
         return searchTopSubreddits
     }
 
-    fun searchResults(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String): RedditPagingSource {
+    fun searchResults(
+        query: String,
+        sort: String,
+        time: String,
+        restrict_sr: Boolean,
+        type: String,
+        subreddit: String
+    ): RedditPagingSource {
         return RedditPagingSource(query, sort, time, restrict_sr, type, subreddit, getBearer(mTokenRepository), redditAPI)
     }
 }

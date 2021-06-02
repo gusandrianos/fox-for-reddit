@@ -22,6 +22,14 @@ import io.github.gusandrianos.foxforreddit.viewmodels.UserViewModel;
 @AndroidEntryPoint
 public class AboutUserFragment extends Fragment {
 
+    public static AboutUserFragment newInstance(String username) {
+        AboutUserFragment fragment = new AboutUserFragment();
+        Bundle args = new Bundle();
+        args.putString(Constants.ARG_USERNAME_NAME, username);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,13 +62,5 @@ public class AboutUserFragment extends Fragment {
                 trophiesRV.setAdapter(adapter);
             }
         });
-    }
-
-    public static AboutUserFragment newInstance(String username) {
-        AboutUserFragment fragment = new AboutUserFragment();
-        Bundle args = new Bundle();
-        args.putString(Constants.ARG_USERNAME_NAME, username);
-        fragment.setArguments(args);
-        return fragment;
     }
 }

@@ -12,8 +12,8 @@ import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import retrofit2.HttpException
 import java.io.IOException
 
-
 class RedditPagingSource(private val redditAPI: RedditAPI) : PagingSource<String, Data>() {
+
     private lateinit var mSubreddit: String
     private lateinit var mFilter: String
     private lateinit var mTime: String
@@ -39,7 +39,16 @@ class RedditPagingSource(private val redditAPI: RedditAPI) : PagingSource<String
         MODE = mode
     }
 
-    constructor(query: String, sort: String, time: String, restrict_sr: Boolean, type: String, subreddit: String, bearer: String, redditAPI: RedditAPI) : this(redditAPI) {
+    constructor(
+        query: String,
+        sort: String,
+        time: String,
+        restrict_sr: Boolean,
+        type: String,
+        subreddit: String,
+        bearer: String,
+        redditAPI: RedditAPI
+    ) : this(redditAPI) {
         mSubreddit = subreddit
         mQuery = query
         mFilter = sort
@@ -60,7 +69,17 @@ class RedditPagingSource(private val redditAPI: RedditAPI) : PagingSource<String
             else if (MODE == MODE_SUBREDDIT)
                 response = redditAPI.getSubreddits(mBearer, mLocation, position, params.loadSize)
             else if (MODE == MODE_SEARCH_RESULTS)
-                response = redditAPI.searchResults(mBearer, mSubreddit, mQuery, mFilter, mTime, mRestrict_sr, mType, params.loadSize, position)
+                response = redditAPI.searchResults(
+                    mBearer,
+                    mSubreddit,
+                    mQuery,
+                    mFilter,
+                    mTime,
+                    mRestrict_sr,
+                    mType,
+                    params.loadSize,
+                    position
+                )
             else if (MODE == MODE_MESSAGES)
                 response = redditAPI.getMessagesWhere(mBearer, mLocation, position, params.loadSize)
             val items = response.data!!.children?.map { it.data!! } ?: emptyList()

@@ -24,6 +24,7 @@ class PostLoadStateAdapter(private val retry: () -> Unit) : LoadStateAdapter<Pos
     }
 
     inner class LoadStateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         private val progressBar: ProgressBar = itemView.findViewById(R.id.progressbar)
         private val mTxtError: TextView = itemView.findViewById(R.id.txt_error)
         private val mBtnRetry: Button = itemView.findViewById(R.id.btn_retry)

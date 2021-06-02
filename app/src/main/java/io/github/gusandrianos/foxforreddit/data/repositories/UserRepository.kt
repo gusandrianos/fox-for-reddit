@@ -24,6 +24,7 @@ class UserRepository @Inject constructor(
     private val mTokenRepository: TokenRepository,
     private val redditAPI: RedditAPI
 ) {
+
     private var user: MutableLiveData<Data> = MutableLiveData()
     private var me: MutableLiveData<Data> = MutableLiveData()
     private var trophies: MutableLiveData<List<Thing>> = MutableLiveData()
@@ -99,7 +100,14 @@ class UserRepository @Inject constructor(
     fun getMessagesWhere(where: String) =
         Pager(
             config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-            pagingSourceFactory = { RedditPagingSource(where, getBearer(mTokenRepository), Constants.MODE_MESSAGES, redditAPI) }
+            pagingSourceFactory = {
+                RedditPagingSource(
+                    where,
+                    getBearer(mTokenRepository),
+                    Constants.MODE_MESSAGES,
+                    redditAPI
+                )
+            }
         ).liveData
 
     fun blockUser(accountId: String, name: String): LiveData<Boolean> {

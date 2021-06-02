@@ -49,22 +49,33 @@ import static io.github.gusandrianos.foxforreddit.Constants.KIND_SUBREDDIT;
 @AndroidEntryPoint
 public class SearchResultsListFragment extends Fragment implements SearchResultsAdapter.OnSearchResultsItemClickListener {
 
-    private View mView;
-    private Token mToken;
-
     String filter;
     String time;
-
     String query;
     boolean sr_restrict;
     String searchType;
-
     SearchResultsAdapter mSearchRecyclerViewAdapter;
     RecyclerView mSearchRecyclerView;
     SwipeRefreshLayout pullToRefresh;
-
     @Inject
     TokenRepository mTokenRepository;
+    private View mView;
+    private Token mToken;
+
+    public static SearchResultsListFragment newSearchInstance(String query, String sort, String time, Boolean restrict_sr, String type) {
+        SearchResultsListFragment fragment = new SearchResultsListFragment();
+
+        Bundle args = new Bundle();
+        args.putString(ARG_QUERY_STRING, query);
+        args.putString(ARG_FILTER_NAME, sort);
+        args.putString(ARG_TIME_NAME, time);
+        args.putBoolean(ARG_SR_RESTRICT_BOOLEAN, restrict_sr);
+        args.putString(ARG_SEARCH_TYPE, type);
+        args.putString(ARG_TYPE_OF_ACTION, ACTION_SEARCH);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -122,7 +133,6 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
         });
     }
 
-
     private void initSwipeToRefresh() {
         int color = Cyanea.getInstance().getAccent();
         pullToRefresh.setColorSchemeColors(color, color, color);
@@ -133,28 +143,11 @@ public class SearchResultsListFragment extends Fragment implements SearchResults
         });
     }
 
-
     private Toolbar getCurrentToolbar() {
         if (getParentFragment() instanceof SearchResultsFragment)
             return requireActivity().findViewById(R.id.toolbar_fragment_results_search);
         else
             return requireActivity().findViewById(R.id.toolbar_main);
-    }
-
-
-    public static SearchResultsListFragment newSearchInstance(String query, String sort, String time, Boolean restrict_sr, String type) {
-        SearchResultsListFragment fragment = new SearchResultsListFragment();
-
-        Bundle args = new Bundle();
-        args.putString(ARG_QUERY_STRING, query);
-        args.putString(ARG_FILTER_NAME, sort);
-        args.putString(ARG_TIME_NAME, time);
-        args.putBoolean(ARG_SR_RESTRICT_BOOLEAN, restrict_sr);
-        args.putString(ARG_SEARCH_TYPE, type);
-        args.putString(ARG_TYPE_OF_ACTION, ACTION_SEARCH);
-        fragment.setArguments(args);
-
-        return fragment;
     }
 
     @Override

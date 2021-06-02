@@ -3,6 +3,7 @@ package io.github.gusandrianos.foxforreddit.data.models
 import com.google.gson.annotations.SerializedName
 
 class PollData {
+
     @SerializedName("voting_end_timestamp")
     val votingEndTimestamp: Long = 0
 

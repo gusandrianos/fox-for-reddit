@@ -14,9 +14,11 @@ import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.formatValue
 
-class SearchResultsAdapter(private val mKind: String, private val listener: OnSearchResultsItemClickListener) : PagingDataAdapter<Data, SearchResultsAdapter.ViewHolder>(ITEM_COMPARATOR) {
+class SearchResultsAdapter(private val mKind: String, private val listener: OnSearchResultsItemClickListener) :
+    PagingDataAdapter<Data, SearchResultsAdapter.ViewHolder>(ITEM_COMPARATOR) {
 
     companion object {
+
         private val ITEM_COMPARATOR = object : DiffUtil.ItemCallback<Data>() {
             override fun areItemsTheSame(oldItem: Data, newItem: Data): Boolean {
                 return oldItem.id == newItem.id
@@ -63,6 +65,7 @@ class SearchResultsAdapter(private val mKind: String, private val listener: OnSe
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         val icon = view.findViewById(R.id.search_item_icon) as ImageView
         val txtName: TextView = view.findViewById(R.id.txt_search_item_name)
         val txtInfo: TextView = view.findViewById(R.id.txt_search_item_info)
@@ -85,6 +88,7 @@ class SearchResultsAdapter(private val mKind: String, private val listener: OnSe
     }
 
     interface OnSearchResultsItemClickListener {
+
         fun onSearchItemClick(item: Data)
     }
 }

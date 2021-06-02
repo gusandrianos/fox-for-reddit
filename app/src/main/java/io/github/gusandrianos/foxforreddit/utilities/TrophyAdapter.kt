@@ -13,6 +13,7 @@ import io.github.gusandrianos.foxforreddit.utilities.TrophyAdapter.ViewHolder
 
 class TrophyAdapter(private val trophies: List<Thing>) : RecyclerView.Adapter<ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         var trophyImg = view.findViewById(R.id.img_trophy_item_icon) as ImageView
         var trophyTitle = view.findViewById(R.id.txt_trophy_item_title) as TextView
     }

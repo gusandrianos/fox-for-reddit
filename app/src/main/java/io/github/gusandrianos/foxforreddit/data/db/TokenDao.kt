@@ -7,6 +7,7 @@ import io.github.gusandrianos.foxforreddit.data.models.Token
 
 @Dao
 interface TokenDao {
+
     @Insert
     fun insert(token: Token)
 

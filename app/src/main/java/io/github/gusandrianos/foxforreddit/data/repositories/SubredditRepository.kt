@@ -5,7 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.github.gusandrianos.foxforreddit.Constants.ACTION_SUBSCRIBE
 import io.github.gusandrianos.foxforreddit.Constants.ACTION_UNSUBSCRIBE
-import io.github.gusandrianos.foxforreddit.data.models.*
+import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.data.models.Flair
+import io.github.gusandrianos.foxforreddit.data.models.ModeratorsList
+import io.github.gusandrianos.foxforreddit.data.models.ModeratorsResponse
+import io.github.gusandrianos.foxforreddit.data.models.RulesBundle
+import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.network.RedditAPI
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.getBearer
 import retrofit2.Call

@@ -14,9 +14,11 @@ import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import org.apache.commons.text.StringEscapeUtils
 
-class MessagesAdapter(private val listener: MessagesItemClickListener) : PagingDataAdapter<Data, MessagesAdapter.ViewHolder>(ITEM_COMPARATOR) {
+class MessagesAdapter(private val listener: MessagesItemClickListener) :
+    PagingDataAdapter<Data, MessagesAdapter.ViewHolder>(ITEM_COMPARATOR) {
 
     companion object {
+
         private val ITEM_COMPARATOR = object : DiffUtil.ItemCallback<Data>() {
             override fun areItemsTheSame(oldItem: Data, newItem: Data): Boolean {
                 return oldItem.id == newItem.id
@@ -42,6 +44,7 @@ class MessagesAdapter(private val listener: MessagesItemClickListener) : PagingD
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         val txtUser: TextView = view.findViewById(R.id.txt_message_item_sent_by_user)
         val txtTimeAgo: TextView = view.findViewById(R.id.txt_message_item_time_ago)
         val txtSubject: TextView = view.findViewById(R.id.txt_message_item_subject)
@@ -67,6 +70,7 @@ class MessagesAdapter(private val listener: MessagesItemClickListener) : PagingD
     }
 
     interface MessagesItemClickListener {
+
         fun onMessageItemClicked(item: Data, action: String, view: View)
     }
 }

@@ -8,8 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Moderator
 
-class ModeratorsListAdapter(private val moderators: List<Moderator>, private val listener: OnItemClickListener) : RecyclerView.Adapter<ModeratorsListAdapter.ViewHolder>() {
+class ModeratorsListAdapter(private val moderators: List<Moderator>, private val listener: OnItemClickListener) :
+    RecyclerView.Adapter<ModeratorsListAdapter.ViewHolder>() {
+
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         var moderatorName = view.findViewById(R.id.text_moderator_name) as TextView
 
         init {
@@ -39,6 +42,7 @@ class ModeratorsListAdapter(private val moderators: List<Moderator>, private val
     }
 
     interface OnItemClickListener {
+
         fun onItemClick(username: String)
     }
 }

@@ -18,6 +18,7 @@ class ConversationAdapter(
 ) : RecyclerView.Adapter<ConversationAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         val txtUser: TextView = view.findViewById(R.id.txt_messages_with_user_item_username)
         val txtTimeSent: TextView = view.findViewById(R.id.txt_messages_with_user_item_time_sent)
         val txtBody: TextView = view.findViewById(R.id.txt_messages_with_user_item_body)
@@ -40,6 +41,7 @@ class ConversationAdapter(
     }
 
     interface UserClickedListener {
+
         fun onUserClicked(user: String?)
     }
 }

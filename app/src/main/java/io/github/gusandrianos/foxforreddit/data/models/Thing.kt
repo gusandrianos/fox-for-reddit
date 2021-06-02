@@ -6,6 +6,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class Thing : Parcelable {
+
     @SerializedName("data")
     val data: Data? = null
 

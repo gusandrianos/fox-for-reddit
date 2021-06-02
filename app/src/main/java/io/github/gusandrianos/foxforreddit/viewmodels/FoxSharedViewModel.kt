@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import io.github.gusandrianos.foxforreddit.data.models.Flair
 
 class FoxSharedViewModel : ViewModel() {
+
     var currentUserUsername: String = ""
     var currentSubreddit: String = ""
     private var subredditChoice: MutableLiveData<String> = MutableLiveData()

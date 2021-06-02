@@ -20,7 +20,14 @@ import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.downVoteColor
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.formatValue
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.upVoteColor
 import io.noties.markwon.Markwon
-import kotlinx.android.synthetic.main.single_post_expandable_comment.view.*
+import kotlinx.android.synthetic.main.single_post_expandable_comment.view.cl_comment
+import kotlinx.android.synthetic.main.single_post_expandable_comment.view.cl_load_more
+import kotlinx.android.synthetic.main.single_post_expandable_comment.view.comment_body
+import kotlinx.android.synthetic.main.single_post_expandable_comment.view.separatorContainer
+import kotlinx.android.synthetic.main.single_post_expandable_comment.view.separatorContainer2
+import kotlinx.android.synthetic.main.single_post_expandable_comment.view.txt_comment_score
+import kotlinx.android.synthetic.main.single_post_expandable_comment.view.txt_comment_user
+import kotlinx.android.synthetic.main.single_post_expandable_comment.view.txt_more_children
 import org.apache.commons.text.StringEscapeUtils
 
 class ExpandableCommentGroup constructor(
@@ -43,7 +50,7 @@ class ExpandableCommentGroup constructor(
                 repliesItem = gson.fromJson(gson.toJsonTree(mComment.data.replies).asJsonObject, repliesType)
             }
         } else
-            repliesItem = null;
+            repliesItem = null
 
         if (repliesItem != null)
             for (comment in repliesItem.data!!.children!!) {
@@ -55,7 +62,17 @@ class ExpandableCommentGroup constructor(
                     val gson = Gson()
                     gson.fromJson(gson.toJsonTree(comment).asJsonObject, childType)
                 }
-                add(ExpandableCommentGroup(item, item.data!!.depth, linkId, listener, mainActivity, markwon, mTokenRepository))
+                add(
+                    ExpandableCommentGroup(
+                        item,
+                        item.data!!.depth,
+                        linkId,
+                        listener,
+                        mainActivity,
+                        markwon,
+                        mTokenRepository
+                    )
+                )
                     .apply { isExpanded = true }
             }
     }
@@ -70,6 +87,7 @@ open class ExpandableCommentItem constructor(
     private val markwon: Markwon,
     private val mTokenRepository: TokenRepository
 ) : Item<GroupieViewHolder>(), ExpandableItem {
+
     private lateinit var expandableGroup: ExpandableGroup
 
     override fun setExpandableGroup(onToggleListener: ExpandableGroup) {
@@ -105,8 +123,10 @@ open class ExpandableCommentItem constructor(
             viewHolder.itemView.cl_comment.visibility = View.VISIBLE
             viewHolder.itemView.cl_load_more.visibility = View.GONE
             viewHolder.itemView.txt_comment_user.text = mComment.data!!.author
-            markwon.setMarkdown(viewHolder.itemView.comment_body,
-                StringEscapeUtils.unescapeXml(mComment.data.body))
+            markwon.setMarkdown(
+                viewHolder.itemView.comment_body,
+                StringEscapeUtils.unescapeXml(mComment.data.body)
+            )
             viewHolder.itemView.txt_comment_score.text = formatValue(mComment.data.score.toDouble())
             viewHolder.itemView.comment_body.apply {
                 setOnClickListener {
@@ -130,8 +150,10 @@ open class ExpandableCommentItem constructor(
         val author: TextView = view.findViewById(R.id.txt_comment_user) as TextView
         val comment: TextView = view.findViewById(R.id.comment_body) as TextView
 
-        FoxToolkit.setLikedStatusOnButtons(mComment.data?.likes, upvote, downvote,
-            score, mainActivity, comment.currentTextColor)
+        FoxToolkit.setLikedStatusOnButtons(
+            mComment.data?.likes, upvote, downvote,
+            score, mainActivity, comment.currentTextColor
+        )
 
         upvote.setOnClickListener {
             if (!FoxToolkit.isAuthorized(mTokenRepository))
@@ -197,7 +219,10 @@ open class ExpandableCommentItem constructor(
     }
 
     interface OnItemClickListener {
-        fun onClick(linkId: String, moreChildren: ArrayList<String>?,
-                    comment: ChildrenItem?, actionType: String, view: View)
+
+        fun onClick(
+            linkId: String, moreChildren: ArrayList<String>?,
+            comment: ChildrenItem?, actionType: String, view: View
+        )
     }
 }

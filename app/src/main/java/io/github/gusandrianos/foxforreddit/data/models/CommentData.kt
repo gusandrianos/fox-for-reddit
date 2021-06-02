@@ -3,6 +3,7 @@ package io.github.gusandrianos.foxforreddit.data.models
 import com.google.gson.annotations.SerializedName
 
 class CommentData {
+
     @SerializedName("modhash")
     val modhash: String? = null
 

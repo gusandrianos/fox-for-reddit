@@ -23,6 +23,7 @@ class PostRepository @Inject constructor(
     private val mTokenRepository: TokenRepository,
     private val redditAPI: RedditAPI
 ) {
+
     private val commentsData = MutableLiveData<CommentListing>()
 
     fun getPosts(subreddit: String, filter: String, time: String): RedditPagingSource {
@@ -52,10 +53,16 @@ class PostRepository @Inject constructor(
 
                     val postType = object : TypeToken<Thing?>() {}.type
                     val commentsType = object : TypeToken<CommentListing?>() {}.type
-                    val post = gson.fromJson<Thing>(gson.toJsonTree(response.body()!![0])
-                        .asJsonObject, postType)
-                    val comments = gson.fromJson<CommentListing>(gson.toJsonTree(response.body()
-                    !![1]).asJsonObject, commentsType)
+                    val post = gson.fromJson<Thing>(
+                        gson.toJsonTree(response.body()!![0])
+                            .asJsonObject, postType
+                    )
+                    val comments = gson.fromJson<CommentListing>(
+                        gson.toJsonTree(
+                            response.body()
+                            !![1]
+                        ).asJsonObject, commentsType
+                    )
 
                     singlePostData.value = SinglePost(post, comments)
                 }
@@ -69,7 +76,7 @@ class PostRepository @Inject constructor(
     }
 
     fun getSinglePostComments(permalink: String):
-        LiveData<CommentListing> {
+            LiveData<CommentListing> {
         val bearer = getBearer(mTokenRepository)
         val singlePost = redditAPI.getSinglePost(bearer, permalink)
         singlePost.enqueue(object : Callback<List<Any>> {
@@ -77,8 +84,12 @@ class PostRepository @Inject constructor(
                 if (response.isSuccessful) {
                     val commentsType = object : TypeToken<CommentListing?>() {}.type
                     val gson = Gson()
-                    val comments = gson.fromJson<CommentListing>(gson.toJsonTree(response.body()
-                    !![1]).asJsonObject, commentsType)
+                    val comments = gson.fromJson<CommentListing>(
+                        gson.toJsonTree(
+                            response.body()
+                            !![1]
+                        ).asJsonObject, commentsType
+                    )
                     commentsData.value = comments
                 }
                 Log.i("SinglePost", "onResponse: ${response.message()}")
@@ -91,7 +102,7 @@ class PostRepository @Inject constructor(
     }
 
     fun getMoreChildren(linkId: String, children: String):
-        LiveData<MoreChildren> {
+            LiveData<MoreChildren> {
         val dataMoreChildren = MutableLiveData<MoreChildren>()
         val bearer = getBearer(mTokenRepository)
         val moreChildren = redditAPI.getMoreChildren(bearer, linkId, children, "json")
@@ -113,11 +124,15 @@ class PostRepository @Inject constructor(
     ): LiveData<SubmitResponse> {
         val submissionData = MutableLiveData<SubmitResponse>()
         val bearer = getBearer(mTokenRepository)
-        val submit = redditAPI.submitText(bearer, type, subreddit, title, url, text, nsfw,
-            spoiler, flair_id, flair_text, "json", true)
+        val submit = redditAPI.submitText(
+            bearer, type, subreddit, title, url, text, nsfw,
+            spoiler, flair_id, flair_text, "json", true
+        )
         submit.enqueue(object : Callback<SubmitResponse> {
-            override fun onResponse(call: Call<SubmitResponse>, response:
-            Response<SubmitResponse>) {
+            override fun onResponse(
+                call: Call<SubmitResponse>, response:
+                Response<SubmitResponse>
+            ) {
                 Log.i("postResponse", "onResponse: ${response.body()}")
                 if (response.isSuccessful)
                     submissionData.value = response.body()
@@ -212,8 +227,10 @@ class PostRepository @Inject constructor(
     fun selectFlair(subreddit: String, link: String, templateId: String): LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
         val bearer = getBearer(mTokenRepository)
-        val selectFlair = redditAPI.selectFlair(bearer, subreddit, "json", link,
-            templateId)
+        val selectFlair = redditAPI.selectFlair(
+            bearer, subreddit, "json", link,
+            templateId
+        )
 
         selectFlair.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -285,7 +302,7 @@ class PostRepository @Inject constructor(
     }
 
     fun editSubmission(text: String, thing_id: String)
-        : LiveData<Boolean> {
+            : LiveData<Boolean> {
         val success = MutableLiveData<Boolean>()
         val bearer = getBearer(mTokenRepository)
         val editSubmission = redditAPI.editSubmission(bearer, "json", text, thing_id)

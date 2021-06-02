@@ -1,15 +1,28 @@
 package io.github.gusandrianos.foxforreddit.data.network
 
 import com.google.gson.JsonObject
-import io.github.gusandrianos.foxforreddit.data.models.*
-
+import io.github.gusandrianos.foxforreddit.data.models.Data
+import io.github.gusandrianos.foxforreddit.data.models.Flair
+import io.github.gusandrianos.foxforreddit.data.models.Listing
+import io.github.gusandrianos.foxforreddit.data.models.ModeratorsResponse
+import io.github.gusandrianos.foxforreddit.data.models.RulesBundle
+import io.github.gusandrianos.foxforreddit.data.models.SubmitResponse
+import io.github.gusandrianos.foxforreddit.data.models.Thing
+import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
 import io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren.MoreChildren
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface RedditAPI {
 
     companion object {
+
         const val BASE_URL = "https://oauth.reddit.com/"
     }
 
@@ -101,7 +114,6 @@ interface RedditAPI {
         @Header("Authorization") bearer: String,
         @Path("subreddit_prefixed") subreddit: String
     ): Call<RulesBundle>
-
 
     @GET("{subreddit_prefixed}/about/moderators")
     fun getSubredditModerators(

@@ -25,8 +25,8 @@ import retrofit2.Response;
 @Singleton
 public class TokenRepository {
     OAuthTokenAPI mTokenRequest;
-    private TokenDao mTokenDao;
     Token mToken;
+    private final TokenDao mTokenDao;
 
     @Inject
     public TokenRepository(OAuthTokenAPI tokenRequest, TokenDao tokenDao) {
@@ -141,6 +141,13 @@ public class TokenRepository {
         return mToken;
     }
 
+    public void setCachedToken(Token token) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            mTokenDao.delete();
+            mTokenDao.insert(token);
+        });
+    }
+
     public Token getToken() {
         if (mToken != null) {
 
@@ -168,13 +175,6 @@ public class TokenRepository {
         getNewToken();
 
         return mToken;
-    }
-
-    public void setCachedToken(Token token) {
-        Executors.newSingleThreadExecutor().execute(() -> {
-            mTokenDao.delete();
-            mTokenDao.insert(token);
-        });
     }
 
     public void logOut() {

@@ -40,11 +40,21 @@ import kotlin.Unit;
 @AndroidEntryPoint
 public class MessagesFragment extends Fragment implements MessagesAdapter.MessagesItemClickListener {
 
-    private View mView;
-    private String where;
     MessagesAdapter mMessagesRecyclerViewAdapter;
     RecyclerView mMessagesRecyclerView;
     SwipeRefreshLayout pullToRefresh;
+    private View mView;
+    private String where;
+
+    public static MessagesFragment newInstance(String where) {
+        MessagesFragment fragment = new MessagesFragment();
+
+        Bundle args = new Bundle();
+        args.putString(Constants.PREFS_WHERE, where);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -107,16 +117,6 @@ public class MessagesFragment extends Fragment implements MessagesAdapter.Messag
             mMessagesRecyclerViewAdapter.refresh();
             mMessagesRecyclerView.smoothScrollToPosition(0);
         });
-    }
-
-    public static MessagesFragment newInstance(String where) {
-        MessagesFragment fragment = new MessagesFragment();
-
-        Bundle args = new Bundle();
-        args.putString(Constants.PREFS_WHERE, where);
-        fragment.setArguments(args);
-
-        return fragment;
     }
 
     @Override

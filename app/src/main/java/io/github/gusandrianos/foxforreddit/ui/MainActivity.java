@@ -44,12 +44,12 @@ public class MainActivity extends CyaneaAppCompatActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener {
 
     public Token mToken;
-    private NavController navController;
     public AppBarConfiguration appBarConfiguration;
     public BottomNavigationView bottomNavView;
     List<Integer> topLevelDestinationIds;
     @Inject
     TokenRepository mTokenRepository;
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +144,7 @@ public class MainActivity extends CyaneaAppCompatActivity implements
                 //When all goes well, there is the line "code=[something]"
                 if (state.equals(Constants.STATE) && error.equals("code")) {
                     String code = inputs[1].split("=")[1];
+                    code = code.substring(0, code.length() - 2);
                     mToken = mTokenRepository.getNewToken(code, Constants.REDIRECT_URI);
                 } else
                     Toast.makeText(this, "Log In unsuccessful", Toast.LENGTH_SHORT).show();

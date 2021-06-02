@@ -6,5 +6,6 @@ import io.github.gusandrianos.foxforreddit.data.models.Token
 
 @Database(entities = [Token::class], version = 1)
 abstract class FoxDatabase : RoomDatabase() {
+
     abstract fun tokenDao(): TokenDao
 }

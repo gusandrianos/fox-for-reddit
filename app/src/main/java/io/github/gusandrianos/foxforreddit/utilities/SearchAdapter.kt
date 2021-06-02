@@ -12,7 +12,8 @@ import io.github.gusandrianos.foxforreddit.data.models.Listing
 import io.github.gusandrianos.foxforreddit.utilities.FoxToolkit.formatValue
 
 @Suppress("CAST_NEVER_SUCCEEDS")
-class SearchAdapter(private val listener: OnSearchItemClickListener, private val results: Listing) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
+class SearchAdapter(private val listener: OnSearchItemClickListener, private val results: Listing) :
+    RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
         return SearchViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_search, parent, false))
@@ -58,6 +59,7 @@ class SearchAdapter(private val listener: OnSearchItemClickListener, private val
     }
 
     inner class SearchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         val icon = view.findViewById(R.id.search_item_icon) as ImageView
         val txtName: TextView = view.findViewById(R.id.txt_search_item_name)
         val txtInfo: TextView = view.findViewById(R.id.txt_search_item_info)
@@ -72,6 +74,7 @@ class SearchAdapter(private val listener: OnSearchItemClickListener, private val
     }
 
     interface OnSearchItemClickListener {
+
         fun onSearchItemClick(destination: String, type: String)
     }
 }

@@ -41,12 +41,10 @@ public class VideoDialogFragment extends BottomSheetDialogFragment {
 
     NavHostFragment navHostFragment;
     NavController navController;
-
-    private boolean wasPlaying;
-
     SimpleExoPlayer player = null;
     ImageView imgPlay;
     SeekBar videoSeekBar;
+    private boolean wasPlaying;
 
     @Nullable
     @Override

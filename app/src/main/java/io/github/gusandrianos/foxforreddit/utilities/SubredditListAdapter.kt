@@ -12,9 +12,11 @@ import com.bumptech.glide.Glide
 import io.github.gusandrianos.foxforreddit.R
 import io.github.gusandrianos.foxforreddit.data.models.Data
 
-class SubredditListAdapter(private val listener: OnItemClickListener) : PagingDataAdapter<Data, SubredditListAdapter.ViewHolder>(ITEM_COMPARATOR) {
+class SubredditListAdapter(private val listener: OnItemClickListener) :
+    PagingDataAdapter<Data, SubredditListAdapter.ViewHolder>(ITEM_COMPARATOR) {
 
     companion object {
+
         private val ITEM_COMPARATOR = object : DiffUtil.ItemCallback<Data>() {
             override fun areItemsTheSame(oldItem: Data, newItem: Data): Boolean {
                 return oldItem.id == newItem.id
@@ -27,6 +29,7 @@ class SubredditListAdapter(private val listener: OnItemClickListener) : PagingDa
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         val subredditImg = view.findViewById(R.id.img_subreddit_list_item_icon) as ImageView
         val subredditTitle = view.findViewById(R.id.txt_subreddit_list_item_title) as TextView
 
@@ -47,6 +50,7 @@ class SubredditListAdapter(private val listener: OnItemClickListener) : PagingDa
     }
 
     interface OnItemClickListener {
+
         fun onItemClick(item: Data)
     }
 

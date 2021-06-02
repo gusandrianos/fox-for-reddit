@@ -5,5 +5,6 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class MoreChildrenList : Parcelable {
+
     var moreChildrenList: List<String>? = null
 }

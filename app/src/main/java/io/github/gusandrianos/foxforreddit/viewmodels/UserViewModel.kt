@@ -4,13 +4,18 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.liveData
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.Thing
 import io.github.gusandrianos.foxforreddit.data.models.UserPrefs
 import io.github.gusandrianos.foxforreddit.data.repositories.UserRepository
 
 class UserViewModel @ViewModelInject constructor(private val mUserRepository: UserRepository) : ViewModel() {
+
     private var subreddits: LiveData<PagingData<Data>>? = null
     private var userPrefs: LiveData<UserPrefs>? = null
     private var messages: LiveData<PagingData<Data>>? = null

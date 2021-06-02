@@ -3,6 +3,7 @@ package io.github.gusandrianos.foxforreddit.data.models.singlepost.morechildren
 import com.google.gson.annotations.SerializedName
 
 class DataMoreChildren {
+
     @SerializedName("body_html")
     val bodyHtml: String? = null
 

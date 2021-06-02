@@ -1,6 +1,7 @@
 package io.github.gusandrianos.foxforreddit
 
 object Constants {
+
     // Reddit URL
     const val REDDIT_URL = "https://www.reddit.com"
 

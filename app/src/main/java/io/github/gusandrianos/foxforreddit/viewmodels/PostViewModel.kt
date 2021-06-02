@@ -4,7 +4,11 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.liveData
 import io.github.gusandrianos.foxforreddit.data.models.CommentListing
 import io.github.gusandrianos.foxforreddit.data.models.Data
 import io.github.gusandrianos.foxforreddit.data.models.SinglePost
@@ -15,16 +19,19 @@ import javax.inject.Singleton
 
 @Singleton
 class PostViewModel @ViewModelInject constructor(private val mPostRepository: PostRepository) : ViewModel() {
+
     var posts: LiveData<PagingData<Data>>? = null
 
     fun getPosts(subreddit: String, filter: String, time: String)
-        : LiveData<PagingData<Data>> {
+            : LiveData<PagingData<Data>> {
         if (posts != null)
             return posts!!
 
         posts = Pager(
-            config = PagingConfig(pageSize = 25, prefetchDistance = 25,
-                enablePlaceholders = false),
+            config = PagingConfig(
+                pageSize = 25, prefetchDistance = 25,
+                enablePlaceholders = false
+            ),
             pagingSourceFactory = {
                 mPostRepository.getPosts(subreddit, filter, time)
             }
@@ -46,19 +53,23 @@ class PostViewModel @ViewModelInject constructor(private val mPostRepository: Po
     }
 
     fun getSinglePostComments(permalink: String):
-        LiveData<CommentListing> {
+            LiveData<CommentListing> {
         return mPostRepository.getSinglePostComments(permalink)
     }
 
     fun getMoreChildren(linkId: String, children: String)
-        : LiveData<MoreChildren> {
+            : LiveData<MoreChildren> {
         return mPostRepository.getMoreChildren(linkId, children)
     }
 
-    fun submitText(type: String, subreddit: String, title: String, url: String, text: String,
-                   nsfw: Boolean, spoiler: Boolean, flair_id: String, flair_text: String): LiveData<SubmitResponse> {
-        return mPostRepository.submitText(type, subreddit, title, url, text, nsfw, spoiler,
-            flair_id, flair_text)
+    fun submitText(
+        type: String, subreddit: String, title: String, url: String, text: String,
+        nsfw: Boolean, spoiler: Boolean, flair_id: String, flair_text: String
+    ): LiveData<SubmitResponse> {
+        return mPostRepository.submitText(
+            type, subreddit, title, url, text, nsfw, spoiler,
+            flair_id, flair_text
+        )
     }
 
     fun savePost(id: String): LiveData<Boolean> {
@@ -98,7 +109,7 @@ class PostViewModel @ViewModelInject constructor(private val mPostRepository: Po
     }
 
     fun editSubmission(text: String, thing_id: String)
-        : LiveData<Boolean> {
+            : LiveData<Boolean> {
         return mPostRepository.editSubmission(text, thing_id)
     }
 }
